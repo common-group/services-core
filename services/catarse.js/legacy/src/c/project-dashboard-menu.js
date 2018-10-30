@@ -60,7 +60,7 @@ const projectDashboardMenu = {
             showPublish.toggle(false);
         }
 
-        return {
+        vnode.state = {
             body,
             validating,
             validatePublish,
@@ -71,20 +71,20 @@ const projectDashboardMenu = {
         };
     },
     view: function({state, attrs}) {
-        const project = args.project(),
+        const project = attrs.project(),
             projectRoute = `/projects/${project.project_id}`,
             editRoute = `${projectRoute}/edit`,
             editLinkClass = hash => `dashboard-nav-link-left ${project.is_published ? 'indent' : ''} ${h.hashMatch(hash) ? 'selected' : ''}`;
         const optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
 
-        ctrl.body.className = ctrl.bodyToggleForNav();
+        state.body.className = state.bodyToggleForNav();
         return m('#project-nav', [
             m('.project-nav-wrapper', [
                 m('nav.w-section.dashboard-nav.side', [
                     m(`a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="${project.is_published ? `/${project.permalink}` : `${editRoute}#preview`}"]`, {
-                        onclick: projectVM.routeToProject(project, args.ref)
+                        onclick: projectVM.routeToProject(project, attrs.ref)
                     }, [
-                        m(`img.thumb-project-dashboard[src="${project ? ctrl.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
+                        m(`img.thumb-project-dashboard[src="${project ? state.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
                         m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"]`, {
                             width: projectVM.isSubscription(project) ? 130 : 80
@@ -136,10 +136,10 @@ const projectDashboardMenu = {
                     ]),
                     m('.edit-project-div', [
                         (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
-                            onclick: ctrl.editLinksToggle.toggle
+                            onclick: state.editLinksToggle.toggle
                         }, [
                             m('span.fa.fa-pencil.fa-fw.fa-lg'), window.I18n.t('edit_project', I18nScope())
-                        ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
+                        ])), (state.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
                                     m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), window.I18n.t('basics_tab', linksScope())),
@@ -170,18 +170,18 @@ const projectDashboardMenu = {
                                 ] : '')
                             ])
                         ]) : ''),
-                        ((!project.is_published && ctrl.showPublish()) ? [
-                            (ctrl.validating() ? h.loader() :
+                        ((!project.is_published && state.showPublish()) ? [
+                            (state.validating() ? h.loader() :
                                 m('.btn-send-draft-fixed',
                                     (project.mode === 'aon' ? [
                                         (project.state === 'draft' ? m('button.btn.btn-medium', {
-                                            onclick: ctrl.validatePublish
+                                            onclick: state.validatePublish
                                         }, [
                                             window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
                                     ] : [
                                         (project.state === 'draft' ? m('button.btn.btn-medium', {
-                                            onclick: ctrl.validatePublish
+                                            onclick: state.validatePublish
                                         }, [
                                             window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
@@ -197,7 +197,7 @@ const projectDashboardMenu = {
                 ]),
             ]),
             m('a.btn-dashboard href="javascript:void(0);"', {
-                onclick: ctrl.bodyToggleForNav.toggle
+                onclick: state.bodyToggleForNav.toggle
             }, [
                 m('span.fa.fa-bars.fa-lg')
             ])

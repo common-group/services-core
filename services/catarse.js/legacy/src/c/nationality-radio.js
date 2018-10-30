@@ -6,15 +6,15 @@ const nationalityRadio = {
             defaultForeignCountryID = vnode.attrs.defaultForeignCountryID,
             international = vnode.attrs.international;
 
-        return {
+        vnode.state = {
             defaultCountryID,
             defaultForeignCountryID,
             international
         };
     },
     view: function({state, attrs}) {
-        const international = ctrl.international,
-            fields = args.fields;
+        const international = state.international,
+            fields = attrs.fields;
 
         return m('div',
             m('.w-row', [
@@ -28,7 +28,7 @@ const nationalityRadio = {
                         m("input.w-radio-input[name='nationality'][type='radio']", {
                             checked: !international(),
                             onclick: () => {
-                                fields.countryID(ctrl.defaultCountryID);
+                                fields.countryID(state.defaultCountryID);
                                 international(false);
                             }
                         }),
@@ -42,8 +42,8 @@ const nationalityRadio = {
                         m("input.w-radio-input[name='nationality'][type='radio']", {
                             checked: international(),
                             onclick: () => {
-                                if (fields.countryID() === ctrl.defaultCountryID) {
-                                    fields.countryID(ctrl.defaultForeignCountryID); // USA
+                                if (fields.countryID() === state.defaultCountryID) {
+                                    fields.countryID(state.defaultForeignCountryID); // USA
                                 }
                                 international(true);
                             }

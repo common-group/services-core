@@ -27,9 +27,9 @@ const statusCustomFilter = {
 };
 
 const dropdownFilterCustomLabel = {
-    view: function({state, attrs}) 
+    view: function({attrs}) 
     {
-        return m('.fontsize-smaller.u-text-center', args.label);
+        return m('.fontsize-smaller.u-text-center', attrs.label);
     }
 };
 
@@ -251,7 +251,7 @@ const projectSubscriptionReport = {
             project(data);
         });
 
-        return {
+        vnode.state = {
             filterVM,
             mapRewardsToOptions,
             filterBuilder,
@@ -264,9 +264,8 @@ const projectSubscriptionReport = {
         };
     },
     view: function ({state, attrs}) {
-
-        const subsCollection = ctrl.subscriptions.collection(),
-            filterBuilder = ctrl.filterBuilder,
+        const subsCollection = state.subscriptions.collection(),
+            filterBuilder = state.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {
                 label: 'status_filter'
             }),
@@ -285,11 +284,11 @@ const projectSubscriptionReport = {
             paidCountFilter = _.findWhere(filterBuilder, {
                 label: 'paid_count_filter'
             });
-        rewardFilter.data.options = ctrl.mapRewardsToOptions();
-        if (ctrl.isProjectDataLoaded() && ctrl.isRewardsDataLoaded()) {
+        rewardFilter.data.options = state.mapRewardsToOptions();
+        if (state.isProjectDataLoaded() && state.isRewardsDataLoaded()) {
             return m('div', [
                 m(projectDashboardMenu, {
-                    project: prop(_.first(ctrl.project()))
+                    project: prop(_.first(state.project()))
                 }),
                 m('.dashboard-header', [
                     m('.w-container',
@@ -306,7 +305,7 @@ const projectSubscriptionReport = {
                     m('.u-marginbottom-30.w-container',
                         m('.w-form', [
                             m('form', {
-                                onsubmit: ctrl.submit
+                                onsubmit: state.submit
                             },
                                 m('w-row', [
                                     m(textFilter.component, textFilter.data),
@@ -332,14 +331,14 @@ const projectSubscriptionReport = {
                                 m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6',
                                     m('.w-inline-block.fontsize-base.u-marginright-10', [
                                         m('span.fontweight-semibold',
-                                            ctrl.subscriptions.total()
+                                            state.subscriptions.total()
                                         ),
                                         ' pessoas',
                                         m.trust('&nbsp;')
                                     ])
                                 ),
                                 m('.w-col.w-col-6',
-                                    m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_download']`, {
+                                    m(`a.alt-link.fontsize-small.u-right[href='/projects/${attrs.project_id}/subscriptions_report_download']`, {
                                         oncreate: m.route.link
                                     }, [
                                             m('span.fa.fa-download',
@@ -397,7 +396,7 @@ const projectSubscriptionReport = {
                         m('.w-container',
                             m('.u-marginbottom-60.w-row', [
                                 m(loadMoreBtn, {
-                                    collection: ctrl.subscriptions,
+                                    collection: state.subscriptions,
                                     cssClass: '.w-col-push-4'
                                 })
                             ])

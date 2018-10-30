@@ -42,14 +42,14 @@ const usersShow = {
 
         userVM.fetchUser(user_id, true, userDetails);
 
-        return {
+        vnode.state = {
             displayTabContent,
             hash,
             userDetails
         };
     },
     view: function({state, attrs}) {
-        const user = ctrl.userDetails();
+        const user = state.userDetails();
 
         return m('div', [
             m(userHeader, { user }),
@@ -69,7 +69,7 @@ const usersShow = {
                               ' Editar perfil'
                           ]
                       ) : '') : h.loader()),
-                      m(`a[data-target=\'#contributed-tab\'][href=\'#contributed\'][id=\'contributed_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#contributed' ? 'selected' : '')}\']`,
+                      m(`a[data-target=\'#contributed-tab\'][href=\'#contributed\'][id=\'contributed_link\'][class=\'dashboard-nav-link ${(state.hash() === '#contributed' ? 'selected' : '')}\']`,
                           [
                               'Apoiados ',
                               m.trust('&nbsp;'),
@@ -78,7 +78,7 @@ const usersShow = {
                               )
                           ]
                       ),
-                      m(`a[data-target=\'#created-tab\'][href=\'#created\'][id=\'created_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#created' ? 'selected' : '')}\']`,
+                      m(`a[data-target=\'#created-tab\'][href=\'#created\'][id=\'created_link\'][class=\'dashboard-nav-link ${(state.hash() === '#created' ? 'selected' : '')}\']`,
                           [
                               'Criados ',
                               m.trust('&nbsp;'),
@@ -87,7 +87,7 @@ const usersShow = {
                               )
                           ]
                       ),
-                      m(`a[data-target=\'#about-tab\'][href=\'#about\'][id=\'about_link\'][class=\'dashboard-nav-link ${(ctrl.hash() === '#about' ? 'selected' : '')}\']`,
+                      m(`a[data-target=\'#about-tab\'][href=\'#about\'][id=\'about_link\'][class=\'dashboard-nav-link ${(state.hash() === '#about' ? 'selected' : '')}\']`,
                           'Sobre'
                       )
                   ]
@@ -96,7 +96,7 @@ const usersShow = {
 
             m('section.section',
               m('.w-container',
-                  m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
+                  m('.w-row', user.id ? state.displayTabContent(user) : h.loader())
               )
           )
         ]);

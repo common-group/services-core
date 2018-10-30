@@ -65,7 +65,7 @@ const userBalanceMain = {
                 };
             })();
 
-        return {
+        vnode.state = {
             bankAccountManager,
             balanceManager,
             balanceTransactionManager
@@ -75,7 +75,7 @@ const userBalanceMain = {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
             m(userBalance, opts),
-            m(userBalanceWithdrawHistory, { user_id: args.user_id }),
+            m(userBalanceWithdrawHistory, { user_id: attrs.user_id }),
             m('.divider'),
             m(userBalanceTransactions, opts),
             m('.u-marginbottom-40'),

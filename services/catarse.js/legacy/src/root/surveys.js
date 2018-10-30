@@ -62,7 +62,7 @@ const surveys = {
         });
         l.load().then(projectDetails);
 
-        return {
+        vnode.state = {
             l,
             project_id,
             toggleOpen,
@@ -71,14 +71,14 @@ const surveys = {
         };
     },
     view: function({state}) {
-        const project = _.first(ctrl.projectDetails());
+        const project = _.first(state.projectDetails());
         const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
         const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));
         const availableAction = (reward) => {
             if (canBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-small-stack.w-col-tiny-tiny-stack',
                     m('a.btn.btn-small.w-button', {
-                        onclick: () => m.route.set(`/projects/${ctrl.project_id}/rewards/${reward.id}/surveys/new`)
+                        onclick: () => m.route.set(`/projects/${state.project_id}/rewards/${reward.id}/surveys/new`)
                     },
                         window.I18n.t('create_survey', surveyScope())
                     )
@@ -98,7 +98,7 @@ const surveys = {
                         m('.u-marginbottom-10.w-clearfix',
                             m('a.toggle.toggle-on.u-right.w-clearfix.w-inline-block', {
                                 onclick: () => {
-                                    ctrl.toggleOpen(reward);
+                                    state.toggleOpen(reward);
                                 }
                             }, [
                                 m('.toggle-btn'),
@@ -127,7 +127,7 @@ const surveys = {
                     m('.u-marginbottom-10.w-clearfix',
                         m('a.toggle.toggle-off.u-right.w-inline-block', {
                             onclick: () => {
-                                ctrl.toggleOpen(reward);
+                                state.toggleOpen(reward);
                             }
                         }, [
                             m('div',
@@ -230,7 +230,7 @@ const surveys = {
                             )
                         ]),
                         m('.fontsize-small.table-inner', [
-                            (_.map(ctrl.rewardVM.rewards(), reward => m('.table-row.w-row', [
+                            (_.map(state.rewardVM.rewards(), reward => m('.table-row.w-row', [
                                 m('.table-col.w-col.w-col-3', [
                                     m('.fontsize-base.fontweight-semibold',
                                         `R$ ${reward.minimum_value} ou mais`

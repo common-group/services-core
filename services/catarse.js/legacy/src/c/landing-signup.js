@@ -30,24 +30,24 @@ const landingSignup = {
                 error(true);
                 return false;
             };
-        return {
+        vnode.state = {
             email,
             submit,
             error
         };
     },
     view: function({state, attrs}) {
-        const errorClasses = (!ctrl.error) ? '.positive.error' : '';
-        return m(`form.w-form[id="email-form"][method="post"][action="${args.builder.customAction}"]`, {
-            onsubmit: ctrl.submit
+        const errorClasses = (!state.error) ? '.positive.error' : '';
+        return m(`form.w-form[id="email-form"][method="post"][action="${attrs.builder.customAction}"]`, {
+            onsubmit: state.submit
         }, [
             m('.w-col.w-col-5', [
                 m(`input${errorClasses}.w-input.text-field.medium[name="EMAIL"][placeholder="Digite seu email"][type="text"]`, {
                     config: h.RDTracker('landing-flex'),
-                    onchange: m.withAttr('value', ctrl.email),
-                    value: ctrl.email()
+                    onchange: m.withAttr('value', state.email),
+                    value: state.email()
                 }),
-                (ctrl.error() ? m('span.fontsize-smaller.text-error', 'E-mail inválido') : '')
+                (state.error() ? m('span.fontsize-smaller.text-error', 'E-mail inválido') : '')
             ]),
             m('.w-col.w-col-3', [
                 m('input.w-button.btn.btn-large[type="submit"][value="Cadastrar"]')

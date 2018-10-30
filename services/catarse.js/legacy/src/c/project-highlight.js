@@ -9,12 +9,12 @@ import projectVM from '../vms/project-vm';
 
 const projectHighlight = {
     oninit: function() {
-        return {
+        vnode.state = {
             displayShareBox: h.toggleProp(false, true)
         };
     },
     view: function({state, attrs}) {
-        const project = args.project;
+        const project = attrs.project;
         const isSub = projectVM.isSubscription(project);
 
         return m('#project-highlight', [
@@ -49,14 +49,14 @@ const projectHighlight = {
                         style: {
                             transition: 'all 0.5s ease 0s'
                         },
-                        onclick: ctrl.displayShareBox.toggle
+                        onclick: state.displayShareBox.toggle
                     }, [
                         '···',
                         ' Mais'
                     ]),
-                    (ctrl.displayShareBox() ? m(projectShareBox, {
+                    (state.displayShareBox() ? m(projectShareBox, {
                         project,
-                        displayShareBox: ctrl.displayShareBox
+                        displayShareBox: state.displayShareBox
                     }) : '')
                 ])
             )

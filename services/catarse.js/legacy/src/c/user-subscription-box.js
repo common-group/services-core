@@ -206,7 +206,7 @@ const userSubscriptionBox = {
             return '';
         };
 
-        return {
+        vnode.state = {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
             displayCancelModal,
@@ -223,28 +223,28 @@ const userSubscriptionBox = {
     },
     view: function({state}) {
         const 
-            subscription = ctrl.subscription,
+            subscription = state.subscription,
             project = subscription.project;
 
         return !_.isEmpty(subscription) && !_.isEmpty(subscription.project) ? m('div',
-            (ctrl.displayCancelModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
+            (state.displayCancelModal() && !_.isEmpty(state.contactModalInfo()) ?
                 m(modalBox, {
-                    displayModal: ctrl.displayCancelModal,
+                    displayModal: state.displayCancelModal,
                     content: [cancelSubscriptionContent, {
-                        displayModal: ctrl.displayCancelModal,
+                        displayModal: state.displayCancelModal,
                         subscription
                     }]
                 }) : ''
             ),
-            (ctrl.displayModal() && !_.isEmpty(ctrl.contactModalInfo()) ?
+            (state.displayModal() && !_.isEmpty(state.contactModalInfo()) ?
                 m(modalBox, {
-                    displayModal: ctrl.displayModal,
-                    content: [ownerMessageContent, ctrl.contactModalInfo]
+                    displayModal: state.displayModal,
+                    content: [ownerMessageContent, state.contactModalInfo]
                 }) : ''
             ),
-            (ctrl.displayPaymentHistoryModal() ? 
+            (state.displayPaymentHistoryModal() ? 
                 m(modalBox, {
-                    displayModal: ctrl.displayPaymentHistoryModal,
+                    displayModal: state.displayPaymentHistoryModal,
                     content: [userSubscriptionPaymentHistoryModal, { subscription, project }]
                 })
             : ''), [
@@ -267,23 +267,23 @@ const userSubscriptionBox = {
                         ]),
                         m("a.btn.btn-edit.btn-inline.btn-small.w-button[href='javascript:void(0);']", {
                             onclick: () => {
-                                ctrl.displayModal.toggle();
+                                state.displayModal.toggle();
                             }
                         },
                             window.I18n.t('contact_author', contributionScope())
                         )
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
-                        m('.fontsize-base.fontweight-semibold.lineheight-tighter', ctrl.showLastSubscriptionVersionValueIfHasOne()),
+                        m('.fontsize-base.fontweight-semibold.lineheight-tighter', state.showLastSubscriptionVersionValueIfHasOne()),
                         m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                             `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                         ),
-                        m('.u-marginbottom-10', ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne()),
+                        m('.u-marginbottom-10', state.showLastSubscriptionVersionPaymentMethodIfHasOne()),
                         m('a.alt-link.fontsize-smallest[href="javascript:void(0);"]', {
-                            onclick: () => ctrl.displayPaymentHistoryModal.toggle()
+                            onclick: () => state.displayPaymentHistoryModal.toggle()
                         },'Histórico de pagamento')
                     ]),
-                    m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
+                    m('.u-marginbottom-20.w-col.w-col-3', state.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
                         (subscription.status === 'started' ? (
                             subscription.last_payment_data.status === 'refused' && subscription.payment_method != 'boleto' ? [
@@ -309,10 +309,10 @@ const userSubscriptionBox = {
                                             m('span.fa.fa-exclamation-triangle'),
                                             ` O boleto de sua assinatura venceu dia ${h.momentify(subscription.boleto_expiration_date)}`,
                                         ]),
-                                        (ctrl.isGeneratingSecondSlip() ? h.loader() :
+                                        (state.isGeneratingSecondSlip() ? h.loader() :
                                             m('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
-                                                disabled: ctrl.isGeneratingSecondSlip(),
-                                                onclick: ctrl.generateSecondSlip
+                                                disabled: state.isGeneratingSecondSlip(),
+                                                onclick: state.generateSecondSlip
                                             }, 'Gerar segunda via'))
                                     ]
                                     : [
@@ -383,7 +383,7 @@ const userSubscriptionBox = {
                                             'Refazer pagamento'
                                         )
                                     ] : [
-                                        ctrl.showLastSubscriptionVersionEditionNextCharge(),
+                                        state.showLastSubscriptionVersionEditionNextCharge(),
                                         subscription.payment_status !== 'pending' ? m('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button',
                                         { href: `/projects/${subscription.project_external_id}/subscriptions/start?${subscription.reward_external_id ? `reward_id=${subscription.reward_external_id}` : ''}&subscription_id=${subscription.id}&subscription_status=${subscription.status}` },
                                         'Editar assinatura'
@@ -398,10 +398,10 @@ const userSubscriptionBox = {
                                                     m('span.fa.fa-exclamation-triangle'),
                                                     ` O boleto de sua assinatura venceu dia ${h.momentify(subscription.boleto_expiration_date)}`,
                                                 ]),
-                                                (ctrl.isGeneratingSecondSlip() ? h.loader() :
+                                                (state.isGeneratingSecondSlip() ? h.loader() :
                                                     m('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
-                                                        disabled: ctrl.isGeneratingSecondSlip(),
-                                                        onclick: ctrl.generateSecondSlip
+                                                        disabled: state.isGeneratingSecondSlip(),
+                                                        onclick: state.generateSecondSlip
                                                     }, 'Gerar segunda via'))
                                             ]
                                             : [
@@ -414,7 +414,7 @@ const userSubscriptionBox = {
                                         ] : '',
                                         m('button.btn-link.fontsize-smallest.link-hidden-light', {
                                             onclick: () => {
-                                                ctrl.displayCancelModal.toggle();
+                                                state.displayCancelModal.toggle();
                                             }
                                         },
                                         'Cancelar assinatura'

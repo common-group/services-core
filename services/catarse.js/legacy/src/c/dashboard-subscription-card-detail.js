@@ -18,16 +18,16 @@ const dashboardSubscriptionCardDetail = {
             vnode.attrs.user.address = user_details.address;
         });
 
-        return {
+        vnode.state = {
             displayModal: h.toggleProp(false, true)
         };
     },
 
     view: function({state, attrs}) {
-        const subscription = args.subscription,
-            user = _.extend({ project_id: subscription.project_external_id }, args.user),
-            reward = args.reward,
-            displayModal = ctrl.displayModal;
+        const subscription = attrs.subscription,
+            user = _.extend({ project_id: subscription.project_external_id }, attrs.user),
+            reward = attrs.reward,
+            displayModal = state.displayModal;
 
         return m('.details-backed-project.card',
             m('.card.card-terciary',

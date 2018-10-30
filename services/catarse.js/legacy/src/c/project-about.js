@@ -9,8 +9,8 @@ import projectReport from './project-report';
 import projectSuggestedContributions from './project-suggested-contributions';
 
 const projectAbout = {
-    view: function({state, attrs}) {
-        const project = args.project() || {},
+    view: function({attrs}) {
+        const project = attrs.project() || {},
             onlineDays = () => {
                 const diff = moment(project.zone_online_date).diff(moment(project.zone_expires_at)),
                     duration = moment.duration(diff);
@@ -24,7 +24,7 @@ const projectAbout = {
 
         const nextStepsCardOptions = () => {
             const isSubscription = projectVM.isSubscription(project);
-            const hasRewards = !_.isEmpty(args.rewardDetails());
+            const hasRewards = !_.isEmpty(attrs.rewardDetails());
             const titleText = hasRewards ? 'Recompensas' : 'Sugestões de apoio';
 
             return [
@@ -39,12 +39,12 @@ const projectAbout = {
                 ],
                 hasRewards ? [
                     m(projectRewardList, {
-                        project: args.project,
-                        hasSubscription: args.hasSubscription,
-                        rewardDetails: args.rewardDetails
+                        project: attrs.project,
+                        hasSubscription: attrs.hasSubscription,
+                        rewardDetails: attrs.rewardDetails
                     })
                 ] : [
-                    m(projectSuggestedContributions, { project: args.project })
+                    m(projectSuggestedContributions, { project: attrs.project })
                 ],
                 fundingPeriod()
             ];
@@ -65,7 +65,7 @@ const projectAbout = {
                 m(projectReport)
             ]),
             m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', [
-                projectVM.isSubscription(project) ? (args.subscriptionData() ? m(projectGoalsBox, { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }) : h.loader()) : '',
+                projectVM.isSubscription(project) ? (attrs.subscriptionData() ? m(projectGoalsBox, { goalDetails: attrs.goalDetails, subscriptionData: attrs.subscriptionData }) : h.loader()) : '',
                 nextStepsCardOptions()
             ])
         ]);

@@ -73,24 +73,24 @@ const paymentStatus = {
             }
         };
 
-        return {
+        vnode.state = {
             displayPaymentMethod,
             paymentMethodClass,
             stateClass
         };
     },
     view: function({state, attrs}) {
-        const payment = args.item;
+        const payment = attrs.item;
 
         return m('.w-row.payment-status', [
             m('.fontsize-smallest.lineheight-looser.fontweight-semibold', [
-                m(`span.fa.fa-circle${ctrl.stateClass()}`), ` ${window.window.I18n.t(payment.state, I18nScope())}`
+                m(`span.fa.fa-circle${state.stateClass()}`), ` ${window.window.I18n.t(payment.state, I18nScope())}`
             ]),
             m('.fontsize-smallest.fontweight-semibold', [
-                m(`span.fa${ctrl.paymentMethodClass()}`), ' ', m('a.link-hidden[href="#"]', payment.payment_method)
+                m(`span.fa${state.paymentMethodClass()}`), ' ', m('a.link-hidden[href="#"]', payment.payment_method)
             ]),
             m('.fontsize-smallest.fontcolor-secondary.lineheight-tight', [
-                ctrl.displayPaymentMethod()
+                state.displayPaymentMethod()
             ])
         ]);
     }

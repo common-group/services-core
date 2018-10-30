@@ -12,20 +12,20 @@ const adminProjectItem = {
                 projectVM.updateProject(project.project_id, { recommended: !recommended() }).then(recommended.toggle);
             };
 
-        return {
+        vnode.state = {
             project,
             toggleRecommend,
             recommended
         };
     },
     view: function({state}) {
-        const project = ctrl.project,
-            recommended = ctrl.recommended;
+        const project = state.project,
+            recommended = state.recommended;
         return m('.w-row', [
             m('.w-col.w-col-4',
                 m('.w-row', [
                     m('.w-col.w-col-2',
-                        m('a.btn-star.fa.fa-lg.fa-star.w-inline-block', { onclick: () => { ctrl.toggleRecommend(); }, class: recommended() ? 'selected' : '' })
+                        m('a.btn-star.fa.fa-lg.fa-star.w-inline-block', { onclick: () => { state.toggleRecommend(); }, class: recommended() ? 'selected' : '' })
                     ),
                     m('.w-col.w-col-10',
                         m('.w-row', [

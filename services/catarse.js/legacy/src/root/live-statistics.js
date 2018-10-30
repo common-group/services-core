@@ -10,26 +10,26 @@ const liveStatistics = {
             notificationData = prop({});
 
         models.statistic.getRow().then(pageStatistics);
-        // args.socket is a socket provided by socket.io
+        // attrs.socket is a socket provided by socket.io
         // can see there https://github.com/catarse/catarse-live/blob/master/public/index.js#L8
-        if (args.socket && _.isFunction(args.socket.on)) {
-            args.socket.on('new_paid_contributions', (msg) => {
+        if (attrs.socket && _.isFunction(attrs.socket.on)) {
+            attrs.socket.on('new_paid_contributions', (msg) => {
                 notificationData(JSON.parse(msg.payload));
                 models.statistic.getRow().then(pageStatistics);
                 m.redraw();
             });
         }
 
-        return {
+        vnode.state = {
             pageStatistics,
             notificationData
         };
     },
     view: function({state}) {
-        const data = ctrl.notificationData();
+        const data = state.notificationData();
 
         return m('.w-section.bg-stats.section.min-height-100', [
-            m('.w-container.u-text-center', _.map(ctrl.pageStatistics(), stat => [m('img.u-marginbottom-60[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/55ada5dd11b36a52616d97df_symbol-catarse.png"]'),
+            m('.w-container.u-text-center', _.map(state.pageStatistics(), stat => [m('img.u-marginbottom-60[src="https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/55ada5dd11b36a52616d97df_symbol-catarse.png"]'),
                 m('.fontcolor-negative.u-marginbottom-40', [
                     m('.fontsize-megajumbo.fontweight-semibold', `R$ ${h.formatNumber(stat.total_contributed, 2, 3)}`),
                     m('.fontsize-large', 'Doados para projetos publicados por aqui')

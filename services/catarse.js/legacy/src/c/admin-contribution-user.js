@@ -17,8 +17,8 @@ import m from 'mithril';
 import adminUser from './admin-user';
 
 const adminContributionUser = {
-    view: function({state, attrs}) {
-        const item = args.item,
+    view: function({attrs}) {
+        const item = attrs.item,
             user = {
                 profile_img_thumbnail: item.user_profile_img,
                 id: item.user_id,

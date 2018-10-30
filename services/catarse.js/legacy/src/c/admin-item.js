@@ -4,13 +4,13 @@ import h from '../h';
 
 const adminItem = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             displayDetailBox: h.toggleProp(false, true)
         };
     },
     view: function({state, attrs}) {
-        const item = args.item,
-            listWrapper = args.listWrapper || {},
+        const item = attrs.item,
+            listWrapper = attrs.listWrapper || {},
             selectedItem = (_.isFunction(listWrapper.isSelected) ?
                               listWrapper.isSelected(item.id) : false);
 
@@ -18,17 +18,17 @@ const adminItem = {
         return m('.w-clearfix.card.u-radius.u-marginbottom-20.results-admin-items', {
             class: (selectedItem ? 'card-alert' : '')
         }, [
-            m(args.listItem, {
+            m(attrs.listItem, {
                 item,
-                listWrapper: args.listWrapper,
-                key: args.key
+                listWrapper: attrs.listWrapper,
+                key: attrs.key
             }),
             m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
-                onclick: ctrl.displayDetailBox.toggle
+                onclick: state.displayDetailBox.toggle
             }),
-            ctrl.displayDetailBox() ? m(args.listDetail, {
+            state.displayDetailBox() ? m(attrs.listDetail, {
                 item,
-                key: args.key
+                key: attrs.key
             }) : ''
         ]);
     }

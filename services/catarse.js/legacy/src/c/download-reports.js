@@ -2,10 +2,10 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const downloadReports = {
-    view: function({state, attrs}) {
-        const project = args.project(),
+    view: function({attrs}) {
+        const project = attrs.project(),
             paymentState = project.state === 'failed' ? 'paid,refunded' : 'paid',
-            paidRewards = _.filter(args.rewards, reward => reward.paid_count > 0);
+            paidRewards = _.filter(attrs.rewards, reward => reward.paid_count > 0);
 
         return m('section.min-height-70',
             m('.w-section',

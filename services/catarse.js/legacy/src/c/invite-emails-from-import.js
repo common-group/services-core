@@ -57,7 +57,7 @@ const inviteEmailsFromImport = {
                 }
             };
 
-        return {
+        vnode.state = {
             onCheckGenerator,
             submitInvites,
             checkedList,
@@ -69,20 +69,20 @@ const inviteEmailsFromImport = {
         };
     },
     view: function({state, attrs}) {
-        const project = args.project;
+        const project = attrs.project;
 
         return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center',
                   'Convide seus amigos')
             ]),
-            m('.modal-dialog-content', (!args.loadingContacts() && !ctrl.loading() ? [
+            m('.modal-dialog-content', (!attrs.loadingContacts() && !state.loading() ? [
                 m('.filter-area', [
                     m('.w-row.u-margintop-20', [
                         m('.w-sub-col.w-col.w-col-12', [
                             m('form[action="javascript:void(0);"]', [
                                 m('input.w-input.text-field[type="text"][placeholder="Busque pelo nome ou email."]', {
-                                    onkeyup: m.withAttr('value', ctrl.filterTerm),
+                                    onkeyup: m.withAttr('value', state.filterTerm),
                                     onchange: (e) => { e.preventDefault(); }
                                 })
                             ])
@@ -90,9 +90,9 @@ const inviteEmailsFromImport = {
                     ])
                 ]),
                 m('.emails-area.u-margintop-40', { style: { height: '250px', 'overflow-x': 'auto' } },
-                  (ctrl.filtering() ? h.loader() : _.map(ctrl.search(), (item, i) => m('.w-row.u-marginbottom-20', [
+                  (state.filtering() ? h.loader() : _.map(state.search(), (item, i) => m('.w-row.u-marginbottom-20', [
                       m('.w-sub-col.w-col.w-col-1', [
-                          m(`input[type='checkbox'][name='check_${i}']`, { onchange: ctrl.onCheckGenerator(item) })
+                          m(`input[type='checkbox'][name='check_${i}']`, { onchange: state.onCheckGenerator(item) })
                       ]),
                       m('.w-sub-col.w-col.w-col-4', [
                           m(`label.fontsize-small[for='check_${i}']`, item.name)
@@ -104,12 +104,12 @@ const inviteEmailsFromImport = {
                 )
             ] : h.loader())),
             m('.modal-dialog-nav-bottom.u-text-center', [
-                (!args.loadingContacts() && !ctrl.loading() && !ctrl.filtering() ?
+                (!attrs.loadingContacts() && !state.loading() && !state.filtering() ?
                  m('.u-text-center.u-margintop-20', [
                      m('a.btn.btn-inline.btn-medium.w-button[href="javascript:void(0)"]', {
-                         onclick: ctrl.submitInvites
-                     }, `Enviar ${ctrl.checkedList().length} convites`)
-                 ]) : (!ctrl.loading() ? 'carregando contatos...' : 'enviando convites...'))
+                         onclick: state.submitInvites
+                     }, `Enviar ${state.checkedList().length} convites`)
+                 ]) : (!state.loading() ? 'carregando contatos...' : 'enviando convites...'))
             ])
         ]);
     }

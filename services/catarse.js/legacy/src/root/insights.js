@@ -46,7 +46,7 @@ const insights = {
                 isProjectNotLoader(false);
             }
         });
-        return {
+        vnode.state = {
             l,
             load,
             filtersVM,
@@ -56,31 +56,31 @@ const insights = {
         };
     },
     view: function({state, attrs}) {
-        const project = _.first(ctrl.projectDetails()) || {
+        const project = _.first(state.projectDetails()) || {
                 user: {
                     name: 'Realizador'
                 }
             },
-            subscribersDetails = ctrl.subscribersDetails() || {
+            subscribersDetails = state.subscribersDetails() || {
                 amount_paid_for_valid_period: 0,
                 total_subscriptions: 0,
                 total_subscribers: 0
             };
 
-        if (!ctrl.l()) {
+        if (!state.l()) {
             project.user.name = project.user.name || 'Realizador';
         }
 
-        return m('.project-insights', ctrl.isProjectNotLoader() ? h.loader() : (
+        return m('.project-insights', state.isProjectNotLoader() ? h.loader() : (
             project.mode === 'sub' ?
                 (
-                    ctrl.load() ?
+                    state.load() ?
                     m(projectInsightsSub, {
                         args,
                         subscribersDetails,
                         project,
-                        l: ctrl.isProjectNotLoader,
-                        filtersVM: ctrl.filtersVM
+                        l: state.isProjectNotLoader,
+                        filtersVM: state.filtersVM
                     }) : '' 
                 )
                     :
@@ -88,8 +88,8 @@ const insights = {
                     m(projectInsights, {
                         args,
                         project,
-                        l: ctrl.isProjectNotLoader,
-                        filtersVM: ctrl.filtersVM
+                        l: state.isProjectNotLoader,
+                        filtersVM: state.filtersVM
                     })
                 )
         ));

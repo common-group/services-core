@@ -24,16 +24,16 @@ const adminReward = {
             return shippingFee;
         };
 
-        return {
+        vnode.state = {
             shippingFee: loadShippingFee()
         };
     },
 
     view: function({state, attrs}) {
-        const reward = args.reward(),
-            contribution = args.contribution,
+        const reward = attrs.reward(),
+            contribution = attrs.contribution,
             available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count),
-            shippingFee = ctrl.shippingFee();
+            shippingFee = state.shippingFee();
 
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Recompensa'),

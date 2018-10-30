@@ -2,8 +2,8 @@ import m from 'mithril';
 import h from '../h';
 
 const adminUser = {
-    view: function({state, attrs}) {
-        const user = args.item;
+    view: function({attrs}) {
+        const user = attrs.item;
 
         return m('.w-row.admin-user', [
             m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [
@@ -15,7 +15,7 @@ const adminUser = {
                 ]),
                 m('.fontsize-smallest', `Usuário: ${user.id}`),
                 m('.fontsize-smallest.fontcolor-secondary', `Email: ${user.email}`),
-                args.additional_data
+                attrs.additional_data
             ])
         ]);
     }

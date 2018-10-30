@@ -37,7 +37,7 @@ const copyTextInput = {
             }
         };
 
-        return {
+        vnode.state = {
             setClickHandler,
             showSuccess
         };
@@ -46,11 +46,11 @@ const copyTextInput = {
         return m('.clipboard.w-row', [
             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('textarea.copy-textarea.text-field.w-input', {
                 style: 'margin-bottom:0;'
-            }, args.value)),
+            }, attrs.value)),
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
-                config: ctrl.setClickHandler
+                config: state.setClickHandler
             })),
-            ctrl.showSuccess() ? m(popNotification, { message: 'Link copiado' }) : ''
+            state.showSuccess() ? m(popNotification, { message: 'Link copiado' }) : ''
         ]);
     }
 };

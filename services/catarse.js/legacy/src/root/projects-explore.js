@@ -260,7 +260,7 @@ const projectsExplore = {
             }
         }
 
-        return {
+        vnode.state = {
             categories: categoryCollection,
             changeFilter,
             resetContextFilter,
@@ -289,26 +289,26 @@ const projectsExplore = {
         };
     },
     view: function({state, attrs}) {
-        const categoryId = ctrl.categoryId,
-            projectsCollection = ctrl.projects().collection(),
+        const categoryId = state.categoryId,
+            projectsCollection = state.projects().collection(),
             projectsCount = projectsCollection.length,
-            filterKeyName = ctrl.currentFilter().keyName,
+            filterKeyName = state.currentFilter().keyName,
             isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends'),
-            hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
+            hasSpecialFooter = state.hasSpecialFooter(categoryId());
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
             m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
                     onclick: () => {
-                        ctrl.categoryToggle.toggle();
-                        ctrl.selectedCategory(category);
+                        state.categoryToggle.toggle();
+                        state.selectedCategory(category);
                     },
-                    class: ctrl.selectedCategory() === category ? 'selected' : ''
+                    class: state.selectedCategory() === category ? 'selected' : ''
                 },
                 category.name
             )
         );
         let widowProjects = [];
 
-        ctrl.tryLoadFromQueryPath();
+        state.tryLoadFromQueryPath();
 
         return m('#explore', {
             config: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -323,44 +323,44 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.modeToggle.toggle
+                            onclick: state.modeToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'MODALIDADE'
                             ),
                             m('.inline-block',
-                                ctrl.currentMode().title
+                                state.currentMode().title
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
-                        ctrl.modeToggle() ? '' :
+                        state.modeToggle() ? '' :
                         m('.explore-filter-select', [
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.changeMode('all_modes');
+                                        state.changeMode('all_modes');
                                     },
-                                    class: ctrl.currentMode() === null ? 'selected' : ''
+                                    class: state.currentMode() === null ? 'selected' : ''
                                 },
                                 'Todos os projetos'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.changeMode('not_sub');
+                                        state.changeMode('not_sub');
                                     },
-                                    class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
+                                    class: state.currentMode() === 'not_sub' ? 'selected' : ''
                                 },
                                 'Projetos pontuais'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.changeMode('sub');
+                                        state.changeMode('sub');
                                     },
-                                    class: ctrl.currentMode() === 'sub' ? 'selected' : ''
+                                    class: state.currentMode() === 'sub' ? 'selected' : ''
                                 },
                                 'Projetos recorrentes'
                             ),
                             m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                onclick: ctrl.modeToggle.toggle
+                                onclick: state.modeToggle.toggle
                             })
                         ])
                     ]),
@@ -369,84 +369,84 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.categoryToggle.toggle
+                            onclick: state.categoryToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'CATEGORIA'
                             ),
                             m('.inline-block',
-                                ctrl.selectedCategory().name
+                                state.selectedCategory().name
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
-                        ctrl.categoryToggle() ? '' :
+                        state.categoryToggle() ? '' :
                         m('.explore-filter-select.big',
                             m('.explore-filer-select-row', [
                                 m('.explore-filter-select-col', [
                                     m("a.explore-filter-link[href='#']", {
                                             onclick: () => {
-                                                ctrl.categoryToggle.toggle();
-                                                ctrl.selectedCategory({
+                                                state.categoryToggle.toggle();
+                                                state.selectedCategory({
                                                     name: 'Todas as categorias',
                                                     id: null
                                                 });
                                             },
-                                            class: ctrl.selectedCategory().id === null ? 'selected' : ''
+                                            class: state.selectedCategory().id === null ? 'selected' : ''
                                         },
                                         'Todas as categorias'
                                     ),
-                                    categoryColumn(ctrl.categories(), 0, Math.floor(_.size(ctrl.categories()) / 2))
+                                    categoryColumn(state.categories(), 0, Math.floor(_.size(state.categories()) / 2))
                                 ]),
                                 m('.explore-filter-select-col', [
-                                    categoryColumn(ctrl.categories(), Math.floor(_.size(ctrl.categories()) / 2), _.size(ctrl.categories()))
+                                    categoryColumn(state.categories(), Math.floor(_.size(state.categories()) / 2), _.size(state.categories()))
                                 ]),
                                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                    onclick: ctrl.categoryToggle.toggle
+                                    onclick: state.categoryToggle.toggle
                                 })
                             ])
                         )
                     ]),
-                    ctrl.showFilter() ? [
+                    state.showFilter() ? [
                         m('.explore-text-fixed',
                             'que são'
                         ),
                         m('.explore-filter-wrapper', [
                             m('.explore-span-filter', {
-                                onclick: ctrl.filterToggle.toggle
+                                onclick: state.filterToggle.toggle
                             }, [
                                 m('.explore-mobile-label',
                                     'FILTRO'
                                 ),
                                 m('.inline-block',
-                                    ctrl.currentFilter().nicename
+                                    state.currentFilter().nicename
                                 ),
                                 m('.inline-block.fa.fa-angle-down')
                             ]),
-                            ctrl.filterToggle() ? '' :
+                            state.filterToggle() ? '' :
                             m('.explore-filter-select', [
-                                _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                         onclick: () => {
-                                            ctrl.changeFilter(pageFilter.keyName);
-                                            ctrl.filterToggle.toggle();
+                                            state.changeFilter(pageFilter.keyName);
+                                            state.filterToggle.toggle();
                                         },
-                                        class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
+                                        class: state.currentFilter() === pageFilter ? 'selected' : ''
                                     },
                                     pageFilter.nicename
                                 )),
                                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                    onclick: ctrl.filterToggle.toggle
+                                    onclick: state.filterToggle.toggle
                                 })
                             ])
                         ])
                     ] : ''
                 ])
-            ]), !ctrl.projects().isLoading() && _.isFunction(ctrl.projects().total) && !_.isUndefined(ctrl.projects().total()) ?
+            ]), !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-9.w-col-tiny-9.w-col-small-9',
                             m('.fontsize-large',
-                                `${ctrl.projects().total()} projetos encontrados`
+                                `${state.projects().total()} projetos encontrados`
                             )
                         ),
                         m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
@@ -454,7 +454,7 @@ const projectsExplore = {
                 )
             ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
-                (!ctrl.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
+                (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
                 ''),
             m('.w-section.section', [
                 m('.w-container', [
@@ -463,12 +463,12 @@ const projectsExplore = {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
 
-                            if (ctrl.isSearch()) {
+                            if (state.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
                             } else if (isContributedByFriendsFilter) {
                                 ref = 'ctrse_explore_friends';
-                            } else if (_.indexOf(ctrl.availableRecommenders, ctrl.currentFilter().keyName) !== -1) {
-                                ref = `ctrse_${ctrl.currentFilter().keyName}`;
+                            } else if (_.indexOf(state.availableRecommenders, state.currentFilter().keyName) !== -1) {
+                                ref = `ctrse_${state.currentFilter().keyName}`;
                             } else if (filterKeyName === 'all') {
                                 if (project.score >= 1) {
                                     if (idx === 0) {
@@ -476,7 +476,7 @@ const projectsExplore = {
                                         ref = 'ctrse_explore_featured_big';
                                         widowProjects = [projectsCount - 1, projectsCount - 2];
                                     } else if (idx === 1 || idx === 2) {
-                                        if (ctrl.checkForMinScoredProjects(projectsCollection)) {
+                                        if (state.checkForMinScoredProjects(projectsCollection)) {
                                             cardType = 'medium';
                                             ref = 'ctrse_explore_featured_medium';
                                             widowProjects = [];
@@ -491,14 +491,14 @@ const projectsExplore = {
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m(projectCard, {
+                            return (_.indexOf(widowProjects, idx) > -1 && !state.projects().isLastPage()) ? '' : m(projectCard, {
                                 project,
                                 ref,
                                 type: cardType,
                                 showFriends: isContributedByFriendsFilter
                             });
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : ''
+                        state.projects().isLoading() ? h.loader() : ''
                     ])
                 ])
             ]),
@@ -507,9 +507,9 @@ const projectsExplore = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-2.w-col-push-5', [
-                            (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
+                            (state.projects().isLastPage() || state.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
                                 onclick: () => {
-                                    ctrl.projects().nextPage();
+                                    state.projects().nextPage();
                                     return false;
                                 }
                             }, 'Carregar mais')
@@ -522,16 +522,16 @@ const projectsExplore = {
                 m('.w-container.u-text-center', [
                     m('img.u-marginbottom-20.icon-hero', {
                         src: hasSpecialFooter ?
-                            ctrl.externalLinkCategories[categoryId()].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
+                            state.externalLinkCategories[categoryId()].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
                     }),
                     m('h2.fontsize-larger.u-marginbottom-60',
-                        hasSpecialFooter ? ctrl.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
+                        hasSpecialFooter ? state.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             hasSpecialFooter ?
                             m('a.w-button.btn.btn-large', {
-                                href: `${ctrl.externalLinkCategories[categoryId()].link}?ref=ctrse_explore`
-                            }, ctrl.externalLinkCategories[categoryId()].cta) :
+                                href: `${state.externalLinkCategories[categoryId()].link}?ref=ctrse_explore`
+                            }, state.externalLinkCategories[categoryId()].cta) :
                             m('a.w-button.btn.btn-large', {
                                 href: '/start?ref=ctrse_explore'
                             }, 'Aprenda como')

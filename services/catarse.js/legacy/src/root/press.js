@@ -14,12 +14,12 @@ const press = {
 
         statsLoader.load().then(stats);
 
-        return {
+        vnode.state = {
             stats
         };
     },
     view: function({state}) {
-        const stats = _.first(ctrl.stats());
+        const stats = _.first(state.stats());
 
         return m('#press', [
             m('.hero-jobs.hero-medium',

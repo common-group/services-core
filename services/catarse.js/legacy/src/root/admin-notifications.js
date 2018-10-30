@@ -55,7 +55,7 @@ const adminNotifications = {
 
         templates.firstPage({}).then(() => { loaderTemp(false); });
 
-        return {
+        vnode.state = {
             templates,
             selectedItem,
             selectedItemTemplate,
@@ -70,8 +70,8 @@ const adminNotifications = {
         };
     },
     view: function({state}) {
-        const templatesCollection = ctrl.templates.collection(),
-            selectedItem = ctrl.selectedItem();
+        const templatesCollection = state.templates.collection(),
+            selectedItem = state.selectedItem();
 
         return m('', [
             m('#notifications-admin', [
@@ -85,9 +85,9 @@ const adminNotifications = {
         m('.fontsize-larger.u-marginbottom-10.u-text-center',
 											'Notificações'
 										),
-										(ctrl.loaderTemp() && !_.isEmpty(templatesCollection) ? h.loader() : m(
+										(state.loaderTemp() && !_.isEmpty(templatesCollection) ? h.loader() : m(
 											'select.medium.text-field.w-select', {
-    oninput: ctrl.changeSelectedTo(templatesCollection)
+    oninput: state.changeSelectedTo(templatesCollection)
 }, (() => {
     const maped = _.map(
 													templatesCollection,
@@ -137,10 +137,10 @@ const adminNotifications = {
 											),
                     m('.w-col.w-col-10',
 												m('input.positive.text-field.w-input', {
-    value: ctrl.selectedItemSubjectTemplate(),
+    value: state.selectedItemSubjectTemplate(),
     oninput: m.withAttr('value', (v) => {
-        ctrl.selectedItemSubjectTemplate(v);
-        ctrl.renderSubjectTemplate(v);
+        state.selectedItemSubjectTemplate(v);
+        state.renderSubjectTemplate(v);
     })
 })
 											)
@@ -152,10 +152,10 @@ const adminNotifications = {
 											)
                 ]),
                 m('textarea.positive.text-field.w-input[rows="20"]', {
-                    value: ctrl.selectedItemTemplate(),
+                    value: state.selectedItemTemplate(),
                     oninput: m.withAttr('value', (v) => {
-                        ctrl.selectedItemTemplate(v);
-                        ctrl.renderTemplate(v);
+                        state.selectedItemTemplate(v);
+                        state.renderTemplate(v);
                     })
                 })
             ])
@@ -166,15 +166,15 @@ const adminNotifications = {
             m('span.fa.fa-eye', ''),
             'Visualização'
         ]),
-        m('', m.trust(ctrl.renderedTemplate()))
+        m('', m.trust(state.renderedTemplate()))
     ])
 ])
 					) : '')
 				)
             ]),
 			(selectedItem ? m('footer', m(projectEditSaveBtn, {
-    loading: ctrl.loaderSubmit,
-    onSubmit: ctrl.onSaveSelectedItem,
+    loading: state.loaderSubmit,
+    onSubmit: state.onSaveSelectedItem,
     hideMarginLeft: true
 })) : '')
         ]);

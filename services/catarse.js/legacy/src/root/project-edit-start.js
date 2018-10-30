@@ -8,9 +8,7 @@ import projectDeleteButton from '../c/project-delete-button';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_start');
 const projectEditStart = {
-    oninit: function(vnode) {},
-
-    view: function({state, attrs}) {
+    view: function({attrs}) {
         return m('.dashboard-header.min-height-70.u-text-center.u-marginbottom-80', [
             m('.w-container',
                 m('.u-marginbottom-40.w-row', [
@@ -20,7 +18,7 @@ const projectEditStart = {
                         ),
                         m('.fontsize-small.lineheight-loose.u-marginbottom-40',
                             window.I18n.t('description', I18nScope({
-                                name: args.project().user.name || ''
+                                name: attrs.project().user.name || ''
                             }))
                         ),
                         m('.card.card-terciary.u-radius',
@@ -30,9 +28,9 @@ const projectEditStart = {
                     ])
                 ])
             ),
-            (args.project().state === 'draft' ?
+            (attrs.project().state === 'draft' ?
                 m(projectDeleteButton, {
-                    project: args.project()
+                    project: attrs.project()
                 }) :
                 '')
         ]);

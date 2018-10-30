@@ -130,7 +130,7 @@ const projectBasicsEdit = {
             }
         };
 
-        return {
+        vnode.state = {
             vm,
             onSubmit,
             loading,
@@ -149,24 +149,24 @@ const projectBasicsEdit = {
         };
     },
     view: function({state, attrs}) {
-        const vm = ctrl.vm;
+        const vm = state.vm;
 
         return m('#basics-tab', [
-            (ctrl.showSuccess() ? m(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
             // add pop notifications here
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-container', [
                     // admin fields
-                    (args.user.is_admin ?
+                    (attrs.user.is_admin ?
                       m('.w-row', [
                           m('.w-col.w-col-10.w-col-push-1', [
                               m(inputCard, {
@@ -226,28 +226,28 @@ const projectBasicsEdit = {
                             m(inputCard, {
                                 label: window.I18n.t('tags', I18nScope()),
                                 label_hint: window.I18n.t('tags_hint', I18nScope()),
-                                onclick: () => ctrl.isEditingTags(false),
+                                onclick: () => state.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        config: ctrl.editTag,
+                                        config: state.editTag,
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
                                         onfocus: () => vm.e.inlineError('public_tags', false)
                                     }),
-                                    ctrl.isEditingTags() ? m('.options-list.table-outer',
-                                         ctrl.tagEditingLoading()
+                                    state.isEditingTags() ? m('.options-list.table-outer',
+                                         state.tagEditingLoading()
                                             ? m('.dropdown-link', m('.fontsize-smallest', 'Carregando...'))
-                                            : ctrl.tagOptions().length
-                                                ? _.map(ctrl.tagOptions(), tag => m('.dropdown-link',
-                                                    { onclick: ctrl.addTag(tag) },
+                                            : state.tagOptions().length
+                                                ? _.map(state.tagOptions(), tag => m('.dropdown-link',
+                                                    { onclick: state.addTag(tag) },
                                                     m('.fontsize-smaller', tag.name)
                                                 ))
                                                 : m('.dropdown-link', m('.fontsize-smallest', 'Nenhuma tag relacionada...'))
                                     ) : '',
                                     vm.e.inlineError('public_tags'),
                                     m('div.tag-choices',
-                                        _.map(ctrl.selectedTags(), choice => m('.tag-div',
+                                        _.map(state.selectedTags(), choice => m('.tag-div',
                                             m('div', [
-                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: ctrl.removeTag(choice) }),
+                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: state.removeTag(choice) }),
                                                 ` ${choice.name}`
                                             ]))
                                         )
@@ -282,7 +282,7 @@ const projectBasicsEdit = {
                                         value: vm.fields.category_id(),
                                         class: vm.e.hasError('category_id') ? 'error' : '',
                                         onchange: m.withAttr('value', vm.fields.category_id)
-                                    }, ctrl.categories()),
+                                    }, state.categories()),
                                     vm.e.inlineError('category_id')
                                 ]
                             }),
@@ -293,16 +293,16 @@ const projectBasicsEdit = {
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.city_name(),
                                         class: vm.e.hasError('city_id') ? 'error' : '',
-                                        onkeyup: vm.generateSearchCity(ctrl.cities)
+                                        onkeyup: vm.generateSearchCity(state.cities)
                                     }),
                                     vm.e.inlineError('city_id'),
-                                    ctrl.cities()
+                                    state.cities()
                                 ]
                             })
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
         ]);
     }

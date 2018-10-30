@@ -28,21 +28,21 @@ const projectReportNoRewardReceived = {
             displayModal(true);
         }
 
-        return {
+        vnode.state = {
             displayModal,
             sendMessage,
             formName: vnode.attrs.formName || formName
         };
     },
     view: function({state, attrs}) {
-        const contactModalC = [ownerMessageContent, prop(_.extend(args.user, {
-            project_id: args.project().id
+        const contactModalC = [ownerMessageContent, prop(_.extend(attrs.user, {
+            project_id: attrs.project().id
         }))];
 
         return m('.card.u-radius.u-margintop-20',
             [
-                     (ctrl.displayModal() ? m(modalBox, {
-                         displayModal: ctrl.displayModal,
+                     (state.displayModal() ? m(modalBox, {
+                         displayModal: state.displayModal,
                          content: contactModalC
                      }) : ''),
 	                   m('.w-form',
@@ -51,18 +51,18 @@ const projectReportNoRewardReceived = {
 				                     m('.report-option.w-radio',
 					                     [
 						                       m('input.w-radio-input[type=\'radio\']', {
-                           value: ctrl.formName,
-                           checked: args.displayFormWithName() === ctrl.formName,
-                           onchange: m.withAttr('value', args.displayFormWithName)
+                           value: state.formName,
+                           checked: attrs.displayFormWithName() === state.formName,
+                           onchange: m.withAttr('value', attrs.displayFormWithName)
                        }),
 						                       m('label.fontsize-small.fontweight-semibold.w-form-label', {
-                           onclick: _ => args.displayFormWithName(ctrl.formName)
+                           onclick: _ => attrs.displayFormWithName(state.formName)
                        }, 'Apoiei este projeto e ainda não recebi a recompensa')
 					                     ]
 				                      ),
 				                     m('.u-margintop-30', {
                          style: {
-                             display: args.displayFormWithName() === ctrl.formName ? 'block' : 'none'
+                             display: attrs.displayFormWithName() === state.formName ? 'block' : 'none'
                          }
                      },
 					                     m('.fontsize-small',
@@ -75,9 +75,9 @@ const projectReportNoRewardReceived = {
                            onclick: h.analytics.event({
                                cat: 'project_view',
                                act: 'project_creator_sendmsg',
-                               lbl: args.user.id,
-                               project: args.project()
-                           }, ctrl.sendMessage),
+                               lbl: attrs.user.id,
+                               project: attrs.project()
+                           }, state.sendMessage),
                            text: ' mensagem diretamente para o(a) Realizador(a)'
                        }),
 							                       '.',

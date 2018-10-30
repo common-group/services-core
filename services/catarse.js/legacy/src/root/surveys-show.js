@@ -129,7 +129,7 @@ const surveysShow = {
             }
         };
 
-        return {
+        vnode.state = {
             projectVM,
             loadSurvey,
             countryName,
@@ -151,24 +151,24 @@ const surveysShow = {
         };
     },
     view: function({state}) {
-        const user = ctrl.user(),
-            survey = ctrl.survey(),
-            countryName = ctrl.countryName,
-            stateName = ctrl.stateName,
-            openQuestions = ctrl.openQuestions(),
-            multipleChoiceQuestions = ctrl.multipleChoiceQuestions(),
-            project = ctrl.projectVM.currentProject(),
-            reward = _.first(ctrl.reward()),
+        const user = state.user(),
+            survey = state.survey(),
+            countryName = state.countryName,
+            stateName = state.stateName,
+            openQuestions = state.openQuestions(),
+            multipleChoiceQuestions = state.multipleChoiceQuestions(),
+            project = state.projectVM.currentProject(),
+            reward = _.first(state.reward()),
             contactModalC = [ownerMessageContent, prop(project ? project.user : {})],
             profileImage = userVM.displayImage(user);
 
         return m('.survey', {
-            config: ctrl.loadSurvey
-        }, _.isEmpty(user) ? '' : [(ctrl.displayModal() ? m(modalBox, {
-            displayModal: ctrl.displayModal,
+            config: state.loadSurvey
+        }, _.isEmpty(user) ? '' : [(state.displayModal() ? m(modalBox, {
+            displayModal: state.displayModal,
             content: contactModalC
         }) : ''),
-            ctrl.showThanks() ? m('.survey-thanks', [
+            state.showThanks() ? m('.survey-thanks', [
                 m('.bg-white.page-header',
                     m('.w-container',
                         m('.w-row', [
@@ -189,7 +189,7 @@ const surveysShow = {
                                     ),
                                     ' ou ',
                                     m('a.alt-link[href=\'javascript:void(0);\']', {
-                                        onclick: ctrl.sendMessage
+                                        onclick: state.sendMessage
                                     },
                                         'envie uma mensagem'
                                     ),
@@ -204,11 +204,11 @@ const surveysShow = {
                     confirmAddress: survey.confirm_address,
                     countryName: countryName(),
                     stateName: stateName(),
-                    fields: ctrl.fields().address(),
+                    fields: state.fields().address(),
                     openQuestions,
                     multipleChoiceQuestions
                 })
-            ]) : ctrl.showPreview() ? m('.survey-preview', [
+            ]) : state.showPreview() ? m('.survey-preview', [
                 m('.bg-white.page-header',
                     m('.w-container',
                         m('.w-row', [
@@ -231,7 +231,7 @@ const surveysShow = {
                     confirmAddress: survey.confirm_address,
                     countryName: countryName(),
                     stateName: stateName(),
-                    fields: ctrl.fields().address(),
+                    fields: state.fields().address(),
                     openQuestions,
                     multipleChoiceQuestions
                 }),
@@ -243,14 +243,14 @@ const surveysShow = {
                                 m('.w-row', [
                                     m('.w-col-small-6.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col',
                                         m('a.btn.btn-large.btn-terciary', {
-                                            onclick: ctrl.showPreview.toggle
+                                            onclick: state.showPreview.toggle
                                         },
                                             'Não'
                                         )
                                     ),
                                     m('.w-col.w-col-6.w-col-small-6.w-col-tiny-6',
                                         m('a.btn.btn-large', {
-                                            onclick: ctrl.sendAnswer
+                                            onclick: state.sendAnswer
                                         },
                                             'Sim'
                                         )
@@ -283,7 +283,7 @@ const surveysShow = {
                         ])
                     )
                 ),
-                (ctrl.finished() ? [
+                (state.finished() ? [
                     m('div',
                             m('.w-container',
                                 m('.w-row', [
@@ -295,18 +295,18 @@ const surveysShow = {
                                                     m('span.fa.fa-exclamation-circle',
                                                         ''
                                                     ),
-                                                    (ctrl.answeredAt() ?
-                                                        m('span', ` Esse questionário não está mais aberto para receber respostas. Segue abaixo as respostas que você enviou no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Qualquer dúvida, `,
+                                                    (state.answeredAt() ?
+                                                        m('span', ` Esse questionário não está mais aberto para receber respostas. Segue abaixo as respostas que você enviou no dia ${h.momentify(state.answeredAt(), 'DD/MM/YYYY')}. Qualquer dúvida, `,
                                                             m('a.alt-link[href=\'javascript:void(0);\']', {
-                                                                onclick: ctrl.sendMessage
+                                                                onclick: state.sendMessage
                                                             },
                                                                 `envie uma mensagem para ${project.user.name}`
                                                             )
                                                         ) :
                                                         m('span',
-                                                            ` Oooops! Esse questionário não está mais aberto para respostas desde o dia ${h.momentify(ctrl.survey().finished_at, 'DD/MM/YYYY')}. Nossa recomendação é que você `,
+                                                            ` Oooops! Esse questionário não está mais aberto para respostas desde o dia ${h.momentify(state.survey().finished_at, 'DD/MM/YYYY')}. Nossa recomendação é que você `,
                                                             m('a.alt-link[href=\'javascript:void(0);\']', {
-                                                                onclick: ctrl.sendMessage
+                                                                onclick: state.sendMessage
                                                             },
                                                                 `envie uma mensagem para ${project.user.name}`
                                                             ),
@@ -319,12 +319,12 @@ const surveysShow = {
                                         ])
                                     ),
 
-                                    (ctrl.answeredAt() ?
+                                    (state.answeredAt() ?
                                         m(surveyPreview, {
                                             confirmAddress: survey.confirm_address,
                                             countryName: countryName(),
                                             stateName: stateName(),
-                                            fields: ctrl.fields().address(),
+                                            fields: state.fields().address(),
                                             openQuestions,
                                             multipleChoiceQuestions
                                         }) : ''),
@@ -339,13 +339,13 @@ const surveysShow = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-10',
                                         m('.card.card-terciary.medium.u-marginbottom-30', [
-                                            (ctrl.answeredAt() ?
+                                            (state.answeredAt() ?
                                                 m('.card.card-message.u-marginbottom-40.u-radius',
                                                     m('.fontsize-base', [
                                                         m('span.fa.fa-exclamation-circle',
                                                             ''
                                                         ),
-                                                        ` Você já enviou as respostas abaixo no dia ${h.momentify(ctrl.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
+                                                        ` Você já enviou as respostas abaixo no dia ${h.momentify(state.answeredAt(), 'DD/MM/YYYY')}. Se notou algo errado, não tem problema: basta alterar as informações necessárias abaixo e reenviar as respostas.`
                                                     ])
                                                 ) : ''),
                                             (survey.confirm_address ? [
@@ -355,7 +355,7 @@ const surveysShow = {
                                                 m(addressForm, {
                                                     countryName,
                                                     stateName,
-                                                    fields: ctrl.fields
+                                                    fields: state.fields
                                                 })
                                             ] :
                                                 ''),
@@ -407,7 +407,7 @@ const surveysShow = {
                                     m('.w-col.w-col-4',
                                         m('a.btn.btn-large', {
                                             onclick: () => {
-                                                ctrl.preview();
+                                                state.preview();
                                             }
                                         },
                                             'Enviar'

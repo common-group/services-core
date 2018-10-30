@@ -111,7 +111,7 @@ const adminProjectDetail = {
             })).load().then(projectSubscriberInfo);
         }
 
-        return {
+        vnode.state = {
             user: loadUser(),
             bankAccount: loadBank(),
             subscriberInfo: projectSubscriberInfo,
@@ -124,12 +124,12 @@ const adminProjectDetail = {
         };
     },
     view: function({state, attrs}) {
-        const actions = ctrl.actions,
-            item = ctrl.currentItem(),
-            user = ctrl.user(),
-            bankAccount = ctrl.bankAccount(),
+        const actions = state.actions,
+            item = state.currentItem(),
+            user = state.user(),
+            bankAccount = state.bankAccount(),
             userAddress = user.address || {},
-            subscriberInfo = ctrl.subscriberInfo(),
+            subscriberInfo = state.subscriberInfo(),
             totalSubscriptions = subscriberInfo ? subscriberInfo.total_subscriptions : 0;
 
         return m('#admin-contribution-detail-box', [
@@ -137,24 +137,24 @@ const adminProjectDetail = {
             m('.w-row.u-marginbottom-30', [
                 m('.w-col.w-col-2', [
                     m('button.btn.btn-small.btn-terciary', {
-                        onclick: ctrl.actions.changeUserAction.toggler.toggle
+                        onclick: state.actions.changeUserAction.toggler.toggle
                     }, 'Trocar realizador'),
-                    (ctrl.actions.changeUserAction.toggler() ? 
+                    (state.actions.changeUserAction.toggler() ? 
                         m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                            config: ctrl.actionUnload(ctrl.actions.changeUserAction)
+                            config: state.actionUnload(state.actions.changeUserAction)
                         }, [
                             m('form.w-form', {
-                                onsubmit: ctrl.actions.changeUserAction.submit
-                            }, (!ctrl.actions.changeUserAction.complete()) ? [
+                                onsubmit: state.actions.changeUserAction.submit
+                            }, (!state.actions.changeUserAction.complete()) ? [
                                 m('label', 'Id do novo realizador:'),
                                 m('input.w-input.text-field[type="tel"][placeholder="ex: 239049"]', {
-                                    onchange: m.withAttr('value', ctrl.actions.changeUserAction.newValue),
-                                    value: ctrl.actions.changeUserAction.newValue()
+                                    onchange: m.withAttr('value', state.actions.changeUserAction.newValue),
+                                    value: state.actions.changeUserAction.newValue()
                                 }),
                                 m('input.w-button.btn.btn-small[type="submit"][value="Transferir"]', {
-                                    onclick: ctrl.actions.changeUserAction.submit(ctrl.actions.changeUserAction.newValue())
+                                    onclick: state.actions.changeUserAction.submit(state.actions.changeUserAction.newValue())
                                 })
-                            ] : (!ctrl.actions.changeUserAction.error()) ? [
+                            ] : (!state.actions.changeUserAction.error()) ? [
                                 m('.w-form-done[style="display:block;"]', [
                                     m('p', 'Usuário transferido com sucesso')
                                 ])
@@ -173,13 +173,13 @@ const adminProjectDetail = {
                 (item.mode === 'sub' && item.state === 'online' ?
                     m('.w-col.w-col-3', [
                         m('button.btn.btn-small.btn-terciary', {
-                            onclick: ctrl.actions.projectRevert.toggler.toggle
+                            onclick: state.actions.projectRevert.toggler.toggle
                         }, (totalSubscriptions > 0 ? 'Encerrar projeto' : 'Virar projeto para Draft')),
-                        (ctrl.actions.projectRevert.toggler() ? 
-                            (ctrl.actions.projectRevert.loading() ? h.loader()
+                        (state.actions.projectRevert.toggler() ? 
+                            (state.actions.projectRevert.loading() ? h.loader()
                                 : m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
                                     m('form.w-form', {
-                                        onsubmit: ctrl.actions.projectRevert.submit
+                                        onsubmit: state.actions.projectRevert.submit
                                     }, [
                                         m('label', (totalSubscriptions > 0 ? 'Ao encerrar esse projeto, ele será convertido para o status FINALIZADO (Flex) e suas assinaturas serão transformadas em CANCELADAS. Tem certeza que deseja encerrar esse projeto?' : 'Tem certeza que deseja transformar esse projeto em Draft?')),
                                         m('input.w-button.btn.btn-small[type="submit"]', {

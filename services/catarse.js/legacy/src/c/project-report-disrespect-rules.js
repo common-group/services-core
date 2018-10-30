@@ -30,7 +30,7 @@ const projectReportDisrespectRules = {
             return ok;
         };
 
-        return {
+        vnode.state = {
             formName: vnode.attrs.formName || formName,
             reasonError,
             detailsError,
@@ -41,19 +41,19 @@ const projectReportDisrespectRules = {
         return m('.card.u-radius.u-margintop-20',
           m('.w-form',
             m('form', {
-                onsubmit: ctrl.sendReport,
-                config: args.checkScroll
+                onsubmit: state.sendReport,
+                config: attrs.checkScroll
             },
                 [
                     m('.report-option.w-radio',
                         [
                             m('input.w-radio-input[type=\'radio\']', {
-                                value: ctrl.formName,
-                                checked: args.displayFormWithName() === ctrl.formName,
-                                onchange: m.withAttr('value', args.displayFormWithName)
+                                value: state.formName,
+                                checked: attrs.displayFormWithName() === state.formName,
+                                onchange: m.withAttr('value', attrs.displayFormWithName)
                             }),
                             m('label.fontsize-small.fontweight-semibold.w-form-label[for=\'radio\']', {
-                                onclick: _ => args.displayFormWithName(ctrl.formName)
+                                onclick: _ => attrs.displayFormWithName(state.formName)
                             }, 'Este projeto desrespeita nossas regras.')
                         ]
                    ),
@@ -68,14 +68,14 @@ const projectReportDisrespectRules = {
                    ),
                     m('.u-margintop-30', {
                         style: {
-                            display: args.displayFormWithName() === ctrl.formName ? 'block' : 'none'
+                            display: attrs.displayFormWithName() === state.formName ? 'block' : 'none'
                         }
                     },
                         [
                             m('select.text-field.positive.w-select[required=\'required\']', {
-                                onchange: m.withAttr('value', args.reason),
+                                onchange: m.withAttr('value', attrs.reason),
                                 class: {
-                                    error: ctrl.reasonError()
+                                    error: state.reasonError()
                                 }
                             },
                                 [
@@ -100,7 +100,7 @@ const projectReportDisrespectRules = {
                                 ]
                          ),
                         (
-                            ctrl.reasonError() ? m(inlineError, { message: 'Selecione um motivo' }) : ''
+                            state.reasonError() ? m(inlineError, { message: 'Selecione um motivo' }) : ''
                         ),
                             m('.u-marginbottom-40',
                                 [
@@ -108,19 +108,19 @@ const projectReportDisrespectRules = {
                                 'Detalhes da denúncia *'
                                ),
                                     m('textarea.text-field.positive.w-input[maxlength=\'5000\'][required=\'required\']', {
-                                        onchange: m.withAttr('value', args.details),
+                                        onchange: m.withAttr('value', attrs.details),
                                         placeholder: 'Por favor, dê mais detalhes que nos ajudem a identificar o problema',
                                         class: {
-                                            error: ctrl.detailsError()
+                                            error: state.detailsError()
                                         }
                                     }),
                               (
-                                    ctrl.detailsError() ? m(inlineError, { message: 'Informe os detalhes da denúncia' }) : ''
+                                    state.detailsError() ? m(inlineError, { message: 'Informe os detalhes da denúncia' }) : ''
                               )
                                 ]
                          ),
                             m('input.btn.btn-medium.btn-inline.btn-dark.w-button[type=\'submit\'][value=\'Enviar denúncia\']', {
-                                disabled: args.submitDisabled()
+                                disabled: attrs.submitDisabled()
                             })
                         ]
                    )

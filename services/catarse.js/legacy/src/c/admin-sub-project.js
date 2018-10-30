@@ -10,13 +10,13 @@ const adminSubProject = {
         projectVM.fetchProject(vnode.attrs.item.project_external_id, false).then((data) => {
             project(_.first(data));
         });
-        return {
+        vnode.state = {
             project
         };
     },
 
     view: function({state, attrs}) {
-        const project = ctrl.project();
+        const project = state.project();
         return m('.w-row.admin-project', project ? [
             m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [
                 m(`img.thumb-project.u-radius[src=${project.large_image}][width=50]`)

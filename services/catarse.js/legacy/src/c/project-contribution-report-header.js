@@ -6,8 +6,8 @@ import FilterMain from '../c/filter-main';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_contribution_reports');
 
 const projectContributionReportHeader = {
-    view: function({state, attrs}) {
-        const filterBuilder = args.filterBuilder,
+    view: function({attrs}) {
+        const filterBuilder = attrs.filterBuilder,
             paymentStateFilter = _.findWhere(filterBuilder, {
                 label: 'payment_state'
             }),
@@ -23,9 +23,9 @@ const projectContributionReportHeader = {
             mainFilter = _.findWhere(filterBuilder, {
                 component: FilterMain
             }),
-            project_id = args.filterVM.project_id();
+            project_id = attrs.filterVM.project_id();
 
-        rewardFilter.data.options = args.mapRewardsToOptions();
+        rewardFilter.data.options = attrs.mapRewardsToOptions();
 
         return m('div', [
             m('.dashboard-header',
@@ -57,7 +57,7 @@ const projectContributionReportHeader = {
                     m('.w-container',
                         m('.w-form', [
                             m('form', {
-                                onsubmit: args.submit
+                                onsubmit: attrs.submit
                             },
                                 m('.u-margintop-20.w-row', [
                                     m('.w-col.w-col-8',

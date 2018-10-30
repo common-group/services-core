@@ -37,7 +37,7 @@ const Flex = {
 
         projectsLoader.load().then(_.compose(projects, sample3));
 
-        return {
+        vnode.state = {
             addDisqus,
             builder,
             statsLoader,
@@ -50,7 +50,7 @@ const Flex = {
         };
     },
     view: function({state, attrs}) {
-        const stats = _.first(ctrl.stats());
+        const stats = _.first(state.stats());
 
         return [
             m('.w-section.hero-full.hero-zelo', [
@@ -62,7 +62,7 @@ const Flex = {
                     m('.w-row', [
                         m('.w-col.w-col-2'),
                         m(landingSignup, {
-                            builder: ctrl.builder
+                            builder: state.builder
                         }),
                         m('.w-col.w-col-2')
                     ])
@@ -112,9 +112,9 @@ const Flex = {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-editable.fontsize-larger.u-margintop-40.u-margin-bottom-40.u-text-center', 'Conheça alguns dos primeiros projetos flex'),
-                        ctrl.projectsLoader() ? h.loader() : m(
+                        state.projectsLoader() ? h.loader() : m(
                             projectRow,
-                            { collection: ctrl.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40' }
+                            { collection: state.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40' }
                         )
                     ])
                 ]),
@@ -157,7 +157,7 @@ const Flex = {
                         m('.fontsize-largest', 'Inscreva seu projeto!'), m('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), m('.w-row', [
                             m('.w-col.w-col-2'),
                             m(landingSignup, {
-                                builder: ctrl.builder
+                                builder: state.builder
                             }),
                             m('.w-col.w-col-2')
                         ])
@@ -165,7 +165,7 @@ const Flex = {
                 ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [
                     m('.w-container.u-text-center', [
                         m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'),
-                        m('.w-row.u-text-center', (ctrl.statsLoader()) ? h.loader() : [
+                        m('.w-row.u-text-center', (state.statsLoader()) ? h.loader() : [
                             m('.w-col.w-col-4', [
                                 m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
                             ]),
@@ -208,7 +208,7 @@ const Flex = {
                             m('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
                         ]),
                         m('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
-                            config: ctrl.addDisqus
+                            config: state.addDisqus
                         })
                     ])
                 ])

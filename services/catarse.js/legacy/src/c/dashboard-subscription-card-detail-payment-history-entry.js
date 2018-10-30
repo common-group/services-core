@@ -7,8 +7,7 @@ const I18nScopePayment = _.partial(h.i18nScope, 'projects.payment');
 const I18nScopePaymentMethod = _.partial(h.i18nScope, 'projects.payment_method');
 
 const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
-    oninit: function(vnode)
-    {
+    oninit: function(vnode) {
         const statusClass = {
             paid: '.text-success',
             pending: '.text-waiting',
@@ -19,19 +18,18 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
             error: '.text-error'
         };
 
-        return {
+        vnode.state = {
             statusClass
         };
     },
-    view: function({state, attrs})
-    {
+    view: function({state, attrs}) {
         const 
             captalize = (str) => str.charAt(0).toUpperCase() + str.slice(1),
-            paymentStatus = args.payment.status,
-            paymentAmount = args.payment.amount,
-            paymentMethod = args.payment.payment_method,
-            paymentDate = args.payment.created_at,
-            paymentDetails = args.payment.payment_method_details,
+            paymentStatus = attrs.payment.status,
+            paymentAmount = attrs.payment.amount,
+            paymentMethod = attrs.payment.payment_method,
+            paymentDate = attrs.payment.created_at,
+            paymentDetails = attrs.payment.payment_method_details,
             paymentMethodText = I18n.t(`${paymentMethod}`, I18nScopePaymentMethod()),
             paymentStatusText = I18n.t(`last_status.${paymentMethod}.${paymentStatus}`, I18nScopePayment()),
             paymentMethodEndText = paymentMethod === 'boleto' ? 
@@ -44,7 +42,7 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
                 m('.w-col.w-col-9', 
                     m('div',
                         [
-                            m(`span.fa.fa-circle${ctrl.statusClass[paymentStatus]}`, m.trust('&nbsp;')),
+                            m(`span.fa.fa-circle${state.statusClass[paymentStatus]}`, m.trust('&nbsp;')),
                             `R$${paymentAmount / 100} ${paymentStatusText} - ${captalize(paymentMethodText)} ${paymentMethodEndText}`
                         ]
                     )

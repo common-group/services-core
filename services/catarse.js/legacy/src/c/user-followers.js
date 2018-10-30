@@ -32,12 +32,12 @@ const userFollowers = {
         if (!followersListVM.collection().length) {
             followersListVM.firstPage(userIdVM.parameters());
         }
-        return {
+        vnode.state = {
             followersListVM
         };
     },
     view: function({state, attrs}) {
-        const followersVM = ctrl.followersListVM;
+        const followersVM = state.followersListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
                 m('.w-row', [

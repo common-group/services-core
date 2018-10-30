@@ -237,7 +237,7 @@ const projectContributionReport = {
             listVM.firstPage(filterVM.parameters());
         }
 
-        return {
+        vnode.state = {
             listVM,
             filterVM,
             filterBuilder,
@@ -250,31 +250,31 @@ const projectContributionReport = {
         };
     },
     view: function({state}) {
-        const list = ctrl.listVM;
+        const list = state.listVM;
 
-        if (!ctrl.lProject()) {
+        if (!state.lProject()) {
             return m('', [
                 m(projectDashboardMenu, {
-                    project: prop(_.first(ctrl.project()))
+                    project: prop(_.first(state.project()))
                 }),
-                ctrl.showDownloads() ? m(downloadReports, {
-                    project: prop(_.first(ctrl.project())),
-                    rewards: ctrl.rewards()
+                state.showDownloads() ? m(downloadReports, {
+                    project: prop(_.first(state.project())),
+                    rewards: state.rewards()
                 }) : [
-                    m(`.w-section.section-product.${_.first(ctrl.project()).mode}`),
+                    m(`.w-section.section-product.${_.first(state.project()).mode}`),
                     m(projectContributionReportHeader, {
-                        submit: ctrl.submit,
-                        filterBuilder: ctrl.filterBuilder,
-                        form: ctrl.filterVM.formDescriber,
-                        mapRewardsToOptions: ctrl.mapRewardsToOptions,
-                        filterVM: ctrl.filterVM
+                        submit: state.submit,
+                        filterBuilder: state.filterBuilder,
+                        form: state.filterVM.formDescriber,
+                        mapRewardsToOptions: state.mapRewardsToOptions,
+                        filterVM: state.filterVM
                     }),
                     m(projectContributionReportContent, {
-                        submit: ctrl.submit,
+                        submit: state.submit,
                         list,
-                        showDownloads: ctrl.showDownloads,
-                        filterVM: ctrl.filterVM,
-                        project: prop(_.first(ctrl.project()))
+                        showDownloads: state.showDownloads,
+                        filterVM: state.filterVM,
+                        project: prop(_.first(state.project()))
                     })
                 ]
             ]);

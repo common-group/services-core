@@ -66,7 +66,7 @@ const projectsShow = {
         const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id// && sub.status !== 'canceled';
             );
 
-        return {
+        vnode.state = {
             loadUserSubscriptions,
             projectVM,
             hasSubscription,
@@ -74,17 +74,17 @@ const projectsShow = {
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.projectVM.currentProject,
-            projectVM = ctrl.projectVM;
+        const project = state.projectVM.currentProject,
+            projectVM = state.projectVM;
 
         return m('.project-show', {
             config: projectVM.setProjectPageTitle()
         }, project() ? [
-            ctrl.loadUserSubscriptions(),
+            state.loadUserSubscriptions(),
             m(projectHeader, {
                 project,
-                hasSubscription: ctrl.hasSubscription,
-                userProjectSubscriptions: ctrl.userProjectSubscriptions,
+                hasSubscription: state.hasSubscription,
+                userProjectSubscriptions: state.userProjectSubscriptions,
                 subscriptionData: projectVM.subscriptionData,
                 rewardDetails: projectVM.rewardDetails,
                 userDetails: projectVM.userDetails,
@@ -93,14 +93,14 @@ const projectsShow = {
             }),
             m(projectTabs, {
                 project,
-                hasSubscription: ctrl.hasSubscription,
+                hasSubscription: state.hasSubscription,
                 subscriptionData: projectVM.subscriptionData,
                 rewardDetails: projectVM.rewardDetails
             }),
             m(projectMain, {
                 project,
-                post_id: args.post_id,
-                hasSubscription: ctrl.hasSubscription,
+                post_id: attrs.post_id,
+                hasSubscription: state.hasSubscription,
                 rewardDetails: projectVM.rewardDetails,
                 subscriptionData: projectVM.subscriptionData,
                 goalDetails: projectVM.goalDetails,

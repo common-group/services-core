@@ -8,7 +8,7 @@ import subPaymentStatus from './sub-payment-status';
 
 const adminSubscriptionItem = {
     oninit: function() {
-        return {
+        vnode.state = {
             itemBuilder: [{
                 component: adminSubscriptionUser,
                 wrapperClass: '.w-col.w-col-4'
@@ -25,13 +25,12 @@ const adminSubscriptionItem = {
         };
     },
     view: function({state, attrs}) {
-        // console.log(args.item);
         return m(
             '.w-row',
-            _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [
+            _.map(state.itemBuilder, panel => m(panel.wrapperClass, [
                 m(panel.component, {
-                    item: args.item,
-                    key: args.key
+                    item: attrs.item,
+                    key: attrs.key
                 })
             ]))
         );

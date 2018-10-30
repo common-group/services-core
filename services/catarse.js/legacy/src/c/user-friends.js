@@ -44,14 +44,14 @@ const userFriends = {
             friendListVM.firstPage(userFriendVM.parameters());
         }
 
-        return {
+        vnode.state = {
             friendListVM,
             followAll,
             allLoading
         };
     },
     view: function({state, attrs}) {
-        const listVM = ctrl.friendListVM;
+        const listVM = state.friendListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
                 m('.w-row.u-marginbottom-40.card.u-radius.card-terciary', [
@@ -59,9 +59,9 @@ const userFriends = {
                         m('.fontsize-small', 'Comece agora! Siga todos os seus amigos ou somente alguns deles para descobrir projetos juntos!')
                     ]),
                     m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                            (ctrl.allLoading() ? h.loader()
+                            (state.allLoading() ? h.loader()
                              : m('a.w-button.btn.btn-medium', {
-                                 onclick: ctrl.followAll
+                                 onclick: state.followAll
                              }, `Siga todos os seus ${listVM.total() ? listVM.total() : ''} amigos`))
                     ])
                 ]),

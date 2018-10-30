@@ -26,21 +26,21 @@ const projectUserCard = {
             displayModal(true);
         }
 
-        return {
+        vnode.state = {
             displayModal,
             sendMessage
         };
     },
     view: function({state, attrs}) {
-        const project = args.project;
-        const contactModalC = [ownerMessageContent, prop(_.extend(args.userDetails(), {
+        const project = attrs.project;
+        const contactModalC = [ownerMessageContent, prop(_.extend(attrs.userDetails(), {
             project_id: project().id
         }))];
-        const userDetail = args.userDetails();
+        const userDetail = attrs.userDetails();
 
         return m('#user-card', _.isEmpty(userDetail) ? 'carregando...' : m('.u-marginbottom-30.u-text-center-small-only', [
-            (ctrl.displayModal() ? m(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: contactModalC
             }) : ''),
             m('.w-row', [
@@ -49,7 +49,7 @@ const projectUserCard = {
                 ]),
                 m('.w-col.w-col-8', [
                     m('.fontsize-small.link-hidden.fontweight-semibold.u-marginbottom-10.lineheight-tight[itemprop="name"]', [
-                        m(`a.link-hidden${args.isDark ? '.link-hidden-white' : ''}[href="${_.isNull(userDetail.deactivated_at) ? `/users/${userDetail.id}` : 'javascript:void(0);'}"]`, {
+                        m(`a.link-hidden${attrs.isDark ? '.link-hidden-white' : ''}[href="${_.isNull(userDetail.deactivated_at) ? `/users/${userDetail.id}` : 'javascript:void(0);'}"]`, {
                             oncreate: m.route.link,
                             onclick: () => {
                                 if (!_.isNull(userDetail.deactivated_at)) {
@@ -74,7 +74,7 @@ const projectUserCard = {
                     ])),
                     (!_.isNull(userDetail.deactivated_at) ? '' : m('ul.w-hidden-tiny.w-hidden-small.w-list-unstyled.fontsize-smaller.fontweight-semibold.u-margintop-20.u-marginbottom-20', [
                         (!_.isEmpty(userDetail.facebook_link) ? m('li', [
-                            m(`a.link-hidden${args.isDark ? '.link-hidden-white' : ''}[itemprop="url"][href="${userDetail.facebook_link}"][target="_blank"]`, {
+                            m(`a.link-hidden${attrs.isDark ? '.link-hidden-white' : ''}[itemprop="url"][href="${userDetail.facebook_link}"][target="_blank"]`, {
                                 onclick: h.analytics.event({
                                     cat: 'project_view',
                                     act: 'project_creator_fb',
@@ -83,7 +83,7 @@ const projectUserCard = {
                                 })
                             }, 'Perfil no Facebook')
                         ]) : ''), (!_.isEmpty(userDetail.twitter_username) ? m('li', [
-                            m(`a.link-hidden${args.isDark ? '.link-hidden-white' : ''}[itemprop="url"][href="https://twitter.com/${userDetail.twitter_username}"][target="_blank"]`, {
+                            m(`a.link-hidden${attrs.isDark ? '.link-hidden-white' : ''}[itemprop="url"][href="https://twitter.com/${userDetail.twitter_username}"][target="_blank"]`, {
                                 onclick: h.analytics.event({
                                     cat: 'project_view',
                                     act: 'project_creator_twitter',
@@ -96,7 +96,7 @@ const projectUserCard = {
                             const parsedLink = h.parseUrl(link.link);
 
                             return (!_.isEmpty(parsedLink.hostname) ? m('li', [
-                                m(`a.link-hidden${args.isDark ? '.link-hidden-white' : ''}[itemprop="url"][href="${link.link}"][target="_blank"]`, {
+                                m(`a.link-hidden${attrs.isDark ? '.link-hidden-white' : ''}[itemprop="url"][href="${link.link}"][target="_blank"]`, {
                                     onclick: h.analytics.event({
                                         cat: 'project_view',
                                         act: 'project_creator_otherlinks',
@@ -109,21 +109,21 @@ const projectUserCard = {
                     ])),
                     (!_.isEmpty(userDetail) ? [
                         (!_.isNull(userDetail.deactivated_at) ? '' : m(UserFollowBtn, {
-                            enabledClass: `a.w-button.btn.btn-terciary${args.isDark ? '.btn-terciary-negative' : ''}.btn-small..u-marginbottom-10`,
-                            disabledClass: `a.w-button.btn.btn-terciary${args.isDark ? '.btn-terciary-negative' : ''}.btn-small.u-marginbottom-10`,
+                            enabledClass: `a.w-button.btn.btn-terciary${attrs.isDark ? '.btn-terciary-negative' : ''}.btn-small..u-marginbottom-10`,
+                            disabledClass: `a.w-button.btn.btn-terciary${attrs.isDark ? '.btn-terciary-negative' : ''}.btn-small.u-marginbottom-10`,
                             follow_id: userDetail.id,
                             following: userDetail.following_this_user
                         })),
-                        m(`button.w-button.btn.btn-terciary${args.isDark ? '.btn-terciary-negative' : ''}.btn-small`, {
+                        m(`button.w-button.btn.btn-terciary${attrs.isDark ? '.btn-terciary-negative' : ''}.btn-small`, {
                             onclick: h.analytics.event({
                                 cat: 'project_view',
                                 act: 'project_creator_sendmsg',
                                 lbl: userDetail.id,
                                 project: project()
-                            }, ctrl.sendMessage)
+                            }, state.sendMessage)
                         }, 'Contato')
                     ] : ''),
-                    args.project().is_admin_role ?
+                    attrs.project().is_admin_role ?
                     m('p', userDetail.email) : ''
                 ]),
             ]),

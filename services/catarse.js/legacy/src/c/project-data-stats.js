@@ -11,9 +11,9 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectDataStats = {
-    view: function({state, attrs}) {
-        const project = args.project(),
-            visitorsTotal = args.visitorsTotal(),
+    view: function({attrs}) {
+        const project = attrs.project(),
+            visitorsTotal = attrs.visitorsTotal(),
             statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),
             remainingTextObj = h.translatedTime(project.remaining_time),
             elapsedTextObj = h.translatedTime(project.elapsed_time);

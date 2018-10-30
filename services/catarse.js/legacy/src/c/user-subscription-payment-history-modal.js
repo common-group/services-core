@@ -2,12 +2,9 @@ import m from 'mithril';
 import dashboardSubscriptionCardDetailPaymentHistory from './dashboard-subscription-card-detail-payment-history';
 
 const userSubscriptionPaymentHistoryModal = {
-
-    view: function({state, attrs}) {
-        
-        const 
-            subscription = args.subscription,
-            project = args.project;
+    view: function({attrs}) {
+        const subscription = attrs.subscription,
+            project = attrs.project;
 
         return m('div', [
             m('.modal-dialog-header',

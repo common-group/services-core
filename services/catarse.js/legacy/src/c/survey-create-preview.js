@@ -14,7 +14,7 @@ const surveyCreatePreview = {
             h.scrollTop();
         };
 
-        return {
+        vnode.state = {
             togglePreview,
             multipleChoiceQuestions,
             openQuestions
@@ -46,7 +46,7 @@ const surveyCreatePreview = {
                         m('.w-col.w-col-1'),
                         m('.w-col.w-col-10',
                             m('.card.card-terciary.medium.u-marginbottom-30', [
-                                (args.confirmAddress ?
+                                (attrs.confirmAddress ?
                                 m('.u-marginbottom-30.w-form', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                         'Endereço de entrega da recompensa'
@@ -135,7 +135,7 @@ const surveyCreatePreview = {
                                     ])
                                 ]) : ''),
 
-                                _.map(ctrl.multipleChoiceQuestions, question =>
+                                _.map(state.multipleChoiceQuestions, question =>
                                 m('.u-marginbottom-30.w-form', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                       question.question
@@ -153,7 +153,7 @@ const surveyCreatePreview = {
                                         ]))
                                     ])
                                 ])),
-                                _.map(ctrl.openQuestions, question =>
+                                _.map(state.openQuestions, question =>
                                 m('.u-marginbottom-30.w-form', [
                                     m('.fontcolor-secondary.fontsize-base.fontweight-semibold',
                                       question.question
@@ -177,9 +177,9 @@ const surveyCreatePreview = {
                     m('.w-col.w-col-8', [
                         m('.u-marginbottom-30.u-text-center', [
                             m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
-                                `O questionário acima será enviado para os ${args.reward.paid_count} apoiadores da recompensa`
+                                `O questionário acima será enviado para os ${attrs.reward.paid_count} apoiadores da recompensa`
                             ),
-                            m(rewardCardBig, { reward: args.reward })
+                            m(rewardCardBig, { reward: attrs.reward })
                         ]),
                         m('.card.card-message.fontsize-small.u-marginbottom-30.u-radius', [
                             m('span.fontweight-semibold',
@@ -194,7 +194,7 @@ const surveyCreatePreview = {
                 m('.u-marginbottom-20.w-row', [
                     m('.w-col.w-col-3'),
                     m('.w-sub-col.w-col.w-col-4',
-                        m("a.btn.btn-large[href='javascript:void(0);']", { onclick: args.sendQuestions }, [
+                        m("a.btn.btn-large[href='javascript:void(0);']", { onclick: attrs.sendQuestions }, [
                             m('span.fa.fa-paper-plane',
                                 ''
                             ),
@@ -204,7 +204,7 @@ const surveyCreatePreview = {
                         ])
                     ),
                     m('.w-col.w-col-2',
-                        m("a.btn.btn-large.btn-terciary[href='javascript:void(0);']", { onclick: ctrl.togglePreview },
+                        m("a.btn.btn-large.btn-terciary[href='javascript:void(0);']", { onclick: state.togglePreview },
                             'Editar'
                         )
                     ),

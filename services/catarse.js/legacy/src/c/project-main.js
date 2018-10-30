@@ -53,15 +53,15 @@ const projectMain = {
 
         projectVM.checkSubscribeAction();
 
-        return {
+        vnode.state = {
             displayTabContent,
             hash
         };
     },
     view: function({state, attrs}) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
-            m(`${ctrl.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
-                m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : h.loader())
+            m(`${state.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
+                m('.w-row', attrs.project() ? state.displayTabContent(attrs.project) : h.loader())
             ])
         ]);
     }

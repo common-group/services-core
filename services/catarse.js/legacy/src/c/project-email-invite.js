@@ -44,7 +44,7 @@ const projectEmailInvite = {
                 }
             };
 
-        return {
+        vnode.state = {
             emailText,
             submitInvite,
             loading,
@@ -52,29 +52,29 @@ const projectEmailInvite = {
         };
     },
     view: function({state, attrs}) {
-        const project = args.project;
+        const project = attrs.project;
 
         return m('.email-invite-box', [
-            (ctrl.showSuccess() ? m(popNotification, { message: 'Convites enviados.' }) : ''),
-            (ctrl.loading() ? h.loader()
+            (state.showSuccess() ? m(popNotification, { message: 'Convites enviados.' }) : ''),
+            (state.loading() ? h.loader()
              : [
                  m('.w-form', [
                      m('form', [
                          m('.u-marginbottom-10', [
                              m(projectGoogleContactImport, {
                                  project,
-                                 showSuccess: ctrl.showSuccess
+                                 showSuccess: state.showSuccess
                              })
                          ]),
                          m('textarea.positive.text-field.w-input[maxlength="5000"][placeholder="Adicione um ou mais emails, separados por linha."]', {
-                             onchange: m.withAttr('value', ctrl.emailText),
-                             value: ctrl.emailText()
+                             onchange: m.withAttr('value', state.emailText),
+                             value: state.emailText()
                          })
                      ])
                  ]),
                  m('.u-text-center', [
                      m('a.btn.btn-inline.btn-medium.w-button[href="javascript:void(0)"]', {
-                         onclick: ctrl.submitInvite
+                         onclick: state.submitInvite
                      }, 'Enviar convites')
                  ])
              ])

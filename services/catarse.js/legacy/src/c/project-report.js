@@ -88,7 +88,7 @@ const projectReport = {
             displayForm(true);
         }
 
-        return {
+        vnode.state = {
             displayFormWithName,
             checkScroll,
             checkLogin,
@@ -116,48 +116,48 @@ const projectReport = {
 
     view: function({state, attrs}) {
         return m('.card.card-terciary.u-radius', [
-            ctrl.sendSuccess() ?
+            state.sendSuccess() ?
                     m('.w-form', m('p', 'Obrigado! A sua denúncia foi recebida.'))
                 :
             [
                 m('button.btn.btn-terciary.btn-inline.btn-medium.w-button',
                     {
-                        onclick: ctrl.checkLogin
+                        onclick: state.checkLogin
                     },
                           'Denunciar este projeto ao Catarse'
                         ),
-                ctrl.displayForm() ?
+                state.displayForm() ?
                             m('div', [
                                 m(projectReportDisrespectRules, {
-                                    displayFormWithName: ctrl.displayFormWithName,
-                                    submitDisabled: ctrl.submitDisabled,
-                                    checkScroll: ctrl.checkScroll,
-                                    sendReport: ctrl.sendReport,
-                                    reason: ctrl.reason,
-                                    details: ctrl.details,
+                                    displayFormWithName: state.displayFormWithName,
+                                    submitDisabled: state.submitDisabled,
+                                    checkScroll: state.checkScroll,
+                                    sendReport: state.sendReport,
+                                    reason: state.reason,
+                                    details: state.details,
                                 }),
                                 m(projectReportInfringesIntellectualProperty, {
-                                    CPF: ctrl.CPF,
-                                    telephone: ctrl.telephone,
-                                    businessName: ctrl.businessName,
-                                    CNPJ: ctrl.CNPJ,
-                                    businessRole: ctrl.businessRole,
-                                    relationWithViolatedProperty: ctrl.relationWithViolatedProperty,
-                                    fullName: ctrl.fullName,
-                                    fullAddress: ctrl.fullAddress,
-                                    projectInfringes: ctrl.projectInfringes,
-                                    termsAgreed: ctrl.termsAgreed,
-                                    reason: ctrl.reason,
-                                    details: ctrl.details,
-                                    displayFormWithName: ctrl.displayFormWithName,
-                                    sendReport: ctrl.sendReport,
-                                    checkScroll: ctrl.checkScroll,
-                                    submitDisabled: ctrl.submitDisabled
+                                    CPF: state.CPF,
+                                    telephone: state.telephone,
+                                    businessName: state.businessName,
+                                    CNPJ: state.CNPJ,
+                                    businessRole: state.businessRole,
+                                    relationWithViolatedProperty: state.relationWithViolatedProperty,
+                                    fullName: state.fullName,
+                                    fullAddress: state.fullAddress,
+                                    projectInfringes: state.projectInfringes,
+                                    termsAgreed: state.termsAgreed,
+                                    reason: state.reason,
+                                    details: state.details,
+                                    displayFormWithName: state.displayFormWithName,
+                                    sendReport: state.sendReport,
+                                    checkScroll: state.checkScroll,
+                                    submitDisabled: state.submitDisabled
                                 }),
                                 m(projectReportNoRewardReceived, {
-                                    displayFormWithName: ctrl.displayFormWithName,
-                                    project: ctrl.project,
-                                    user: ctrl.user
+                                    displayFormWithName: state.displayFormWithName,
+                                    project: state.project,
+                                    user: state.user
                                 })
                             ])
                         :

@@ -21,32 +21,32 @@ const projectFriends = {
                 friendsSample(_.sample(listVM.collection(), 2));
             });
         }
-        return {
+        vnode.state = {
             project,
             listVM,
             friendsSample
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.project,
-            friendsCount = ctrl.listVM.collection().length,
-            wrapper = args.wrapper || '.friend-backed-card';
+        const project = state.project,
+            friendsCount = state.listVM.collection().length,
+            wrapper = attrs.wrapper || '.friend-backed-card';
 
         return m(wrapper, [
             m('.friend-facepile', [
-                _.map(ctrl.friendsSample(), (user) => {
+                _.map(state.friendsSample(), (user) => {
                     const profile_img = _.isEmpty(user.data.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : user.data.profile_img_thumbnail;
                     return m(`img.user-avatar[src='${profile_img}']`);
                 })
             ]),
             m('p.fontsize-smallest.friend-namepile.lineheight-tighter', [
                 m('span.fontweight-semibold',
-                    _.map(ctrl.friendsSample(), user => user.data.name.split(' ')[0]).join(friendsCount > 2 ? ', ' : ' e ')
+                    _.map(state.friendsSample(), user => user.data.name.split(' ')[0]).join(friendsCount > 2 ? ', ' : ' e ')
                 ),
                 (friendsCount > 2 ? [
                     ' e ',
                     m('span.fontweight-semibold',
-                        `mais ${friendsCount - ctrl.friendsSample().length}`
+                        `mais ${friendsCount - state.friendsSample().length}`
                     )
                 ] : ''),
                 (friendsCount > 1 ?

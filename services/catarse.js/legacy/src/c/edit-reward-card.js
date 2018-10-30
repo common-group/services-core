@@ -155,7 +155,7 @@ const editRewardCard = {
             }
         });
 
-        return {
+        vnode.state = {
             minimumValueError,
             minimumValue,
             deliverAtError,
@@ -177,15 +177,15 @@ const editRewardCard = {
                 value: prop(null),
                 destination: prop(null)
             },
-            fees = ctrl.fees(),
-            reward = args.reward(),
+            fees = state.fees(),
+            reward = attrs.reward(),
             inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
                 m('span',
                     message
                 )
             );
 
-        return ctrl.destroyed() ? m('div', '') : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
+        return state.destroyed() ? m('div', '') : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.card',
                 m('.w-form', [
                     m('.w-row', [
@@ -196,8 +196,8 @@ const editRewardCard = {
                         ),
                         m('.w-col.w-col-7',
                             m('input.w-input.text-field.positive[aria-required=\'true\'][autocomplete=\'off\'][type=\'tel\']', {
-                                value: ctrl.reward.title(),
-                                oninput: m.withAttr('value', ctrl.reward.title)
+                                value: state.reward.title(),
+                                oninput: m.withAttr('value', state.reward.title)
                             })
                         )
                     ]),
@@ -217,20 +217,20 @@ const editRewardCard = {
                                 m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                     m('input.string.tel.required.w-input.text-field.project-edit-reward.positive.postfix[aria-required=\'true\'][autocomplete=\'off\'][required=\'required\'][type=\'tel\']', {
 
-                                        class: ctrl.minimumValueError() ? 'error' : false,
-                                        value: ctrl.reward.minimum_value(),
-                                        oninput: e => ctrl.acceptNumeric(e)
+                                        class: state.minimumValueError() ? 'error' : false,
+                                        value: state.reward.minimum_value(),
+                                        oninput: e => state.acceptNumeric(e)
                                     })
                                 )
                             ]),
-                            ctrl.minimumValueError() ? inlineError(`Valor deve ser igual ou superior a R$${ctrl.minimumValue}.`) : '',
+                            state.minimumValueError() ? inlineError(`Valor deve ser igual ou superior a R$${state.minimumValue}.`) : '',
 
                             m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_minimum_value']",
                                 'Informe um valor mínimo maior ou igual a 10'
                             )
                         ])
                     ]),
-                    ctrl.project.mode === 'sub' ? null : m('.w-row', [
+                    state.project.mode === 'sub' ? null : m('.w-row', [
                         m('.w-col.w-col-5',
                             m('label.fontsize-smaller',
                                 'Previsão de entrega:'
@@ -242,28 +242,28 @@ const editRewardCard = {
                                     m('.w-row', [
                                         m('input[type=\'hidden\'][value=\'1\']'),
                                         m('select.date.required.w-input.text-field.w-col-6.positive[aria-required=\'true\'][discard_day=\'true\'][required=\'required\'][use_short_month=\'true\']', {
-                                            class: ctrl.deliverAtError() ? 'error' : false,
+                                            class: state.deliverAtError() ? 'error' : false,
                                             onchange: (e) => {
-                                                ctrl.reward.deliver_at(moment(ctrl.reward.deliver_at()).month(parseInt(e.target.value) - 1).format());
+                                                state.reward.deliver_at(moment(state.reward.deliver_at()).month(parseInt(e.target.value) - 1).format());
                                             }
                                         }, [
                                             _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
                                                 value: monthIndex + 1,
-                                                selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
+                                                selected: moment(state.reward.deliver_at()).format('M') == monthIndex + 1
                                             },
                                                 h.capitalize(month)
                                             ))
                                         ]),
                                         m('select.date.required.w-input.text-field.w-col-6.positive[aria-required=\'true\'][discard_day=\'true\'][required=\'required\'][use_short_month=\'true\']', {
-                                            class: ctrl.deliverAtError() ? 'error' : false,
+                                            class: state.deliverAtError() ? 'error' : false,
                                             onchange: (e) => {
-                                                ctrl.reward.deliver_at(moment(reward.deliver_at()).year(parseInt(e.target.value)).format());
+                                                state.reward.deliver_at(moment(reward.deliver_at()).year(parseInt(e.target.value)).format());
                                             }
                                         }, [
                                             _.map(_.range(moment().year(), moment().year() + 6), year =>
                                                 m('option', {
                                                     value: year,
-                                                    selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
+                                                    selected: moment(state.reward.deliver_at()).format('YYYY') === String(year)
                                                 },
                                                     year
                                                 )
@@ -272,7 +272,7 @@ const editRewardCard = {
                                     ])
                                 )
                             ),
-                            ctrl.deliverAtError() ? inlineError('Data de entrega não pode ser no passado.') : '',
+                            state.deliverAtError() ? inlineError('Data de entrega não pode ser no passado.') : '',
                         )
                     ]),
                     m('.w-row',
@@ -282,16 +282,16 @@ const editRewardCard = {
                     ),
                     m('.w-row', [
                         m('textarea.text.required.w-input.text-field.positive.height-medium[aria-required=\'true\'][placeholder=\'Descreva sua recompensa\'][required=\'required\']', {
-                            value: ctrl.reward.description(),
-                            class: ctrl.descriptionError() ? 'error' : false,
-                            oninput: m.withAttr('value', ctrl.reward.description)
+                            value: state.reward.description(),
+                            class: state.descriptionError() ? 'error' : false,
+                            oninput: m.withAttr('value', state.reward.description)
                         }),
                         m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
                             'Descrição não pode ficar em branco'
                         )
                     ]),
-                    ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
-                    ctrl.project.mode === 'sub' ? null : m('.u-marginbottom-30.w-row', [
+                    state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+                    state.project.mode === 'sub' ? null : m('.u-marginbottom-30.w-row', [
                         m('.w-col.w-col-3',
                             m("label.fontsize-smaller[for='field-2']",
                                 'Tipo de entrega'
@@ -299,10 +299,10 @@ const editRewardCard = {
                         ),
                         m('.w-col.w-col-9', [
                             m('select.positive.text-field.w-select', {
-                                value: ctrl.reward.shipping_options() || 'free',
+                                value: state.reward.shipping_options() || 'free',
                                 onchange: (e) => {
-                                    ctrl.reward.shipping_options(e.target.value);
-                                    ctrl.updateOptions();
+                                    state.reward.shipping_options(e.target.value);
+                                    state.updateOptions();
                                 }
                             }, [
                                 m('option[value=\'international\']',
@@ -319,22 +319,22 @@ const editRewardCard = {
                                 )
                             ]),
 
-                            ((ctrl.reward.shipping_options() === 'national' || ctrl.reward.shipping_options() === 'international') ?
+                            ((state.reward.shipping_options() === 'national' || state.reward.shipping_options() === 'international') ?
                                 m('.card.card-terciary', [
 
                                     // state fees
                                     (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
                                         fee,
-                                        fees: ctrl.fees,
+                                        fees: state.fees,
                                         feeIndex,
-                                        states: ctrl.states
+                                        states: state.states
                                     }),
 
                                     ])),
                                     m('.u-margintop-20',
                                         m("a.alt-link[href='#']", {
                                             onclick: () => {
-                                                ctrl.fees().push(newFee);
+                                                state.fees().push(newFee);
                                                 return false;
                                             }
                                         },
@@ -348,7 +348,7 @@ const editRewardCard = {
                         m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5.w-sub-col-middle',
                             m('a.w-button.btn.btn-small', {
                                 onclick: () => {
-                                    ctrl.saveReward();
+                                    state.saveReward();
                                 }
                             }, 'Salvar')
                         ),
@@ -363,7 +363,7 @@ const editRewardCard = {
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                             m('input[type=\'hidden\'][value=\'false\']'),
                             m('a.remove_fields.existing', {
-                                onclick: ctrl.confirmDelete
+                                onclick: state.confirmDelete
                             },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
                             )

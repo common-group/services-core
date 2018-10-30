@@ -7,8 +7,7 @@ import loadMoreBtn from './load-more-btn';
 import dashboardSubscriptionCardDetailPaymentHistoryEntry from './dashboard-subscription-card-detail-payment-history-entry';
 
 const dashboardSubscriptionCardDetailPaymentHistory = {
-    oninit: function(vnode)
-    {
+    oninit: function(vnode) {
         const loadingFirstPage = prop(true);
         const errorOcurred = prop(false);
 
@@ -27,11 +26,10 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
         })
         .catch(() => errorOcurred(true));
 
-        return { payments, loadingFirstPage };
+        vnode.state = { payments, loadingFirstPage };
     },
-    view: function({state, attrs})
-    {
-        const paymentsColletion = ctrl.payments.collection();
+    view: function({state, attrs}) {
+        const paymentsColletion = state.payments.collection();
 
         return m('div', [
             _.map(paymentsColletion, 
@@ -39,7 +37,7 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
             ),
             m('.u-marginbottom-30.u-margintop-30.w-row', [
                 m(loadMoreBtn, {
-                    collection: ctrl.payments,
+                    collection: state.payments,
                     cssClass: '.w-col-push-4'
                 })
             ])

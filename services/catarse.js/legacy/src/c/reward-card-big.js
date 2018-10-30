@@ -5,8 +5,8 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const rewardCardBig = {
-    view: function({state, attrs}) {
-        const reward = args.reward;
+    view: function({attrs}) {
+        const reward = attrs.reward;
 
         return m('.card.u-radius', [
             m('.fontsize-large.fontweight-semibold.u-marginbottom-10',

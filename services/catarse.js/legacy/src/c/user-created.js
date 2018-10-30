@@ -38,19 +38,19 @@ const userCreated = {
             m.redraw();
         });
 
-        return {
+        vnode.state = {
             projects: pages,
             loader,
             error
         };
     },
     view: function({state, attrs}) {
-        const projects_collection = ctrl.projects.collection();
+        const projects_collection = state.projects.collection();
 
         return m('.content[id=\'created-tab\']',
-            (ctrl.error() ? m(inlineError, {
+            (state.error() ? m(inlineError, {
                 message: 'Erro ao carregar os projetos.'
-            }) : !ctrl.loader() ? [
+            }) : !state.loader() ? [
                 (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m(projectCard, {
                     project,
                     ref: 'user_contributed',
@@ -80,7 +80,7 @@ const userCreated = {
                 (!_.isEmpty(projects_collection) ?
                     m('.w-row.u-marginbottom-40.u-margintop-30', [
                         m(loadMoreBtn, {
-                            collection: ctrl.projects,
+                            collection: state.projects,
                             cssClass: '.w-col-push-5'
                         })
                     ]) : '')

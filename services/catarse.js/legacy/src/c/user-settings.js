@@ -121,7 +121,7 @@ const userSettings = {
             parsedErrors.inlineError('country_id', false);
         }
 
-        return {
+        vnode.state = {
             handleError,
             applyDocumentMask,
             fields,
@@ -141,32 +141,32 @@ const userSettings = {
         };
     },
     view: function({state, attrs}) {
-        const user = ctrl.user,
-            fields = ctrl.fields,
+        const user = state.user,
+            fields = state.fields,
             hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),
             disableFields = (user.is_admin_role ? false : (hasContributedOrPublished && !_.isEmpty(user.name) && !_.isEmpty(user.owner_document))),
-            applyBirthDateMask = ctrl.applyBirthDateMask,
-            applyDocumentMask = ctrl.applyDocumentMask,
-            parsedErrors = ctrl.parsedErrors,
-            creditCards = ctrl.creditCards,
-            toDeleteCard = ctrl.toDeleteCard,
-            deleteCard = ctrl.deleteCard,
-            setCardDeletionForm = ctrl.setCardDeletionForm,
-            shouldHideCreditCards = args.hideCreditCards,
-            isProjectUserEdit = !!args.isProjectUserEdit;
+            applyBirthDateMask = state.applyBirthDateMask,
+            applyDocumentMask = state.applyDocumentMask,
+            parsedErrors = state.parsedErrors,
+            creditCards = state.creditCards,
+            toDeleteCard = state.toDeleteCard,
+            deleteCard = state.deleteCard,
+            setCardDeletionForm = state.setCardDeletionForm,
+            shouldHideCreditCards = attrs.hideCreditCards,
+            isProjectUserEdit = !!attrs.isProjectUserEdit;
 
         return m('[id=\'settings-tab\']', [
-            (ctrl.showSuccess() ? m(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('update_success_msg', I18nScope()),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m(popNotification, {
-                message: m.trust(ctrl.error()),
-                toggleOpt: ctrl.showError,
+            (state.showError() ? m(popNotification, {
+                message: m.trust(state.error()),
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
             m('form.w-form', {
-                onsubmit: ctrl.onSubmit
+                onsubmit: state.onSubmit
             }, [
                 m('div', [
                     m('.w-container',
@@ -188,8 +188,8 @@ const userSettings = {
                         )
                     ),
                     m(projectEditSaveBtn, {
-                        loading: ctrl.loading,
-                        onSubmit: ctrl.onSubmit
+                        loading: state.loading,
+                        onSubmit: state.onSubmit
                     })
                 ])
             ])

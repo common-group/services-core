@@ -97,7 +97,7 @@ const adminRadioAction = {
 
         fetch();
 
-        return {
+        vnode.state = {
             complete,
             description,
             setDescription,
@@ -112,41 +112,41 @@ const adminRadioAction = {
         };
     },
     view: function({state, attrs}) {
-        const data = args.data,
-            item = args.item(),
-            btnValue = (ctrl.setLoader() || ctrl.getLoader()) ? 'por favor, aguarde...' : data.callToAction;
+        const data = attrs.data,
+            item = attrs.item(),
+            btnValue = (state.setLoader() || state.getLoader()) ? 'por favor, aguarde...' : data.callToAction;
 
         return m('.w-col.w-col-2', [
             m('button.btn.btn-small.btn-terciary', {
-                onclick: ctrl.toggler.toggle
-            }, data.outerLabel), (ctrl.toggler()) ?
+                onclick: state.toggler.toggle
+            }, data.outerLabel), (state.toggler()) ?
             m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: ctrl.unload
+                config: state.unload
             }, [
                 m('form.w-form', {
-                    onsubmit: ctrl.submit
-                }, (!ctrl.complete()) ? [
-                    (ctrl.radios()) ?
-                    _.map(ctrl.radios(), (radio, index) => m('.w-radio', [
+                    onsubmit: state.submit
+                }, (!state.complete()) ? [
+                    (state.radios()) ?
+                    _.map(state.radios(), (radio, index) => m('.w-radio', [
                         m(`input#r-${index}.w-radio-input[type=radio][name="admin-radio"][value="${radio.id}"]`, {
                             checked: radio.id === (item[data.selectKey] || item.id),
                             onclick: () => {
-                                ctrl.newID(radio.id);
-                                ctrl.setDescription(radio.description);
+                                state.newID(radio.id);
+                                state.setDescription(radio.description);
                             }
                         }),
                         m(`label.w-form-label[for="r-${index}"]`, `R$${radio.minimum_value}`)
                     ])) : h.loader(),
                     m('strong', 'Descrição'),
-                    m('p', ctrl.description()),
+                    m('p', state.description()),
                     m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
-                ] : (!ctrl.error()) ? [
+                ] : (!state.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', 'Recompensa alterada com sucesso!')
                     ])
                 ] : [
                     m('.w-form-error[style="display:block;"]', [
-                        m('p', ctrl.error().message)
+                        m('p', state.error().message)
                     ])
                 ])
             ]) : ''

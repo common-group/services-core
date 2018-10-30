@@ -5,7 +5,7 @@
  * Example:
  * m.component(c.ProjectSuccessfulOnboardConfirmAccountError, {
  *    projectAccount: projectAccount,
- *    changeToAction: ctrl.changeToAction //provided by ProjectSuccessfulOnboardConfirmAccount controller
+ *    changeToAction: state.changeToAction //provided by ProjectSuccessfulOnboardConfirmAccount controller
  * })
  * */
 import m from 'mithril';
@@ -27,7 +27,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
             return vnode.attrs.addErrorReason(errorReasonM).call();
         };
 
-        return {
+        vnode.state = {
             addErrorReason,
             errorReasonM,
             error
@@ -38,15 +38,15 @@ const projectSuccessfulOnboardConfirmAccountError = {
             m('.w-col.w-col-6.w-col-push-3', [
                 m('.w-form.bank-transfer-problem.card.u-radius', [
                     m('form#successful-onboard-error', [
-                        m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', { href: '#confirm_account', onclick: args.changeToAction('start') }),
+                        m('a.w-inline-block.u-right.btn.btn-terciary.btn-no-border.btn-inline.fa.fa-close', { href: '#confirm_account', onclick: attrs.changeToAction('start') }),
                         m('label.field-label.fontweight-semibold.u-marginbottom-20', window.I18n.t('title', I18nScope())),
                         m('textarea.w-input.text-field', {
                             placeholder: window.I18n.t('placeholder', I18nScope()),
-                            class: ctrl.error() ? 'error' : '',
-                            onfocus: () => ctrl.error(false),
-                            onchange: m.withAttr('value', ctrl.errorReasonM)
+                            class: state.error() ? 'error' : '',
+                            onfocus: () => state.error(false),
+                            onchange: m.withAttr('value', state.errorReasonM)
                         }),
-                        ctrl.error() ? m('.w-row', [
+                        state.error() ? m('.w-row', [
                             m('.w-col.w-col-6.w-col-push-3.u-text-center', [
                                 m('span.fontsize-smallest.text-error', 'Campo Obrigatório')
                             ])
@@ -55,7 +55,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
                             m('.w-col.w-col-4.w-col-push-4', [
                                 m('a.w-button.btn.btn-medium', {
                                     href: '#confirm_account_refuse',
-                                    onclick: ctrl.addErrorReason
+                                    onclick: state.addErrorReason
                                 }, window.I18n.t('cta', I18nScope()))
                             ])
                         ])

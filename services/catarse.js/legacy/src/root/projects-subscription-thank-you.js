@@ -51,7 +51,7 @@ const ProjectsSubscriptionThankYou = {
             .then(projectUserData => projectUser(_.first(projectUserData)))
             .catch(() => error(true));
 
-        return {
+        vnode.state = {
             displayShareBox: h.toggleProp(false, true),
             recommendedProjects,
             paymentMethod,
@@ -64,9 +64,9 @@ const ProjectsSubscriptionThankYou = {
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.project();
+        const project = state.project();
         const user = h.getUser();
-        const projectUser = ctrl.projectUser();
+        const projectUser = state.projectUser();
 
         return m('#thank-you', !project ? h.loader() : [
             m('.page-header.u-marginbottom-30',
@@ -78,18 +78,18 @@ const ProjectsSubscriptionThankYou = {
                             ),
                             m('#thank-you.u-text-center', [
                                 m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
-                                  ctrl.isEdit
+                                  state.isEdit
                                     ? window.I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
                                     : window.I18n.t('thank_you.thank_you', I18nScope())
                                 ),
                                 m('.fontsize-base.u-marginbottom-40',
                                     m.trust(
                                         window.I18n.t(
-                                            ctrl.isEdit
+                                            state.isEdit
                                                 ? 'thank_you.subscription_edit.text_html'
-                                                : ctrl.paymentMethod === 'credit_card'
+                                                : state.paymentMethod === 'credit_card'
                                                     ? 'thank_you.thank_you_text_html'
-                                                    : ctrl.paymentConfirmed
+                                                    : state.paymentConfirmed
                                                         ? 'thank_you_slip.thank_you_text_html'
                                                         : 'thank_you.thank_you_slip_unconfirmed_text_html',
                                             I18nScope({
@@ -122,14 +122,14 @@ const ProjectsSubscriptionThankYou = {
                                 ]),
                                 m('.w-hidden-main.w-hidden-medium', [
                                     m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
-                                        onclick: ctrl.displayShareBox.toggle
+                                        onclick: state.displayShareBox.toggle
                                     }, 'Compartilhe')),
-                                    ctrl.displayShareBox() ? m(projectShareBox, {
+                                    state.displayShareBox() ? m(projectShareBox, {
                                         project: prop({
                                             permalink: project.permalink,
                                             name: project.name
                                         }),
-                                        displayShareBox: ctrl.displayShareBox
+                                        displayShareBox: state.displayShareBox
                                     }) : ''
                                 ])
                             ]),
@@ -138,17 +138,17 @@ const ProjectsSubscriptionThankYou = {
                     )
                 )
             ),
-            ctrl.error()
+            state.error()
                 ? m('.w-row',
                     m('.w-col.w-col-8.w-col-offset-2',
                         m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', window.I18n.translate('thank_you.thank_you_error', I18nScope()))
                     )
                 )
-                : ctrl.paymentData().boleto_url
+                : state.paymentData().boleto_url
                     ? m('.w-row',
                         m('.w-col.w-col-8.w-col-offset-2',
                             m('iframe.slip', {
-                                src: ctrl.paymentData().boleto_url,
+                                src: state.paymentData().boleto_url,
                                 width: '100%',
                                 height: '905px',
                                 frameborder: '0',
@@ -161,7 +161,7 @@ const ProjectsSubscriptionThankYou = {
                                 window.I18n.t('thank_you.project_recommendations', I18nScope())
                             ),
                             m(projectRow, {
-                                collection: ctrl.recommendedProjects,
+                                collection: state.recommendedProjects,
                                 ref: 'ctrse_thankyou_r'
                             })
                         ])

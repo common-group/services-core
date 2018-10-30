@@ -45,7 +45,7 @@ const UserFollowBtn = {
                 });
             };
 
-        return {
+        vnode.state = {
             following,
             follow,
             unfollow,
@@ -54,21 +54,21 @@ const UserFollowBtn = {
         };
     },
     view: function({state, attrs}) {
-        if (h.userSignedIn() && h.getUserID() != args.follow_id) {
-            let disableClass = args.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
-                enabledClass = args.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';
-            if (ctrl.loading()) { return h.loader(); }
-            if (ctrl.following()) {
+        if (h.userSignedIn() && h.getUserID() != attrs.follow_id) {
+            let disableClass = attrs.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
+                enabledClass = attrs.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';
+            if (state.loading()) { return h.loader(); }
+            if (state.following()) {
                 return m(`a${enabledClass}`,
                     {
-                        onclick: ctrl.unfollow,
-                        onmouseover: () => ctrl.hover(true),
-                        onmouseout: () => ctrl.hover(false)
+                        onclick: state.unfollow,
+                        onmouseover: () => state.hover(true),
+                        onmouseout: () => state.hover(false)
                     },
-                         (ctrl.hover() ? 'Deixar de seguir' : 'Seguindo'));
+                         (state.hover() ? 'Deixar de seguir' : 'Seguindo'));
             }
             return m(`a${disableClass}`,
-                         { onclick: ctrl.follow },
+                         { onclick: state.follow },
                          'Seguir');
         }
         return m('');

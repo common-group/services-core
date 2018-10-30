@@ -43,7 +43,7 @@ const projectGoalsEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, e);
         }
-        return {
+        vnode.state = {
             showSuccess,
             e,
             error,
@@ -54,21 +54,21 @@ const projectGoalsEdit = {
     },
 
     view: function({state, attrs}) {
-        const showSuccess = ctrl.showSuccess,
-            error = ctrl.error;
+        const showSuccess = state.showSuccess,
+            error = state.error;
         return m('.w-container',
             m('.w-row', [
-                (ctrl.showSuccess() ? m(popNotification, {
+                (state.showSuccess() ? m(popNotification, {
                     message: 'Meta salva com sucesso'
                 }) : ''),
-                (ctrl.error() ? m(popNotification, {
+                (state.error() ? m(popNotification, {
                     message: 'Erro ao salvar informações',
                     error: true
                 }) : ''),
 
                 m('.w-col.w-col-8',
                     m('.w-form', [
-                        ctrl.e.inlineError('goals'),
+                        state.e.inlineError('goals'),
                         m('div',
                             m(".card.card-terciary.medium.u-marginbottom-30[id='arrecadacao']", [
                                 m('.u-marginbottom-30', [
@@ -81,13 +81,13 @@ const projectGoalsEdit = {
                                         'Lembre-se: uma vez que a arrecadação for iniciada, você não poderá mais alterar a sua meta de arrecadação inicial.'
                                     ])
                                 ]),
-                                _.map(ctrl.goals(), (goal) => {
+                                _.map(state.goals(), (goal) => {
                                     if (goal().editing()) {
                                         return m(projectGoalEditCard, {
                                             goal,
                                             showSuccess,
-                                            project: args.project,
-                                            currentGoal: ctrl.currentGoal,
+                                            project: attrs.project,
+                                            currentGoal: state.currentGoal,
                                             error
                                         });
                                     }
@@ -97,7 +97,7 @@ const projectGoalsEdit = {
                                 }),
                                 m('button.btn.btn-large.btn-message', {
                                     onclick: () => {
-                                        ctrl.addGoal(args.projectId);
+                                        state.addGoal(attrs.projectId);
                                     }
                                 }, [
                                     '+ ',

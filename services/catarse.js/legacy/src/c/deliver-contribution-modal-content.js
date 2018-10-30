@@ -6,9 +6,8 @@
 import m from 'mithril';
 
 const deliverContributionModalContent = {
-    view: function({state, attrs}) {
+    view: function({attrs}) {
         return m('div',
-
             m('.modal-dialog-header',
                 m('.fontsize-large.u-text-center', [
                     m('span.fa.fa-check-circle',
@@ -20,7 +19,7 @@ const deliverContributionModalContent = {
             m('.modal-dialog-content', [
                 m('p.fontsize-small.u-marginbottom-30', [
                     m('span.fontweight-semibold',
-                        `Você selecionou ${args.amount} apoios.`
+                        `Você selecionou ${attrs.amount} apoios.`
                     ),
                     ' Após sua confirmação, os apoiadores que efetuaram esses apoios ao seu projeto serão notificados de que suas recompensas serão entregues em breve.'
                 ]),
@@ -30,8 +29,8 @@ const deliverContributionModalContent = {
                             'Se quiser adicionar alguma informação nessa mensagem, use o espaço abaixo! É um ótimo momento para agradecer a essas pessoas que acreditaram em você!'
                         ),
                         m("textarea.height-mini.text-field.w-input[placeholder='Digite sua mensagem (opcional)']", {
-                            value: args.message(),
-                            onchange: m.withAttr('value', args.message)
+                            value: attrs.message(),
+                            onchange: m.withAttr('value', attrs.message)
                         })
                     ]),
                 ]),
@@ -48,14 +47,14 @@ const deliverContributionModalContent = {
                     m('.w-col.w-col-1'),
                     m('.w-col.w-col-5',
                         m('a.btn.btn-medium.w-button', {
-                            onclick: () => args.updateStatus('delivered')
+                            onclick: () => attrs.updateStatus('delivered')
                         },
                             'Sim!'
                         )
                     ),
                     m('.w-col.w-col-5',
                         m('a.btn.btn-medium.btn-terciary.w-button', {
-                            onclick: args.displayModal.toggle
+                            onclick: attrs.displayModal.toggle
                         },
                             'Voltar'
                         )

@@ -63,7 +63,7 @@ const userBankForm = {
         });
         banksLoader.load().then(banks);
 
-        return {
+        vnode.state = {
             bankInput: vnode.attrs.bankInput,
             bankCode: vnode.attrs.bankCode,
             banks,
@@ -76,32 +76,32 @@ const userBankForm = {
         };
     },
     view: function({state, attrs}) {
-        let user = args.user,
-            fields = args.fields,
-            bankAccount = ctrl.bankAccount();
+        let user = attrs.user,
+            fields = attrs.fields,
+            bankAccount = state.bankAccount();
         return m('div', [
             m('.w-row', [
-                m(`.w-col.w-col-5.w-sub-col${ctrl.showOtherBanksInput() ? '.w-hidden' : ''}[id='bank_select']`,
+                m(`.w-col.w-col-5.w-sub-col${state.showOtherBanksInput() ? '.w-hidden' : ''}[id='bank_select']`,
                   m('.input.select.required.user_bank_account_bank_id', [
                       m('label.field-label.fontsize-smaller',
                         'Banco'
                        ),
                       m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_bank_id\']', {
                           name: 'user[bank_account_attributes][bank_id]',
-                          class: ctrl.parsedErrors.hasError('bank_id') ? 'error' : false,
+                          class: state.parsedErrors.hasError('bank_id') ? 'error' : false,
                           onchange: (e) => {
-                              m.withAttr('value', ctrl.bankCode)(e);
-                              ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
+                              m.withAttr('value', state.bankCode)(e);
+                              state.showOtherBanksInput(state.bankCode() == '0');
                           }
                       }, [
                           m('option[value=\'\']', {
                               selected: fields.bank_id() === ''
                           }),
-                          (_.map(ctrl.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
+                          (_.map(state.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
                               selected: fields.bank_id() == bank.id
                           },
                                                                                              `${bank.code} . ${bank.name}`) : ''))),
-                          (fields.bank_id() === '' || _.find(ctrl.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
+                          (fields.bank_id() === '' || _.find(state.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
                            m(`option[value='${fields.bank_id()}']`, {
                                selected: true
                            },
@@ -115,10 +115,10 @@ const userBankForm = {
                       m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_bank_account_attributes_bank_id\']',
                         ' Selecione um banco'
                        ),
-                      ctrl.parsedErrors.inlineError('bank_id')
+                      state.parsedErrors.inlineError('bank_id')
                   ])
                  ),
-                (ctrl.showOtherBanksInput() ?
+                (state.showOtherBanksInput() ?
                  m('.w-col.w-col-5.w-sub-col',
                    m('.w-row.u-marginbottom-20[id=\'bank_search\']',
                      m('.w-col.w-col-12', [
@@ -128,8 +128,8 @@ const userBankForm = {
                               ),
                              m('input.string.optional.w-input.text-field.bank_account_input_bank_number[id=\'user_bank_account_attributes_input_bank_number\'][maxlength=\'3\'][size=\'3\'][type=\'text\']', {
                                  name: 'user[bank_account_attributes][input_bank_number]',
-                                 value: ctrl.bankInput(),
-                                 onchange: m.withAttr('value', ctrl.bankInput)
+                                 value: state.bankInput(),
+                                 onchange: m.withAttr('value', state.bankInput)
                              }),
                              m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_bank_account_attributes_input_bank_number\']',
 
@@ -137,14 +137,14 @@ const userBankForm = {
                               )
                          ]),
                          m('a.w-hidden-small.w-hidden-tiny.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                             onclick: ctrl.showOtherBanks.toggle
+                             onclick: state.showOtherBanks.toggle
                          }, [
                              'Busca por nome  ',
                              m.trust('&nbsp;'),
                              m.trust('&gt;')
                          ]),
                          m('a.w-hidden-main.w-hidden-medium.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                             onclick: ctrl.showOtherBanks.toggle
+                             onclick: state.showOtherBanks.toggle
                          }, [
                              'Busca por nome  ',
                              m.trust('&nbsp;'),
@@ -153,7 +153,7 @@ const userBankForm = {
                      ])
                     )
                   ) : ''),
-                (ctrl.showOtherBanks() ?
+                (state.showOtherBanks() ?
                  m('.w-row[id=\'bank_search_list\']',
                    m('.w-col.w-col-12',
                      m('.select-bank-list[data-ix=\'height-0-on-load\']', {
@@ -178,13 +178,13 @@ const userBankForm = {
                                       )
                                     )
                                ]),
-                               (!_.isEmpty(ctrl.banks()) ?
-                                _.map(ctrl.banks(), bank => m('.w-row.card.fontsize-smallest', [
+                               (!_.isEmpty(state.banks()) ?
+                                _.map(state.banks(), bank => m('.w-row.card.fontsize-smallest', [
                                     m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                       m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
                                           onclick: () => {
-                                              ctrl.bankInput(bank.code);
-                                              ctrl.showOtherBanks.toggle();
+                                              state.bankInput(bank.code);
+                                              state.showOtherBanks.toggle();
                                           }
                                       },
                                         bank.code
@@ -193,8 +193,8 @@ const userBankForm = {
                                     m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                       m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
                                           onclick: () => {
-                                              ctrl.bankInput(bank.code);
-                                              ctrl.showOtherBanks.toggle();
+                                              state.bankInput(bank.code);
+                                              state.showOtherBanks.toggle();
                                           }
                                       },
                                         `${bank.code} . ${bank.name}`
@@ -214,11 +214,11 @@ const userBankForm = {
                            ),
                           m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_agency\'][type=\'text\']', {
                               value: fields.agency(),
-                              class: ctrl.parsedErrors.hasError('agency') ? 'error' : false,
+                              class: state.parsedErrors.hasError('agency') ? 'error' : false,
                               name: 'user[bank_account_attributes][agency]',
                               onchange: m.withAttr('value', fields.agency)
                           }),
-                          ctrl.parsedErrors.inlineError('agency')
+                          state.parsedErrors.inlineError('agency')
                       ]),
                       m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
                           m('label.text.optional.field-label.field-label.fontweight-semibold.force-text-dark.fontsize-smaller[for=\'user_bank_account_attributes_agency_digit\']',
@@ -226,11 +226,11 @@ const userBankForm = {
                            ),
                           m('input.string.optional.w-input.text-field.positive[id=\'user_bank_account_attributes_agency_digit\'][type=\'text\']', {
                               value: fields.agency_digit(),
-                              class: ctrl.parsedErrors.hasError('agency_digit') ? 'error' : false,
+                              class: state.parsedErrors.hasError('agency_digit') ? 'error' : false,
                               name: 'user[bank_account_attributes][agency_digit]',
                               onchange: m.withAttr('value', fields.agency_digit)
                           }),
-                          ctrl.parsedErrors.inlineError('agency_digit')
+                          state.parsedErrors.inlineError('agency_digit')
                       ])
                   ])
                  )
@@ -243,7 +243,7 @@ const userBankForm = {
                     m('.input.select.required.user_bank_account_account_type', [
                         m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_account_type\']', {
                             name: 'user[bank_account_attributes][account_type]',
-                            class: ctrl.parsedErrors.hasError('account_type') ? 'error' : false,
+                            class: state.parsedErrors.hasError('account_type') ? 'error' : false,
                             onchange: m.withAttr('value', fields.bank_account_type)
                         }, [
                             m('option[value=\'conta_corrente\']', {
@@ -259,7 +259,7 @@ const userBankForm = {
                                 selected: fields.bank_account_type() === 'conta_poupanca_conjunta'
                             }, 'Conta poupança conjunta'),
                         ]),
-                        ctrl.parsedErrors.inlineError('account_type')
+                        state.parsedErrors.inlineError('account_type')
                     ])
                 ]),
                 m('.w-col.w-col-7',
@@ -270,11 +270,11 @@ const userBankForm = {
                            ),
                           m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account\'][type=\'text\']', {
                               value: fields.account(),
-                              class: ctrl.parsedErrors.hasError('account') ? 'error' : false,
+                              class: state.parsedErrors.hasError('account') ? 'error' : false,
                               onchange: m.withAttr('value', fields.account),
                               name: 'user[bank_account_attributes][account]'
                           }),
-                          ctrl.parsedErrors.inlineError('account')
+                          state.parsedErrors.inlineError('account')
                       ]),
                       m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
                           m('label.text.required.field-label.field-label.fontweight-semibold.force-text-dark.fontsize-smaller[for=\'user_bank_account_attributes_account_digit\']',
@@ -282,11 +282,11 @@ const userBankForm = {
                            ),
                           m('input.string.required.w-input.text-field.positive[id=\'user_bank_account_attributes_account_digit\'][type=\'text\']', {
                               value: fields.account_digit(),
-                              class: ctrl.parsedErrors.hasError('account_digit') ? 'error' : false,
+                              class: state.parsedErrors.hasError('account_digit') ? 'error' : false,
                               onchange: m.withAttr('value', fields.account_digit),
                               name: 'user[bank_account_attributes][account_digit]'
                           }),
-                          ctrl.parsedErrors.inlineError('account_digit')
+                          state.parsedErrors.inlineError('account_digit')
                       ])
                   ])
                  )

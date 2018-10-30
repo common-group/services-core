@@ -100,7 +100,7 @@ const projectInsights = {
         const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
         lContributionsPerRef.load().then(buildPerRefTable);
 
-        return {
+        vnode.state = {
             lContributionsPerRef,
             lContributionsPerLocation,
             lContributionsPerDay,
@@ -115,7 +115,7 @@ const projectInsights = {
         };
     },
     view: function({state, attrs}) {
-        const project = args.project,
+        const project = attrs.project,
             buildTooltip = el => m(tooltip, {
                 el,
                 text: [
@@ -125,17 +125,17 @@ const projectInsights = {
                 width: 380
             });
 
-        if (!args.l()) {
+        if (!attrs.l()) {
             project.user.name = project.user.name || 'Realizador';
         }
 
-        return m('.project-insights', !args.l() ? [
+        return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
             (project.is_owner_or_admin ? m(projectDashboardMenu, {
                 project: prop(project)
             }) : ''),
-            (ctrl.displayModal() ? m(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: [onlineSuccessModalContent]
             }) : ''),
 
@@ -172,7 +172,7 @@ const projectInsights = {
                     m('.w-container', [
                         m(
                             projectDataStats,
-                            { project: prop(project), visitorsTotal: ctrl.visitorsTotal }
+                            { project: prop(project), visitorsTotal: state.visitorsTotal }
                         ),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
@@ -183,8 +183,8 @@ const projectInsights = {
                                 m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
                                     window.I18n.t('visitors_per_day_label', I18nScope())
                                 ]),
-                                !ctrl.lVisitorsPerDay() ? m(projectDataChart, {
-                                    collection: ctrl.visitorsPerDay,
+                                !state.lVisitorsPerDay() ? m(projectDataChart, {
+                                    collection: state.visitorsPerDay,
                                     dataKey: 'visitors',
                                     xAxis: item => h.momentify(item.day),
                                     emptyState: window.I18n.t('visitors_per_day_empty', I18nScope())
@@ -197,8 +197,8 @@ const projectInsights = {
                                     'min-height': '300px'
                                 }
                             }, [
-                                !ctrl.lContributionsPerDay() ? m(projectDataChart, {
-                                    collection: ctrl.contributionsPerDay,
+                                !state.lContributionsPerDay() ? m(projectDataChart, {
+                                    collection: state.contributionsPerDay,
                                     label: window.I18n.t('amount_per_day_label', I18nScope()),
                                     dataKey: 'total_amount',
                                     xAxis: item => h.momentify(item.paid_at),
@@ -212,8 +212,8 @@ const projectInsights = {
                                     'min-height': '300px'
                                 }
                             }, [
-                                !ctrl.lContributionsPerDay() ? m(projectDataChart, {
-                                    collection: ctrl.contributionsPerDay,
+                                !state.lContributionsPerDay() ? m(projectDataChart, {
+                                    collection: state.contributionsPerDay,
                                     label: window.I18n.t('contributions_per_day_label', I18nScope()),
                                     dataKey: 'total',
                                     xAxis: item => h.momentify(item.paid_at),
@@ -229,8 +229,8 @@ const projectInsights = {
                                         ' ',
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
-                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m(projectDataTable, {
-                                        table: ctrl.contributionsPerRefTable,
+                                    !state.lContributionsPerRef() ? !_.isEmpty(_.rest(state.contributionsPerRefTable)) ? m(projectDataTable, {
+                                        table: state.contributionsPerRefTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
                                             m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
@@ -246,8 +246,8 @@ const projectInsights = {
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', window.I18n.t('location_origin_title', I18nScope())),
-                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m(projectDataTable, {
-                                        table: ctrl.contributionsPerLocationTable,
+                                    !state.lContributionsPerLocation() ? !_.isEmpty(_.rest(state.contributionsPerLocationTable)) ? m(projectDataTable, {
+                                        table: state.contributionsPerLocationTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
                                             m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',

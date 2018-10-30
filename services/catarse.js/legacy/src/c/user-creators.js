@@ -41,14 +41,14 @@ const userCreators = {
             creatorsListVM.firstPage();
         }
 
-        return {
+        vnode.state = {
             allLoading,
             creatorsListVM,
             followAll
         };
     },
     view: function({state}) {
-        const creatorsVM = ctrl.creatorsListVM;
+        const creatorsVM = state.creatorsListVM;
 
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
@@ -57,9 +57,9 @@ const userCreators = {
                         m('.fontsize-small', 'Siga os realizadores que você já apoiou e saiba em primeira mão sempre que eles apoiarem projetos ou lançarem novas campanhas!')
                     ]),
                     m('.w-col.w-col-5.w-col-small-6.w-col-tiny-6', [
-                        (ctrl.allLoading() ? h.loader()
+                        (state.allLoading() ? h.loader()
                          : m('a.w-button.btn.btn-medium', {
-                             onclick: ctrl.followAll
+                             onclick: state.followAll
                          }, `Siga todos os ${creatorsVM.total() ? creatorsVM.total() : ''} realizadores`))
                     ])
                 ]),

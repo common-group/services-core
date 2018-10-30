@@ -6,8 +6,7 @@ import _ from 'underscore';
 const EnterKey = 13;
 
 const innerFieldInput = {
-    oninit: function(vnode)
-    {
+    oninit: function(vnode) {
         const inputState = {
             value: vnode.attrs.inputValue,
             setValue: function(value) {
@@ -17,33 +16,32 @@ const innerFieldInput = {
             }
         }
 
-        return { inputState };
+        vnode.state = { inputState };
     },
-    view: function({state, attrs})
-    {
+    view: function({state, attrs}) {
         const defaultInputOptions = {
-            onchange: m.withAttr('value', ctrl.inputState.setValue),
-            value: ctrl.inputState.value(),
+            onchange: m.withAttr('value', state.inputState.setValue),
+            value: state.inputState.value(),
             onkeyup: (e) => {
                 if (e.keyCode == EnterKey) 
-                    args.onsetValue();
-                ctrl.inputState.setValue(e.target.value)
+                    attrs.onsetValue();
+                state.inputState.setValue(e.target.value)
             }
         };
 
         let inputExtraProps = '';
 
-        if ('min' in args) inputExtraProps += `[min='${args.min}']`;
-        if ('max' in args) inputExtraProps += `[max='${args.max}']`;
-        if ('placeholder' in args) inputExtraProps += `[placeholder='${args.placeholder}']`;
+        if ('min' in args) inputExtraProps += `[min='${attrs.min}']`;
+        if ('max' in args) inputExtraProps += `[max='${attrs.max}']`;
+        if ('placeholder' in args) inputExtraProps += `[placeholder='${attrs.placeholder}']`;
         else inputExtraProps += `[placeholder=' ']`;
 
-        return args.shouldRenderInnerFieldLabel ? 
+        return attrs.shouldRenderInnerFieldLabel ? 
             m(`input.text-field.positive.w-input[type='number']${inputExtraProps}`, defaultInputOptions)
                 :
             m('.w-row', [
                 m('.text-field.positive.prefix.no-hover.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
-                    m('.fontsize-smallest.fontcolor-secondary.u-text-center', args.label)
+                    m('.fontsize-smallest.fontcolor-secondary.u-text-center', attrs.label)
                 ),
                 m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                     m(`input.text-field.postfix.positive.w-input[type='number']${inputExtraProps}`, defaultInputOptions)
@@ -94,23 +92,23 @@ const filterDropdownNumberRange = {
     view: function ({state, attrs}) {
         
         const dropdownOptions = {};
-        const shouldRenderInnerFieldLabel = !!!args.inner_field_label;
+        const shouldRenderInnerFieldLabel = !!!attrs.inner_field_label;
         const applyValueToFilter = () => {
-            const higherValue = ctrl.getHigherValue() * args.value_multiplier;
-            const lowerValue = ctrl.getLowerValue() * args.value_multiplier;
+            const higherValue = state.getHigherValue() * attrs.value_multiplier;
+            const lowerValue = state.getLowerValue() * attrs.value_multiplier;
 
-            args.vm.gte(lowerValue);
-            args.vm.lte(higherValue);
-            args.onapply();
-            ctrl.showDropdown.toggle();
+            attrs.vm.gte(lowerValue);
+            attrs.vm.lte(higherValue);
+            attrs.onapply();
+            state.showDropdown.toggle();
         };
         
         if ('dropdown_inline_style' in args) {
-            dropdownOptions.style = args.dropdown_inline_style;
+            dropdownOptions.style = attrs.dropdown_inline_style;
         }
 
-        return m(args.wrapper_class, [
-            m('.fontsize-smaller.u-text-center', args.label),
+        return m(attrs.wrapper_class, [
+            m('.fontsize-smaller.u-text-center', attrs.label),
             m('div', {
                 style: {'z-index' : '1'}
             }, [
@@ -120,27 +118,27 @@ const filterDropdownNumberRange = {
                     },
                     onmousedown: function(e) {
                         e.preventDefault();
-                        if (args.selectable() !== args.index && ctrl.showDropdown()) ctrl.showDropdown.toggle();
-                        args.selectable(args.index);
-                        ctrl.showDropdown.toggle();
+                        if (attrs.selectable() !== attrs.index && state.showDropdown()) state.showDropdown.toggle();
+                        attrs.selectable(attrs.index);
+                        state.showDropdown.toggle();
                     }
                 },
                 [
                     m('option', {
                         value: ''
-                    }, ctrl.renderPlaceholder())
+                    }, state.renderPlaceholder())
                 ]),
-                ((ctrl.showDropdown() && args.selectable() == args.index) ? 
+                ((state.showDropdown() && attrs.selectable() == attrs.index) ? 
                     m('nav.dropdown-list.dropdown-list-medium.card', dropdownOptions,
                     [
                         m('.u-marginbottom-20.w-row', [
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5',
                                 m(innerFieldInput, {
                                     shouldRenderInnerFieldLabel,
-                                    inputValue: ctrl.firstValue,
-                                    placeholder: args.inner_field_placeholder,
-                                    label: args.inner_field_label,
-                                    min: args.min,
+                                    inputValue: state.firstValue,
+                                    placeholder: attrs.inner_field_placeholder,
+                                    label: attrs.inner_field_label,
+                                    min: attrs.min,
                                     onsetValue: applyValueToFilter
                                 })
                             ),
@@ -152,10 +150,10 @@ const filterDropdownNumberRange = {
                             m('.w-col.w-col-5.w-col-small-5.w-col-tiny-5',
                                 m(innerFieldInput, {
                                     shouldRenderInnerFieldLabel,
-                                    inputValue: ctrl.secondValue,
+                                    inputValue: state.secondValue,
                                     placeholder: ' ',
-                                    label: args.inner_field_label,
-                                    min: args.min,
+                                    label: attrs.inner_field_label,
+                                    min: attrs.min,
                                     onsetValue: applyValueToFilter
                                 })
                             )
@@ -165,7 +163,7 @@ const filterDropdownNumberRange = {
                         }, 'Aplicar'),
                         m('a.fontsize-smaller.link-hidden[href=\'#\']', {
                             onclick: () => {
-                                ctrl.clearFieldValues();
+                                state.clearFieldValues();
                                 applyValueToFilter();
                             }
                         }, 'Limpar')

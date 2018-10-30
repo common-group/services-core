@@ -52,7 +52,7 @@ const adminUsers = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             filterVM,
             filterBuilder,
             listVM: {
@@ -67,13 +67,13 @@ const adminUsers = {
 
         return m('', [
             m(adminFilter, {
-                form: ctrl.filterVM.formDescriber,
-                filterBuilder: ctrl.filterBuilder,
+                form: state.filterVM.formDescriber,
+                filterBuilder: state.filterBuilder,
                 label,
-                submit: ctrl.submit
+                submit: state.submit
             }),
             m(adminList, {
-                vm: ctrl.listVM,
+                vm: state.listVM,
                 label,
                 listItem: adminUserItem,
                 listDetail: adminUserDetail

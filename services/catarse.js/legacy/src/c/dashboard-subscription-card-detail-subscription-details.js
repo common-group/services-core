@@ -5,15 +5,10 @@ import paymentMethodIcon from './payment-method-icon';
 import dashboardSubscriptionCardDetailPaymentHistory from './dashboard-subscription-card-detail-payment-history';
 
 const dashboardSubscriptionCardDetailSubscriptionDetails = {
-    oninit: function(vnode)
-    {
-
-    },
-    view: function({state, attrs})
-    {
-        const subscription = args.subscription,
-            reward = args.reward,
-            user = args.user;
+    view: function({attrs}) {
+        const subscription = attrs.subscription,
+            reward = attrs.reward,
+            user = attrs.user;
             
         return m('.u-marginbottom-20.card.u-radius', 
         [

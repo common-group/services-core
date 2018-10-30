@@ -73,7 +73,7 @@ const projectContributionReportContentCard = {
             };
 
         surveyLoader().load().then(survey);
-        return {
+        vnode.state = {
             stateClass,
             survey,
             checked,
@@ -83,9 +83,9 @@ const projectContributionReportContentCard = {
         };
     },
     view: function({state, attrs}) {
-        const contribution = args.contribution(),
-            project = args.project(),
-            survey = _.first(ctrl.survey()),
+        const contribution = attrs.contribution(),
+            project = attrs.project(),
+            survey = _.first(state.survey()),
             profileImg = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {
                 minimum_value: 0,
@@ -105,16 +105,16 @@ const projectContributionReportContentCard = {
                                                     window.I18n.t(`status.${contribution.delivery_status}`, I18nScope())
                                                 ]) : '');
 
-        return m('div', [m(`.w-clearfix.card${ctrl.checked(contribution) ? '.card-alert' : ''}`, [
+        return m('div', [m(`.w-clearfix.card${state.checked(contribution) ? '.card-alert' : ''}`, [
             m('.w-row', [
                 m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                         m('.w-inline-block',
                             m('.w-checkbox.w-clearfix',
                                 (contribution.delivery_status !== 'received' && project.state !== 'failed' ?
                                     m('input.w-checkbox-input[type=\'checkbox\']', {
-                                        checked: ctrl.checked(contribution),
+                                        checked: state.checked(contribution),
                                         value: contribution.id,
-                                        onclick: () => ctrl.selectContribution(contribution)
+                                        onclick: () => state.selectContribution(contribution)
                                     }) : '')
                             )
                         )
@@ -139,7 +139,7 @@ const projectContributionReportContentCard = {
                                     ]),
                                     m('.w-col.w-col-3', [
                                         m('.lineheight-tighter', [
-                                            m(`span.fa.fontsize-smallest.${ctrl.stateClass(contribution.state)}`),
+                                            m(`span.fa.fontsize-smallest.${state.stateClass(contribution.state)}`),
                                             '   ',
                                             m('span.fontsize-large', `R$ ${h.formatNumber(contribution.value, 2, 3)}`)
                                         ])
@@ -207,21 +207,21 @@ const projectContributionReportContentCard = {
                     )
             ]),
             m('a.arrow-admin.fa.fa-chevron-down.fontcolor-secondary.w-inline-block', {
-                onclick: ctrl.showDetail.toggle
+                onclick: state.showDetail.toggle
             })
         ]),
-            (ctrl.showDetail() ?
+            (state.showDetail() ?
                 m('.card.details-backed-project.w-tabs', [
                     m('.w-tab-menu', [
                         _.map(['info', 'profile'], tab =>
-                        m(`a.dashboard-nav-link.w-inline-block.w-tab-link${ctrl.currentTab() === tab ? '.w--current' : ''}`, { onclick: () => ctrl.currentTab(tab) },
+                        m(`a.dashboard-nav-link.w-inline-block.w-tab-link${state.currentTab() === tab ? '.w--current' : ''}`, { onclick: () => state.currentTab(tab) },
                             m('div',
                                 window.I18n.t(`report.${tab}`, contributionScope())
                             )
                         ))
                     ]),
                     m('.card.card-terciary.w-tab-content', [
-                        (ctrl.currentTab() === 'info' ?
+                        (state.currentTab() === 'info' ?
                         m('.w-tab-pane.w--tab-active',
                             m('.w-row', [
                                 m('.right-divider.w-col.w-col-6', [

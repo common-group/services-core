@@ -33,7 +33,7 @@ const FollowFoundFriends = {
 
         h.redrawHashChange();
 
-        return {
+        vnode.state = {
             user,
             displayTabContent
         };
@@ -67,7 +67,7 @@ const FollowFoundFriends = {
                               'Seguindo',
                               m.trust('&nbsp;'),
                               m('span.w-hidden-small.w-hidden-tiny.badge',
-                            ctrl.user.follows_count
+                            state.user.follows_count
                            )
                           ]
                      ),
@@ -76,14 +76,14 @@ const FollowFoundFriends = {
                               'Seguidores',
                               m.trust('&nbsp;'),
                               m('span.w-hidden-small.w-hidden-tiny.badge',
-                            ctrl.user.followers_count
+                            state.user.followers_count
                            )
                           ]
                      )
                   ]
                )
              ),
-            ctrl.displayTabContent()
+            state.displayTabContent()
         ]);
     }
 };

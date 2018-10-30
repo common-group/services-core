@@ -49,7 +49,7 @@ const projectGoalEdit = {
         }
         vm.fillFields(vnode.attrs.project);
 
-        return {
+        vnode.state = {
             onSubmit,
             showSuccess,
             showError,
@@ -61,19 +61,19 @@ const projectGoalEdit = {
         };
     },
     view: function({state, attrs}) {
-        const vm = ctrl.vm;
+        const vm = state.vm;
         return m('#goal-tab', [
-            (ctrl.showSuccess() ? m(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
@@ -96,12 +96,12 @@ const projectGoalEdit = {
                                         ])
                                     ]),
                                     m('.u-text-center.fontsize-smaller', [
-                                        m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, [
+                                        m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: state.showModeDiff.toggle }, [
                                             'Veja a diferença entre os modelos ',
                                             m('span.fa.fa-chevron-down')
                                         ])
                                     ]),
-                                    (ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [
+                                    (state.showModeDiff() ? m('.mode-diff.u-margintop-30', [
                                         m('.flex-row', [
                                             m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('aon_diff_html', I18nScope()))),
                                             m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('flex_diff_html', I18nScope())))
@@ -133,7 +133,7 @@ const projectGoalEdit = {
                                                                 class: vm.e.hasError('goal') ? 'error' : false,
                                                                 value: vm.fields.goal(),
                                                                 maxlength: 14,
-                                                                onkeyup: m.withAttr('value', ctrl.applyGoalMask)
+                                                                onkeyup: m.withAttr('value', state.applyGoalMask)
                                                             }),
                                                         ]),
                                                     ])
@@ -144,13 +144,13 @@ const projectGoalEdit = {
                                     ]),
                                     m('.u-text-center.fontsize-smaller.fontweight-semibold', [
                                         m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
-                                            onclick: ctrl.showTaxesDiff.toggle
+                                            onclick: state.showTaxesDiff.toggle
                                         }, [
                                             window.I18n.t('goal_taxes_link', I18nScope()),
                                             m('span.fa.fa-chevron-down')
                                         ])
                                     ]),
-                                    (ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
+                                    (state.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
                                         m('.u-marginbottom-30', [
                                             m('.fontsize-small.fontweight-semibold', window.I18n.t('goal_taxes_label', I18nScope())),
                                             m('.fontsize-smaller', window.I18n.t(`goal_${vm.fields.mode()}_taxes_hint`, I18nScope()))
@@ -231,7 +231,7 @@ const projectGoalEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
 
         ]);

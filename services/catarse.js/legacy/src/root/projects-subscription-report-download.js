@@ -21,7 +21,7 @@ const projectSubscriptionReportDownload = {
         lProject.load().then((data) => {
             project(data);
         });
-        return {
+        vnode.state = {
             project
         };
     },
@@ -30,7 +30,7 @@ const projectSubscriptionReportDownload = {
             m('.w-container',
                 m('.w-row', [
                     m(projectDashboardMenu, {
-                        project: prop(_.first(ctrl.project()))
+                        project: prop(_.first(state.project()))
                     }),
                     m('.w-col.w-col-2'),
                     m('.w-col.w-col-8',
@@ -52,13 +52,13 @@ const projectSubscriptionReportDownload = {
                                     m('div', [
                                         'Base de assinantes ',
                                         m.trust('&nbsp;'),
-                                        m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.csv']`,
+                                        m(`a.alt-link[href='/projects/${attrs.project_id}/subscriptions_report_for_project_owners.csv']`,
                                             'CSV'
                                         ),
                                         m.trust('&nbsp;'),
                                         '\\',
                                         m.trust('&nbsp;'),
-                                        m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_report_for_project_owners.xls']`,
+                                        m(`a.alt-link[href='/projects/${attrs.project_id}/subscriptions_report_for_project_owners.xls']`,
                                             'XLS'
                                         )
                                     ])
@@ -69,13 +69,13 @@ const projectSubscriptionReportDownload = {
                                         'Relatório de pagamentos confirmados',
                                         m.trust('&nbsp;'),
                                         m.trust('&nbsp;'),
-                                        m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.csv']`,
+                                        m(`a.alt-link[href='/projects/${attrs.project_id}/subscriptions_monthly_report_for_project_owners.csv']`,
                                             'CSV'
                                         ),
                                         m.trust('&nbsp;'),
                                         '\\',
                                         m.trust('&nbsp;'),
-                                        m(`a.alt-link[href='/projects/${args.project_id}/subscriptions_monthly_report_for_project_owners.xls']`,
+                                        m(`a.alt-link[href='/projects/${attrs.project_id}/subscriptions_monthly_report_for_project_owners.xls']`,
                                             'XLS'
                                         )
                                     ])

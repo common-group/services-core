@@ -21,13 +21,13 @@ const userBalance = {
     oninit: function(vnode) {
         vnode.attrs.balanceManager.load();
 
-        return {
+        vnode.state = {
             userBalances: vnode.attrs.balanceManager.collection,
             displayModal: h.toggleProp(false, true)
         };
     },
     view: function({state, attrs}) {
-        const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0 },
+        const balance = _.first(state.userBalances()) || { user_id: attrs.user_id, amount: 0 },
             positiveValue = balance.amount >= 0,
             balanceRequestModalC = [
                 userBalanceRequestModalContent,
@@ -35,8 +35,8 @@ const userBalance = {
             ];
 
         return m('.w-section.section.user-balance-section', [
-            (ctrl.displayModal() ? m(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: balanceRequestModalC
             }) : ''),
             m('.w-container', [
@@ -50,7 +50,7 @@ const userBalance = {
                     m('.w-col.w-col-4', [
                         m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${((balance.amount <= 0 || balance.in_period_yet || balance.has_cancelation_request) ? 'btn-inactive' : '')}"][href="javascript:void(0);"]`,
                             {
-                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false) && !balance.has_cancelation_request) ? ctrl.displayModal.toggle : 'javascript:void(0);')
+                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false) && !balance.has_cancelation_request) ? state.displayModal.toggle : 'javascript:void(0);')
                             },
                             window.I18n.t('withdraw_cta', I18nScope())
                         ),

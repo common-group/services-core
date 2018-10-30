@@ -6,14 +6,14 @@ import projectRewardList from './project-reward-list';
 import projectGoalsBox from './project-goals-box';
 
 const projectRewards = {
-    view: function({state, attrs}) {
-        return m('.w-col.w-col-12', [projectVM.isSubscription(args.project) ? args.subscriptionData() ? m(
+    view: function({attrs}) {
+        return m('.w-col.w-col-12', [projectVM.isSubscription(attrs.project) ? attrs.subscriptionData() ? m(
             projectGoalsBox,
-            { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }
+            { goalDetails: attrs.goalDetails, subscriptionData: attrs.subscriptionData }
         ) : h.loader() : '', m(projectRewardList, _.extend({}, {
-            rewardDetails: args.rewardDetails,
-            hasSubscription: args.hasSubscription
-        }, args.c_opts))]);
+            rewardDetails: attrs.rewardDetails,
+            hasSubscription: attrs.hasSubscription
+        }, attrs.c_opts))]);
     }
 };
 

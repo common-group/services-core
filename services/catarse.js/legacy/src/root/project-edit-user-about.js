@@ -5,15 +5,15 @@ import userAboutEdit from '../c/user-about-edit';
 
 const projectEditUserAbout = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             user: userVM.fetchUser(vnode.attrs.user_id)
         };
     },
 
     view: function({state, attrs}) {
-        return (ctrl.user() ? m(userAboutEdit, {
-            user: ctrl.user(),
-            userId: args.user_id,
+        return (state.user() ? m(userAboutEdit, {
+            user: state.user(),
+            userId: attrs.user_id,
             useFloatBtn: true,
             hideDisableAcc: true,
             hideCoverImg: true,

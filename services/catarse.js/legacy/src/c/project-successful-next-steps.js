@@ -12,7 +12,6 @@ import projectSuccessOnboardEnabledWithdraw from './project-successful-onboard-e
 const projectSuccessfulNextSteps = {
 
     oninit: function(vnode) {
-        
         const 
             wishedState = 'transferred',
             userIdVM = catarse.filtersVM({user_id: 'eq', state: 'eq'}),
@@ -63,14 +62,13 @@ const projectSuccessfulNextSteps = {
                 isLoading(false);                
             });
 
-        return {
+        vnode.state = {
             successfulOnboards
         };
     },
 
     view: function({state, attrs}) {
-
-        return ctrl.successfulOnboards();        
+        return state.successfulOnboards();        
     }
 };
 

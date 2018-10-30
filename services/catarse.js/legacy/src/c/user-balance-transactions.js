@@ -10,12 +10,12 @@ const userBalanceTransactions = {
     oninit: function(vnode) {
         vnode.attrs.balanceTransactionManager.load();
 
-        return {
+        vnode.state = {
             list: vnode.attrs.balanceTransactionManager.list
         };
     },
     view: function({state, attrs}) {
-        const list = ctrl.list;
+        const list = state.list;
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
             m('.w-container', [

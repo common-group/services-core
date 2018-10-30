@@ -14,14 +14,14 @@ const userCard = {
 
         userVM.fetchUser(user_id, true, userDetails);
 
-        return {
+        vnode.state = {
             userDetails,
             displayModal: h.toggleProp(false, true)
         };
     },
     view: function({state}) {
-        const user = ctrl.userDetails(),
-            contactModalC = [ownerMessageContent, ctrl.userDetails],
+        const user = state.userDetails(),
+            contactModalC = [ownerMessageContent, state.userDetails],
             profileImage = userVM.displayImage(user);
 
         return m('#user-card', m('.card.card-user.u-radius.u-marginbottom-30[itemprop=\'author\']', [
@@ -56,12 +56,12 @@ const userCard = {
                     ]))
                 ]),
             ]),
-            (ctrl.displayModal() ? m(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: contactModalC
             }) : ''),
             m(UserFollowBtn, { follow_id: user.id, following: user.following_this_user, enabledClass: '.btn.btn-medium.btn-message.u-marginbottom-10', disabledClass: '.btn.btn-medium.btn-message.u-marginbottom-10' }),
-            (!_.isEmpty(user.email) ? m('a.btn.btn-medium.btn-message[href=\'javascript:void(0);\']', { onclick: ctrl.displayModal.toggle }, 'Enviar mensagem') : '')
+            (!_.isEmpty(user.email) ? m('a.btn.btn-medium.btn-message[href=\'javascript:void(0);\']', { onclick: state.displayModal.toggle }, 'Enviar mensagem') : '')
         ]));
     }
 };

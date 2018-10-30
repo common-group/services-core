@@ -41,32 +41,32 @@ const postsPreview = {
                     m.redraw();
                 });
             };
-        return {
+        vnode.state = {
             sendNotification,
             togglePreview
         };
     },
     view: function({state, attrs}) {
-        const comment_html = args.comment_html(),
-            title = args.title(),
-            recipientsText = args.reward_id > 1 ?
+        const comment_html = attrs.comment_html(),
+            title = attrs.title(),
+            recipientsText = attrs.reward_id > 1 ?
             m('.fontsize-small.u-marginbottom-30', [
                 'A novidade acima será enviada por email para os ',
                 m('span.fontweight-semibold',
-                    args.rewardText
+                    attrs.rewardText
                 ),
                 ' e ficará ',
                 m('span.fontweight-semibold',
-                window.I18n.t(`backers_only_${args.mode}`, I18nScope())
+                window.I18n.t(`backers_only_${attrs.mode}`, I18nScope())
                 )
             ]) :
-            args.reward_id === '-1' ?
+            attrs.reward_id === '-1' ?
             m('.fontsize-small.u-marginbottom-30', [
                 'A novidade acima será  ',
                 m('span.fontweight-semibold',
                     'enviada por email para todos'
                 ),
-                window.I18n.t(`all_backers_${args.mode}`, I18nScope()),
+                window.I18n.t(`all_backers_${attrs.mode}`, I18nScope()),
                 m('span.fontweight-semibold',
                     'visível publicamente '
                 ),
@@ -74,7 +74,7 @@ const postsPreview = {
             ]) :
             m('.fontsize-small.u-marginbottom-30', [
                 m('span', ' A novidade acima será  '),
-                m('span.fontweight-semibold', window.I18n.t(`email_backers_${args.mode}`, I18nScope())),
+                m('span.fontweight-semibold', window.I18n.t(`email_backers_${attrs.mode}`, I18nScope())),
                 m('span', ' e ficará '),
                 m('span.fontweight-semibold', 'visível somente para esses na plataforma.')
             ]);
@@ -120,7 +120,7 @@ const postsPreview = {
                     m('.w-col.w-col-3'),
                     m('.w-sub-col.w-col.w-col-4',
                         m('button.btn.btn-large', {
-                            onclick: ctrl.sendNotification
+                            onclick: state.sendNotification
                         }, [
                             m('span.fa.fa-paper-plane',
                                 ''
@@ -132,7 +132,7 @@ const postsPreview = {
                     ),
                     m('.w-col.w-col-2',
                         m('button.btn.btn-large.btn-terciary', {
-                            onclick: ctrl.togglePreview
+                            onclick: state.togglePreview
                         },
                             'Editar'
                         )

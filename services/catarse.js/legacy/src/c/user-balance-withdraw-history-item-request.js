@@ -7,7 +7,6 @@ const I18nScopeBank = _.partial(h.i18nScope, 'users.balance.bank');
 
 const userBalanceWithdrawHistoryItemRequest = {
     oninit: function (vnode) {
-
         const documentMask = _.partial(h.mask, '999.999.999-99');
         const documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
 
@@ -78,7 +77,7 @@ const userBalanceWithdrawHistoryItemRequest = {
 
         const documentMasked = (document_number) => vnode.attrs.transfer.document_type == 'cpf' ? documentMask(document_number) : documentCompanyMask(document_number);
 
-        return {
+        vnode.state = {
             cardStatusClassMap,
             innerCardStatusClassMap,
             innerCardInfo,
@@ -87,39 +86,39 @@ const userBalanceWithdrawHistoryItemRequest = {
     },
     view: function ({state, attrs}) {
         return m('.u-marginbottom-20.w-col.w-col-4',
-            m(`.card.u-radius${ctrl.cardStatusClassMap[args.transfer.status]}`, [
+            m(`.card.u-radius${state.cardStatusClassMap[attrs.transfer.status]}`, [
                 m('div', [
                     m('.fontsize-small', [
                         m('strong', I18n.t('amount', I18nScopeTransfer())),
-                        `R$ ${h.formatNumber(args.transfer.amount || 0, 2, 3)}`,
+                        `R$ ${h.formatNumber(attrs.transfer.amount || 0, 2, 3)}`,
                         m('br')
                     ]),
                     m('.fontsize-smaller.u-marginbottom-20', [
                         m('strong', I18n.t('requested_in', I18nScopeTransfer())),
-                        h.momentify(args.transfer.requested_in, 'DD/MM/YYYY'),
+                        h.momentify(attrs.transfer.requested_in, 'DD/MM/YYYY'),
                         m('br')
                     ])
                 ]),
                 m('.fontsize-smallest', [
                     m('strong', I18n.t('bank_name', I18nScopeBank())),
-                    args.transfer.bank_name,
+                    attrs.transfer.bank_name,
                     m('br'),
                     m('strong', I18n.t('agency', I18nScopeBank())),
-                    `${args.transfer.agency}${args.transfer.agency_digit ? '-' + args.transfer.agency_digit : ''}`,
+                    `${attrs.transfer.agency}${attrs.transfer.agency_digit ? '-' + attrs.transfer.agency_digit : ''}`,
                     m('br'),
                     m('strong', I18n.t('account', I18nScopeBank())),
-                    `${args.transfer.account}${args.transfer.account_digit ? '-' + args.transfer.account_digit : ''}`,
+                    `${attrs.transfer.account}${attrs.transfer.account_digit ? '-' + attrs.transfer.account_digit : ''}`,
                     m('br'),
                     m('strong', I18n.t('account_type_name', I18nScopeBank())),
-                    I18n.t(`account_type.${args.transfer.account_type}`, I18nScopeBank()),
+                    I18n.t(`account_type.${attrs.transfer.account_type}`, I18nScopeBank()),
                     m('br'),
                     m('strong', I18n.t('user_name', I18nScopeTransfer())),
-                    args.transfer.user_name,
+                    attrs.transfer.user_name,
                     m('br'),
-                    m('strong', I18n.t(`${args.transfer.document_type}`, I18nScopeBank())),
-                    ctrl.documentMasked(args.transfer.document_number)
+                    m('strong', I18n.t(`${attrs.transfer.document_type}`, I18nScopeBank())),
+                    state.documentMasked(attrs.transfer.document_number)
                 ]),
-                m(`.fontsize-smaller.u-text-center.badge.fontweight-semibold.u-margintop-30${ctrl.innerCardStatusClassMap[args.transfer.status]}`, ctrl.innerCardInfo[args.transfer.status])
+                m(`.fontsize-smaller.u-text-center.badge.fontweight-semibold.u-margintop-30${state.innerCardStatusClassMap[attrs.transfer.status]}`, state.innerCardInfo[attrs.transfer.status])
             ])
         );
     }

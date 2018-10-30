@@ -13,7 +13,6 @@ const I18nScopeBank = _.partial(h.i18nScope, 'users.balance.bank');
 
 const userBalanceWithdrawHistory = {
     oninit: function (vnode) {
-
         const userIdVM = catarse.filtersVM({user_id: 'eq'});
         const balanceTransfersList = userBalanceTransfersVM.getWithPagination;
         userIdVM.user_id(vnode.attrs.user_id);
@@ -47,7 +46,7 @@ const userBalanceWithdrawHistory = {
             return array;
         };
 
-        return {
+        vnode.state = {
             balanceTransfersList,
             explitInArraysOf3
         };
@@ -61,25 +60,25 @@ const userBalanceWithdrawHistory = {
                     m('.fontsize-base.fontweight-semibold', I18n.t('withdraw_history_group', I18nScope()))
                 ),
                 (
-                    _.map(ctrl.explitInArraysOf3(ctrl.balanceTransfersList.collection()), 
+                    _.map(state.explitInArraysOf3(state.balanceTransfersList.collection()), 
                         (transferList) => m('.u-marginbottom-30.w-row',  
                             _.map(transferList, 
                                 (transfer, index) => m(userBalanceWithdrawHistoryItemRequest, { transfer, index }))
                     ))
                 ),
                 (
-                    ctrl.balanceTransfersList.isLoading() ? 
+                    state.balanceTransfersList.isLoading() ? 
                         h.loader() 
                     :
                         (
-                            ctrl.balanceTransfersList.isLastPage() ? 
+                            state.balanceTransfersList.isLastPage() ? 
                                 '' 
                             : 
                                 m('.u-margintop-40.u-marginbottom-80.w-row', [
                                     m('.w-col.w-col-5'),
                                     m('.w-col.w-col-2',
                                         m('a.btn.btn-medium.btn-terciary.w-button[href=\'javascript:void(0);\']', {
-                                            onclick: ctrl.balanceTransfersList.nextPage
+                                            onclick: state.balanceTransfersList.nextPage
                                         }, 'Carregar mais')
                                     ),
                                     m('.w-col.w-col-5')

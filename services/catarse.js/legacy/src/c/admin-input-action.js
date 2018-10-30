@@ -43,7 +43,7 @@ const adminInputAction = {
             };
         };
 
-        return {
+        vnode.state = {
             complete,
             error,
             l,
@@ -54,26 +54,26 @@ const adminInputAction = {
         };
     },
     view: function({state, attrs}) {
-        const data = args.data,
-            btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
+        const data = attrs.data,
+            btnValue = (state.l()) ? 'por favor, aguarde...' : data.callToAction;
 
         return m('.w-col.w-col-2', [
             m('button.btn.btn-small.btn-terciary', {
-                onclick: ctrl.toggler.toggle
-            }, data.outerLabel), (ctrl.toggler()) ?
+                onclick: state.toggler.toggle
+            }, data.outerLabel), (state.toggler()) ?
             m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: ctrl.unload
+                config: state.unload
             }, [
                 m('form.w-form', {
-                    onsubmit: ctrl.submit
-                }, (!ctrl.complete()) ? [
+                    onsubmit: state.submit
+                }, (!state.complete()) ? [
                     m('label', data.innerLabel), (data.forceValue === undefined) ?
                     m(`input.w-input.text-field[type="text"][placeholder="${data.placeholder}"]`, {
-                        onchange: m.withAttr('value', ctrl.newValue),
-                        value: ctrl.newValue()
+                        onchange: m.withAttr('value', state.newValue),
+                        value: state.newValue()
                     }) : '',
                     m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
-                ] : (!ctrl.error()) ? [
+                ] : (!state.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', data.successMessage)
                     ])

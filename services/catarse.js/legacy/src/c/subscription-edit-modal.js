@@ -11,20 +11,20 @@ const paymentBadge = paymentMethod => paymentMethod === 'credit_card'
 const subscriptionEditModal = {
     oninit: function(vnode) {
         const isLongDescription = reward => reward.description && reward.description.length > 110;
-        const scope = attr => vnode.attrs.args.vm.isInternational()
+        const scope = attr => vnode.attrs.attrs.vm.isInternational()
                    ? I18nIntScope(attr)
                    : I18nScope(attr);
 
-        return {
+        vnode.state = {
             isLongDescription,
             toggleDescription: h.toggleProp(false, true),
             scope
         };
     },
     view: function({state, attrs}) {
-        const vmIsLoading = args.vm.isLoading;
-        const newSubscription = args.args;
-        const oldSubscription = args.args.oldSubscription;
+        const vmIsLoading = attrs.vm.isLoading;
+        const newSubscription = attrs.args;
+        const oldSubscription = attrs.attrs.oldSubscription;
 
         return newSubscription && oldSubscription ? m('.modal-backdrop',
             m('.modal-dialog-outer',
@@ -32,7 +32,7 @@ const subscriptionEditModal = {
                     [
                         m('button.modal-close.fa.fa-close.fa-lg.w-inline-block', { onclick: () => {
                             vmIsLoading(false);
-                            args.showModal(false);
+                            attrs.showModal(false);
                         } }),
                         m('.modal-dialog-header',
                             m('.fontsize-large.u-text-center',
@@ -50,8 +50,8 @@ const subscriptionEditModal = {
                                             [
                                                 m('.fontsize-smallest.fontweight-semibold',
                                                     {
-                                                        class: ctrl.isLongDescription(newSubscription.reward())
-                                                            ? ctrl.toggleDescription()
+                                                        class: state.isLongDescription(newSubscription.reward())
+                                                            ? state.toggleDescription()
                                                                 ? 'extended'
                                                                 : ''
                                                             : 'extended'
@@ -63,7 +63,7 @@ const subscriptionEditModal = {
                                                         ? newSubscription.reward().description
                                                         : m.trust(
                                                             window.I18n.t('selected_reward.review_without_reward_html',
-                                                                ctrl.scope(
+                                                                state.scope(
                                                                     _.extend({
                                                                         value: Number(newSubscription.value).toFixed()
                                                                     })
@@ -71,9 +71,9 @@ const subscriptionEditModal = {
                                                             )
                                                         )
                                                 ),
-                                                ctrl.isLongDescription(newSubscription.reward())
+                                                state.isLongDescription(newSubscription.reward())
                                                     ? m('a.link-more.link-hidden[href="#"]', {
-                                                        onclick: ctrl.toggleDescription.toggle
+                                                        onclick: state.toggleDescription.toggle
                                                     },
                                                         ['mais', m('span.fa.fa-angle-down')]
                                                     ) : ''
@@ -103,7 +103,7 @@ const subscriptionEditModal = {
                                 ),
                                 m('.w-hidden-small.w-hidden-tiny',
                                     [
-                                        oldSubscription().payment_method === args.paymentMethod
+                                        oldSubscription().payment_method === attrs.paymentMethod
                                             ? ''
                                             : m('.fontsize-large.u-marginbottom-10',
                                                 [
@@ -111,7 +111,7 @@ const subscriptionEditModal = {
                                                       [paymentBadge(oldSubscription().checkout_data ? oldSubscription().checkout_data.payment_method : ''), ' ']
                                                     ),
                                                     m('span.fa.fa-angle-right.fontcolor-terciary'),
-                                                    [' ', paymentBadge(args.paymentMethod)]
+                                                    [' ', paymentBadge(attrs.paymentMethod)]
                                                 ]
                                             ),
                                         m('.fontsize-smaller',
@@ -145,9 +145,9 @@ const subscriptionEditModal = {
                                             m('.u-text-center.w-col.w-col-4',
                                                 m('button.btn.btn-large.u-marginbottom-20', {
                                                     onclick: () => {
-                                                        args.confirm(true);
-                                                        args.showModal(false);
-                                                        args.pay();
+                                                        attrs.confirm(true);
+                                                        attrs.showModal(false);
+                                                        attrs.pay();
                                                     }
                                                 },
                                                     'Confirmar'
@@ -156,7 +156,7 @@ const subscriptionEditModal = {
                                             m('.w-col.w-col-4',
                                                 m('button.btn.btn-large.u-marginbottom-20.btn-terciary.btn-no-border', { onclick: () => {
                                                     vmIsLoading(false);
-                                                    args.showModal(false);
+                                                    attrs.showModal(false);
                                                 } },
                                                     'Cancelar'
                                                 )

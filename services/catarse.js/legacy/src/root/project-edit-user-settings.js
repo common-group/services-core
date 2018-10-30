@@ -6,15 +6,15 @@ import userSettings from '../c/user-settings';
 
 const projectEditUserSettings = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             user: userVM.fetchUser(vnode.attrs.user_id)
         };
     },
 
     view: function({state, attrs}) {
-        return (ctrl.user() ? m(userSettings, {
-            user: ctrl.user(),
-            userId: args.user_id,
+        return (state.user() ? m(userSettings, {
+            user: state.user(),
+            userId: attrs.user_id,
             hideCreditCards: true,
             useFloatBtn: true,
             publishingUserSettings: true,
