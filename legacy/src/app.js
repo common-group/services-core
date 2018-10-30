@@ -160,6 +160,7 @@ import Chart from 'chart.js';
             [urlWithLocale('/projects/:project_id/subscriptions/checkout')]: wrap(c.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
             [urlWithLocale('/projects/subscriptions/thank_you')]: wrap(c.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false }),
             '/en': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
+            '/pt': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
             [urlWithLocale('/flexible_projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
             [urlWithLocale('/projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
             '/projects': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
