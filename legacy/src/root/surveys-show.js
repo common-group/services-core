@@ -150,7 +150,7 @@ const surveysShow = {
             survey
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const user = ctrl.user(),
             survey = ctrl.survey(),
             countryName = ctrl.countryName,

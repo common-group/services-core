@@ -43,7 +43,7 @@ const publish = {
             projectDetails
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = _.first(ctrl.projectDetails()),
             acceptedIndex = ctrl.acceptedIndex,
             account = _.first(ctrl.projectAccount());

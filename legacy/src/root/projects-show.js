@@ -73,7 +73,7 @@ const projectsShow = {
             userProjectSubscriptions
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.projectVM.currentProject,
             projectVM = ctrl.projectVM;
 

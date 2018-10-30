@@ -176,7 +176,7 @@ const adminProjects = {
             submit
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const label = 'Projetos';
 
         return m('', [

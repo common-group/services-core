@@ -288,7 +288,7 @@ const projectsExplore = {
             tryLoadFromQueryPath
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const categoryId = ctrl.categoryId,
             projectsCollection = ctrl.projects().collection(),
             projectsCount = projectsCollection.length,

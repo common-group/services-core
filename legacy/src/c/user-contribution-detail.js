@@ -16,7 +16,7 @@ const userContributionDetail = {
             chosenReward
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const contribution = args.contribution;
 
         return m(userContributedBox, { contribution });

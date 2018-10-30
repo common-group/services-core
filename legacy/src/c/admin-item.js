@@ -8,7 +8,7 @@ const adminItem = {
             displayDetailBox: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const item = args.item,
             listWrapper = args.listWrapper || {},
             selectedItem = (_.isFunction(listWrapper.isSelected) ?

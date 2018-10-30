@@ -9,7 +9,7 @@ const adminFilter = {
             toggler: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const filterBuilder = args.filterBuilder,
             data = args.data,
             label = args.label || '',

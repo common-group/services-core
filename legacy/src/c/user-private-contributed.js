@@ -70,7 +70,7 @@ const userPrivateContributed = {
             loader
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subsCollection = ctrl.subscriptions.collection(),
             onlineCollection = ctrl.onlinePages.collection(),
             successfulCollection = ctrl.successfulPages.collection(),

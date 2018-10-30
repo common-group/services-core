@@ -36,7 +36,7 @@ const dashboardMultipleChoiceQuestion = {
             updateOption
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const { question, index } = args;
 
         return m('.card.u-marginbottom-30.u-radius.w-form', [

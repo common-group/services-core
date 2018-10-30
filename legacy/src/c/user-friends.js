@@ -50,7 +50,7 @@ const userFriends = {
             allLoading
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const listVM = ctrl.friendListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [

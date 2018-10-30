@@ -69,7 +69,7 @@ const adminNotifications = {
             selectedItemSubjectTemplate
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const templatesCollection = ctrl.templates.collection(),
             selectedItem = ctrl.selectedItem();
 

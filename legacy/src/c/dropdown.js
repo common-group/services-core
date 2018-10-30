@@ -2,7 +2,7 @@ import m from 'mithril';
 import _ from 'underscore';
 
 const dropdown = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const opts = (_.isFunction(args.options) ? args.options() : args.options);
 
         return m(

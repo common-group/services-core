@@ -58,7 +58,7 @@ const projectMain = {
             hash
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
             m(`${ctrl.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
                 m('.w-row', args.project() ? ctrl.displayTabContent(args.project) : h.loader())

@@ -19,7 +19,7 @@ const teamMembers = {
             vm
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         return m('#team-members-static.w-section.section', [
             m('.w-container', [
                 _.map(ctrl.vm.collection(), group => m('.w-row.u-text-center', [

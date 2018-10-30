@@ -45,7 +45,7 @@ const projectsContribution = {
             sortedRewards: () => _.sortBy(rewards(), reward => Number(reward.row_order))
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project;
 
         return m('#contribution-new',

@@ -21,7 +21,7 @@ const subscriptionEditModal = {
             scope
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const vmIsLoading = args.vm.isLoading;
         const newSubscription = args.args;
         const oldSubscription = args.args.oldSubscription;

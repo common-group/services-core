@@ -53,7 +53,7 @@ const projectGoalsEdit = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const showSuccess = ctrl.showSuccess,
             error = ctrl.error;
         return m('.w-container',

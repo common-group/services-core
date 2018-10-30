@@ -9,7 +9,7 @@ const dashboardSubscriptionCardDetailSubscriptionDetails = {
     {
 
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const subscription = args.subscription,
             reward = args.reward,

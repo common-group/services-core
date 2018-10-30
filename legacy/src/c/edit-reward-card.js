@@ -171,7 +171,7 @@ const editRewardCard = {
             fees
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const newFee = {
                 id: prop(null),
                 value: prop(null),

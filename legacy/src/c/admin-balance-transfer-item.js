@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminBalanceTransferItem = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const item = args.item;
         return m('.w-row', [
             m('.w-col.w-col-1.w-col-tiny-1', [

@@ -25,7 +25,7 @@ const projectSubscriptionReportDownload = {
             project
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.section.project-metrics',
             m('.w-container',
                 m('.w-row', [

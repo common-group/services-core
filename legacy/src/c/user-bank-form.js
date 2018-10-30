@@ -75,7 +75,7 @@ const userBankForm = {
             parsedErrors
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         let user = args.user,
             fields = args.fields,
             bankAccount = ctrl.bankAccount();

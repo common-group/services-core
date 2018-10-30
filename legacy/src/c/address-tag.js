@@ -3,7 +3,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const addressTag = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project,
             address = project().address || {
                 state_acronym: '',

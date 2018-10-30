@@ -14,7 +14,7 @@ const projectCancelButton = {
             displayCancelModal
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div', [
             (ctrl.displayCancelModal() ? m(modalBox, {
                 displayModal: ctrl.displayCancelModal,

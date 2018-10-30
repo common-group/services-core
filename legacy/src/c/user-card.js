@@ -19,7 +19,7 @@ const userCard = {
             displayModal: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const user = ctrl.userDetails(),
             contactModalC = [ownerMessageContent, ctrl.userDetails],
             profileImage = userVM.displayImage(user);

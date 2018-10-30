@@ -12,7 +12,7 @@ const projectEditCard = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return (ctrl.user() && ctrl.project() ? m(projectCardEdit, {
             user: ctrl.user(),
             userId: args.user_id,

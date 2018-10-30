@@ -71,7 +71,7 @@ const tooltip = {
             setParentPosition
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const width = ctrl.width();
         return m(args.el, {
             onclick: ctrl.toggle,

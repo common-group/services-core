@@ -66,7 +66,7 @@ const projectSidebar = {
             navigate
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         // @TODO: remove all those things from the view
         const project = args.project,
             elapsed = project().elapsed_time,

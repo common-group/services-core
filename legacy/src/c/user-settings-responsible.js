@@ -10,7 +10,7 @@ const userSettingsResponsible = {
     {
         return {};
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const 
             disableFields = args.disableFields,

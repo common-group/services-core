@@ -70,7 +70,7 @@ const surveys = {
             projectDetails,
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const project = _.first(ctrl.projectDetails());
         const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
         const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));

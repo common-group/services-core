@@ -14,7 +14,7 @@ const userBalanceTransactions = {
             list: vnode.attrs.balanceTransactionManager.list
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const list = ctrl.list;
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [

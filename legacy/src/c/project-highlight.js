@@ -13,7 +13,7 @@ const projectHighlight = {
             displayShareBox: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project;
         const isSub = projectVM.isSubscription(project);
 

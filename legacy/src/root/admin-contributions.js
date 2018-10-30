@@ -143,7 +143,7 @@ const adminContributions = {
             toChargebackCollection = prop(),
             chargebackConfirmationModalContentWrapper = (customAttrs) => {
                 const wrapper = {
-                    view: function(ctrl, args) {
+                    view: function({state, attrs}) {
                         return m('', [
                             m('.modal-dialog-header', [
                                 m('.fontsize-large.u-text-center', args.modalTitle)
@@ -267,7 +267,7 @@ const adminContributions = {
         };
     },
 
-    view: function(ctrl) {
+    view: function({state}) {
         return m('', [
             (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {
                 displayModal: ctrl.displayChargebackConfirmationModal,

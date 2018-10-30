@@ -49,7 +49,7 @@ const faqBox = {
             tKey
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const image = args.mode === 'sub'
             ? m('div', m('img.u-marginbottom-10[width="130"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'))
             : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',

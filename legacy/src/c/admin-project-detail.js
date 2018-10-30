@@ -123,7 +123,7 @@ const adminProjectDetail = {
             actionUnload
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const actions = ctrl.actions,
             item = ctrl.currentItem(),
             user = ctrl.user(),

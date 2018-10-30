@@ -217,7 +217,7 @@ const userAboutEdit = {
             parsedErrors
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const user = args.user || {},
             fields = ctrl.fields;
 

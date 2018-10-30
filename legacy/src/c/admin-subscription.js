@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminSubscription = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = args.item;
         return m('.w-row.admin-contribution', [
             m('.fontweight-semibold.fontsize-small',

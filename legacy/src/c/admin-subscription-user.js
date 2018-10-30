@@ -30,7 +30,7 @@ const adminSubscriptionUser = {
             user
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const item = args.item,
             customer = item.checkout_data ? item.checkout_data.customer : {},
             user = {

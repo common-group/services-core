@@ -86,7 +86,7 @@ const projectInsightsSub = {
             isSubscriptionsPerMonthLoaded
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
         const weekSum = sumAmount(ctrl.weekSubscriptions());
         const lastWeekSum = sumAmount(ctrl.lastWeekSubscriptions());

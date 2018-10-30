@@ -69,7 +69,7 @@ const projectSuccessfulOnboard = {
             listenToReplace
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const projectAccount = _.first(ctrl.projectAccounts()),
             projectTransfer = _.first(ctrl.projectTransfers()),
             lpa = ctrl.lProjectAccount,

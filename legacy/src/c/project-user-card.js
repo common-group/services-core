@@ -31,7 +31,7 @@ const projectUserCard = {
             sendMessage
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project;
         const contactModalC = [ownerMessageContent, prop(_.extend(args.userDetails(), {
             project_id: project().id

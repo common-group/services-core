@@ -5,7 +5,7 @@ import facebookButton from '../c/facebook-button';
 import copyTextInput from '../c/copy-text-input';
 
 const projectInviteCard = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project;
 
         return m('.card.card-terciary.u-marginbottom-20.u-radius.w-clearfix', [

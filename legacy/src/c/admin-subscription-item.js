@@ -24,7 +24,7 @@ const adminSubscriptionItem = {
             }]
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         // console.log(args.item);
         return m(
             '.w-row',

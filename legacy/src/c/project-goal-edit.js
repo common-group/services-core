@@ -60,7 +60,7 @@ const projectGoalEdit = {
             loading
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const vm = ctrl.vm;
         return m('#goal-tab', [
             (ctrl.showSuccess() ? m(popNotification, {

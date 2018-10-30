@@ -29,7 +29,7 @@ const adminReward = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const reward = args.reward(),
             contribution = args.contribution,
             available = parseInt(reward.paid_count) + parseInt(reward.waiting_payment_count),

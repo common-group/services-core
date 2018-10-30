@@ -99,7 +99,7 @@ const projectEditReward = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const error = ctrl.error,
             project = args.project;
 

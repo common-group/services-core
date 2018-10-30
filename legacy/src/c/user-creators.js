@@ -47,7 +47,7 @@ const userCreators = {
             followAll
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const creatorsVM = ctrl.creatorsListVM;
 
         return m('.w-section.bg-gray.before-footer.section', [

@@ -71,7 +71,7 @@ const projectDataTable = {
             sortTable
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const header = _.first(ctrl.table()),
             body = _.rest(ctrl.table());
         return m('.table-outer.u-marginbottom-60', [

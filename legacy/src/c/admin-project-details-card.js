@@ -25,7 +25,7 @@ const adminProjectDetailsCard = {
             isFinalLap
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         let project = ctrl.project,
             progress = project.progress.toFixed(2),
             statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),

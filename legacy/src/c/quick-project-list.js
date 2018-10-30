@@ -3,7 +3,7 @@ import _ from 'underscore';
 import projectVM from '../vms/project-vm';
 
 const quickProjectList = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.quickProjectList', _.map(args.projects(), (project, idx) => m('li.u-marginbottom-10', {
             key: idx
         }, m('.w-row',

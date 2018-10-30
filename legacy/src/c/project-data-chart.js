@@ -46,7 +46,7 @@ const projectDataChart = {
             source
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.card.u-radius.medium.u-marginbottom-30', [
             m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
             m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', args.subLabel || ''),

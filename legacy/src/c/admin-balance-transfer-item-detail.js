@@ -87,7 +87,7 @@ const adminBalanceTransferItemDetail = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const bankAccount = (_.isUndefined(ctrl.metaBank) ? ctrl.userBankAccount() : ctrl.transitionBankAccount());
 
         return m('#admin-balance-transfer-item-detail-box', [

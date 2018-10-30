@@ -68,7 +68,7 @@ const projectSuccessfulNextSteps = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
 
         return ctrl.successfulOnboards();        
     }

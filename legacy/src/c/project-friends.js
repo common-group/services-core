@@ -27,7 +27,7 @@ const projectFriends = {
             friendsSample
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project,
             friendsCount = ctrl.listVM.collection().length,
             wrapper = args.wrapper || '.friend-backed-card';

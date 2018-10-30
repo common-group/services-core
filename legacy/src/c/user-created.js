@@ -44,7 +44,7 @@ const userCreated = {
             error
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const projects_collection = ctrl.projects.collection();
 
         return m('.content[id=\'created-tab\']',

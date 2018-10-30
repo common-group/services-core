@@ -12,7 +12,7 @@ const projectEditGoals = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return (ctrl.user() && ctrl.project() ? (ctrl.project().mode !== 'sub' ? '' : m(projectGoalsEdit, {
             user: ctrl.user(),
             userId: args.user_id,

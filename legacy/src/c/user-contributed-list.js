@@ -16,7 +16,7 @@ const userContributedList = {
             title
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const collection = args.collection,
             isSubscription = args.isSubscription,
             pagination = args.pagination,

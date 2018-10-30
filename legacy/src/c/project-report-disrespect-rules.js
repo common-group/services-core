@@ -37,7 +37,7 @@ const projectReportDisrespectRules = {
             sendReport: vnode.attrs.sendReport.bind(vnode.attrs.sendReport, validate),
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.card.u-radius.u-margintop-20',
           m('.w-form',
             m('form', {

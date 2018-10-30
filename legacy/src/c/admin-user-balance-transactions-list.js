@@ -26,7 +26,7 @@ const adminUserBalanceTransactionsList = {
             transactionsListVM
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const collection = ctrl.transactionsListVM.collection(),
             userBalance = ctrl.userBalance() || { amount: 0 };
 

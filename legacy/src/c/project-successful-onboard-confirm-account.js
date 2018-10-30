@@ -32,7 +32,7 @@ const projectSuccessfulOnboardConfirmAccount = {
             currentStage
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const projectAccount = args.projectAccount,
             actionStage = ctrl.actionStage,
             currentStage = ctrl.currentStage,

@@ -49,7 +49,7 @@ const Flex = {
             }
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const stats = _.first(ctrl.stats());
 
         return [

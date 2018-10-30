@@ -4,7 +4,7 @@ import paymentMethodIcon from './payment-method-icon';
 import subscriptionStatusIcon from './subscription-status-icon';
 
 const subPaymentStatus = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = args.item;
         return m('.w-row.admin-contribution', [
             m('div',

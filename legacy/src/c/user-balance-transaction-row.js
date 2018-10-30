@@ -16,7 +16,7 @@ const userBalanceTrasactionRow = {
             expanded
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const item = args.item,
             createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 

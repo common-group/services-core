@@ -10,7 +10,7 @@ const userSubscriptionDetail = {
             subscription
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = args.subscription;
 
         return m(userSubscriptionBox, { subscription });

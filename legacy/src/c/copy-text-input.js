@@ -42,7 +42,7 @@ const copyTextInput = {
             showSuccess
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.clipboard.w-row', [
             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', m('textarea.copy-textarea.text-field.w-input', {
                 style: 'margin-bottom:0;'

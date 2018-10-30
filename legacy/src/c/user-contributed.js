@@ -46,7 +46,7 @@ const userContributed = {
             loader
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const projects_collection = ctrl.projects.collection();
         return ctrl.error() ? m(inlineError, { message: 'Erro ao carregar os projetos.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
             [

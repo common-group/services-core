@@ -25,7 +25,7 @@ const liveStatistics = {
             notificationData
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const data = ctrl.notificationData();
 
         return m('.w-section.bg-stats.section.min-height-100', [

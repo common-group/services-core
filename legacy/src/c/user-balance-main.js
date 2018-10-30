@@ -71,7 +71,7 @@ const userBalanceMain = {
             balanceTransactionManager
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const opts = _.extend({}, args, ctrl);
         return m('#balance-area', [
             m(userBalance, opts),

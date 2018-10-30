@@ -53,7 +53,7 @@ const adminUserDetail = {
             },
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const actions = ctrl.actions,
             item = args.item,
             details = args.details,

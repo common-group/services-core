@@ -59,7 +59,7 @@ const thankYou = {
             recommendedProjects
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('#thank-you', { config: ctrl.setEvents }, [
             m('.page-header.u-marginbottom-30',
               m('.w-container',

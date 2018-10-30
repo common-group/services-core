@@ -145,7 +145,7 @@ const posts = {
             isProjectLoaded
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         
         const project = _.first(ctrl.projectDetails()),
             paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);

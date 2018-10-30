@@ -11,7 +11,7 @@ const projectComments = {
 
         return { loadComments };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project();
         return m('.w-row',
             [

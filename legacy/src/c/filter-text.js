@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const filterText = {
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
 
         const buttonOptions = {};
 

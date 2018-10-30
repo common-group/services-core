@@ -12,7 +12,7 @@ const projectEditVideo = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return (ctrl.user() && ctrl.project() ? m(projectVideoEdit, {
             user: ctrl.user(),
             userId: args.user_id,

@@ -36,7 +36,7 @@ const userFollowers = {
             followersListVM
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const followersVM = ctrl.followersListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [

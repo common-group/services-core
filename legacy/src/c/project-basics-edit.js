@@ -148,7 +148,7 @@ const projectBasicsEdit = {
             tagEditingLoading
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const vm = ctrl.vm;
 
         return m('#basics-tab', [

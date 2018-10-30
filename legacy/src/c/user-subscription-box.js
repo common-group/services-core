@@ -221,7 +221,7 @@ const userSubscriptionBox = {
             generateSecondSlip
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const 
             subscription = ctrl.subscription,
             project = subscription.project;

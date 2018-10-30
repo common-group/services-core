@@ -69,7 +69,7 @@ const paymentSlip = {
             isReactivation
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const buttonLabel = ctrl.isSubscriptionEdit() && !args.isReactivation() ? window.I18n.t('subscription_edit', I18nScope()) : window.I18n.t('pay_slip', I18nScope());
 
         return m('.w-row',

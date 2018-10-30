@@ -29,7 +29,7 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
 
         return { payments, loadingFirstPage };
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const paymentsColletion = ctrl.payments.collection();
 

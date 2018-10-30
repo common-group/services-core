@@ -63,7 +63,7 @@ const ProjectsSubscriptionThankYou = {
             isEdit
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project();
         const user = h.getUser();
         const projectUser = ctrl.projectUser();

@@ -3,7 +3,7 @@ import dashboardSubscriptionCardDetailPaymentHistory from './dashboard-subscript
 
 const userSubscriptionPaymentHistoryModal = {
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         
         const 
             subscription = args.subscription,

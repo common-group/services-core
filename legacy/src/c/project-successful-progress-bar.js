@@ -48,7 +48,7 @@ const projectSuccessfulProgressBar = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const 
             designComponent = ctrl.designStates[args.current_state()],
             processingComponent = designComponent.processing,

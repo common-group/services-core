@@ -53,7 +53,7 @@ const adminInputAction = {
             unload
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const data = args.data,
             btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
 

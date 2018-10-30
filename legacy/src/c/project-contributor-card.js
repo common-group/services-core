@@ -20,7 +20,7 @@ const projectContributorCard = {
             userDetails
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const contribution = args.contribution;
 
         return m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [

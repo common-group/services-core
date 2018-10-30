@@ -117,7 +117,7 @@ const adminSubscriptionDetail = {
             l
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const payments = ctrl.payments(),
             transitions = ctrl.transitions(),
             notifications = ctrl.notifications(),

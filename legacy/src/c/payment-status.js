@@ -79,7 +79,7 @@ const paymentStatus = {
             stateClass
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const payment = args.item;
 
         return m('.w-row.payment-status', [

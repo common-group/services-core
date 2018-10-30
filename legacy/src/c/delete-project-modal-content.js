@@ -45,7 +45,7 @@ const deleteProjectModalContent = {
             check
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div',
                  (ctrl.deleteSuccess() ? '' : m('.modal-dialog-header',
                   m('.fontsize-large.u-text-center',

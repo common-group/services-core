@@ -46,7 +46,7 @@ const postsPreview = {
             togglePreview
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const comment_html = args.comment_html(),
             title = args.title(),
             recipientsText = args.reward_id > 1 ?

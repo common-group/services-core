@@ -19,7 +19,7 @@ const innerFieldInput = {
 
         return { inputState };
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const defaultInputOptions = {
             onchange: m.withAttr('value', ctrl.inputState.setValue),
@@ -91,7 +91,7 @@ const filterDropdownNumberRange = {
             showDropdown = h.toggleProp(false, true);
         return {firstValue, secondValue, clearFieldValues, getLowerValue, getHigherValue, renderPlaceholder, showDropdown};
     },
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
         
         const dropdownOptions = {};
         const shouldRenderInnerFieldLabel = !!!args.inner_field_label;

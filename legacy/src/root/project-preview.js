@@ -3,7 +3,7 @@ import m from 'mithril';
 import projectsShow from '../root/projects-show';
 
 const projectPreview = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return args.project() ? m('div', [
             m('.u-text-center',
                 m('.w-container',

@@ -55,7 +55,7 @@ const insights = {
             isProjectNotLoader
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = _.first(ctrl.projectDetails()) || {
                 user: {
                     name: 'Realizador'

@@ -82,7 +82,7 @@ const projectEditWelcome = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const error = ctrl.error,
             project = args.project;
         return m("[id='dashboard-welcome-tab']",

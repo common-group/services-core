@@ -53,7 +53,7 @@ const UserFollowBtn = {
             hover
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         if (h.userSignedIn() && h.getUserID() != args.follow_id) {
             let disableClass = args.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
                 enabledClass = args.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';

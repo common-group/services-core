@@ -98,7 +98,7 @@ const projectRewardCard = {
             contributionValue: vm.contributionValue
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         // FIXME: MISSING ADJUSTS
         // - add draft admin modifications
         const reward = ctrl.reward,

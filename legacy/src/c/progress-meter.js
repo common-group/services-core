@@ -20,7 +20,7 @@ const progressMeter = {
             isFinished
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const project = ctrl.project;
         return m(ctrl.cardMeter(), [
             (ctrl.isFinished(project)) ?

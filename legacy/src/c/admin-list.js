@@ -12,7 +12,7 @@ const adminList = {
             });
         }
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const list = args.vm.list,
             error = args.vm.error,
             label = args.label || '',

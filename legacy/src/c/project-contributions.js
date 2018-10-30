@@ -94,7 +94,7 @@ const projectContributions = {
             contributionsStats
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const list = ctrl.listVM,
             stats = projectVM.isSubscription(args.project()) ? args.subscriptionData() : ctrl.contributionsStats(),
             groupedCollection = ctrl.groupedCollection(list.collection());

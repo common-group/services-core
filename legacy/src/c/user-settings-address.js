@@ -11,7 +11,7 @@ const userSettingsAddress = {
     {
         return {};
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const
             fields = args.fields,

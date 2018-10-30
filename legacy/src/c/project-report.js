@@ -114,7 +114,7 @@ const projectReport = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.card.card-terciary.u-radius', [
             ctrl.sendSuccess() ?
                     m('.w-form', m('p', 'Obrigado! A sua denúncia foi recebida.'))

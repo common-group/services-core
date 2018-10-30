@@ -4,7 +4,7 @@ import userVM from '../vms/user-vm';
 import UserFollowBtn from './user-follow-btn';
 
 const userHeader = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const user = args.user,
             hideDetails = args.hideDetails,
             profileImage = userVM.displayImage(user),
