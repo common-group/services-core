@@ -9,6 +9,10 @@ import Chart from 'chart.js';
     Chart.defaults.global.responsive = false;
     Chart.defaults.global.scaleFontFamily = 'proxima-nova';
 
+    // NOTE: comment when need to use multilanguage i18n support
+    window.I18n.defaultLocale = 'pt';
+    window.I18n.locale = 'pt';
+
     const adminRoot = document.getElementById('new-admin');
 
     if (adminRoot) {
