@@ -113,7 +113,7 @@ const surveyCreate = {
             return false;
         };
 
-        return {
+        vnode.state = {
             reward,
             showError,
             showPreview,
@@ -128,12 +128,12 @@ const surveyCreate = {
         };
     },
     view: function({state}) {
-        const project = _.first(ctrl.projectDetails());
-        const reward = _.first(ctrl.reward());
+        const project = _.first(state.projectDetails());
+        const reward = _.first(state.reward());
         return project ? m('.project-surveys', (project.is_owner_or_admin ? m(projectDashboardMenu, {
             project: prop(project)
         }) : ''),
-            ctrl.showPreview() ? m(surveyCreatePreview, { confirmAddress: ctrl.confirmAddress(), showPreview: ctrl.showPreview, surveyVM, reward, sendQuestions: ctrl.sendQuestions }) : [
+            state.showPreview() ? m(surveyCreatePreview, { confirmAddress: state.confirmAddress(), showPreview: state.showPreview, surveyVM, reward, sendQuestions: state.sendQuestions }) : [
             (reward ?
                 m('.card-terciary.section.u-text-center',
                     m('.w-container',
@@ -160,13 +160,13 @@ const surveyCreate = {
                                     'Confirmar endereço de entrega?'
                                 ),
                                 m('a.toggle.w-clearfix.w-inline-block', {
-                                    class: ctrl.confirmAddress() ? 'toggle-on' : 'toggle-off',
-                                    onclick: ctrl.confirmAddress.toggle
+                                    class: state.confirmAddress() ? 'toggle-on' : 'toggle-off',
+                                    onclick: state.confirmAddress.toggle
                                 }, [
                                     m('.toggle-btn', {
-                                        class: ctrl.confirmAddress() ? null : 'toggle-btn--off'
+                                        class: state.confirmAddress() ? null : 'toggle-btn--off'
                                     }),
-                                    ctrl.confirmAddress() ? m('.u-right', 'SIM') : m('.u-left', 'NÃO')
+                                    state.confirmAddress() ? m('.u-right', 'SIM') : m('.u-left', 'NÃO')
                                 ]
                                 ),
                                 m('input[type="hidden"]', {
@@ -182,20 +182,20 @@ const surveyCreate = {
                             ])
                         ]),
                         _.map(surveyVM.dashboardQuestions(), (question, index) => m('.card.card-terciary.medium.u-marginbottom-20.w-row', [
-                            ctrl.choiceDropdown(question),
+                            state.choiceDropdown(question),
                             m('.w-clearfix.w-col.w-col-8', [
                                 m(
                                     question.type === 'multiple' ? dashboardMultipleChoiceQuestion : dashboardOpenQuestion,
                                     { question, index }
                                 ),
                                 m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash.u-right', {
-                                    onclick: ctrl.deleteDashboardQuestion(question)
+                                    onclick: state.deleteDashboardQuestion(question)
                                 })
                             ])
 
                         ])),
                         m('button.btn.btn-large.btn-message', {
-                            onclick: ctrl.addDashboardQuestion
+                            onclick: state.addDashboardQuestion
                         }, [
                             m('span.fa.fa-plus-circle'),
                             '  Adicionar pergunta'
@@ -208,11 +208,11 @@ const surveyCreate = {
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4',
                             m('a.btn.btn-large[href=\'javascript:void(0);\']', {
-                                onclick: ctrl.toggleShowPreview
+                                onclick: state.toggleShowPreview
                             },
                                 'Pré-visualizar'
                             ),
-                            ctrl.showError()
+                            state.showError()
                                 ? m('.u-text-center.u-margintop-10', m(inlineError, { message: 'Erro ao salvar formulário.' }))
                                 : null
                         )

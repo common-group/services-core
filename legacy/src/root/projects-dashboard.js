@@ -16,10 +16,10 @@ const projectsDashboard = {
     oninit: function(vnode) {
         projectVM.init(vnode.attrs.project_id, vnode.attrs.project_user_id);
 
-        return projectVM;
+        vnode.state = projectVM;
     },
     view: function({state}) {
-        const project = ctrl.currentProject;
+        const project = state.currentProject;
 
         return project().is_owner_or_admin ?
             m(projectDashboardMenu, { project }) : '';

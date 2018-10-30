@@ -38,13 +38,13 @@ const subscriptionStatusIcon = {
             });
         }
 
-        return {
+        vnode.state = {
             statusClass
         };
     },
     view: function({state, attrs}) {
-        const subscription = args.subscription,
-            statusClass = ctrl.statusClass,
+        const subscription = attrs.subscription,
+            statusClass = state.statusClass,
 	            statusToShowTransitionDate = ['started', 'canceling', 'canceled', 'inactive'],
             shouldShowTransitionDate = statusToShowTransitionDate.indexOf(subscription.status) >= 0;
 

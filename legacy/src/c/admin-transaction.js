@@ -2,8 +2,8 @@ import m from 'mithril';
 import h from '../h';
 
 const adminTransaction = {
-    view: function({state, attrs}) {
-        const contribution = args.contribution;
+    view: function({attrs}) {
+        const contribution = attrs.contribution;
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Detalhes do apoio'),
             m('.fontsize-smallest.lineheight-looser', [

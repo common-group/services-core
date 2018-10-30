@@ -116,18 +116,18 @@ const projectEdit = {
             };
 
         h.redrawHashChange();
-        return {
+        vnode.state = {
             displayTabContent,
             hash,
             project
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.project;
+        const project = state.project;
 
         return m('.project-dashboard-edit', (project() ? [
             m(`.w-section.section-product.${project().mode}`),
-            ctrl.displayTabContent(),
+            state.displayTabContent(),
             (project() ? m(projectDashboardMenu, {
                 project
             }) : '')

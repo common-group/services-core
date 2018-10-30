@@ -86,7 +86,7 @@ const projectEditReward = {
 
         loadRewards();
 
-        return {
+        vnode.state = {
             loading,
             error,
             errors,
@@ -100,18 +100,18 @@ const projectEditReward = {
     },
 
     view: function({state, attrs}) {
-        const error = ctrl.error,
-            project = args.project;
+        const error = state.error,
+            project = attrs.project;
 
         return m("[id='dashboard-rewards-tab']",
             (project() ? [
                 m('.w-section.section',
                     m('.w-container', [
-                        (ctrl.showSuccess() ? m(popNotification, {
+                        (state.showSuccess() ? m(popNotification, {
                             message: 'Recompensa salva com sucesso'
                         }) : ''),
-                        (ctrl.error() ? m(popNotification, {
-                            message: ctrl.errors(),
+                        (state.error() ? m(popNotification, {
+                            message: state.errors(),
                             error: true
                         }) : ''),
                         m('.w-row',
@@ -127,25 +127,25 @@ const projectEditReward = {
                         m('.w-row', [
                             m('.w-col.w-col-8',
                                 m('.w-form', [
-                                    ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
-                                        config: ctrl.setSorting
+                                    state.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
+                                        config: state.setSorting
                                     }, [
-                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
+                                        _.map(_.sortBy(state.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
                                                 m('.reward-card', [
                                                     (!reward().edit() ?
                                                         m(dashboardRewardCard, {
                                                             reward,
                                                             error,
-                                                            errors: ctrl.errors,
-                                                            user: ctrl.user(),
-                                                            showSuccess: ctrl.showSuccess,
+                                                            errors: state.errors,
+                                                            user: state.user(),
+                                                            showSuccess: state.showSuccess,
                                                             project
                                                         }) :
                                                         m(editRewardCard, {
-                                                            project_id: args.project_id,
+                                                            project_id: attrs.project_id,
                                                             error,
-                                                            showSuccess: ctrl.showSuccess,
-                                                            errors: ctrl.errors,
+                                                            showSuccess: state.showSuccess,
+                                                            errors: state.errors,
                                                             reward
                                                         }))
                                                 ])
@@ -157,9 +157,9 @@ const projectEditReward = {
                                     ])
 
                                 ]),
-                                rewardVM.canAdd(project().state, ctrl.user()) ? [
+                                rewardVM.canAdd(project().state, state.user()) ? [
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                        onclick: () => ctrl.rewards().push(prop(ctrl.newReward()))
+                                        onclick: () => state.rewards().push(prop(state.newReward()))
                                     },
                                         window.I18n.t('add_reward', I18nScope())
                                     )
@@ -180,7 +180,7 @@ const projectEditReward = {
                                         window.I18n.t('reward_faq_sub_intro', I18nScope()),
                                         m('br'),
                                         m('br'),
-                                        _.map(ctrl.tips,
+                                        _.map(state.tips,
                                             (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4)
                                                 ? null : [
                                                     m('.fontweight-semibold', tip.title),

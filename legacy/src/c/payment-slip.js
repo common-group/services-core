@@ -56,7 +56,7 @@ const paymentSlip = {
             return false;
         };
 
-        return {
+        vnode.state = {
             vm,
             buildSlip,
             slipPaymentDate,
@@ -70,37 +70,37 @@ const paymentSlip = {
         };
     },
     view: function({state, attrs}) {
-        const buttonLabel = ctrl.isSubscriptionEdit() && !args.isReactivation() ? window.I18n.t('subscription_edit', I18nScope()) : window.I18n.t('pay_slip', I18nScope());
+        const buttonLabel = state.isSubscriptionEdit() && !attrs.isReactivation() ? window.I18n.t('subscription_edit', I18nScope()) : window.I18n.t('pay_slip', I18nScope());
 
         return m('.w-row',
                     m('.w-col.w-col-12',
                         m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [
                             projectVM.isSubscription() ? '' : m('.fontsize-small.u-marginbottom-20',
-                                ctrl.slipPaymentDate() ? `Esse boleto bancário vence no dia ${h.momentify(ctrl.slipPaymentDate().slip_expiration_date)}.` : 'carregando...'
+                                state.slipPaymentDate() ? `Esse boleto bancário vence no dia ${h.momentify(state.slipPaymentDate().slip_expiration_date)}.` : 'carregando...'
                             ),
                             m('.fontsize-small.u-marginbottom-40',
                                 'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'
                             ),
                             m('.w-row',
                                 m('.w-col.w-col-8.w-col-push-2', [
-                                    ctrl.vm.isLoading() ? h.loader() : ctrl.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
-                                        onclick: ctrl.buildSlip,
+                                    state.vm.isLoading() ? h.loader() : state.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
+                                        onclick: state.buildSlip,
                                         value: buttonLabel,
                                         type: 'submit'
                                     }),
-                                    ctrl.showSubscriptionModal()
+                                    state.showSubscriptionModal()
                                         ? m(subscriptionEditModal,
                                             {
                                                 args,
-                                                vm: ctrl.vm,
-                                                showModal: ctrl.showSubscriptionModal,
-                                                confirm: ctrl.subscriptionEditConfirmed,
+                                                vm: state.vm,
+                                                showModal: state.showSubscriptionModal,
+                                                confirm: state.subscriptionEditConfirmed,
                                                 paymentMethod: 'boleto',
-                                                pay: ctrl.buildSlip
+                                                pay: state.buildSlip
                                             }
                                         ) : null,
-                                    !_.isEmpty(ctrl.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(ctrl.vm.submissionError()))) : '',
-                                    ctrl.error() ? m(inlineError, { message: ctrl.error() }) : '',
+                                    !_.isEmpty(state.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', m('.u-marginbottom-10.fontweight-bold', m.trust(state.vm.submissionError()))) : '',
+                                    state.error() ? m(inlineError, { message: state.error() }) : '',
                                     m('.fontsize-smallest.u-text-center.u-marginbottom-30', [
                                         'Ao apoiar, você concorda com os ',
                                         m(`a.alt-link[href=\'/${window.I18n.locale}/terms-of-use\']`,

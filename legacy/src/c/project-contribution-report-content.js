@@ -56,7 +56,7 @@ const projectContributionReportContent = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             showSuccess,
             selectAll,
             unselectAll,
@@ -71,22 +71,22 @@ const projectContributionReportContent = {
         };
     },
     view: function({state, attrs}) {
-        const list = args.list;
-        const isFailed = args.project().state === 'failed';
+        const list = attrs.list;
+        const isFailed = attrs.project().state === 'failed';
 
-        return m('.w-section.bg-gray.before-footer.section', ctrl.loading() ? h.loader() : [
-              (ctrl.displayErrorModal() ? m(modalBox, {
-                  displayModal: ctrl.displayErrorModal,
+        return m('.w-section.bg-gray.before-footer.section', state.loading() ? h.loader() : [
+              (state.displayErrorModal() ? m(modalBox, {
+                  displayModal: state.displayErrorModal,
                   hideCloseButton: false,
-                  content: [errorContributionModalContent, { project: args.project, displayModal: ctrl.displayErrorModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+                  content: [errorContributionModalContent, { project: attrs.project, displayModal: state.displayErrorModal, amount: state.selectedContributions().length, updateStatus: state.updateStatus, message: state.deliveryMessage }]
               }) : ''),
-              (ctrl.displayDeliverModal() ? m(modalBox, {
-                  displayModal: ctrl.displayDeliverModal,
+              (state.displayDeliverModal() ? m(modalBox, {
+                  displayModal: state.displayDeliverModal,
                   hideCloseButton: false,
-                  content: [deliverContributionModalContent, { project: args.project, displayModal: ctrl.displayDeliverModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+                  content: [deliverContributionModalContent, { project: attrs.project, displayModal: state.displayDeliverModal, amount: state.selectedContributions().length, updateStatus: state.updateStatus, message: state.deliveryMessage }]
               }) : ''),
 
-            (ctrl.showSuccess() ? m(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: 'As informações foram atualizadas'
             }) : ''),
             m('.w-container', [
@@ -101,22 +101,22 @@ const projectContributionReportContent = {
                             ])
                         ),
                         m('.w-col.w-col-6', isFailed ? '' : [
-                            (!ctrl.selectedAny() ?
+                            (!state.selectedAny() ?
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                                    onclick: ctrl.selectAll
+                                    onclick: state.selectAll
                                 },
                                     'Selecionar todos'
                                 ) :
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                                    onclick: ctrl.unselectAll
+                                    onclick: state.unselectAll
                                 },
                                     'Desmarcar todos'
                                 )
                             ),
-                            (ctrl.selectedAny() ?
+                            (state.selectedAny() ?
                                 m('.w-inline-block', [
                                     m('button.btn.btn-inline.btn-small.btn-terciary.w-button', {
-                                        onclick: ctrl.showSelectedMenu.toggle
+                                        onclick: state.showSelectedMenu.toggle
                                     }, [
                                         'Marcar ',
                                         m('span.w-hidden-tiny',
@@ -124,15 +124,15 @@ const projectContributionReportContent = {
                                         ),
                                         ' como'
                                     ]),
-                                    (ctrl.showSelectedMenu() ?
+                                    (state.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.displayDeliverModal.toggle()
+                                                onclick: () => state.displayDeliverModal.toggle()
                                             },
                                                 'Entregue'
                                             ),
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.displayErrorModal.toggle()
+                                                onclick: () => state.displayErrorModal.toggle()
                                             },
                                                 'Erro na entrega'
                                             )
@@ -140,7 +140,7 @@ const projectContributionReportContent = {
                                 ]) : '')
                         ]),
                         m('.w-clearfix.w-col.w-col-4',
-                            m('a.alt-link.fontsize-small.lineheight-looser.u-right', { onclick: () => args.showDownloads(true) }, [
+                            m('a.alt-link.fontsize-small.lineheight-looser.u-right', { onclick: () => attrs.showDownloads(true) }, [
                                 m('span.fa.fa-download',
                                     ''
                                 ),
@@ -153,10 +153,10 @@ const projectContributionReportContent = {
                 _.map(list.collection(), (item) => {
                     const contribution = prop(item);
                     return m(projectContributionReportContentCard, {
-                        project: args.project,
+                        project: attrs.project,
                         contribution,
-                        selectedContributions: ctrl.selectedContributions,
-                        selectedAny: ctrl.selectedAny
+                        selectedContributions: state.selectedContributions,
+                        selectedAny: state.selectedAny
                     });
                 })
             ]),

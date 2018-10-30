@@ -82,7 +82,7 @@ const projectContributions = {
         const lContributionsStats = catarse.loader(models.projectContributiorsStat.getRowOptions(filterStats.parameters()));
         lContributionsStats.load().then(data => contributionsStats(_.first(data)));
 
-        return {
+        vnode.state = {
             listVM,
             filterVM,
             groupedCollection,
@@ -95,20 +95,20 @@ const projectContributions = {
         };
     },
     view: function({state, attrs}) {
-        const list = ctrl.listVM,
-            stats = projectVM.isSubscription(args.project()) ? args.subscriptionData() : ctrl.contributionsStats(),
-            groupedCollection = ctrl.groupedCollection(list.collection());
+        const list = state.listVM,
+            stats = projectVM.isSubscription(attrs.project()) ? attrs.subscriptionData() : state.contributionsStats(),
+            groupedCollection = state.groupedCollection(list.collection());
 
         return m('#project_contributions', m('#contributions_top', [
             m('.section.w-section',
                     m('.w-container',
-                        m('.w-row', ctrl.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
+                        m('.w-row', state.lContributionsStats() ? h.loader() : !_.isEmpty(stats) ? [
                             m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', [
                                 m('.fontsize-megajumbo',
-                                    projectVM.isSubscription(args.project()) ? stats.total_subscriptions : stats.total
+                                    projectVM.isSubscription(attrs.project()) ? stats.total_subscriptions : stats.total
                                 ),
                                 m('.fontsize-large',
-                                    window.I18n.t(`people_back.${args.project().mode}`, I18nScope())
+                                    window.I18n.t(`people_back.${attrs.project().mode}`, I18nScope())
                                 )
                             ]),
                             m('.w-col.w-col-6',
@@ -116,25 +116,25 @@ const projectContributions = {
                                     m('.w-row', [
                                         m('.u-marginbottom-20.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                             m('.fontweight-semibold.u-marginbottom-10',
-                                                window.I18n.t(`new_backers.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`new_backers.${attrs.project().mode}`, I18nScope())
                                             ),
                                             m('.fontsize-largest.u-marginbottom-10',
                                                 `${Math.floor(stats.new_percent)}%`
                                             ),
                                             m('.fontsize-smallest',
-                                                window.I18n.t(`new_backers_explanation.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`new_backers_explanation.${attrs.project().mode}`, I18nScope())
                                             )
                                         ]),
                                         m('.w-col.w-sub-col.w-col-6.w-col-small-6', [
                                             m('.divider.u-marginbottom-20.w-hidden-main.w-hidden-medium.w-hidden-small'),
                                             m('.fontweight-semibold.u-marginbottom-10',
-                                                window.I18n.t(`recurring_backers.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`recurring_backers.${attrs.project().mode}`, I18nScope())
                                             ),
                                             m('.fontsize-largest.u-marginbottom-10',
                                                 `${Math.ceil(stats.returning_percent)}%`
                                             ),
                                             m('.fontsize-smallest',
-                                                window.I18n.t(`recurring_backers_explanation.${args.project().mode}`, I18nScope())
+                                                window.I18n.t(`recurring_backers_explanation.${attrs.project().mode}`, I18nScope())
                                             )
                                         ])
                                     ])
@@ -145,9 +145,9 @@ const projectContributions = {
                 ),
             m('.divider.w-section'),
             m('.section.w-section', m('.w-container', [
-                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', window.I18n.t(`backers.${args.project().mode}`, I18nScope())),
+                m('.fontsize-large.fontweight-semibold.u-marginbottom-40.u-text-center', window.I18n.t(`backers.${attrs.project().mode}`, I18nScope())),
                 m('.project-contributions.w-clearfix', _.map(groupedCollection, (group, idx) => m('.w-row', _.map(group, contribution => m('.project-contribution-item.w-col.w-col-4', [
-                    m(projectContributorCard, { project: args.project, contribution, isSubscription: projectVM.isSubscription(args.project()) })
+                    m(projectContributorCard, { project: attrs.project, contribution, isSubscription: projectVM.isSubscription(attrs.project()) })
                 ]))))),
                 m('.w-row.u-marginbottom-40.u-margintop-20', [
                     m('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ?
@@ -158,15 +158,15 @@ const projectContributions = {
                 ])
             ]))
         ]),
-            (projectVM.isSubscription(args.project()) ? '' :
+            (projectVM.isSubscription(attrs.project()) ? '' :
             m('.before-footer.bg-gray.section.w-section', m('.w-container', [
                 m('.w-row.u-marginbottom-60', [
                     m('.w-col.w-col-12.u-text-center', {
                         style: {
                             'min-height': '300px'
                         }
-                    }, [!ctrl.lContributionsPerDay() ? m(projectDataChart, {
-                        collection: ctrl.contributionsPerDay,
+                    }, [!state.lContributionsPerDay() ? m(projectDataChart, {
+                        collection: state.contributionsPerDay,
                         label: 'R$ arrecadados por dia',
                         dataKey: 'total_amount',
                         xAxis: item => h.momentify(item.paid_at),
@@ -176,8 +176,8 @@ const projectContributions = {
                 m('.w-row',
                     m('.w-col.w-col-12.u-text-center', [
                         m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', 'De onde vem os apoios'),
-                        (!ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m(projectDataTable, {
-                            table: ctrl.contributionsPerLocationTable,
+                        (!state.lContributionsPerLocation() ? !_.isEmpty(_.rest(state.contributionsPerLocationTable)) ? m(projectDataTable, {
+                            table: state.contributionsPerLocationTable,
                             defaultSortIndex: -2
                         }) : '' : h.loader())
                     ])

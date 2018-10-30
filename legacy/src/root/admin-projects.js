@@ -166,7 +166,7 @@ const adminProjects = {
 
         loadCategories();
 
-        return {
+        vnode.state = {
             filterVM,
             filterBuilder,
             listVM: {
@@ -181,14 +181,14 @@ const adminProjects = {
 
         return m('', [
             m(adminFilter, {
-                form: ctrl.filterVM.formDescriber,
-                filterBuilder: ctrl.filterBuilder,
+                form: state.filterVM.formDescriber,
+                filterBuilder: state.filterBuilder,
                 label,
-                submit: ctrl.submit
+                submit: state.submit
             }),
             m(adminList, {
-                vm: ctrl.listVM,
-                filterVM: ctrl.filterVM,
+                vm: state.listVM,
+                filterVM: state.filterVM,
                 label,
                 listItem: adminProjectItem,
                 listDetail: adminProjectDetail

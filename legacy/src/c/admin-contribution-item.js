@@ -8,7 +8,7 @@ import paymentStatus from './payment-status';
 
 const adminContributionItem = {
     oninit: function() {
-        return {
+        vnode.state = {
             itemBuilder: [{
                 component: adminContributionUser,
                 wrapperClass: '.w-col.w-col-4'
@@ -27,10 +27,10 @@ const adminContributionItem = {
     view: function({state, attrs}) {
         return m(
             '.w-row',
-            _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [
+            _.map(state.itemBuilder, panel => m(panel.wrapperClass, [
                 m(panel.component, {
-                    item: args.item,
-                    key: args.key
+                    item: attrs.item,
+                    key: attrs.key
                 })
             ]))
         );

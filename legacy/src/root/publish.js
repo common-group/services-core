@@ -33,7 +33,7 @@ const publish = {
 
         const acceptedIndex = prop(0);
 
-        return {
+        vnode.state = {
             l,
             accountL,
             acceptedIndex,
@@ -44,12 +44,12 @@ const publish = {
         };
     },
     view: function({state, attrs}) {
-        const project = _.first(ctrl.projectDetails()),
-            acceptedIndex = ctrl.acceptedIndex,
-            account = _.first(ctrl.projectAccount());
+        const project = _.first(state.projectDetails()),
+            acceptedIndex = state.acceptedIndex,
+            account = _.first(state.projectAccount());
 
         const terms = project.mode === 'flex' ? publishVM.flexTerms(project) :
-          project.mode === 'aon' ? publishVM.aonTerms(project, ctrl.expiresAt()) :
+          project.mode === 'aon' ? publishVM.aonTerms(project, state.expiresAt()) :
                                    publishVM.subTerms(project);
 
         return [project && account ? [

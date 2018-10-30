@@ -38,7 +38,7 @@ const projectsContribution = {
 
         projectVM.getCurrentProject();
 
-        return {
+        vnode.state = {
             project: projectVM.currentProject,
             paymentVM: paymentVM(),
             submitContribution,
@@ -46,7 +46,7 @@ const projectsContribution = {
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.project;
+        const project = state.project;
 
         return m('#contribution-new',
                     !_.isEmpty(project()) ? [
@@ -67,10 +67,10 @@ const projectsContribution = {
                             m('.w-col.w-col-8',
                         m('.w-form.back-reward-form',
                             m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/${window.I18n.locale}/projects/${project().id}/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]`,
-                                { onsubmit: ctrl.submitContribution }
+                                { onsubmit: state.submitContribution }
                             , [
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
-                                _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, { reward }))
+                                _.map(state.sortedRewards(), reward => m(rewardSelectCard, { reward }))
                             ])
                         )
                     ),
@@ -83,9 +83,9 @@ const projectsContribution = {
                                 ]),
                                 m(faqBox, {
                                     mode: project().mode,
-                                    vm: ctrl.paymentVM,
-                                    faq: ctrl.paymentVM.faq(project().mode),
-                                    projectUserId: args.project_user_id
+                                    vm: state.paymentVM,
+                                    faq: state.paymentVM.faq(project().mode),
+                                    projectUserId: attrs.project_user_id
                                 })
                             ])
                         ])))

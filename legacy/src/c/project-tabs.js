@@ -52,19 +52,19 @@ const projectTabs = {
             return false;
         };
 
-        return {
+        vnode.state = {
             navDisplay,
             isFixed,
             navigate
         };
     },
     view: function({state, attrs}) {
-        const project = args.project,
-            rewards = args.rewardDetails;
+        const project = attrs.project,
+            rewards = attrs.rewardDetails;
 
         return m('nav-wrapper', project() ? [
             m('.w-section.project-nav', {
-                config: ctrl.navDisplay
+                config: state.navDisplay
             }, [
                 m('.w-container', [
                     m('.w-row', [
@@ -97,7 +97,7 @@ const projectTabs = {
                                     cat: 'project_view', act: 'project_contributions_view', project: project() })
                             }, projectVM.isSubscription(project) ? [
                                 'Assinantes ',
-                                m('span.badge.w-hidden-small.w-hidden-tiny', args.subscriptionData() ? args.subscriptionData().total_subscriptions : '-')
+                                m('span.badge.w-hidden-small.w-hidden-tiny', attrs.subscriptionData() ? attrs.subscriptionData().total_subscriptions : '-')
                             ] : [
                                 'Apoiadores ',
                                 m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
@@ -112,11 +112,11 @@ const projectTabs = {
                                 project() ? m(`fb:comments-count[href="http://www.catarse.me/${project().permalink}"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]`, m.trust('&nbsp;')) : '-'
                             ]),
                         ]),
-                        project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions && !args.hasSubscription() ? [
+                        project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions && !attrs.hasSubscription() ? [
                             m('.w-row.project-nav-back-button', [
                                 projectVM.isSubscription(project) ? m('.w-col.w-col-12', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/subscriptions/start"]`, {
-                                        onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, ctrl.navigate)
+                                        onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, state.navigate)
                                     }, window.I18n.t(`submit_${project().mode}`, I18nScope()))
                                 ]) : m('.w-col.w-col-6.w-col-medium-8', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/contributions/new"]`, {
@@ -133,7 +133,7 @@ const projectTabs = {
                     ])
                 ])
             ]),
-            (ctrl.isFixed() && !project().is_owner_or_admin) ? m('.w-section.project-nav') : ''
+            (state.isFixed() && !project().is_owner_or_admin) ? m('.w-section.project-nav') : ''
         ] : '');
     }
 };

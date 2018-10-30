@@ -12,11 +12,11 @@ const adminList = {
             });
         }
     },
-    view: function({state, attrs}) {
-        const list = args.vm.list,
-            error = args.vm.error,
-            label = args.label || '',
-            itemComponent = args.itemComponent || adminItem;
+    view: function({attrs}) {
+        const list = attrs.vm.list,
+            error = attrs.vm.error,
+            label = attrs.label || '',
+            itemComponent = attrs.itemComponent || adminItem;
 
         return m('.w-section.section', [
             m('.w-container',
@@ -32,7 +32,7 @@ const adminList = {
                                           m('.fontweight-semibold', list.total()),
                                           ` ${label.toLowerCase()} encontrados`
                                       ]),
-                                      (args.vm && args.vm.hasInputAction ? m('.w-col-10.w-col', args.vm.inputActions()) : '')
+                                      (attrs.vm && attrs.vm.hasInputAction ? m('.w-col-10.w-col', attrs.vm.inputActions()) : '')
                                   ])
                               ]
                             )
@@ -40,9 +40,9 @@ const adminList = {
                     ]),
                     m('#admin-contributions-list.w-container', [
                         list.collection().map(item => m(itemComponent, {
-                            listItem: args.listItem,
-                            listDetail: args.listDetail,
-                            listWrapper: args.vm,
+                            listItem: attrs.listItem,
+                            listDetail: attrs.listDetail,
+                            listWrapper: attrs.vm,
                             item,
                             key: item.id
                         })),

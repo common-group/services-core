@@ -29,7 +29,7 @@ const projectsFiscal = {
         l2.load().then((data) => {
             projectDetail(_.first(data) || {});
         });
-        return {
+        vnode.state = {
             l,
             l2,
             projectDetail,
@@ -37,9 +37,9 @@ const projectsFiscal = {
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.projectDetail();
-        const projectFiscalData = ctrl.projectFiscalData();
-        const loading = ctrl.l() || ctrl.l2();
+        const project = state.projectDetail();
+        const projectFiscalData = state.projectFiscalData();
+        const loading = state.l() || state.l2();
         const hasData = !loading && projectFiscalData && (!_.isEmpty(projectFiscalData.debit_notes) || !_.isEmpty(projectFiscalData.informs));
         
         return m('.project-fiscal',

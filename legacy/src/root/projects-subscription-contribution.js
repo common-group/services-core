@@ -42,7 +42,7 @@ const projectsSubscriptionContribution = {
 
         projectVM.getCurrentProject();
 
-        return {
+        vnode.state = {
             isEdit,
             isReactivation,
             project: projectVM.currentProject,
@@ -52,14 +52,14 @@ const projectsSubscriptionContribution = {
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.project;
+        const project = state.project;
         if (_.isEmpty(project())) {
             return h.loader();
         }
-        const faq = ctrl.paymentVM.faq(
-            ctrl.isReactivation()
+        const faq = state.paymentVM.faq(
+            state.isReactivation()
                 ? `${project().mode}_reactivate`
-                : ctrl.isEdit()
+                : state.isEdit()
                     ? `${project().mode}_edit`
                     : project().mode);
 
@@ -72,10 +72,10 @@ const projectsSubscriptionContribution = {
             ),
             m('.w-section.header-cont-new',
                 m('.w-container',
-                    ctrl.isReactivation()
+                    state.isReactivation()
                         ? [m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_reactivation_title', I18nScope())),
                             m('.fontsize-base', window.I18n.t('subscription_edit_subtitle', I18nScope()))]
-                        : ctrl.isEdit()
+                        : state.isEdit()
                             ? [m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_edit_title', I18nScope())),
                                 m('.fontsize-base', window.I18n.t('subscription_edit_subtitle', I18nScope()))]
                             : m('.fontweight-semibold.lineheight-tight.text-success.fontsize-large.u-text-center-small-only', window.I18n.t('subscription_start_title', I18nScope()))
@@ -85,12 +85,12 @@ const projectsSubscriptionContribution = {
                 m('.w-col.w-col-8',
                     m('.w-form.back-reward-form',
                         m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/projects/${project().id}/subscriptions/checkout"][id="contribution_form"][method="get"]`, {
-                            onsubmit: ctrl.submitContribution
+                            onsubmit: state.submitContribution
                         }, [
-                            _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, {
+                            _.map(state.sortedRewards(), reward => m(rewardSelectCard, {
                                 reward,
                                 isSubscription: projectVM.isSubscription(project),
-                                isReactivation: ctrl.isReactivation
+                                isReactivation: state.isReactivation
                             }))
                         ])
                     )
@@ -104,11 +104,11 @@ const projectsSubscriptionContribution = {
                     ]),
                     m(faqBox, {
                         mode: project().mode,
-                        vm: ctrl.paymentVM,
+                        vm: state.paymentVM,
                         faq,
-                        projectUserId: args.project_user_id,
-                        isEdit: ctrl.isEdit(),
-                        isReactivate: ctrl.isReactivation()
+                        projectUserId: attrs.project_user_id,
+                        isEdit: state.isEdit(),
+                        isReactivate: state.isReactivation()
                     })
                 ])
             ])))

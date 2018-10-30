@@ -26,16 +26,16 @@ const projectSuccessfulOnboardConfirmAccount = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             changeToAction,
             actionStage,
             currentStage
         };
     },
     view: function({state, attrs}) {
-        const projectAccount = args.projectAccount,
-            actionStage = ctrl.actionStage,
-            currentStage = ctrl.currentStage,
+        const projectAccount = attrs.projectAccount,
+            actionStage = state.actionStage,
+            currentStage = state.currentStage,
             juridicalPerson = projectAccount.user_type != 'pf';
 
         return m('.w-container.u-marginbottom-40', [
@@ -103,7 +103,7 @@ const projectSuccessfulOnboardConfirmAccount = {
             (currentStage() === 'start') ? m('#confirmation-dialog.w-row.bank-transfer-answer', [
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny'),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: ctrl.changeToAction('accept') }, 'Sim')
+                    m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: state.changeToAction('accept') }, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
                     m('a#refuse-account.btn.btn-large.btn-terciary', { href: `/projects/${projectAccount.project_id}/edit#user_settings` }, 'Não')
@@ -111,9 +111,9 @@ const projectSuccessfulOnboardConfirmAccount = {
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
             ]) : m(actionStage(), {
                 projectAccount,
-                changeToAction: ctrl.changeToAction,
-                acceptAccount: args.acceptAccount,
-                acceptAccountLoader: args.acceptAccountLoader
+                changeToAction: state.changeToAction,
+                acceptAccount: attrs.acceptAccount,
+                acceptAccountLoader: attrs.acceptAccountLoader
             })
         ]);
     }

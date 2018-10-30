@@ -50,7 +50,7 @@ const contributionActivities = {
 
         startTimer();
 
-        return {
+        vnode.state = {
             collection,
             startConfig,
             collectionL,
@@ -59,12 +59,12 @@ const contributionActivities = {
         };
     },
     view: function({state, attrs}) {
-        if (!ctrl.collectionL() && !_.isUndefined(ctrl.resource()) && (ctrl.collectionSize() || 0) > 0) {
-            const resource = ctrl.resource(),
+        if (!state.collectionL() && !_.isUndefined(state.resource()) && (state.collectionSize() || 0) > 0) {
+            const resource = state.resource(),
                 elapsed = h.translatedTime(resource.elapsed_time),
                 projectLink = `https://catarse.me/${resource.permalink}?ref=ctrse_home_activities`;
 
-            return m('.w-section.section.bg-backs-carrosel', { config: ctrl.startConfig }, [
+            return m('.w-section.section.bg-backs-carrosel', { config: state.startConfig }, [
                 m('.w-container.u-text-center.fontcolor-negative', [
                     m('.fontsize-large.u-marginbottom-30', `há ${parseInt(elapsed.total)} ${elapsed.unit}...`),
                     m('.w-clearfix.w-inline-block.u-marginbottom-10', [

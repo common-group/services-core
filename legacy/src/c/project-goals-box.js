@@ -25,24 +25,24 @@ const projectGoalsBox = {
         if (currentGoalIndex() === -1) {
             currentGoalIndex(vnode.attrs.goalDetails().length - 1);
         }
-        return { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
+        vnode.state = { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
     },
     view: function({state, attrs}) {
-        const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
+        const goals = attrs.goalDetails().length > 0 ? attrs.goalDetails() : [{
                 title: 'N/A',
                 value: '',
                 description: ''
             }],
-            subscriptionData = ctrl.subscriptionData,
-            currentGoalIndex = ctrl.currentGoalIndex,
+            subscriptionData = state.subscriptionData,
+            currentGoalIndex = state.currentGoalIndex,
             goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
 
         return m('div',
-          m(`.card.u-marginbottom-30.u-radius${args.style}`, [
+          m(`.card.u-marginbottom-30.u-radius${attrs.style}`, [
               m('.w-clearfix', [
                   m('.u-right', [
-                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-left.w-button', { onclick: ctrl.previousGoal, class: currentGoalIndex() === 0 ? 'btn-desactivated' : '' }),
-                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-right.w-button', { onclick: ctrl.nextGoal, class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : '' })
+                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-left.w-button', { onclick: state.previousGoal, class: currentGoalIndex() === 0 ? 'btn-desactivated' : '' }),
+                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-right.w-button', { onclick: state.nextGoal, class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : '' })
                   ]),
                   m('.fontsize-base.fontweight-semibold.u-marginbottom-20.w-hidden-small.w-hidden-tiny',
                     m('span',

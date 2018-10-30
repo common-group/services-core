@@ -25,7 +25,7 @@ const projectHeader = {
             }
         }
 
-        return {
+        vnode.state = {
             hasSubscription,
             userProjectSubscriptions,
             projectContributions: vnode.attrs.projectContributions,
@@ -33,24 +33,24 @@ const projectHeader = {
         };
     },
     view: function({state, attrs}) {
-        const project = args.project,
-            rewardDetails = args.rewardDetails,
-            activeSubscriptions = _.filter(ctrl.userProjectSubscriptions(), sub => sub.status === 'active'),
-            sortedSubscriptions = _.sortBy(ctrl.userProjectSubscriptions(), sub => _.indexOf(['active', 'started', 'canceling', 'inactive', 'canceled'], sub.status));
+        const project = attrs.project,
+            rewardDetails = attrs.rewardDetails,
+            activeSubscriptions = _.filter(state.userProjectSubscriptions(), sub => sub.status === 'active'),
+            sortedSubscriptions = _.sortBy(state.userProjectSubscriptions(), sub => _.indexOf(['active', 'started', 'canceling', 'inactive', 'canceled'], sub.status));
 
         const hasContribution = (
-            (!_.isEmpty(ctrl.projectContributions()) || ctrl.hasSubscription()) ?
+            (!_.isEmpty(state.projectContributions()) || state.hasSubscription()) ?
             m(`.card.card-terciary.u-radius.u-marginbottom-40${projectVM.isSubscription(project) ? '.fontcolor-primary' : ''}`, [
                 m('.fontsize-small.u-text-center', [
                     m('span.fa.fa-thumbs-up'),
                     m('span.fontweight-semibold', (!projectVM.isSubscription(project) ? ' Você é apoiador deste projeto! ' : ' Você tem uma assinatura neste projeto! ')),
                     m('a.alt-link[href=\'javascript:void(0);\']', {
-                        onclick: ctrl.showContributions.toggle
+                        onclick: state.showContributions.toggle
                     }, 'Detalhes')
                 ]),
-                ctrl.showContributions() ? m('.u-margintop-20.w-row',
+                state.showContributions() ? m('.u-margintop-20.w-row',
                     (!projectVM.isSubscription(project) ?
-                        _.map(ctrl.projectContributions(), contribution => m(userContributionDetail, {
+                        _.map(state.projectContributions(), contribution => m(userContributionDetail, {
                             contribution,
                             rewardDetails
                         })) :
@@ -82,10 +82,10 @@ const projectHeader = {
                             })),
                             m('.w-col.w-col-4', m(projectSidebar, {
                                 project,
-                                hasSubscription: ctrl.hasSubscription(),
-                                subscriptionData: args.subscriptionData,
-                                userDetails: args.userDetails,
-                                goalDetails: args.goalDetails
+                                hasSubscription: state.hasSubscription(),
+                                subscriptionData: attrs.subscriptionData,
+                                userDetails: attrs.userDetails,
+                                goalDetails: attrs.goalDetails
                             }))
                         ])
                     ])

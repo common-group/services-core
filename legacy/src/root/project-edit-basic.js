@@ -6,18 +6,18 @@ import projectBasicsEdit from '../c/project-basics-edit';
 
 const projectEditBasic = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             user: userVM.fetchUser(vnode.attrs.user_id),
             project: projectVM.fetchProject(vnode.attrs.project_id)
         };
     },
 
     view: function({state, attrs}) {
-        return (ctrl.user() && ctrl.project() ? m(projectBasicsEdit, {
-            user: ctrl.user(),
-            userId: args.user_id,
-            projectId: args.project_id,
-            project: ctrl.project()
+        return (state.user() && state.project() ? m(projectBasicsEdit, {
+            user: state.user(),
+            userId: attrs.user_id,
+            projectId: attrs.project_id,
+            project: state.project()
         }) : m('div', h.loader()));
     }
 };

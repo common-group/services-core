@@ -49,7 +49,7 @@ const dashboardRewardCard = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             availableCount,
             toggleShowLimit,
             toggleLimit,
@@ -59,8 +59,8 @@ const dashboardRewardCard = {
         };
     },
     view: function({state, attrs}) {
-        const reward = args.reward();
-        const project = args.project();
+        const reward = attrs.reward();
+        const project = attrs.project();
         const isSubscription = projectVM.isSubscription(project);
 
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
@@ -76,7 +76,7 @@ const dashboardRewardCard = {
                                 }))
                         )
                     ),
-                    (rewardVM.canEdit(reward, project.state, args.user) ?
+                    (rewardVM.canEdit(reward, project.state, attrs.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
                                 onclick: () => {
@@ -107,7 +107,7 @@ const dashboardRewardCard = {
                 m('.fontsize-small.fontcolor-secondary',
                     m.trust(h.simpleFormat(h.strip(reward.description()))),
                 ),
-                (reward.limited() ? (ctrl.availableCount() <= 0) ?
+                (reward.limited() ? (state.availableCount() <= 0) ?
                     m('.u-margintop-10',
                         m('span.badge.badge-gone.fontsize-smaller',
                             window.I18n.t('reward_gone', I18nScope())
@@ -119,7 +119,7 @@ const dashboardRewardCard = {
                                 window.I18n.t('reward_limited', I18nScope())
                             ),
                             window.I18n.t('reward_available', I18nScope({
-                                available: ctrl.availableCount(),
+                                available: state.availableCount(),
                                 maximum: reward.maximum_contributions()
                             }))
                         ])
@@ -133,16 +133,16 @@ const dashboardRewardCard = {
                     m('b', `${window.I18n.t('delivery', I18nScope())}: `),
                     window.I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
                 m('.u-margintop-40.w-row', [
-                    (ctrl.showLimited() ? '' :
+                    (state.showLimited() ? '' :
                         m('.w-col.w-col-4', [
                             m('button.btn.btn-small.btn-terciary.w-button', {
-                                onclick: ctrl.toggleShowLimit
+                                onclick: state.toggleShowLimit
                             }, 'Alterar limite'),
 
                         ])),
                     m('.w-col.w-col-8')
                 ]),
-                m(`div${ctrl.showLimited() ? '' : '.w-hidden'}`,
+                m(`div${state.showLimited() ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
                         style: {
                             display: 'block'
@@ -154,7 +154,7 @@ const dashboardRewardCard = {
                                     m('.w-col.w-col-6',
                                         m('.w-checkbox', [
                                             m("input.w-checkbox-input[type='checkbox']", {
-                                                onclick: ctrl.toggleLimit,
+                                                onclick: state.toggleLimit,
                                                 checked: reward.limited()
                                             }),
                                             m('label.fontsize-smaller.fontweight-semibold.w-form-label',
@@ -164,7 +164,7 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-col.w-col-6',
                                         m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade disponível\'][type=\'tel\']', {
-                                            class: ctrl.limitError() ? 'error' : false,
+                                            class: state.limitError() ? 'error' : false,
                                             value: reward.maximum_contributions(),
                                             onchange: m.withAttr('value', reward.maximum_contributions)
                                         })
@@ -173,12 +173,12 @@ const dashboardRewardCard = {
                                 m('.w-row', [
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.w-button', {
-                                            onclick: ctrl.saveReward
+                                            onclick: state.saveReward
                                         }, 'Salvar')
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: ctrl.toggleShowLimit
+                                            onclick: state.toggleShowLimit
                                         },
                                             'Cancelar'
                                         )
@@ -190,7 +190,7 @@ const dashboardRewardCard = {
                     )
 
                 ),
-                ctrl.limitError() ? m(inlineError, {
+                state.limitError() ? m(inlineError, {
                     message: 'Limite deve ser maior que quantidade de apoios.'
                 }) : '', ,
             ]),

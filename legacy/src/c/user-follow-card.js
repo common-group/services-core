@@ -16,12 +16,12 @@ import userVM from '../vms/user-vm';
 const UserFollowCard = {
     oninit: function(vnode) {
         const friend = prop(vnode.attrs.friend);
-        return {
+        vnode.state = {
             friend
         };
     },
     view: function({state, attrs}) {
-        const friend = ctrl.friend(),
+        const friend = state.friend(),
             profile_img = _.isEmpty(friend.avatar) ? '/assets/catarse_bootstrap/user.jpg' : friend.avatar;
         return m('.w-col.w-col-4',
           m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center',

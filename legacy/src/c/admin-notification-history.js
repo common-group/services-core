@@ -34,14 +34,14 @@ const adminNotificationHistory = {
 
         getNotifications(vnode.attrs.user);
 
-        return {
+        vnode.state = {
             notifications
         };
     },
     view: function({state}) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico de notificações'),
-            ctrl.notifications().map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
+            state.notifications().map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
                 m('.w-col.w-col-24', [
                     m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'),
                           ' - ', m(`a[target="blank"][href="/notifications/${cEvent.relation}/${cEvent.id}"]`, cEvent.template_name), cEvent.origin ? ` - ${cEvent.origin}` : '')

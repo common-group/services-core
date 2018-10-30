@@ -83,7 +83,7 @@ const adminSubscriptions = {
                     view({state, attrs}) {
                         return m('', [
                             m('.modal-dialog-header', [
-                                m('.fontsize-large.u-text-center', args.modalTitle)
+                                m('.fontsize-large.u-text-center', attrs.modalTitle)
                             ]),
                             m('.modal-dialog-content', [
                                 m('.w-row.fontweight-semibold', [
@@ -116,12 +116,12 @@ const adminSubscriptions = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
-                                            onclick: args.onClickCallback
-                                        }, args.ctaText)
+                                            onclick: attrs.onClickCallback
+                                        }, attrs.ctaText)
                                     ),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.btn-terciary.w-button', {
-                                            onclick: args.displayModal.toggle
+                                            onclick: attrs.displayModal.toggle
                                         }, 'Voltar')
                                     ),
                                     m('.w-col.w-col-1')
@@ -185,7 +185,7 @@ const adminSubscriptions = {
                 ])
             ]);
 
-        return {
+        vnode.state = {
             filterVM,
             filterBuilder,
             displayChargebackConfirmationModal,
@@ -207,24 +207,24 @@ const adminSubscriptions = {
     view: function({state}) {
         const label = 'Assinaturas';
         return m('', [
-            (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {
-                displayModal: ctrl.displayChargebackConfirmationModal,
-                content: ctrl.chargebackConfirmationModalContentWrapper({
+            (state.displayChargebackConfirmationModal() ? m(modalBox, {
+                displayModal: state.displayChargebackConfirmationModal,
+                content: state.chargebackConfirmationModalContentWrapper({
                     modalTitle: 'Aprovar chargebacks',
                     ctaText: 'Aprovar',
-                    displayModal: ctrl.displayChargebackConfirmationModal,
-                    onClickCallback: ctrl.processChargebacks
+                    displayModal: state.displayChargebackConfirmationModal,
+                    onClickCallback: state.processChargebacks
                 })
             }) : ''),
             m('#admin-root-subscriptions', [
                 m(adminFilter, {
-                    form: ctrl.filterVM.formDescriber,
-                    filterBuilder: ctrl.filterBuilder,
+                    form: state.filterVM.formDescriber,
+                    filterBuilder: state.filterBuilder,
                     label,
-                    submit: ctrl.submit
+                    submit: state.submit
                 }),
                 m(adminList, {
-                    vm: ctrl.listVM,
+                    vm: state.listVM,
                     listItem: adminSubscriptionItem,
                     listDetail: adminSubscriptionDetail
                 })

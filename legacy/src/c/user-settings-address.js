@@ -7,15 +7,10 @@ import addressForm from './address-form';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettingsAddress = {
-    oninit: function(vnode)
-    {
-        return {};
-    },
-    view: function({state, attrs})
-    {
+    view: function({attrs}) {
         const
-            fields = args.fields,
-            parsedErrors = args.parsedErrors;
+            fields = attrs.fields,
+            parsedErrors = attrs.parsedErrors;
 
         return m(bigCard, {
             label: window.I18n.t('address_title', I18nScope()),

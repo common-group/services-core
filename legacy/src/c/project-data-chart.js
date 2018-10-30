@@ -3,7 +3,7 @@
  * A graph builder interface to be used on project related dashboards.
  * Example:
  * m.component(c.ProjectDataChart, {
- *     collection: ctrl.contributionsPerDay,
+ *     collection: state.contributionsPerDay,
  *     label: 'R$ arrecadados por dia',
  *     dataKey: 'total_amount'
  * })
@@ -41,20 +41,20 @@ const projectDataChart = {
                 }
             };
 
-        return {
+        vnode.state = {
             renderChart,
             source
         };
     },
     view: function({state, attrs}) {
         return m('.card.u-radius.medium.u-marginbottom-30', [
-            m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', args.label),
-            m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', args.subLabel || ''),
+            m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', attrs.label),
+            m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', attrs.subLabel || ''),
             m('.w-row', [
                 m('.w-col.w-col-12.overflow-auto', [
-                    !_.isEmpty(ctrl.source) ? m('canvas[id="chart"][width="860"][height="300"]', {
-                        config: ctrl.renderChart
-                    }) : m('.w-col.w-col-8.w-col-push-2', m('p.fontsize-base', args.emptyState))
+                    !_.isEmpty(state.source) ? m('canvas[id="chart"][width="860"][height="300"]', {
+                        config: state.renderChart
+                    }) : m('.w-col.w-col-8.w-col-push-2', m('p.fontsize-base', attrs.emptyState))
                 ]),
             ])
         ]);

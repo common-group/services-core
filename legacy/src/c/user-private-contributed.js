@@ -61,7 +61,7 @@ const userPrivateContributed = {
             loader(false);
         }).catch(handleError);
 
-        return {
+        vnode.state = {
             subscriptions,
             onlinePages,
             successfulPages,
@@ -71,14 +71,14 @@ const userPrivateContributed = {
         };
     },
     view: function({state, attrs}) {
-        const subsCollection = ctrl.subscriptions.collection(),
-            onlineCollection = ctrl.onlinePages.collection(),
-            successfulCollection = ctrl.successfulPages.collection(),
-            failedCollection = ctrl.failedPages.collection();
+        const subsCollection = state.subscriptions.collection(),
+            onlineCollection = state.onlinePages.collection(),
+            successfulCollection = state.successfulPages.collection(),
+            failedCollection = state.failedPages.collection();
 
-        return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m(inlineError, {
+        return m('.content[id=\'private-contributed-tab\']', state.error() ? m(inlineError, {
             message: 'Erro ao carregar os projetos.'
-        }) : ctrl.loader() ? h.loader() :
+        }) : state.loader() ? h.loader() :
             (_.isEmpty(subsCollection) && _.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
             m('.w-container',
                 m('.w-row.u-margintop-30.u-text-center', [
@@ -112,22 +112,22 @@ const userPrivateContributed = {
                     title: 'Assinaturas',
                     collection: subsCollection,
                     isSubscription: true,
-                    pagination: ctrl.subscriptions
+                    pagination: state.subscriptions
                 }),
                 m(userContributedList, {
                     title: 'Projetos em andamento',
                     collection: onlineCollection,
-                    pagination: ctrl.onlinePages
+                    pagination: state.onlinePages
                 }),
                 m(userContributedList, {
                     title: 'Projetos bem-sucedidos',
                     collection: successfulCollection,
-                    pagination: ctrl.successfulPages
+                    pagination: state.successfulPages
                 }),
                 m(userContributedList, {
                     title: 'Projetos não-financiados',
                     collection: failedCollection,
-                    pagination: ctrl.failedPages,
+                    pagination: state.failedPages,
                     hideSurveys: true
                 }),
 

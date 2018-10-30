@@ -12,15 +12,15 @@ const userBalanceTrasactionRow = {
             expanded.toggle();
         }
 
-        return {
+        vnode.state = {
             expanded
         };
     },
     view: function({state, attrs}) {
-        const item = args.item,
+        const item = attrs.item,
             createdAt = h.momentFromString(item.created_at, 'YYYY-MM-DD');
 
-        return m(`div[class='balance-card ${(ctrl.expanded() ? 'card-detailed-open' : '')}']`,
+        return m(`div[class='balance-card ${(state.expanded() ? 'card-detailed-open' : '')}']`,
                  m('.w-clearfix.card.card-clickable', [
                      m('.w-row', [
                          m('.w-col.w-col-2.w-col-tiny-2', [
@@ -53,9 +53,9 @@ const userBalanceTrasactionRow = {
                              ])
                          ])
                      ]),
-                     m(`a.w-inline-block.arrow-admin.${(ctrl.expanded() ? 'arrow-admin-opened' : '')}.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]`, { onclick: ctrl.expanded.toggle })
+                     m(`a.w-inline-block.arrow-admin.${(state.expanded() ? 'arrow-admin-opened' : '')}.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]`, { onclick: state.expanded.toggle })
                  ]),
-                 (ctrl.expanded() ? m('.card', _.map(item.source, (transaction) => {
+                 (state.expanded() ? m('.card', _.map(item.source, (transaction) => {
                      const pos = transaction.amount >= 0;
                      const event_data = {
                          subscription_reward_label: transaction.origin_objects.subscription_reward_label || '',

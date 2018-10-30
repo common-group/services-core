@@ -82,7 +82,7 @@ const projectGoalEditCard = {
             }
             return false;
         };
-        return {
+        vnode.state = {
             confirmDelete,
             descriptionError,
             titleError,
@@ -93,14 +93,14 @@ const projectGoalEditCard = {
         };
     },
     view: function({state, attrs}) {
-        const goal = args.goal(),
+        const goal = attrs.goal(),
             inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
                 m('span',
                     message
                 )
             );
 
-        return ctrl.destroyed() ? m('div', '') :
+        return state.destroyed() ? m('div', '') :
             m('.card.u-marginbottom-30', [
                 m('.w-row', [
                     m('.w-col.w-col-6',
@@ -117,9 +117,9 @@ const projectGoalEditCard = {
                             ),
                             m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6',
                                 m("input.positive.postfix.text-field.w-input[type='text']", {
-                                    class: ctrl.valueError() ? 'error' : false,
+                                    class: state.valueError() ? 'error' : false,
                                     value: goal.value(),
-                                    oninput: e => ctrl.acceptNumeric(e),
+                                    oninput: e => state.acceptNumeric(e),
                                     onchange: m.withAttr('value', goal.value)
                                 })
                             )
@@ -127,7 +127,7 @@ const projectGoalEditCard = {
                     )
                 ]),
 
-                ctrl.valueError() ? inlineError('A meta deve ser igual ou superior a R$10') : '',
+                state.valueError() ? inlineError('A meta deve ser igual ou superior a R$10') : '',
                 m('.w-row', [
                     m('.w-col.w-col-6',
                         m('.fontsize-small',
@@ -137,12 +137,12 @@ const projectGoalEditCard = {
                     m('.w-col.w-col-6',
                         m("input.positive.text-field.w-input[type='text']", {
                             value: goal.title(),
-                            class: ctrl.descriptionError() ? 'error' : false,
+                            class: state.descriptionError() ? 'error' : false,
                             onchange: m.withAttr('value', goal.title)
                         })
                     )
                 ]),
-                ctrl.titleError() ? inlineError('Título não pode ficar em branco.') : '',
+                state.titleError() ? inlineError('Título não pode ficar em branco.') : '',
                 m('.w-row', [
                     m('.w-col.w-col-6',
                         m('.fontsize-small',
@@ -152,29 +152,29 @@ const projectGoalEditCard = {
                     m('.w-col.w-col-6',
                         m("textarea.height-medium.positive.text-field.w-input[placeholder='O que você vai fazer se atingir essa meta?']", {
                             value: goal.description(),
-                            class: ctrl.descriptionError() ? 'error' : false,
+                            class: state.descriptionError() ? 'error' : false,
                             onchange: m.withAttr('value', goal.description)
                         })
                     )
                 ]),
-                ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+                state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
                 m('.u-margintop-30.w-row', [
                     m('.w-sub-col.w-col.w-col-5',
                         m('button.btn.btn-small.w-button', {
-                            onclick: ctrl.saveGoal
+                            onclick: state.saveGoal
                         }, 'Salvar')
                     ),
-                    (args.goal().id() ?
+                    (attrs.goal().id() ?
                         m('.w-sub-col.w-col.w-col-6',
                             m('button.btn.btn-small.btn-terciary.w-button', {
                                 onclick: () => {
-                                    args.goal().editing.toggle();
+                                    attrs.goal().editing.toggle();
                                 }
                             }, 'Cancelar')
                         ) : ''),
                     m('.w-col.w-col-1',
                         m('button.btn.btn-inline.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash', {
-                            onclick: ctrl.confirmDelete
+                            onclick: state.confirmDelete
                         })
                     )
                 ])

@@ -9,16 +9,16 @@ const projectAnnounceExpiration = {
     oninit: function() {
         const days = prop(2),
             showModal = h.toggleProp(false, true);
-        return {
+        vnode.state = {
             days,
             showModal
         };
     },
     view: function({state, attrs}) {
-        const days = ctrl.days,
-            expirationDate = moment().add(ctrl.days(), 'days').format('DD/MM/YYYY');
+        const days = state.days,
+            expirationDate = moment().add(state.days(), 'days').format('DD/MM/YYYY');
         return m("[id='dashboard-announce_expiration-tab']",
-            m(`form.simple_form.project-form.w-form[accept-charset='UTF-8'][action='/${window.I18n.locale}/flexible_projects/${args.project_id}'][id='expiration-form'][method='post'][novalidate='novalidate']`, [
+            m(`form.simple_form.project-form.w-form[accept-charset='UTF-8'][action='/${window.I18n.locale}/flexible_projects/${attrs.project_id}'][id='expiration-form'][method='post'][novalidate='novalidate']`, [
                 m("input[name='utf8'][type='hidden'][value='✓']"),
                 m("input[name='_method'][type='hidden'][value='patch']"),
                 m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
@@ -46,7 +46,7 @@ const projectAnnounceExpiration = {
                                                         {
                                                             name: 'flexible_project[online_days]',
                                                             value: days(),
-                                                            onchange: m.withAttr('value', ctrl.days)
+                                                            onchange: m.withAttr('value', state.days)
                                                         }
                                                     )
 
@@ -83,7 +83,7 @@ const projectAnnounceExpiration = {
                             m('.w-col.w-col-4',
                                 m('button.btn.btn-large.u-marginbottom-20', {
                                     onclick: (e) => {
-                                        ctrl.showModal.toggle();
+                                        state.showModal.toggle();
                                         e.preventDefault();
                                     }
                                 },
@@ -94,11 +94,11 @@ const projectAnnounceExpiration = {
                     )
                 ),
 
-                (ctrl.showModal() ? m(modalBox, {
-                    displayModal: ctrl.showModal,
+                (state.showModal() ? m(modalBox, {
+                    displayModal: state.showModal,
                     content: [announceExpirationModal, {
                         expirationDate,
-                        displayModal: ctrl.showModal
+                        displayModal: state.showModal
                     }]
                 }) : '')
             ])

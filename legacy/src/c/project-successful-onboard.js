@@ -59,8 +59,7 @@ const projectSuccessfulOnboard = {
         const lProjectTransfer = loader(models.projectTransfer.getRowOptions(projectIdVM.parameters()));
         lProjectTransfer.load().then(projectTransfers);
 
-
-        return {
+        vnode.state = {
             projectAccounts,
             projectTransfers,
             lProjectAccount,
@@ -70,14 +69,14 @@ const projectSuccessfulOnboard = {
         };
     },
     view: function({state, attrs}) {
-        const projectAccount = _.first(ctrl.projectAccounts()),
-            projectTransfer = _.first(ctrl.projectTransfers()),
-            lpa = ctrl.lProjectAccount,
-            lpt = ctrl.lProjectTransfer;
+        const projectAccount = _.first(state.projectAccounts()),
+            projectTransfer = _.first(state.projectTransfers()),
+            lpa = state.lProjectAccount,
+            lpt = state.lProjectTransfer;
 
         return m('.w-section.section', [
-            (ctrl.showTaxModal() ? m(modalBox, {
-                displayModal: ctrl.showTaxModal,
+            (state.showTaxModal() ? m(modalBox, {
+                displayModal: state.showTaxModal,
                 content: [successfulProjectTaxModal, {
                     projectTransfer
                 }]
@@ -90,10 +89,10 @@ const projectSuccessfulOnboard = {
                              m('img.u-marginbottom-20', { src: window.I18n.t('finished.icon', I18nScope()), width: 94 }),
                              m('.fontsize-large.fontweight-semibold.u-marginbottom-20', window.I18n.t('finished.title', I18nScope())),
                              m('.fontsize-base.u-marginbottom-30', {
-                                 config: ctrl.listenToReplace
+                                 config: state.listenToReplace
                              }, m.trust(
-                                 window.I18n.t('finished.text', I18nScope({ link_news: `/projects/${args.project().id}/posts`, link_surveys: `/projects/${args.project().id}/surveys` })))),
-                             // m('a.btn.btn-large.btn-inline', { href: `/users/${args.project().user_id}/edit#balance` }, window.I18n.t('start.cta', I18nScope()))
+                                 window.I18n.t('finished.text', I18nScope({ link_news: `/projects/${attrs.project().id}/posts`, link_surveys: `/projects/${attrs.project().id}/surveys` })))),
+                             // m('a.btn.btn-large.btn-inline', { href: `/users/${attrs.project().user_id}/edit#balance` }, window.I18n.t('start.cta', I18nScope()))
                          ])
                      ])
                  ])

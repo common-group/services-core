@@ -42,7 +42,7 @@ const faqBox = {
 
         userVM.fetchUser(vnode.attrs.projectUserId, false).then(data => user(_.first(data)));
 
-        return {
+        vnode.state = {
             scopedQuestions,
             selectQuestion,
             selectedQuestion,
@@ -50,11 +50,11 @@ const faqBox = {
         };
     },
     view: function({state, attrs}) {
-        const image = args.mode === 'sub'
+        const image = attrs.mode === 'sub'
             ? m('div', m('img.u-marginbottom-10[width="130"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'))
             : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                 m('img[width=\'30\']', {
-                    src: args.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
+                    src: attrs.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
                 })
             );
         return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius',
@@ -64,18 +64,18 @@ const faqBox = {
                         image,
                         m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
                             m('.w-inline-block.fontsize-smallest.w-inline-block.fontcolor-secondary',
-                                window.I18n.t(`${ctrl.tKey()}.description`, I18nScope())
+                                window.I18n.t(`${state.tKey()}.description`, I18nScope())
                             )
                         )
                     ]
              ),
                 m('.u-marginbottom-20.fontsize-small.fontweight-semibold',
-                window.I18n.t(`${args.vm.isInternational() ? 'international_title' : 'title'}`, I18nScope())
+                window.I18n.t(`${attrs.vm.isInternational() ? 'international_title' : 'title'}`, I18nScope())
             ),
                 m('ul.w-list-unstyled',
-                _.map(ctrl.scopedQuestions(), (question, idx) => [
+                _.map(state.scopedQuestions(), (question, idx) => [
                     m(`li#faq_question_${idx}.fontsize-smaller.alt-link.list-question`, {
-                        onclick: ctrl.selectQuestion(idx)
+                        onclick: state.selectQuestion(idx)
                     }, m('span',
                         [
                             m('span.faq-box-arrow'),
@@ -84,7 +84,7 @@ const faqBox = {
                           )
                         ),
                     m('li.list-answer', {
-                        class: ctrl.selectedQuestion() === idx ? 'list-answer-opened' : ''
+                        class: state.selectedQuestion() === idx ? 'list-answer-opened' : ''
                     }, m(`p#faq_answer_${idx}.fontsize-smaller`, m.trust(question.answer))
                         )
                 ])

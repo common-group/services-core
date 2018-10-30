@@ -4,12 +4,12 @@ import h from '../h';
 import projectCard from './project-card';
 
 const projectRow = {
-    view: function({state, attrs}) {
-        const collection = args.collection,
-            title = args.title || collection.title,
-            ref = args.ref,
-            showFriends = args.showFriends,
-            wrapper = args.wrapper || '.w-section.section.u-marginbottom-40';
+    view: function({attrs}) {
+        const collection = attrs.collection,
+            title = attrs.title || collection.title,
+            ref = attrs.ref,
+            showFriends = attrs.showFriends,
+            wrapper = attrs.wrapper || '.w-section.section.u-marginbottom-40';
 
         if (collection.loader() || collection.collection().length > 0) {
             return m(wrapper, [

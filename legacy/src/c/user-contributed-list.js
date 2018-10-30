@@ -11,17 +11,17 @@ const userContributedList = {
     oninit: function(vnode) {
         const title = vnode.attrs.title,
             hideSurveys = vnode.attrs.hideSurveys;
-        return {
+        vnode.state = {
             hideSurveys,
             title
         };
     },
     view: function({state, attrs}) {
-        const collection = args.collection,
-            isSubscription = args.isSubscription,
-            pagination = args.pagination,
-            hideSurveys = ctrl.hideSurveys,
-            title = ctrl.title;
+        const collection = attrs.collection,
+            isSubscription = attrs.isSubscription,
+            pagination = attrs.pagination,
+            hideSurveys = state.hideSurveys,
+            title = state.title;
 
         return (!_.isEmpty(collection) ? m('div', [m('.section-one-column.u-marginbottom-30',
                 m('.w-container', [

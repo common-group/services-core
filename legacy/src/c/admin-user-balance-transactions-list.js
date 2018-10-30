@@ -21,16 +21,16 @@ const adminUserBalanceTransactionsList = {
         userVM.getUserBalance(vnode.attrs.user_id).then(_.compose(userBalance, _.first));
         transactionsListVM.firstPage({ user_id: `eq.${vnode.attrs.user_id}` });
 
-        return {
+        vnode.state = {
             userBalance,
             transactionsListVM
         };
     },
     view: function({state, attrs}) {
-        const collection = ctrl.transactionsListVM.collection(),
-            userBalance = ctrl.userBalance() || { amount: 0 };
+        const collection = state.transactionsListVM.collection(),
+            userBalance = state.userBalance() || { amount: 0 };
 
-        return m((args.wrapperClass || '.w-col.w-col-8'), [
+        return m((attrs.wrapperClass || '.w-col.w-col-8'), [
             m('.fontsize-smaller.fontweight-semibold.lineheight-tighter.u-marginbottom-20',
               window.I18n.t('totals_transactions_title', I18nScope({
                   value: h.formatNumber(userBalance.amount, 2, 3)
@@ -75,10 +75,10 @@ const adminUserBalanceTransactionsList = {
             ])),
             m('.w-row', [
                 m('.w-col.w-col-3.w-col-push-4', [
-                    ctrl.transactionsListVM.isLoading() ?
+                    state.transactionsListVM.isLoading() ?
                         h.loader() :
                         m('button#load-more.btn.btn-terciary', {
-                            onclick: ctrl.transactionsListVM.nextPage
+                            onclick: state.transactionsListVM.nextPage
                         }, window.I18n.t('shared.load_more'))
                 ])
             ])

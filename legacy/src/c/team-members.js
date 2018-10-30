@@ -15,14 +15,14 @@ const teamMembers = {
             vm.collection(groupCollection(data, 4));
         });
 
-        return {
+        vnode.state = {
             vm
         };
     },
     view: function({state}) {
         return m('#team-members-static.w-section.section', [
             m('.w-container', [
-                _.map(ctrl.vm.collection(), group => m('.w-row.u-text-center', [
+                _.map(state.vm.collection(), group => m('.w-row.u-text-center', [
                     _.map(group, member => m('.team-member.w-col.w-col-3.w-col-small-3.w-col-tiny-6.u-marginbottom-40', [
                         m(`a.alt-link[href="/users/${member.id}"]`, [
                             m(`img.thumb.big.u-round.u-marginbottom-10[src="${member.img}"]`),

@@ -105,7 +105,7 @@ const adminSubscriptionDetail = {
             });
         };
 
-        return {
+        vnode.state = {
             payments: loadPayments(),
             transitions: loadTransitions(),
             notifications: loadNotifications(),
@@ -118,11 +118,11 @@ const adminSubscriptionDetail = {
         };
     },
     view: function({state, attrs}) {
-        const payments = ctrl.payments(),
-            transitions = ctrl.transitions(),
-            notifications = ctrl.notifications(),
-            reward = ctrl.reward(),
-            currentPayment = ctrl.currentPayment;
+        const payments = state.payments(),
+            transitions = state.transitions(),
+            notifications = state.notifications(),
+            reward = state.reward(),
+            currentPayment = state.currentPayment;
 
         return m('.card.card-terciary.w-row', payments ? [
             m('.w-col.w-col-4',
@@ -151,7 +151,7 @@ const adminSubscriptionDetail = {
                         m('.w-col.w-col-6',
                                 m(`span.${payment.selected() ? 'link-hidden-dark' : 'alt-link'}`, {
                                     onclick: () => {
-                                        ctrl.clearSelected(payments);
+                                        state.clearSelected(payments);
                                         payment.selected(true);
                                         currentPayment(payment);
                                     }
@@ -175,8 +175,8 @@ const adminSubscriptionDetail = {
                         )
                     ])),
                     m('.w-inline-block', 
-                        (ctrl.notificationsLoader.isLastPage() ? ''
-                        : m('button.btn-inline.btn.btn-small.btn-terciary', { onclick: ctrl.loadNotifications }, 'Carregar mais')))
+                        (state.notificationsLoader.isLastPage() ? ''
+                        : m('button.btn-inline.btn.btn-small.btn-terciary', { onclick: state.loadNotifications }, 'Carregar mais')))
                 ])),
             m('.w-col.w-col-4',
                 m('div', [

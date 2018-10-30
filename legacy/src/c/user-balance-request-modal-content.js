@@ -97,7 +97,7 @@ const userBalanceRequestModelContent = {
                 });
             };
 
-        return {
+        vnode.state = {
             loading,
             requestLoader,
             requestFund,
@@ -114,16 +114,16 @@ const userBalanceRequestModelContent = {
         };
     },
     view: function({state, attrs}) {
-        const balance = args.balance,
-            fields = ctrl.fields,
-            user = args.user;
+        const balance = attrs.balance,
+            fields = state.fields,
+            user = attrs.user;
 
         return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center', window.I18n.t('withdraw', I18nScope()))
             ]),
-            (ctrl.displayConfirmation() ? m('.modal-dialog-content.u-text-center', (
-                ctrl.loadBankA() ? h.loader() : _.map(ctrl.bankAccounts(), item => [
+            (state.displayConfirmation() ? m('.modal-dialog-content.u-text-center', (
+                state.loadBankA() ? h.loader() : _.map(state.bankAccounts(), item => [
                     m('.fontsize-base.u-marginbottom-20', [
                         m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
                         m.trust('&nbsp;'),
@@ -168,7 +168,7 @@ const userBalanceRequestModelContent = {
                     ])
                 ])
             )) : (
-                ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
+                state.displayDone() ? m('.modal-dialog-content.u-text-center', [
                     m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
                     m('p.fontsize-large', window.I18n.t('success_message', I18nScope()))
                 ]) : m('.modal-dialog-content', [
@@ -179,42 +179,42 @@ const userBalanceRequestModelContent = {
                        window.I18n.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) })
                       )
                     ]),
-                    m(UserOwnerBox, { user: args.user, hideAvatar: true }),
-                    m(userBankForm, { user: args.user, parsedErrors: ctrl.parsedErrors, fields: ctrl.fields, bankCode: ctrl.bankCode, bankInput: ctrl.bankInput })
+                    m(UserOwnerBox, { user: attrs.user, hideAvatar: true }),
+                    m(userBankForm, { user: attrs.user, parsedErrors: state.parsedErrors, fields: state.fields, bankCode: state.bankCode, bankInput: state.bankInput })
                 ]))),
-            (ctrl.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [
+            (state.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [
                 m('.w-row', [
                     m('.w-col.w-col-1'),
                     m('.w-col.w-col-5',
-                        (ctrl.requestLoader() || ctrl.loading() ?
+                        (state.requestLoader() || state.loading() ?
                          h.loader()
                          : [
                              m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]',
-                               { onclick: () => ctrl.requestFund() },
+                               { onclick: () => state.requestFund() },
                                window.I18n.t('shared.confirm_text')),
                          ])
                     ),
                     m('.w-col.w-col-5',
-                      (ctrl.requestLoader() || ctrl.loading() ?
+                      (state.requestLoader() || state.loading() ?
                        ''
                        : [
                            m('a.btn.btn-medium.btn-terciary.w-button', {
-                               onclick: ctrl.displayConfirmation.toggle
+                               onclick: state.displayConfirmation.toggle
                            }, window.I18n.t('shared.back_text'))
                        ])
                      ),
                     m('.w-col.w-col-1')
                 ])
             ]) : ''),
-            (!ctrl.displayConfirmation() && !ctrl.displayDone() ?
+            (!state.displayConfirmation() && !state.displayDone() ?
              m('.modal-dialog-nav-bottom', { style: 'position: relative;' }, [
                  m('.w-row', [
                      m('.w-col.w-col-3'),
                      m('.w-col.w-col-6', [
-                         (ctrl.requestLoader() || ctrl.loading() ?
+                         (state.requestLoader() || state.loading() ?
                           h.loader()
                           : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]',
-                              { onclick: () => ctrl.updateUserData(args.user.id) },
+                              { onclick: () => state.updateUserData(attrs.user.id) },
                               window.I18n.t('request_fund', I18nScope())))
                      ]),
                      m('.w-col.w-col-3')

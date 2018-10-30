@@ -42,7 +42,7 @@ const projectsReward = {
             rewards.unshift(vm.noReward);
         }
 
-        return {
+        vnode.state = {
             rewards,
             project: projectVM.currentProject,
             contributionValue: vm.contributionValue,
@@ -56,7 +56,7 @@ const projectsReward = {
         };
     },
     view: function({state, attrs}) {
-        const project = ctrl.project;
+        const project = state.project;
 
         return m('#project-rewards', [
             m('.w-section.page-header.u-text-center', [
@@ -84,14 +84,14 @@ const projectsReward = {
                                 m('.w-col.w-col-8',
                                     m('.w-form.back-reward-form',
                                         m('form.simple_form.new_contribution', {
-                                            onsubmit: ctrl.submitContribution
-                                        }, _.map(ctrl.rewards, (reward, index) => {
-                                            const isSelected = ctrl.isSelected(reward),
+                                            onsubmit: state.submitContribution
+                                        }, _.map(state.rewards, (reward, index) => {
+                                            const isSelected = state.isSelected(reward),
                                                 monetaryMinimum = h.applyMonetaryMask(reward.minimum_value);
 
                                             return m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
                                                 class: isSelected ? 'selected' : '',
-                                                onclick: ctrl.selectReward(reward),
+                                                onclick: state.selectReward(reward),
                                                 key: index
                                             }, m(`label[for='contribution_reward_id_${reward.id}']`,
                                                 [
@@ -114,20 +114,20 @@ const projectsReward = {
                                                                                         ),
                                                                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                                                                             m('input.user-reward-value.back-reward-input-reward[autocomplete=\'off\'][type=\'tel\']', {
-                                                                                                class: ctrl.error() ? 'error' : '',
+                                                                                                class: state.error() ? 'error' : '',
                                                                                                 min: monetaryMinimum,
                                                                                                 placeholder: monetaryMinimum,
-                                                                                                onkeyup: m.withAttr('value', ctrl.applyMask),
-                                                                                                value: ctrl.contributionValue()
+                                                                                                onkeyup: m.withAttr('value', state.applyMask),
+                                                                                                value: state.contributionValue()
                                                                                             }
                                                                                             )
                                                                                         )
                                                                         ]
                                                                                 ),
-                                                                    ctrl.error().length > 0 ? m('.text-error', [
+                                                                    state.error().length > 0 ? m('.text-error', [
                                                                         m('br'),
                                                                         m('span.fa.fa-exclamation-triangle'),
-                                                                        ` ${ctrl.error()}`
+                                                                        ` ${state.error()}`
                                                                     ]) : ''
                                                                 ]
                                                                         ),
@@ -152,7 +152,7 @@ const projectsReward = {
                                     )
                                 )
                             ),
-                                m('.w-col.w-col-4', m(faqBox, { mode: ctrl.project().mode, faq: ctrl.faq }))
+                                m('.w-col.w-col-4', m(faqBox, { mode: state.project().mode, faq: state.faq }))
                             ]
                     )
                 )

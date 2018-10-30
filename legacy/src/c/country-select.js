@@ -25,7 +25,7 @@ const countrySelect = {
             }
         });
 
-        return {
+        vnode.state = {
             changeCountry,
             defaultCountryID,
             defaultForeignCountryID,
@@ -35,9 +35,9 @@ const countrySelect = {
         };
     },
     view: function({state, attrs}) {
-        const fields = ctrl.fields;
-        if (args.countryName) {
-            args.countryName(ctrl.countries() && fields.countryID() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');
+        const fields = state.fields;
+        if (attrs.countryName) {
+            attrs.countryName(state.countries() && fields.countryID() ? _.find(state.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');
         }
 
         return m('.u-marginbottom-30.w-row', [
@@ -51,12 +51,12 @@ const countrySelect = {
                 ]),
                 m('select#country.positive.text-field.w-select', {
                     onchange: (e) => {
-                        ctrl.changeCountry(e.target.value);
+                        state.changeCountry(e.target.value);
                     }
                 }, [
-                    (!_.isEmpty(ctrl.countries()) ?
-                        _.map(ctrl.countries(), country => m('option', {
-                            selected: country.id === ctrl.fields.countryID(),
+                    (!_.isEmpty(state.countries()) ?
+                        _.map(state.countries(), country => m('option', {
+                            selected: country.id === state.fields.countryID(),
                             value: country.id
                         },
                             country.name_en

@@ -12,14 +12,14 @@ const paymentMethodIcon = {
             boleto: 'fa-barcode',
             credit_card: 'fa-credit-card'
         };
-        return {
+        vnode.state = {
             subscription,
             paymentClass
         };
     },
     view: function({state, attrs}) {
-        const subscription = ctrl.subscription,
-            paymentClass = ctrl.paymentClass;
+        const subscription = state.subscription,
+            paymentClass = state.paymentClass;
 
         return m('span', [
             m(`span.fa.${paymentClass[subscription.payment_method]}`,

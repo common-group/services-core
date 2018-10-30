@@ -22,7 +22,7 @@ import { catarse } from '../api';
 
 const adminUserDetail = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             actions: {
                 reset: {
                     property: 'password',
@@ -54,9 +54,9 @@ const adminUserDetail = {
         };
     },
     view: function({state, attrs}) {
-        const actions = ctrl.actions,
-            item = args.item,
-            details = args.details,
+        const actions = state.actions,
+            item = attrs.item,
+            details = attrs.details,
             banUser = (builder, id) => _.extend({}, builder, {
                 requestOptions: {
                     url: (`/users/${id}/ban`),

@@ -31,18 +31,18 @@ const projectPosts = {
             listVM.firstPage(filterVM.parameters());
         }
 
-        return {
+        vnode.state = {
             listVM,
             filterVM,
             scrollTo
         };
     },
     view: function({state, attrs}) {
-        const list = ctrl.listVM,
-            project = args.project() || {};
+        const list = state.listVM,
+            project = attrs.project() || {};
 
         return m('#posts.project-posts.w-section', {
-            config: ctrl.scrollTo
+            config: state.scrollTo
         }, [
             m('.w-container.u-margintop-20', [
                 (project.is_owner_or_admin ? [
@@ -99,18 +99,18 @@ const projectPosts = {
                     ]
                 ]))),
                 m('.w-row', [
-                    (!_.isUndefined(args.post_id) ? m('.w-col.w-col-2.w-col-push-5',
+                    (!_.isUndefined(attrs.post_id) ? m('.w-col.w-col-2.w-col-push-5',
                                                       m(`a#load-more.btn.btn-medium.btn-terciary[href=\'/projects/${project.project_id}#posts']`, {
                                                          }, 'Ver todos')
                                                        ) :
                         (!list.isLoading() ?
-                            (list.collection().length === 0 && args.projectContributions().length === 0) ?
+                            (list.collection().length === 0 && attrs.projectContributions().length === 0) ?
                             !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
                                 m('p.fontsize-base',
                                     m.trust(
                                         window.I18n.t('empty',
                                             I18nScope({
-                                                project_user_name: args.userDetails().name,
+                                                project_user_name: attrs.userDetails().name,
                                                 project_id: project.project_id
                                             })
                                         )

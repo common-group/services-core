@@ -60,7 +60,7 @@ const tooltip = {
                 }
             };
 
-        return {
+        vnode.state = {
             width,
             top,
             left,
@@ -72,16 +72,16 @@ const tooltip = {
         };
     },
     view: function({state, attrs}) {
-        const width = ctrl.width();
-        return m(args.el, {
-            onclick: ctrl.toggle,
-            config: ctrl.setParentPosition,
+        const width = state.width();
+        return m(attrs.el, {
+            onclick: state.toggle,
+            config: state.setParentPosition,
             style: { cursor: 'pointer' }
-        }, ctrl.tooltip() ? [
-            m(`.tooltip.dark[style="width: ${width}px; top: ${ctrl.top()}px; left: ${ctrl.left()}px;"]`, {
-                config: ctrl.setPosition
+        }, state.tooltip() ? [
+            m(`.tooltip.dark[style="width: ${width}px; top: ${state.top()}px; left: ${state.left()}px;"]`, {
+                config: state.setPosition
             }, [
-                m('.fontsize-smallest', args.text)
+                m('.fontsize-smallest', attrs.text)
             ])
         ] : '');
     }

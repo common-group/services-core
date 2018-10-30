@@ -40,15 +40,15 @@ const userContributed = {
             m.redraw();
         });
 
-        return {
+        vnode.state = {
             projects: pages,
             error,
             loader
         };
     },
     view: function({state, attrs}) {
-        const projects_collection = ctrl.projects.collection();
-        return ctrl.error() ? m(inlineError, { message: 'Erro ao carregar os projetos.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
+        const projects_collection = state.projects.collection();
+        return state.error() ? m(inlineError, { message: 'Erro ao carregar os projetos.' }) : state.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
             [
                   (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m(projectCard, {
                       project,
@@ -84,7 +84,7 @@ const userContributed = {
 
                   (!_.isEmpty(projects_collection) ?
                   m('.w-row.u-marginbottom-40.u-margintop-30', [
-                      m(loadMoreBtn, { collection: ctrl.projects, cssClass: '.w-col-push-4' })
+                      m(loadMoreBtn, { collection: state.projects, cssClass: '.w-col-push-4' })
                   ]) : '')
             ]
               );

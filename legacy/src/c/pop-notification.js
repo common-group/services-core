@@ -7,20 +7,20 @@ const popNotification = {
             setPopTimeout = () => {
                 setTimeout(() => { displayNotification(false); m.redraw(); }, 3000);
             };
-        return {
+        vnode.state = {
             displayNotification,
             setPopTimeout
         };
     },
     view: function({state, attrs}) {
-        return (ctrl.displayNotification() ? m('.flash.w-clearfix.card.card-notification.u-radius.zindex-20', {
-            config: ctrl.setPopTimeout,
-            class: args.error ? 'card-error' : ''
+        return (state.displayNotification() ? m('.flash.w-clearfix.card.card-notification.u-radius.zindex-20', {
+            config: state.setPopTimeout,
+            class: attrs.error ? 'card-error' : ''
         }, [
             m('img.icon-close[src="/assets/catarse_bootstrap/x.png"][width="12"][alt="fechar"]', {
-                onclick: ctrl.displayNotification.toggle
+                onclick: state.displayNotification.toggle
             }),
-            m('.fontsize-small', m.trust(args.message))
+            m('.fontsize-small', m.trust(attrs.message))
         ]) : m('span'));
     }
 };

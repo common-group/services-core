@@ -6,18 +6,18 @@ import projectGoalEdit from '../c/project-goal-edit';
 
 const projectEditGoal = {
     oninit: function(vnode) {
-        return {
+        vnode.state = {
             user: userVM.fetchUser(vnode.attrs.user_id),
             project: projectVM.fetchProject(vnode.attrs.project_id)
         };
     },
 
     view: function({state, attrs}) {
-        return (ctrl.user() && ctrl.project() ? (ctrl.project().mode === 'sub' ? '' : m(projectGoalEdit, {
-            user: ctrl.user(),
-            userId: args.user_id,
-            projectId: args.project_id,
-            project: ctrl.project()
+        return (state.user() && state.project() ? (state.project().mode === 'sub' ? '' : m(projectGoalEdit, {
+            user: state.user(),
+            userId: attrs.user_id,
+            projectId: attrs.project_id,
+            project: state.project()
         })) : m('div', h.loader()));
     }
 };

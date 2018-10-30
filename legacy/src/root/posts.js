@@ -121,7 +121,7 @@ const posts = {
             isProjectLoaded(true);
         });
 
-        return {
+        vnode.state = {
             listVM,
             l,
             projectPosts,
@@ -147,31 +147,31 @@ const posts = {
     },
     view: function({state}) {
         
-        const project = _.first(ctrl.projectDetails()),
+        const project = _.first(state.projectDetails()),
             paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);
 
-        return (ctrl.isProjectLoaded() && ctrl.isProjectPostsLoaded()) ? m('.project-posts',
+        return (state.isProjectLoaded() && state.isProjectPostsLoaded()) ? m('.project-posts',
             (project.is_owner_or_admin ? m(projectDashboardMenu, {
                 project: prop(project)
             }) : ''),
-            ctrl.showPreview() ? m(postsPreview, {
-                showError: ctrl.showError,
-                showSuccess: ctrl.showSuccess,
-                errors: ctrl.errors,
-                showPreview: ctrl.showPreview,
-                project_id: ctrl.project_id,
+            state.showPreview() ? m(postsPreview, {
+                showError: state.showError,
+                showSuccess: state.showSuccess,
+                errors: state.errors,
+                showPreview: state.showPreview,
+                project_id: state.project_id,
                 mode: project.mode,
-                comment_html: ctrl.fields.comment_html,
-                title: ctrl.fields.title,
-                reward_id: ctrl.fields.reward_id(),
-                rewardText: ctrl.fields.reward_id() >= 1 ? ctrl.rewardText(ctrl.fields.reward_id(), project) : null
+                comment_html: state.fields.comment_html,
+                title: state.fields.title,
+                reward_id: state.fields.reward_id(),
+                rewardText: state.fields.reward_id() >= 1 ? state.rewardText(state.fields.reward_id(), project) : null
             }) : [
                 m(`.w-section.section-product.${project.mode}`),
-                (ctrl.showSuccess() ? m(popNotification, {
+                (state.showSuccess() ? m(popNotification, {
                     message: window.I18n.t('successful', I18nScope())
                 }) : ''),
-                (ctrl.showError() ? m(popNotification, {
-                    message: ctrl.errors(),
+                (state.showError() ? m(popNotification, {
+                    message: state.errors(),
                     error: true
                 }) : ''),
                 m('.dashboard-header.u-text-center',
@@ -208,7 +208,7 @@ const posts = {
                                         'Destinatários'
                                     ),
                                     m('select.positive.text-field.w-select', {
-                                        onchange: m.withAttr('value', ctrl.fields.reward_id)
+                                        onchange: m.withAttr('value', state.fields.reward_id)
                                     }, [
                                         m('option[value=\'-1\']', {
                                             selected: true
@@ -219,7 +219,7 @@ const posts = {
                                             window.I18n.t(`backers_${project.mode}`, I18nScope())
                                         ),
                                         (_.map(paidRewards, reward => m(`option[value='${projectVM.isSubscription(project) ? reward.external_id : reward.id}']`,
-                                              ctrl.rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project)
+                                              state.rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project)
                                             )))
                                     ]),
                                     m('label.field-label.fontweight-semibold',
@@ -227,23 +227,23 @@ const posts = {
                                     ),
                                     m('input.positive.text-field.w-input[id=\'post_title\'][maxlength=\'256\'][type=\'text\']', {
                                         name: 'posts[title]',
-                                        value: ctrl.fields.title(),
-                                        onfocus: () => ctrl.titleHasError(false),
-                                        class: ctrl.titleHasError() ? 'error' : '',
-                                        onchange: m.withAttr('value', ctrl.fields.title)
+                                        value: state.fields.title(),
+                                        onfocus: () => state.titleHasError(false),
+                                        class: state.titleHasError() ? 'error' : '',
+                                        onchange: m.withAttr('value', state.fields.title)
                                     }),
                                     m('label.field-label.fontweight-semibold',
                                         'Texto'
                                     ),
                                     m('.preview-container.u-marginbottom-40', {
-                                        class: ctrl.commentHasError() ? 'error' : '',
-                                        onclick: () => ctrl.commentHasError(false)
-                                    }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
+                                        class: state.commentHasError() ? 'error' : '',
+                                        onclick: () => state.commentHasError(false)
+                                    }, h.redactor('posts[comment_html]', state.fields.comment_html)),
                                     m('.u-marginbottom-20.w-row', [
                                         m('.w-col.w-col-3'),
                                         m('.w-sub-col.w-col.w-col-6',
                                             m('button.btn.btn-large', {
-                                                onclick: ctrl.togglePreview
+                                                onclick: state.togglePreview
                                             },
                                                 window.I18n.t('preview', I18nScope())
                                             )
@@ -274,8 +274,8 @@ const posts = {
                                     ),
                                     m('.table-col.w-col.w-col-1')
                                 ]),
-                                (ctrl.projectPosts() ? m('.fontsize-small.table-inner', [
-                                    (_.map(ctrl.projectPosts(), post => m('.table-row.w-row', [
+                                (state.projectPosts() ? m('.fontsize-small.table-inner', [
+                                    (_.map(state.projectPosts(), post => m('.table-row.w-row', [
                                         m('.table-col.w-col.w-col-5', [
                                             m(`a.alt-link.fontsize-base[href='/projects/${project.project_id}/posts/${post.id}#posts'][target='_blank']`,
                                                     post.title
@@ -290,7 +290,7 @@ const posts = {
                                                 m('span.fontweight-semibold',
                                                         'Destinatários: '
                                                     ),
-                                                ctrl.showRecipientes(post, project)
+                                                state.showRecipientes(post, project)
                                             ])
                                         ]),
                                         m('.table-col.u-text-center.w-col.w-col-3',
@@ -301,19 +301,19 @@ const posts = {
                                         m('.table-col.u-text-center.w-col.w-col-3',
                                                 m('.fontsize-base', [
                                                     post.open_count,
-                                                    m('span.fontcolor-secondary', ` (${ctrl.openedPercentage(post)}%)`)
+                                                    m('span.fontcolor-secondary', ` (${state.openedPercentage(post)}%)`)
                                                 ])
                                             ),
                                         m('.table-col.w-col.w-col-1',
                                                 m('button.btn.btn-no-border.btn-small.btn-terciary.fa.fa-lg.fa-trash', {
-                                                    onclick: ctrl.deletePost(post)
+                                                    onclick: state.deletePost(post)
                                                 })
                                             )
                                     ]))),
                                     m('form.w-hidden', {
-                                        action: `/${window.I18n.locale}/projects/${project.project_id}/posts/${ctrl.toDeletePost()}`,
+                                        action: `/${window.I18n.locale}/projects/${project.project_id}/posts/${state.toDeletePost()}`,
                                         method: 'POST',
-                                        config: ctrl.setPostDeletionForm
+                                        config: state.setPostDeletionForm
                                     }, [
                                         m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                                         m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),

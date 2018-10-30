@@ -146,7 +146,7 @@ const adminContributions = {
                     view: function({state, attrs}) {
                         return m('', [
                             m('.modal-dialog-header', [
-                                m('.fontsize-large.u-text-center', args.modalTitle)
+                                m('.fontsize-large.u-text-center', attrs.modalTitle)
                             ]),
                             m('.modal-dialog-content', [
                                 m('.w-row.fontweight-semibold', [
@@ -179,12 +179,12 @@ const adminContributions = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
-                                            onclick: args.onClickCallback
-                                        }, args.ctaText)
+                                            onclick: attrs.onClickCallback
+                                        }, attrs.ctaText)
                                     ),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.btn-terciary.w-button', {
-                                            onclick: args.displayModal.toggle
+                                            onclick: attrs.displayModal.toggle
                                         }, 'Voltar')
                                     ),
                                     m('.w-col.w-col-1')
@@ -248,7 +248,7 @@ const adminContributions = {
                 ])
             ]);
 
-        return {
+        vnode.state = {
             filterVM,
             filterBuilder,
             displayChargebackConfirmationModal,
@@ -269,23 +269,23 @@ const adminContributions = {
 
     view: function({state}) {
         return m('', [
-            (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {
-                displayModal: ctrl.displayChargebackConfirmationModal,
-                content: ctrl.chargebackConfirmationModalContentWrapper({
+            (state.displayChargebackConfirmationModal() ? m(modalBox, {
+                displayModal: state.displayChargebackConfirmationModal,
+                content: state.chargebackConfirmationModalContentWrapper({
                     modalTitle: 'Aprovar chargebacks',
                     ctaText: 'Aprovar',
-                    displayModal: ctrl.displayChargebackConfirmationModal,
-                    onClickCallback: ctrl.processChargebacks
+                    displayModal: state.displayChargebackConfirmationModal,
+                    onClickCallback: state.processChargebacks
                 })
             }) : ''),
             m('#admin-root-contributions', [
                 m(adminFilter, {
-                    form: ctrl.filterVM.formDescriber,
-                    filterBuilder: ctrl.filterBuilder,
-                    submit: ctrl.submit
+                    form: state.filterVM.formDescriber,
+                    filterBuilder: state.filterBuilder,
+                    submit: state.submit
                 }),
                 m(adminList, {
-                    vm: ctrl.listVM,
+                    vm: state.listVM,
                     listItem: adminContributionItem,
                     listDetail: adminContributionDetail
                 })

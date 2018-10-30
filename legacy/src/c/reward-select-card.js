@@ -79,7 +79,7 @@ const rewardSelectCard = {
 
         rewardVM.getStates();
 
-        return {
+        vnode.state = {
             normalReward,
             isSelected,
             setInput,
@@ -95,29 +95,29 @@ const rewardSelectCard = {
         };
     },
     view: function({state, attrs}) {
-        const reward = ctrl.normalReward(args.reward);
+        const reward = state.normalReward(attrs.reward);
 
         return (h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {
-            class: ctrl.isSelected(reward) ? 'selected' : '',
-            onclick: ctrl.selectReward(reward)
+            class: state.isSelected(reward) ? 'selected' : '',
+            onclick: state.selectReward(reward)
         },
             m(`label[for="contribution_reward_id_${reward.id}"]`, [
                 m(`input.radio_buttons.optional.w-input.text-field.w-radio-input.back-reward-radio-button[id="contribution_reward_id_${reward.id}"][type="radio"][value="${reward.id}"]`, {
-                    checked: ctrl.isSelected(reward),
+                    checked: state.isSelected(reward),
                     name: 'contribution[reward_id]'
                 }),
                 m(`label.w-form-label.fontsize-base.fontweight-semibold.u-marginbottom-10[for="contribution_reward_${reward.id}"]`, !reward.id ? 'Apoiar sem recompensa' :
-                    `R$ ${h.formatNumber(reward.minimum_value)} ou mais${args.isSubscription ? ' por mês' : ''}`
-                ), !ctrl.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
+                    `R$ ${h.formatNumber(reward.minimum_value)} ou mais${attrs.isSubscription ? ' por mês' : ''}`
+                ), !state.isSelected(reward) ? '' : m('.w-row.back-reward-money', [
                     rewardVM.hasShippingOptions(reward) ?
                     m('.w-sub-col.w-col.w-col-4', [
                         m('.fontcolor-secondary.u-marginbottom-10',
                             'Local de entrega'
                         ),
                         m('select.positive.text-field.w-select', {
-                            onchange: m.withAttr('value', ctrl.selectDestination)
+                            onchange: m.withAttr('value', state.selectDestination)
                         },
-                            _.map(ctrl.locationOptions(reward, ctrl.selectedDestination),
+                            _.map(state.locationOptions(reward, state.selectedDestination),
                                 option => m('option', {
                                     value: option.value
                                 }, [
@@ -131,7 +131,7 @@ const rewardSelectCard = {
                         class: rewardVM.hasShippingOptions(reward) ?
                             'w-col-4' : 'w-col-8'
                     }, [
-                        m('.fontcolor-secondary.u-marginbottom-10', `Valor do apoio${args.isSubscription ? ' mensal' : ''}`),
+                        m('.fontcolor-secondary.u-marginbottom-10', `Valor do apoio${attrs.isSubscription ? ' mensal' : ''}`),
                         m('.w-row.u-marginbottom-20', [
                             m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                 m('.back-reward-input-reward.medium.placeholder',
@@ -144,9 +144,9 @@ const rewardSelectCard = {
                                     min: reward.minimum_value,
                                     placeholder: reward.minimum_value,
                                     type: 'tel',
-                                    config: ctrl.setInput,
-                                    onkeyup: m.withAttr('value', ctrl.applyMask),
-                                    value: ctrl.contributionValue()
+                                    config: state.setInput,
+                                    onkeyup: m.withAttr('value', state.applyMask),
+                                    value: state.contributionValue()
                                 })
                             )
                         ]),
@@ -157,28 +157,28 @@ const rewardSelectCard = {
                     ]),
                     m('.submit-form.w-col.w-col-4',
                         m('button.btn.btn-medium.u-margintop-30', {
-                            onclick: ctrl.submitContribution
+                            onclick: state.submitContribution
                         }, [
                             'Continuar  ',
                             m('span.fa.fa-chevron-right')
                         ])
                     )
                 ]),
-                ctrl.error().length > 0 && ctrl.isSelected(reward) ? m('.text-error', [
+                state.error().length > 0 && state.isSelected(reward) ? m('.text-error', [
                     m('br'),
                     m('span.fa.fa-exclamation-triangle'),
-                    ` ${ctrl.error()}`
+                    ` ${state.error()}`
                 ]) : '',
                 m('.fontsize-smaller.fontweight-semibold',
                     reward.title
                 ),
                 m('.back-reward-reward-description', [
                     m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description),
-                    m('.u-marginbottom-20.w-row', [!reward.deliver_at || args.isSubscription ? '' : m('.w-col.w-col-6', [
+                    m('.u-marginbottom-20.w-row', [!reward.deliver_at || attrs.isSubscription ? '' : m('.w-col.w-col-6', [
                         m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
                         m('.fontsize-smallest', h.momentify(reward.deliver_at, 'MMM/YYYY'))
                     ]),
-                        args.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
+                        attrs.isSubscription || (!rewardVM.hasShippingOptions(reward) && reward.shipping_options !== 'presential') ? '' : m('.w-col.w-col-6', [
                             m('.fontsize-smallest.fontcolor-secondary', 'Envio:'),
                             m('.fontsize-smallest', window.I18n.t(`shipping_options.${reward.shipping_options}`, I18nScope()))
                         ])

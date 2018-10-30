@@ -13,7 +13,7 @@ const progressMeter = {
 
             return `.card-project-meter.${project.mode}.${project.state}.${progress > 100 ? 'complete' : 'incomplete'}.${failed()}`;
         };
-        return {
+        vnode.state = {
             project,
             progress,
             cardMeter,
@@ -21,16 +21,16 @@ const progressMeter = {
         };
     },
     view: function({state}) {
-        const project = ctrl.project;
-        return m(ctrl.cardMeter(), [
-            (ctrl.isFinished(project)) ?
+        const project = state.project;
+        return m(state.cardMeter(), [
+            (state.isFinished(project)) ?
             m('div',
-                project.state === 'successful' && ctrl.progress < 100 ? window.I18n.t('display_status.flex_successful', I18nScope()) : window.I18n.t(`display_status.${project.state}`, I18nScope())
+                project.state === 'successful' && state.progress < 100 ? window.I18n.t('display_status.flex_successful', I18nScope()) : window.I18n.t(`display_status.${project.state}`, I18nScope())
             ) :
             m('.meter', [
                 m('.meter-fill', {
                     style: {
-                        width: `${(ctrl.progress > 100 ? 100 : ctrl.progress)}%`
+                        width: `${(state.progress > 100 ? 100 : state.progress)}%`
                     }
                 })
             ])

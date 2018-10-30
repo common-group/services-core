@@ -13,9 +13,9 @@ import m from 'mithril';
 import h from '../h';
 
 const loadMoreBtn = {
-    view: function({state, attrs}) {
-        const collection = args.collection,
-            cssClass = args.cssClass;
+    view: function({attrs}) {
+        const collection = attrs.collection,
+            cssClass = attrs.cssClass;
         return m(`.w-col.w-col-4${cssClass}`, [
               (!collection.isLoading() ?
                (collection.isLastPage() ? '' : m('button#load-more.btn.btn-small.btn-terciary.w-button', {

@@ -58,7 +58,7 @@ const projectCardEdit = {
         }
         vm.fillFields(vnode.attrs.project);
 
-        return {
+        vnode.state = {
             onSubmit,
             showSuccess,
             showError,
@@ -67,19 +67,19 @@ const projectCardEdit = {
         };
     },
     view: function({state, attrs}) {
-        const vm = ctrl.vm;
+        const vm = state.vm;
         return m('#card-tab', [
-            (ctrl.showSuccess() ? m(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-section.section', [
                     m('.w-container', [
                         (vm.currentProject().mode === 'sub' ?
@@ -133,7 +133,7 @@ const projectCardEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
 
         ]);

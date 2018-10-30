@@ -101,7 +101,7 @@ const start = {
         statsLoader.load().then(stats);
         loadCategories();
 
-        return {
+        vnode.state = {
             stats,
             categories,
             paneImages,
@@ -122,8 +122,8 @@ const start = {
         };
     },
     view: function({state, attrs}) {
-        const stats = _.first(ctrl.stats());
-        const testimonials = () => _.map(ctrl.testimonials, (testimonial) => {
+        const stats = _.first(state.stats());
+        const testimonials = () => _.map(state.testimonials, (testimonial) => {
             const content = m('.card.u-radius.card-big.card-terciary', [
                 m('.u-text-center.u-marginbottom-20', [
                     m(`img.thumb-testimonial.u-round.u-marginbottom-20[src="${testimonial.thumbUrl}"]`)
@@ -225,11 +225,11 @@ const start = {
                 ]),
                 m('.w-container', [
                     m('.w-tabs.w-hidden-small.w-hidden-tiny', [
-                        m('.w-tab-menu.w-col.w-col-4', _.map(ctrl.paneImages, (pane, idx) => m(`btn.w-tab-link.w-inline-block.tab-list-item${(idx === ctrl.selectedPane()) ? '.selected' : ''}`, {
-                            onclick: h.analytics.event({ cat: 'project_start', act: 'start_solution_click', lbl: pane.label }, ctrl.selectPane(idx))
+                        m('.w-tab-menu.w-col.w-col-4', _.map(state.paneImages, (pane, idx) => m(`btn.w-tab-link.w-inline-block.tab-list-item${(idx === state.selectedPane()) ? '.selected' : ''}`, {
+                            onclick: h.analytics.event({ cat: 'project_start', act: 'start_solution_click', lbl: pane.label }, state.selectPane(idx))
                         }, pane.label))),
-                        m('.w-tab-content.w-col.w-col-8', _.map(ctrl.paneImages, (pane, idx) => m('.w-tab-pane', [
-                            m(`img[src="${pane.src}"].pane-image${(idx === ctrl.selectedPane()) ? '.selected' : ''}`)
+                        m('.w-tab-content.w-col.w-col-8', _.map(state.paneImages, (pane, idx) => m('.w-tab-pane', [
+                            m(`img[src="${pane.src}"].pane-image${(idx === state.selectedPane()) ? '.selected' : ''}`)
                         ])))
                     ])
                 ])
@@ -349,14 +349,14 @@ const start = {
                         ])
                     ]),
                     m('.w-tabs', [
-                        m('.w-tab-menu.u-text-center', _.map(ctrl.categories(), category => m(`a.w-tab-link.w-inline-block.btn-category.small.btn-inline${(ctrl.selectedCategoryIdx() === category.id) ? '.w--current' : ''}`, {
-                            onclick: h.analytics.event({ cat: 'project_start', act: 'start_category_click', lbl: category.name }, ctrl.selectCategory(category))
+                        m('.w-tab-menu.u-text-center', _.map(state.categories(), category => m(`a.w-tab-link.w-inline-block.btn-category.small.btn-inline${(state.selectedCategoryIdx() === category.id) ? '.w--current' : ''}`, {
+                            onclick: h.analytics.event({ cat: 'project_start', act: 'start_category_click', lbl: category.name }, state.selectCategory(category))
                         }, [
                             m('div', category.name)
                         ]))),
                         m('.w-tab-content.u-margintop-40', [
                             m('.w-tab-pane.w--tab-active', [
-                                m('.w-row', (ctrl.selectedCategoryIdx() !== -1) ? _.map(ctrl.selectedCategory(), category => [
+                                m('.w-row', (state.selectedCategoryIdx() !== -1) ? _.map(state.selectedCategory(), category => [
                                     m('.w-col.w-col-5', [
                                         m('.fontsize-jumbo.u-marginbottom-20', category.name),
                                         m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
@@ -368,7 +368,7 @@ const start = {
                                         m('.fontsize-large.u-marginbottom-20', 'Doados para projetos'),
                                         m('.fontsize-megajumbo.fontcolor-negative', (category.successful_projects) ? category.successful_projects : '...'),
                                         m('.fontsize-large.u-marginbottom-30', 'Projetos financiados'),
-                                        !_.isEmpty(ctrl.featuredProjects()) ? _.map(ctrl.featuredProjects(), project => !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
+                                        !_.isEmpty(state.featuredProjects()) ? _.map(state.featuredProjects(), project => !_.isUndefined(project) ? m('.w-row.u-marginbottom-10', [
                                             m('.w-col.w-col-1', [
                                                 m(`img.user-avatar[src="${h.useAvatarOrDefault(project.userThumb)}"]`)
                                             ]),
@@ -398,12 +398,12 @@ const start = {
             m('.w-container', [
                 m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', window.I18n.t('qa_title', I18nScope())),
                 m('.w-row.u-marginbottom-60', [
-                    m('.w-col.w-col-6', _.map(ctrl.questions.col_1, question => m(landingQA, {
+                    m('.w-col.w-col-6', _.map(state.questions.col_1, question => m(landingQA, {
                         question: question.question,
                         answer: question.answer,
                         onclick: h.analytics.event({ cat: 'project_start', act: 'start_qa_click', lbl: question.question })
                     }))),
-                    m('.w-col.w-col-6', _.map(ctrl.questions.col_2, question => m(landingQA, {
+                    m('.w-col.w-col-6', _.map(state.questions.col_2, question => m(landingQA, {
                         question: question.question,
                         answer: question.answer,
                         onclick: h.analytics.event({ cat: 'project_start', act: 'start_qa_click', lbl: question.question })
@@ -416,7 +416,7 @@ const start = {
                     m('form[action="/projects/fallback_create"][method="GET"].w-row.w-form', {
                         onsubmit: (e) => {
                             h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_submit' })(e);
-                            return ctrl.validateProjectForm();
+                            return state.validateProjectForm();
                         }
                     },
                         [
@@ -427,25 +427,25 @@ const start = {
                                 m(`input[name="authenticity_token"][type="hidden"][value="${h.authenticityToken()}"]`),
                                 m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
                                     name: 'project[name]',
-                                    class: ctrl.projectNameError() ? 'error' : '',
-                                    onfocus: () => ctrl.projectNameError(false),
+                                    class: state.projectNameError() ? 'error' : '',
+                                    onfocus: () => state.projectNameError(false),
                                     onchange: (e) => {
                                         h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'name' })(e);
-                                        m.withAttr('value', ctrl.projectName)(e);
+                                        m.withAttr('value', state.projectName)(e);
                                     }
                                 }),
                                 m('.fontsize-larger.fontcolor-negative.u-marginbottom-10', 'na categoria'),
                                 m('select.w-select.text-field.medium.u-marginbottom-40', {
                                     name: 'project[category_id]',
-                                    class: ctrl.projectCategoryError() ? 'error' : '',
-                                    onfocus: () => ctrl.projectCategoryError(false),
+                                    class: state.projectCategoryError() ? 'error' : '',
+                                    onfocus: () => state.projectCategoryError(false),
                                     onchange: (e) => {
                                         h.analytics.oneTimeEvent({ cat: 'project_create', act: 'create_form_change', lbl: 'category' })(e);
-                                        m.withAttr('value', ctrl.projectCategory)(e);
+                                        m.withAttr('value', state.projectCategory)(e);
                                     }
                                 }, [
                                     m('option[value="-1"]', window.I18n.t('form.select_default', I18nScope())),
-                                    _.map(ctrl.categories(), category => m('option', { value: category.id, selected: ctrl.projectCategory() === category.id }, category.name))
+                                    _.map(state.categories(), category => m('option', { value: category.id, selected: state.projectCategory() === category.id }, category.name))
                                 ])
                             ]),
                             m('.w-col.w-col-2'),
@@ -454,7 +454,7 @@ const start = {
                                     m(`input[type="submit"][value="${window.I18n.t('form.submit', I18nScope())}"].w-button.btn.btn-large`)
                                 ]),
                             ]),
-                            m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m(
+                            m('.w-row.u-marginbottom-80', (state.projectNameError() || state.projectCategoryError()) ? m(
                                 inlineError,
                                 { message: 'Por favor, verifique novamente os campos acima!' }
                             ) : '')

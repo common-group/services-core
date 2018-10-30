@@ -14,7 +14,7 @@ const paymentForm = {
             scope = () => vnode.attrs.vm.isInternational()
                        ? I18nIntScope()
                        : I18nScope();
-        vnode.state {
+        vnode.state = {
             isSlip,
             scope,
             vm: vnode.attrs.vm

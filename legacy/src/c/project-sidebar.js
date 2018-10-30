@@ -60,7 +60,7 @@ const projectSidebar = {
             return false;
         };
 
-        return {
+        vnode.state = {
             animateProgress,
             displayShareBox: h.toggleProp(false, true),
             navigate
@@ -68,7 +68,7 @@ const projectSidebar = {
     },
     view: function({state, attrs}) {
         // @TODO: remove all those things from the view
-        const project = args.project,
+        const project = attrs.project,
             elapsed = project().elapsed_time,
             remaining = project().remaining_time,
             displayCardClass = () => {
@@ -98,8 +98,8 @@ const projectSidebar = {
                 return states[project().state];
             },
             isSub = projectVM.isSubscription(project),
-            subscriptionData = args.subscriptionData && args.subscriptionData() ? args.subscriptionData() : prop(),
-            subGoal = isSub ? (_.find(args.goalDetails(), g => g.value > subscriptionData.amount_paid_for_valid_period) || _.last(args.goalDetails()) || { value: '--' }) : null,
+            subscriptionData = attrs.subscriptionData && attrs.subscriptionData() ? attrs.subscriptionData() : prop(),
+            subGoal = isSub ? (_.find(attrs.goalDetails(), g => g.value > subscriptionData.amount_paid_for_valid_period) || _.last(attrs.goalDetails()) || { value: '--' }) : null,
             pledged = isSub ? subscriptionData.amount_paid_for_valid_period : project().pledged,
             progress = isSub ? (subscriptionData.amount_paid_for_valid_period / subGoal.value) * 100 : project().progress,
             totalContributors = isSub ? subscriptionData.total_subscriptions : project().total_contributors;
@@ -149,14 +149,14 @@ const projectSidebar = {
                         })
                     ])
                 ]),
-                (project().open_for_contributions && !args.hasSubscription ? m('.back-project-btn-div', [
+                (project().open_for_contributions && !attrs.hasSubscription ? m('.back-project-btn-div', [
                     m('.back-project--btn-row', [
                         m('a#contribute_project_form.btn.btn-large.u-marginbottom-20[href="javascript:void(0);"]', {
                             onclick: h.analytics.event({
                                 cat: 'contribution_create',
                                 act: 'contribution_button_click',
                                 project: project()
-                            }, ctrl.navigate)
+                            }, state.navigate)
 
                         }, window.I18n.t(`submit_${project().mode}`, I18nScope()))
                     ]),
@@ -175,16 +175,16 @@ const projectSidebar = {
                 m(categoryTag, { project }),
                 m('.u-marginbottom-30.u-text-center-small-only',
                     m(`button.btn.btn-inline.btn-medium.btn-terciary${projectVM.isSubscription(project) ? '.btn-terciary-negative' : ''}`, {
-                        onclick: ctrl.displayShareBox.toggle
+                        onclick: state.displayShareBox.toggle
                     }, 'Compartilhar este projeto')
                 ),
-                ctrl.displayShareBox() ? m(projectShareBox, {
+                state.displayShareBox() ? m(projectShareBox, {
                     project,
-                    displayShareBox: ctrl.displayShareBox
+                    displayShareBox: state.displayShareBox
                 }) : ''
             ]),
             m('.user-c', m(projectUserCard, {
-                userDetails: args.userDetails,
+                userDetails: attrs.userDetails,
                 isDark: projectVM.isSubscription(project),
                 project
             }))

@@ -28,7 +28,7 @@ const subProjectNew = {
 
         loadCategories();
 
-        return {
+        vnode.state = {
             categories,
             projectCategory,
             projectName,
@@ -50,7 +50,7 @@ const subProjectNew = {
                         m('.w-form', [
                             m('form.w-row.w-form[action="/projects/fallback_create"][method="GET"]',
                                 {
-                                    onsubmit: e => ctrl.validateProjectForm()
+                                    onsubmit: e => state.validateProjectForm()
                                 }, [
                                     m('.fontcolor-negative.fontsize-larger.u-marginbottom-10',
                                         'Quero iniciar uma campanha chamada'
@@ -63,10 +63,10 @@ const subProjectNew = {
                                     }),
                                     m('input.w-input.text-field.medium.u-marginbottom-30[type="text"]', {
                                         name: 'project[name]',
-                                        class: ctrl.projectNameError() ? 'error' : '',
-                                        onfocus: () => ctrl.projectNameError(false),
+                                        class: state.projectNameError() ? 'error' : '',
+                                        onfocus: () => state.projectNameError(false),
                                         onchange: (e) => {
-                                            m.withAttr('value', ctrl.projectName)(e);
+                                            m.withAttr('value', state.projectName)(e);
                                         }
                                     }),
                                     m('.fontcolor-negative.fontsize-larger.u-marginbottom-10',
@@ -74,16 +74,16 @@ const subProjectNew = {
                                     ),
                                     m('select.w-select.text-field.medium.u-marginbottom-40', {
                                         name: 'project[category_id]',
-                                        class: ctrl.projectCategoryError() ? 'error' : '',
-                                        onfocus: () => ctrl.projectCategoryError(false),
+                                        class: state.projectCategoryError() ? 'error' : '',
+                                        onfocus: () => state.projectCategoryError(false),
                                         onchange: (e) => {
-                                            m.withAttr('value', ctrl.projectCategory)(e);
+                                            m.withAttr('value', state.projectCategory)(e);
                                         }
                                     }, [
                                         m('option[value="-1"]', window.I18n.t('form.select_default', I18nScope())),
-                                        _.map(ctrl.categories(), category => m('option', {
+                                        _.map(state.categories(), category => m('option', {
                                             value: category.id,
-                                            selected: ctrl.projectCategory() === category.id
+                                            selected: state.projectCategory() === category.id
                                         }, category.name))
                                     ])
                                 ],
@@ -101,7 +101,7 @@ const subProjectNew = {
                     ),
                     m('.w-col.w-col-2')
                 ]),
-                m('.w-row.u-marginbottom-80', (ctrl.projectNameError() || ctrl.projectCategoryError()) ? m(inlineError, {
+                m('.w-row.u-marginbottom-80', (state.projectNameError() || state.projectCategoryError()) ? m(inlineError, {
                     message: 'Por favor, verifique novamente os campos acima!'
                 }) : ''),
 

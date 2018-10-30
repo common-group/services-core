@@ -70,7 +70,7 @@ const projectInsightsSub = {
         projectGoalsVM.fetchGoals(filtersVM.project_id());
         const balanceLoader = userVM.getUserBalance(vnode.attrs.project.user_id);
 
-        return {
+        vnode.state = {
             weekSubscriptions,
             subscriptionsPerMonth,
             lastWeekSubscriptions,
@@ -88,16 +88,16 @@ const projectInsightsSub = {
     },
     view: function({state, attrs}) {
         const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
-        const weekSum = sumAmount(ctrl.weekSubscriptions());
-        const lastWeekSum = sumAmount(ctrl.lastWeekSubscriptions());
-        const canceledWeekSum = sumAmount(ctrl.weekTransitions());
-        const canceledLastWeekSum = sumAmount(ctrl.lastWeekTransitions());
-        const project = args.project,
-            subscribersDetails = args.subscribersDetails,
-            balanceData = (ctrl.balanceLoader() && !_.isNull(_.first(ctrl.balanceLoader())) ? _.first(ctrl.balanceLoader()) : null);
+        const weekSum = sumAmount(state.weekSubscriptions());
+        const lastWeekSum = sumAmount(state.lastWeekSubscriptions());
+        const canceledWeekSum = sumAmount(state.weekTransitions());
+        const canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
+        const project = attrs.project,
+            subscribersDetails = attrs.subscribersDetails,
+            balanceData = (state.balanceLoader() && !_.isNull(_.first(state.balanceLoader())) ? _.first(state.balanceLoader()) : null);
         const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : null;
 
-        return m('.project-insights', !args.l() ? [
+        return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
             (project.is_owner_or_admin ? m(projectDashboardMenu, {
                 project: prop(project)
@@ -113,9 +113,9 @@ const projectInsightsSub = {
                 ]),
                 m('.w-container', [
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        subscribersDetails && !_.isEmpty(ctrl.projectGoalsVM.goals()) ?
+                        subscribersDetails && !_.isEmpty(state.projectGoalsVM.goals()) ?
                         m(projectGoalsBoxDashboard, {
-                            goalDetails: ctrl.projectGoalsVM.goals,
+                            goalDetails: state.projectGoalsVM.goals,
                             amount: subscribersDetails.amount_paid_for_valid_period
                         }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
@@ -171,9 +171,9 @@ const projectInsightsSub = {
                             ]),
                             m(insightsInfoBox, {
                                 label: 'Novos Assinantes',
-                                info: ctrl.weekSubscriptions().length,
-                                newCount: ctrl.weekSubscriptions().length,
-                                oldCount: ctrl.lastWeekSubscriptions().length
+                                info: state.weekSubscriptions().length,
+                                newCount: state.weekSubscriptions().length,
+                                oldCount: state.lastWeekSubscriptions().length
                             }),
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
@@ -188,8 +188,8 @@ const projectInsightsSub = {
                         m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [
                             window.I18n.t('last_30_days_indication', I18nScope())
                         ])
-                    ]), !ctrl.lVisitorsPerDay() ? m(projectDataChart, {
-                        collection: ctrl.visitorsPerDay,
+                    ]), !state.lVisitorsPerDay() ? m(projectDataChart, {
+                        collection: state.visitorsPerDay,
                         dataKey: 'visitors',
                         limitDataset: 30,
                         xAxis: item => h.momentify(item.day),
@@ -200,8 +200,8 @@ const projectInsightsSub = {
                         style: {
                             'min-height': '300px'
                         }
-                    }, [!ctrl.lSubscriptionsPerDay() ? m(projectDataChart, {
-                        collection: ctrl.subscriptionsPerDay,
+                    }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
+                        collection: state.subscriptionsPerDay,
                         label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
                         subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
                         dataKey: 'total_amount',
@@ -212,16 +212,16 @@ const projectInsightsSub = {
                         style: {
                             'min-height': '300px'
                         }
-                    }, [!ctrl.lSubscriptionsPerDay() ? m(projectDataChart, {
-                        collection: ctrl.subscriptionsPerDay,
+                    }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
+                        collection: state.subscriptionsPerDay,
                         label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
                         subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
                         dataKey: 'total',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
                     }) : h.loader()]),
-                    (ctrl.isSubscriptionsPerMonthLoaded() ?
-                        m(subscriptionsPerMonthTable, { data: ctrl.subscriptionsPerMonth() }) : h.loader())
+                    (state.isSubscriptionsPerMonthLoaded() ?
+                        m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader())
 
                 ])
             ])

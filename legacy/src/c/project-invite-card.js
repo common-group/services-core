@@ -5,8 +5,8 @@ import facebookButton from '../c/facebook-button';
 import copyTextInput from '../c/copy-text-input';
 
 const projectInviteCard = {
-    view: function({state, attrs}) {
-        const project = args.project;
+    view: function({attrs}) {
+        const project = attrs.project;
 
         return m('.card.card-terciary.u-marginbottom-20.u-radius.w-clearfix', [
             m('.fontsize-base.fontweight-semibold.u-marginbottom-30.u-text-center', 'Convide seus amigos para apoiar sua campanha'),

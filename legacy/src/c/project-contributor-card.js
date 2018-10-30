@@ -16,12 +16,12 @@ const projectContributorCard = {
                 vnode.attrs.contribution.data.total_published_projects += userDetails().total_published_projects;
             });
         }
-        return {
+        vnode.state = {
             userDetails
         };
     },
     view: function({state, attrs}) {
-        const contribution = args.contribution;
+        const contribution = attrs.contribution;
 
         return m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
             m(`a[href="/users/${contribution.user_id}"][style="display: block;"]`, {
@@ -29,7 +29,7 @@ const projectContributorCard = {
                     cat: 'project_view',
                     act: 'project_backer_link',
                     lbl: contribution.user_id,
-                    project: args.project()
+                    project: attrs.project()
                 })
             }, [
                 m(`img.thumb.u-marginbottom-10.u-round[src="${!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg'}"]`)
@@ -39,7 +39,7 @@ const projectContributorCard = {
                     cat: 'project_view',
                     act: 'project_backer_link',
                     lbl: contribution.user_id,
-                    project: args.project()
+                    project: attrs.project()
                 })
             }, userVM.displayName(contribution.data)),
             m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${h.selfOrEmpty(contribution.data.city)}, ${h.selfOrEmpty(contribution.data.state)}`),

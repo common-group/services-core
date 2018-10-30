@@ -29,7 +29,7 @@ const adminContributionDetail = {
             return reward;
         };
 
-        return {
+        vnode.state = {
             reward: loadReward(),
             actions: {
                 transfer: {
@@ -82,9 +82,9 @@ const adminContributionDetail = {
         };
     },
     view: function({state, attrs}) {
-        const actions = ctrl.actions,
-            item = args.item,
-            reward = ctrl.reward,
+        const actions = state.actions,
+            item = attrs.item,
+            reward = state.reward,
             addOptions = (builder, id) => _.extend({}, builder, {
                 requestOptions: {
                     url: (`/admin/contributions/${id}/gateway_refund`),
@@ -99,7 +99,7 @@ const adminContributionDetail = {
                     data: actions.transfer,
                     item
                 }),
-                (ctrl.l()) ? h.loader :
+                (state.l()) ? h.loader :
                 m(adminRadioAction, {
                     data: actions.reward,
                     item: reward,
@@ -122,7 +122,7 @@ const adminContributionDetail = {
                 m(adminTransactionHistory, {
                     contribution: item
                 }),
-                (ctrl.l()) ? h.loader :
+                (state.l()) ? h.loader :
                 m(adminReward, {
                     reward,
                     contribution: item,

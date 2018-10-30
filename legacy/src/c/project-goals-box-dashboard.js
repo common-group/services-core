@@ -21,29 +21,29 @@ const projectGoalsBoxDashboard = {
         if (currentGoalIndex() === -1) {
             currentGoalIndex(vnode.attrs.goalDetails().length - 1);
         }
-        return {
+        vnode.state = {
             currentGoalIndex,
             nextGoal,
             previousGoal
         };
     },
     view: function({state, attrs}) {
-        const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
+        const goals = attrs.goalDetails().length > 0 ? attrs.goalDetails() : [{
                 title: 'N/A',
                 value: '',
                 description: ''
             }],
-            currentGoalIndex = ctrl.currentGoalIndex,
-            goalPercentage = (args.amount / goals[currentGoalIndex()].value) * 100;
+            currentGoalIndex = state.currentGoalIndex,
+            goalPercentage = (attrs.amount / goals[currentGoalIndex()].value) * 100;
 
         return m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius.w-clearfix', [
             m('.u-right', [
                 m('button.btn-inline.btn-terciary.fa.fa-angle-left.u-radius.w-inline-block', {
-                    onclick: ctrl.previousGoal,
+                    onclick: state.previousGoal,
                     class: currentGoalIndex() === 0 ? 'btn-desactivated' : ''
                 }),
                 m('button.btn-inline.btn-terciary.fa.fa-angle-right.u-radius.w-inline-block', {
-                    onclick: ctrl.nextGoal,
+                    onclick: state.nextGoal,
                     class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : ''
                 })
             ]),
@@ -64,7 +64,7 @@ const projectGoalsBoxDashboard = {
                     goals[currentGoalIndex()].title
                 ),
             m('.fontcolor-secondary.fontsize-smallest',
-                    `R$${args.amount} de R$${goals[currentGoalIndex()].value} por mês`
+                    `R$${attrs.amount} de R$${goals[currentGoalIndex()].value} por mês`
                 )
         ]);
     }

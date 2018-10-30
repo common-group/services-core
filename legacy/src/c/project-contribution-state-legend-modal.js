@@ -8,7 +8,7 @@ const ProjectContributionStateLegendModal = {
     oninit: function(vnode) {
         const translate = path => window.I18n.t(path, I18nScope());
 
-        return {
+        vnode.state = {
             stages: {
                 online: [
                     {
@@ -49,7 +49,7 @@ const ProjectContributionStateLegendModal = {
         };
     },
     view: function({state, attrs}) {
-        const project = _.first(args.project()),
+        const project = _.first(attrs.project()),
             project_stage = (project.state == 'waiting_funds' ? 'online' : project.state);
 
         return m('div', [
@@ -57,7 +57,7 @@ const ProjectContributionStateLegendModal = {
                 m('.fontsize-large.u-text-center',
                   'Status do apoio')
             ]),
-            m('.modal-dialog-content', _.map(ctrl.stages[project_stage], (item, i) => m('.u-marginbottom-20', [
+            m('.modal-dialog-content', _.map(state.stages[project_stage], (item, i) => m('.u-marginbottom-20', [
                 m('.fontsize-small.fontweight-semibold', [
                     m(`span${item.i_class}`),
                     `  ${item.label}`

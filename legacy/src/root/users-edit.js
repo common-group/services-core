@@ -58,7 +58,7 @@ const usersEdit = {
 
         h.redrawHashChange();
         userVM.fetchUser(userId, true, userDetails);
-        return {
+        vnode.state = {
             displayTabContent,
             hash,
             userDetails
@@ -66,7 +66,7 @@ const usersEdit = {
     },
 
     view: function({state, attrs}) {
-        const user = ctrl.userDetails();
+        const user = state.userDetails();
 
         return m('div', [
             m(userHeader, {
@@ -80,20 +80,20 @@ const usersEdit = {
                 }
             },
                         m('.w-container', [
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#contributions' ? '.selected' : '')}[data-target='#dashboard_contributions'][href='#contributions'][id='dashboard_contributions_link']`, 'Apoiados'),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#projects' ? '.selected' : '')}[data-target='#dashboard_projects'][href='#projects'][id='dashboard_projects_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#contributions' ? '.selected' : '')}[data-target='#dashboard_contributions'][href='#contributions'][id='dashboard_contributions_link']`, 'Apoiados'),
+                            m(`a.dashboard-nav-link${(state.hash() === '#projects' ? '.selected' : '')}[data-target='#dashboard_projects'][href='#projects'][id='dashboard_projects_link']`,
                                 'Criados'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#about_me' ? '.selected' : '')}[data-target='#dashboard_about_me'][href='#about_me'][id='dashboard_about_me_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#about_me' ? '.selected' : '')}[data-target='#dashboard_about_me'][href='#about_me'][id='dashboard_about_me_link']`,
                               'Perfil Público'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#settings' ? '.selected' : '')}[data-target='#dashboard_settings'][href='#settings'][id='dashboard_settings_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#settings' ? '.selected' : '')}[data-target='#dashboard_settings'][href='#settings'][id='dashboard_settings_link']`,
                               'Dados cadastrais'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
                                 'Notificações'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
                               'Saldo'
                              ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/${window.I18n.locale}/users/${user.id}']`, {
@@ -110,8 +110,8 @@ const usersEdit = {
                     ),
 
                 m('section.section',
-                  m((ctrl.hash() == '#projects' ? '.w-container' : '.w-section'),
-                            m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
+                  m((state.hash() == '#projects' ? '.w-container' : '.w-section'),
+                            m('.w-row', user.id ? state.displayTabContent(user) : h.loader())
                         )
                     )
 

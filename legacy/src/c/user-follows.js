@@ -34,12 +34,12 @@ const userFollows = {
             followsListVM.firstPage(userFriendVM.parameters());
         }
 
-        return {
+        vnode.state = {
             followsListVM
         };
     },
     view: function({state, attrs}) {
-        const followsVM = ctrl.followsListVM;
+        const followsVM = state.followsListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
                 m('.w-row', [

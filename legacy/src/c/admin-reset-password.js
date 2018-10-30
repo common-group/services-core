@@ -61,7 +61,7 @@ const adminResetPassword = {
             };
         };
 
-        return {
+        vnode.state = {
             complete,
             error,
             error_message,
@@ -73,32 +73,32 @@ const adminResetPassword = {
         };
     },
     view: function({state, attrs}) {
-        const data = args.data,
-            btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
+        const data = attrs.data,
+            btnValue = (state.l()) ? 'por favor, aguarde...' : data.callToAction;
 
         return m('.w-col.w-col-2', [
             m('button.btn.btn-small.btn-terciary', {
-                onclick: ctrl.toggler.toggle
-            }, data.outerLabel), (ctrl.toggler()) ?
+                onclick: state.toggler.toggle
+            }, data.outerLabel), (state.toggler()) ?
             m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: ctrl.unload
+                config: state.unload
             }, [
                 m('form.w-form', {
-                    onsubmit: ctrl.submit
-                }, (!ctrl.complete()) ? [
+                    onsubmit: state.submit
+                }, (!state.complete()) ? [
                     m('label', data.innerLabel),
                     m(`input.w-input.text-field[type="text"][name="${data.property}"][placeholder="${data.placeholder}"]`, {
-                        onchange: m.withAttr('value', ctrl.newPassword),
-                        value: ctrl.newPassword()
+                        onchange: m.withAttr('value', state.newPassword),
+                        value: state.newPassword()
                     }),
                     m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
-                ] : (!ctrl.error()) ? [
+                ] : (!state.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', 'Senha alterada com sucesso.')
                     ])
                 ] : [
                     m('.w-form-error[style="display:block;"]', [
-                        m('p', ctrl.error_message())
+                        m('p', state.error_message())
                     ])
                 ])
             ]) : ''

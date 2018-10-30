@@ -5,18 +5,13 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettingsSavedCreditCards = {
-    oninit: function(vnode)
-    {
-        return {};
-    },
-    view: function({state, attrs})
-    {
+    view: function({attrs}) {
         const 
-            user = args.user,
-            creditCards = args.creditCards(),
-            setCardDeletionForm = args.setCardDeletionForm,
-            deleteCard = args.deleteCard,
-            toDeleteCard = args.toDeleteCard;
+            user = attrs.user,
+            creditCards = attrs.creditCards(),
+            setCardDeletionForm = attrs.setCardDeletionForm,
+            deleteCard = attrs.deleteCard,
+            toDeleteCard = attrs.toDeleteCard;
 
         return m('.w-form.card.card-terciary.u-marginbottom-20', [
             m('.fontsize-base.fontweight-semibold',

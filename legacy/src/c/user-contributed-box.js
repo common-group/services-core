@@ -23,7 +23,7 @@ const userContributedBox = {
             },
             installmentTotalAmount = prop(h.formatNumber(vnode.attrs.contribution.installments_total_amount, 2));
 
-        return {
+        vnode.state = {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
             contribution: vnode.attrs.contribution,
@@ -32,7 +32,7 @@ const userContributedBox = {
         };
     },
     view: function({state}) {
-        const contribution = ctrl.contribution,
+        const contribution = state.contribution,
             contactModalC = [ownerMessageContent, prop({
                 id: contribution.project_user_id,
                 name: contribution.project_owner_name,
@@ -44,8 +44,8 @@ const userContributedBox = {
             console.log('contribution', contribution);
 
         return !_.isEmpty(contribution) ? m('div',
-            (ctrl.displayModal() ? m(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: contactModalC
             }) : ''), [
                 m('.card.w-row', [
@@ -66,7 +66,7 @@ const userContributedBox = {
                         ]),
                         m("a.btn.btn-edit.btn-inline.btn-small.w-button[href='javascript:void(0);']", {
                             onclick: () => {
-                                ctrl.displayModal.toggle();
+                                state.displayModal.toggle();
                             }
                         },
                             window.I18n.t('contact_author', contributionScope())
@@ -98,7 +98,7 @@ const userContributedBox = {
                                     contribution.installments > 1 ? 
                                         m(".fontsize-smallest.fontweight-semibold.u-marginbottom-10", 
                                             I18n.t('total_amount', contributionScope({
-                                                total_amount: ctrl.installmentTotalAmount()
+                                                total_amount: state.installmentTotalAmount()
                                             }))
                                         ) : ''
                                 ),
@@ -118,7 +118,7 @@ const userContributedBox = {
                                     ) : ''),
                                 m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                                     m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
-                                        onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution)
+                                        onclick: () => state.toggleAnonymous(contribution.project_id, contribution)
                                     }),
                                     m('label.w-form-label',
                                         window.I18n.t('anonymous', contributionScope())

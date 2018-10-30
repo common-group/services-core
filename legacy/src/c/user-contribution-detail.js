@@ -11,13 +11,13 @@ const userContributionDetail = {
                 id: contribution.reward_id
             });
 
-        return {
+        vnode.state = {
             contribution,
             chosenReward
         };
     },
     view: function({state, attrs}) {
-        const contribution = args.contribution;
+        const contribution = attrs.contribution;
 
         return m(userContributedBox, { contribution });
     }
