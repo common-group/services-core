@@ -16,7 +16,7 @@ const facebookButton = {
             share
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const buttonCss = () => {
             if (args.mobile) {
                 return `w-hidden-main w-hidden-medium u-marginbottom-20 btn btn-medium btn-fb ${args.class}`;

@@ -32,7 +32,7 @@ const projectHeader = {
             showContributions: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project,
             rewardDetails = args.rewardDetails,
             activeSubscriptions = _.filter(ctrl.userProjectSubscriptions(), sub => sub.status === 'active'),

@@ -6,7 +6,7 @@ const dashboardSubscriptionCardDetailUserAddress = {
     {
         return {};
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         return (args.user && args.user.address) ?
             m('.u-marginbottom-20.card.card-secondary.u-radius', [

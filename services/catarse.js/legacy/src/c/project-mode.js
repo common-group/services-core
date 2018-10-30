@@ -16,7 +16,7 @@ import h from '../h';
 import tooltip from './tooltip';
 
 const projectMode = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project(),
             mode = project.mode,
             modeImgSrc = (mode === 'aon')

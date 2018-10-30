@@ -2,7 +2,7 @@ import m from 'mithril';
 import h from '../h';
 
 const adminProject = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.item;
         return m('.w-row.admin-project', [
             m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [

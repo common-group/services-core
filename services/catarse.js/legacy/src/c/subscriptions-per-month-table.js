@@ -15,7 +15,7 @@ const subscriptionsPerMonthTable = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div', [
             m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
                 'Crescimento mensal das assinaturas'

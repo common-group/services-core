@@ -34,7 +34,7 @@ const countrySelect = {
             countries
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const fields = ctrl.fields;
         if (args.countryName) {
             args.countryName(ctrl.countries() && fields.countryID() ? _.find(ctrl.countries(), country => country.id === parseInt(fields.countryID())).name_en : '');

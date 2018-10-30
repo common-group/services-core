@@ -25,7 +25,7 @@ const subscriptionLastPaymentStatus = {
             lastPaymentMethod: vnode.attrs.subscription.last_payment_data.payment_method
         };
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         return m('span', [
             m(".fontsize-smaller",

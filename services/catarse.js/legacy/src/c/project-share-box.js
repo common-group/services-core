@@ -8,7 +8,7 @@ const projectShareBox = {
             displayEmbed: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.pop-share.fontcolor-primary', {
             style: 'display: block;'
         }, [

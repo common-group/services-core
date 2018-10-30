@@ -9,7 +9,7 @@
 import m from 'mithril';
 
 const search = {
-    view: function(ctrl, args = {}) {
+    view: function({state, attrs} = {}) {
         const action = args.action || `/${window.I18n.locale}/explore?ref=ctrse_explore_pgsearch`,
             method = args.method || 'GET';
 

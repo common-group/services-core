@@ -55,7 +55,7 @@ const projectDescriptionVideoEdit = {
             loading
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const vm = ctrl.vm;
         return m('#description-tab', [
             (ctrl.showSuccess() ? m(popNotification, {

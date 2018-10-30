@@ -42,7 +42,7 @@ const subscriptionStatusIcon = {
             statusClass
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = args.subscription,
             statusClass = ctrl.statusClass,
 	            statusToShowTransitionDate = ['started', 'canceling', 'canceled', 'inactive'],

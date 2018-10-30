@@ -94,7 +94,7 @@ const rewardSelectCard = {
             contributionValue: rewardVM.contributionValue
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const reward = ctrl.normalReward(args.reward);
 
         return (h.rewardSouldOut(reward) ? m('') : m('span.radio.w-radio.w-clearfix.back-reward-radio-reward', {

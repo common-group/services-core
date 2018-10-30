@@ -48,7 +48,7 @@ const usersShow = {
             userDetails
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const user = ctrl.userDetails();
 
         return m('div', [

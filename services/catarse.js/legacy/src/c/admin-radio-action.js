@@ -111,7 +111,7 @@ const adminRadioAction = {
             radios
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const data = args.data,
             item = args.item(),
             btnValue = (ctrl.setLoader() || ctrl.getLoader()) ? 'por favor, aguarde...' : data.callToAction;

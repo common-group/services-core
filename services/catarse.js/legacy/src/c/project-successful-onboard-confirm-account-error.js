@@ -33,7 +33,7 @@ const projectSuccessfulOnboardConfirmAccountError = {
             error
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.w-row.bank-transfer-answer', [
             m('.w-col.w-col-6.w-col-push-3', [
                 m('.w-form.bank-transfer-problem.card.u-radius', [

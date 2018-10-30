@@ -159,7 +159,7 @@ const projectsSubscriptionCheckout = {
             subscriptionStatus
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),

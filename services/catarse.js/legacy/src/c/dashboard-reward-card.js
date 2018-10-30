@@ -58,7 +58,7 @@ const dashboardRewardCard = {
             limitError
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const reward = args.reward();
         const project = args.project();
         const isSubscription = projectVM.isSubscription(project);

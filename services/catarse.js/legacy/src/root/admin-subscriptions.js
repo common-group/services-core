@@ -80,7 +80,7 @@ const adminSubscriptions = {
             searchChargebackLoader = h.toggleProp(false, true),
             chargebackConfirmationModalContentWrapper = (customAttrs) => {
                 const wrapper = {
-                    view(ctrl, args) {
+                    view({state, attrs}) {
                         return m('', [
                             m('.modal-dialog-header', [
                                 m('.fontsize-large.u-text-center', args.modalTitle)
@@ -204,7 +204,7 @@ const adminSubscriptions = {
         };
     },
 
-    view: function(ctrl) {
+    view: function({state}) {
         const label = 'Assinaturas';
         return m('', [
             (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {

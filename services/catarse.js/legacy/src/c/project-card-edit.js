@@ -66,7 +66,7 @@ const projectCardEdit = {
             loading
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const vm = ctrl.vm;
         return m('#card-tab', [
             (ctrl.showSuccess() ? m(popNotification, {

@@ -4,7 +4,7 @@ import h from '../h';
 import projectCard from './project-card';
 
 const projectRow = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const collection = args.collection,
             title = args.title || collection.title,
             ref = args.ref,

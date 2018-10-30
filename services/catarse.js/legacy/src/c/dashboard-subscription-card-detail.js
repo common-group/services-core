@@ -23,7 +23,7 @@ const dashboardSubscriptionCardDetail = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = args.subscription,
             user = _.extend({ project_id: subscription.project_external_id }, args.user),
             reward = args.reward,

@@ -38,7 +38,7 @@ const FollowFoundFriends = {
             displayTabContent
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div', [
             m('.w-section.dashboard-header', [
                 m('.w-container', [

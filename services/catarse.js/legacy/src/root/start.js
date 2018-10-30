@@ -121,7 +121,7 @@ const start = {
             validateProjectForm
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const stats = _.first(ctrl.stats());
         const testimonials = () => _.map(ctrl.testimonials, (testimonial) => {
             const content = m('.card.u-radius.card-big.card-terciary', [

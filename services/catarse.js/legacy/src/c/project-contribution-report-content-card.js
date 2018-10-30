@@ -82,7 +82,7 @@ const projectContributionReportContentCard = {
             selectContribution
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const contribution = args.contribution(),
             project = args.project(),
             survey = _.first(ctrl.survey()),

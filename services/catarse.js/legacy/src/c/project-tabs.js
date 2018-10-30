@@ -58,7 +58,7 @@ const projectTabs = {
             navigate
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project,
             rewards = args.rewardDetails;
 

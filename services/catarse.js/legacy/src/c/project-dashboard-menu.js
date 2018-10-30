@@ -70,7 +70,7 @@ const projectDashboardMenu = {
             projectThumb
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project(),
             projectRoute = `/projects/${project.project_id}`,
             editRoute = `${projectRoute}/edit`,

@@ -24,7 +24,7 @@ const adminContributionItem = {
             }]
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m(
             '.w-row',
             _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [

@@ -15,7 +15,7 @@ const projectSuccessfulEnabledWithdraw = {
         };
     },
 
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
         return m('.u-marginbottom-40.w-row', [
             m('.w-col.w-col-1'),
             m('.w-col.w-col-10', [

@@ -114,7 +114,7 @@ const projectInsights = {
             visitorsTotal
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project,
             buildTooltip = el => m(tooltip, {
                 el,

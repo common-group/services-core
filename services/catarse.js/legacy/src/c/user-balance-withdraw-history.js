@@ -52,7 +52,7 @@ const userBalanceWithdrawHistory = {
             explitInArraysOf3
         };
     },
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
 
 
         return m('div',

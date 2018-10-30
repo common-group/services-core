@@ -31,7 +31,7 @@ const userContributedBox = {
             installmentTotalAmount
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const contribution = ctrl.contribution,
             contactModalC = [ownerMessageContent, prop({
                 id: contribution.project_user_id,

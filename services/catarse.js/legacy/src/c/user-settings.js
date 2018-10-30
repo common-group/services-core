@@ -140,7 +140,7 @@ const userSettings = {
             parsedErrors
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const user = ctrl.user,
             fields = ctrl.fields,
             hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),

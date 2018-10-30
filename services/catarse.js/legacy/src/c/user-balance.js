@@ -26,7 +26,7 @@ const userBalance = {
             displayModal: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0 },
             positiveValue = balance.amount >= 0,
             balanceRequestModalC = [

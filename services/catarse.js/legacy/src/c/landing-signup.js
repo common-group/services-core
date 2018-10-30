@@ -36,7 +36,7 @@ const landingSignup = {
             error
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const errorClasses = (!ctrl.error) ? '.positive.error' : '';
         return m(`form.w-form[id="email-form"][method="post"][action="${args.builder.customAction}"]`, {
             onsubmit: ctrl.submit

@@ -48,7 +48,7 @@ const ProjectContributionStateLegendModal = {
             }
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = _.first(args.project()),
             project_stage = (project.state == 'waiting_funds' ? 'online' : project.state);
 

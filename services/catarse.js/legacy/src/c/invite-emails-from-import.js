@@ -68,7 +68,7 @@ const inviteEmailsFromImport = {
             filtering
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project;
 
         return m('div', [

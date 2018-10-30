@@ -15,7 +15,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
 
 const projectSuccessfulOnboardConfirmAccountAccept = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.w-row.bank-transfer-answer', [
             m('.w-col.w-col-6.w-col-push-3', [
                 m('.w-form.bank-transfer-confirm.card.u-radius', [

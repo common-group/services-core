@@ -12,7 +12,7 @@ const projectEditBasic = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return (ctrl.user() && ctrl.project() ? m(projectBasicsEdit, {
             user: ctrl.user(),
             userId: args.user_id,

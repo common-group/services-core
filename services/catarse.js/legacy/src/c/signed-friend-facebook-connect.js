@@ -10,7 +10,7 @@ const SignedFriendFacebookConnect = {
             mapWithAvatar
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         if (args.friendListVM.isLoading()) {
             return h.loader();
         }

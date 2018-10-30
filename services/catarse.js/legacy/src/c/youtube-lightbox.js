@@ -58,7 +58,7 @@ const youtubeLightbox = {
             closeVideo
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('#youtube-lightbox', [
             m('a#youtube-play.w-lightbox.w-inline-block.fa.fa-play-circle.fontcolor-negative.fa-5x[href=\'javascript:void(0);\']', {
                 onclick: () => {

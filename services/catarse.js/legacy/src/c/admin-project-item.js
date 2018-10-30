@@ -18,7 +18,7 @@ const adminProjectItem = {
             recommended
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const project = ctrl.project,
             recommended = ctrl.recommended;
         return m('.w-row', [

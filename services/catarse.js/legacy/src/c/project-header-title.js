@@ -5,7 +5,7 @@ import projectVM from '../vms/project-vm';
 import h from '../h';
 
 const projectHeaderTitle = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project,
             isSub = projectVM.isSubscription(project);
 

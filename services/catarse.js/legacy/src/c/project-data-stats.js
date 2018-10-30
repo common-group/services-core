@@ -11,7 +11,7 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectDataStats = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project(),
             visitorsTotal = args.visitorsTotal(),
             statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),

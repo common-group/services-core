@@ -18,7 +18,7 @@ const projectsDashboard = {
 
         return projectVM;
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const project = ctrl.currentProject;
 
         return project().is_owner_or_admin ?

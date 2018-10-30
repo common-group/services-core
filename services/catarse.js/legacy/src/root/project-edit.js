@@ -122,7 +122,7 @@ const projectEdit = {
             project
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project;
 
         return m('.project-dashboard-edit', (project() ? [

@@ -52,7 +52,7 @@ const projectReportInfringesIntellectualProperty = {
             sendReport: vnode.attrs.sendReport.bind(vnode.attrs.sendReport, validate)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const assertError = (condition, message) => condition ? m(inlineError, { message }) : '';
 
         return m('.card.u-radius.u-margintop-20',

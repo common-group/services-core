@@ -70,7 +70,7 @@ const projectContributionReportContent = {
             selectedContributions
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const list = args.list;
         const isFailed = args.project().state === 'failed';
 

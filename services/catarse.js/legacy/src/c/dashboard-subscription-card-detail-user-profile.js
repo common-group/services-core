@@ -10,7 +10,7 @@ const dashboardSubscriptionCardDetailUserProfile = {
     {
         return {};
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const contactModalC = [ownerMessageContent, prop(args.user)];
 

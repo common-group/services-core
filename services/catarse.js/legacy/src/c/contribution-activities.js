@@ -58,7 +58,7 @@ const contributionActivities = {
             collectionSize
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         if (!ctrl.collectionL() && !_.isUndefined(ctrl.resource()) && (ctrl.collectionSize() || 0) > 0) {
             const resource = ctrl.resource(),
                 elapsed = h.translatedTime(resource.elapsed_time),

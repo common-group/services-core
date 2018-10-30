@@ -113,7 +113,7 @@ const userBalanceRequestModelContent = {
             bankCode
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const balance = args.balance,
             fields = ctrl.fields,
             user = args.user;

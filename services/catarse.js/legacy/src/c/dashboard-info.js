@@ -34,7 +34,7 @@ const dashboardInfo = {
             listenToReplace
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const content = args.content;
 
         return m('.w-container', [

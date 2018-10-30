@@ -10,7 +10,7 @@ const projectEditUserAbout = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return (ctrl.user() ? m(userAboutEdit, {
             user: ctrl.user(),
             userId: args.user_id,

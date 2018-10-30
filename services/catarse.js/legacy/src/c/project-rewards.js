@@ -6,7 +6,7 @@ import projectRewardList from './project-reward-list';
 import projectGoalsBox from './project-goals-box';
 
 const projectRewards = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.w-col.w-col-12', [projectVM.isSubscription(args.project) ? args.subscriptionData() ? m(
             projectGoalsBox,
             { goalDetails: args.goalDetails, subscriptionData: args.subscriptionData }

@@ -6,7 +6,7 @@ import FilterMain from '../c/filter-main';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_contribution_reports');
 
 const projectContributionReportHeader = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const filterBuilder = args.filterBuilder,
             paymentStateFilter = _.findWhere(filterBuilder, {
                 label: 'payment_state'

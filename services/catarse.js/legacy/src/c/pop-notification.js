@@ -12,7 +12,7 @@ const popNotification = {
             setPopTimeout
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return (ctrl.displayNotification() ? m('.flash.w-clearfix.card.card-notification.u-radius.zindex-20', {
             config: ctrl.setPopTimeout,
             class: args.error ? 'card-error' : ''

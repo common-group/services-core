@@ -162,7 +162,7 @@ const userBilling = {
             error
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         let user = args.user,
             fields = ctrl.fields,
             bankAccount = ctrl.bankAccount();

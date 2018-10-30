@@ -55,7 +55,7 @@ const projectsReward = {
             faq
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project;
 
         return m('#project-rewards', [

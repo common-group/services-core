@@ -34,7 +34,7 @@ const projectReportNoRewardReceived = {
             formName: vnode.attrs.formName || formName
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const contactModalC = [ownerMessageContent, prop(_.extend(args.user, {
             project_id: args.project().id
         }))];

@@ -13,7 +13,7 @@ import m from 'mithril';
 import h from '../h';
 
 const loadMoreBtn = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const collection = args.collection,
             cssClass = args.cssClass;
         return m(`.w-col.w-col-4${cssClass}`, [

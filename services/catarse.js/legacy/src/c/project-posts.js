@@ -37,7 +37,7 @@ const projectPosts = {
             scrollTo
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const list = ctrl.listVM,
             project = args.project() || {};
 

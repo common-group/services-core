@@ -15,7 +15,7 @@ const adminSubProject = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project();
         return m('.w-row.admin-project', project ? [
             m('.w-col.w-col-3.w-col-small-3.u-marginbottom-10', [

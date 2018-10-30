@@ -27,7 +27,7 @@ const shippingFeeInput = {
             states
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const deleted = ctrl.deleted,
             othersCount = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international').length,
             states = ctrl.states;

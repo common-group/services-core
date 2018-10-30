@@ -62,7 +62,7 @@ const adminUsers = {
             submit
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const label = 'Usuários';
 
         return m('', [

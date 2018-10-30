@@ -65,7 +65,7 @@ const ownerMessageContent = {
             l
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const successMessage = m('.modal-dialog-content.u-text-center', [
                 m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
                 m('p.fontsize-large', `Sua mensagem foi enviada com sucesso para ${ctrl.userDetails().name}. Você vai receber uma cópia no seu email e pode seguir a conversa por lá!`)

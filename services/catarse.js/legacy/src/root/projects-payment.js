@@ -116,7 +116,7 @@ const projectsPayment = {
             toggleDescription: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const user = ctrl.user(),
             addVM = ctrl.addVM(),
             project = ctrl.project(),

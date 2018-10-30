@@ -81,7 +81,7 @@ const adminContributionDetail = {
             l
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const actions = ctrl.actions,
             item = args.item,
             reward = ctrl.reward,

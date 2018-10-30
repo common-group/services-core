@@ -18,7 +18,7 @@ const press = {
             stats
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const stats = _.first(ctrl.stats());
 
         return m('#press', [

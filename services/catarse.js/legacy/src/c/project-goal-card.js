@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectGoalCard = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const goal = args.goal();
 
         return m('.card.u-marginbottom-30',

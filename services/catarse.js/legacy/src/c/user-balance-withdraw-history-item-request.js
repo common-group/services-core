@@ -85,7 +85,7 @@ const userBalanceWithdrawHistoryItemRequest = {
             documentMasked
         };
     },
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
         return m('.u-marginbottom-20.w-col.w-col-4',
             m(`.card.u-radius${ctrl.cardStatusClassMap[args.transfer.status]}`, [
                 m('div', [

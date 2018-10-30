@@ -61,7 +61,7 @@ const projectReminder = {
             popNotification
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
             buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-large',
             hideTextOnMobile = args.hideTextOnMobile || false,

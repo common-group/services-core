@@ -33,7 +33,7 @@ const cancelSubscriptionContent = {
             canceling
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const successMessage = m('.modal-dialog-content', [
                 m('.fontsize-megajumbo.u-text-center.u-marginbottom-20',
               '🙁'

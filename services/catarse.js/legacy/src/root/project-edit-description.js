@@ -13,7 +13,7 @@ const projectEditDescription = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const editComponent = projectVM.isSubscription(ctrl.project)
             ? projectDescriptionVideoEdit
             : projectDescriptionEdit;

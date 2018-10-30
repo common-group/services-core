@@ -16,7 +16,7 @@ const surveyPreview = {
             openQuestions
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.section.u-marginbottom-40',
             m('.w-container',
                 m('.w-row', [

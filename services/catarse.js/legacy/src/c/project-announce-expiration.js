@@ -14,7 +14,7 @@ const projectAnnounceExpiration = {
             showModal
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const days = ctrl.days,
             expirationDate = moment().add(ctrl.days(), 'days').format('DD/MM/YYYY');
         return m("[id='dashboard-announce_expiration-tab']",

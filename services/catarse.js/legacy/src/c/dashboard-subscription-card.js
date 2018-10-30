@@ -46,7 +46,7 @@ const dashboardSubscriptionCard = {
             user
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = args.subscription,
             user = ctrl.user(),
             cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';

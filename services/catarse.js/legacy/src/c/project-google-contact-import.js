@@ -72,7 +72,7 @@ const projectGoogleContactImport = {
             dataEmails
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = args.project;
 
         return m('#google_contact_wrapper', [

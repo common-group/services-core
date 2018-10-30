@@ -17,7 +17,7 @@ const paymentMethodIcon = {
             paymentClass
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const subscription = ctrl.subscription,
             paymentClass = ctrl.paymentClass;
 

@@ -334,7 +334,7 @@ const adminBalanceTranfers = {
             submit
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('', [
             m(adminFilter, {
                 filterBuilder: ctrl.filterBuilder,

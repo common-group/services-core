@@ -6,7 +6,7 @@ import m from 'mithril';
 import h from '../h';
 
 const successfulProjectTaxModal = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const pt = args.projectTransfer;
 
         return m('div', [

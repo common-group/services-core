@@ -14,7 +14,7 @@ const projectDeleteButton = {
             displayDeleteModal
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div', [
             (ctrl.displayDeleteModal() ? m(modalBox, {
                 displayModal: ctrl.displayDeleteModal,

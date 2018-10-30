@@ -249,7 +249,7 @@ const projectContributionReport = {
             mapRewardsToOptions
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const list = ctrl.listVM;
 
         if (!ctrl.lProject()) {

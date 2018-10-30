@@ -27,7 +27,7 @@ const statusCustomFilter = {
 };
 
 const dropdownFilterCustomLabel = {
-    view: function(ctrl, args) 
+    view: function({state, attrs}) 
     {
         return m('.fontsize-smaller.u-text-center', args.label);
     }
@@ -263,7 +263,7 @@ const projectSubscriptionReport = {
             isRewardsDataLoaded
         };
     },
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
 
         const subsCollection = ctrl.subscriptions.collection(),
             filterBuilder = ctrl.filterBuilder,

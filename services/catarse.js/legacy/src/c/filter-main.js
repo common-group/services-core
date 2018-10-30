@@ -1,7 +1,7 @@
 import m from 'mithril';
 
 const filterMain = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const wrapper_c = args.wrapper_class || '.w-row';
         const inputWrapperClass = args.inputWrapperClass || '.w-input.text-field.positive.medium',
             btnClass = args.btnClass || '.btn.btn-large.u-marginbottom-10';

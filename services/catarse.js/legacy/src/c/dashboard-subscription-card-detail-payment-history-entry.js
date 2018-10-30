@@ -23,7 +23,7 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
             statusClass
         };
     },
-    view: function(ctrl, args)
+    view: function({state, attrs})
     {
         const 
             captalize = (str) => str.charAt(0).toUpperCase() + str.slice(1),

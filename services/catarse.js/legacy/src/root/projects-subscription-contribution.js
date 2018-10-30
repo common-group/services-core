@@ -51,7 +51,7 @@ const projectsSubscriptionContribution = {
             sortedRewards: () => _.sortBy(rewards(), reward => Number(reward.row_order))
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.project;
         if (_.isEmpty(project())) {
             return h.loader();

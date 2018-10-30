@@ -92,7 +92,7 @@ const projectGoalEditCard = {
             saveGoal
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const goal = args.goal(),
             inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
                 m('span',

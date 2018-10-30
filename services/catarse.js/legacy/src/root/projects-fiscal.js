@@ -36,7 +36,7 @@ const projectsFiscal = {
             projectFiscalData
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const project = ctrl.projectDetail();
         const projectFiscalData = ctrl.projectFiscalData();
         const loading = ctrl.l() || ctrl.l2();

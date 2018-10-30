@@ -10,7 +10,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_start');
 const projectEditStart = {
     oninit: function(vnode) {},
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.dashboard-header.min-height-70.u-text-center.u-marginbottom-80', [
             m('.w-container',
                 m('.u-marginbottom-40.w-row', [

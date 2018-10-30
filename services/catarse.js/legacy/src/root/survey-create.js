@@ -127,7 +127,7 @@ const surveyCreate = {
             sendQuestions
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const project = _.first(ctrl.projectDetails());
         const reward = _.first(ctrl.reward());
         return project ? m('.project-surveys', (project.is_owner_or_admin ? m(projectDashboardMenu, {

@@ -8,7 +8,7 @@ const InfoProjectContributionLegend = {
             modalToggle: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('span', [
             args.text,
             m.trust('&nbsp;'),

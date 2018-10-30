@@ -21,7 +21,7 @@ const landingQA = {
             showAnswer: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.card.qa-card.u-marginbottom-20.u-radius.btn-terciary', [
             m('.fontsize-base', {
                 onclick: () => {

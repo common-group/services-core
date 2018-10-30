@@ -27,7 +27,7 @@ const projectGoalsBoxDashboard = {
             previousGoal
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
                 title: 'N/A',
                 value: '',

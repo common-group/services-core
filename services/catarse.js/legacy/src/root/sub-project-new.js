@@ -37,7 +37,7 @@ const subProjectNew = {
             validateProjectForm
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         return m('.before-footer.bg-purple.section-large.u-text-center',
             m('.w-container', [
                 m("img[src='https://daks2k3a4ib2z.cloudfront.net/57ba58b4846cc19e60acdd5b/59cd4be2c67c8d0001764fbe_logo-ass.png']"),
