@@ -12,8 +12,8 @@ const liveStatistics = {
         models.statistic.getRow().then(pageStatistics);
         // attrs.socket is a socket provided by socket.io
         // can see there https://github.com/catarse/catarse-live/blob/master/public/index.js#L8
-        if (attrs.socket && _.isFunction(attrs.socket.on)) {
-            attrs.socket.on('new_paid_contributions', (msg) => {
+        if (vnode.attrs.socket && _.isFunction(vnode.attrs.socket.on)) {
+            vnode.attrs.socket.on('new_paid_contributions', (msg) => {
                 notificationData(JSON.parse(msg.payload));
                 models.statistic.getRow().then(pageStatistics);
                 m.redraw();

@@ -4,7 +4,7 @@ import _ from 'underscore';
 import models from '../models';
 
 const teamMembers = {
-    oninit: function() {
+    oninit: function(vnode) {
         const vm = {
                 collection: prop([])
             },

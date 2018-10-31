@@ -4,7 +4,7 @@ import h from '../h';
 import models from '../models';
 
 const teamTotal = {
-    oninit: function() {
+    oninit: function(vnode) {
         const vm = {
             collection: prop([])
         };

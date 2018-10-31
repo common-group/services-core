@@ -9,7 +9,7 @@ describe('pages.LiveStatistics', () => {
     beforeAll(() => {
       statistic = StatisticMockery()[0];
       let component = m(liveStatistics);
-      $output = mq(component.view(component.controller(), {}));
+      $output = mq(component);
     });
 
     it('should render statistics', () => {

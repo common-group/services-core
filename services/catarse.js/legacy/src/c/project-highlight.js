@@ -8,7 +8,7 @@ import categoryTag from './category-tag';
 import projectVM from '../vms/project-vm';
 
 const projectHighlight = {
-    oninit: function() {
+    oninit: function(vnode) {
         vnode.state = {
             displayShareBox: h.toggleProp(false, true)
         };
