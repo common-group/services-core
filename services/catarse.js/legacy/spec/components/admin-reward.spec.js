@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import adminReward from '../../src/c/admin-reward';
 
 describe('adminReward', () => {

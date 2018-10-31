@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import tooltip from '../../src/c/tooltip';
 

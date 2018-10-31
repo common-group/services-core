@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import creditCardInput from '../../src/c/credit-card-input';
 

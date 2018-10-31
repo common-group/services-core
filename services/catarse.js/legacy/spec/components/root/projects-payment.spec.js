@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import userVM from '../../../src/vms/user-vm';
 import projectsPayment from '../../../src/root/projects-payment';

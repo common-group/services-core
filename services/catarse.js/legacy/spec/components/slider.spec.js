@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import slider from '../../src/c/slider';
 
 describe('Slider', () => {

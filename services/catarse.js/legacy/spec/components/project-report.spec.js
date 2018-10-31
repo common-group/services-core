@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 /*
 Test if project reports forms are rendered
  */

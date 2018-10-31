@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import h from '../../src/h';
 import projectCard from '../../src/c/project-card';

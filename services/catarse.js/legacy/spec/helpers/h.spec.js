@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import h from '../../src/h';
 
 describe("helper methods", () => {

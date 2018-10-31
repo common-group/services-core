@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import dashboardSubscriptionCardDetail from '../../src/c/dashboard-subscription-card-detail';
 

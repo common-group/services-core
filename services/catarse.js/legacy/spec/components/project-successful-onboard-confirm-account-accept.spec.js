@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import projectSuccessfulOnboardConfirmAccountAccept from '../../src/c/project-successful-onboard-confirm-account-accept';
 

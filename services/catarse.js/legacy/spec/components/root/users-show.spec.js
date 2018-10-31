@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import usersShow from '../../../src/root/users-show';
 
 describe('UsersShow', () => {

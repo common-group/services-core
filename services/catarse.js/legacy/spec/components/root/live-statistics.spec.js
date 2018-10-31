@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import liveStatistics from '../../../src/root/live-statistics';
 import h from '../../../src/h';
 

@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import search from '../../src/c/search';
 
 describe('Search', () => {

@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import thankYou from '../../../src/root/thank-you'
 
 describe('ThankYou', () => {

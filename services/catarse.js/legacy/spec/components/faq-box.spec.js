@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import faqBox from '../../src/c/faq-box';
 

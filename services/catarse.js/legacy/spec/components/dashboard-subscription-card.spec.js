@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import subscriptionStatusIcon from '../../src/c/subscription-status-icon';
 import dashboardSubscriptionCard from '../../src/c/dashboard-subscription-card';

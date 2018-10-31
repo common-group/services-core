@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import adminContributions from '../../../src/root/admin-contributions';
 
 describe('adminContributions', () => {

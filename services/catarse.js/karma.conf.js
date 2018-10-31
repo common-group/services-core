@@ -5,7 +5,6 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'legacy/spec/lib/mithril-query/mithril-query.js',
             'legacy/spec/lib/jasmine-species/jasmine-grammar.js',
             'legacy/spec/lib/jasmine-matchers.js',
             'legacy/spec/lib/jasmine-ajax/mock-ajax.js',

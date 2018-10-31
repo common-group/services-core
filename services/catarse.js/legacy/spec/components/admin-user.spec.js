@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import adminUser from '../../src/c/admin-user';
 
 describe('AdminUser', () => {
