@@ -12,7 +12,7 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminUsers = {
-    oninit: function() {
+    oninit: function(vnode) {
         const listVM = userListVM,
             filterVM = userFilterVM,
             error = prop(''),

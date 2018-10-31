@@ -7,9 +7,8 @@ describe('UsersShow', () => {
   beforeAll(() => {
     window.location.hash = '';
     userDetail = UserDetailMockery()[0];
-    let component = m(usersShow, {user_id: '405699'}),
-        view = component.view(component.controller());
-    $output = mq(view);
+    let component = m(usersShow, {user_id: '405699'});
+    $output = mq(component);
   });
 
   it('should render some user details', () => {
