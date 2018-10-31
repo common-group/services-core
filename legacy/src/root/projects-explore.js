@@ -356,7 +356,7 @@ const projectsExplore = {
                                     },
                                     class: ctrl.currentMode() === 'sub' ? 'selected' : ''
                                 },
-                                'Projetos recorrentes'
+                                'Assinaturas'
                             ),
                             m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                                 onclick: ctrl.modeToggle.toggle
