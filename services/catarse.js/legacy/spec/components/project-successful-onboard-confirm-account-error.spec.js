@@ -10,7 +10,7 @@ describe('Project Successful Onboard Account Error', () => {
             changeActionFn = jasmine.createSpy('change-action');
             addErrorReasonFn = jasmine.createSpy('error-reason');
 
-            let component = m.component(projectSuccessfulOnboardConfirmAccountError, {
+            let component = m(projectSuccessfulOnboardConfirmAccountError, {
                 changeToAction: () => changeActionFn,
                 addErrorReason: () => addErrorReasonFn
             });

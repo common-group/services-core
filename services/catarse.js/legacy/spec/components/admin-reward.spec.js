@@ -10,12 +10,12 @@ describe('adminReward', () => {
         describe("when contribution has no reward", function() {
             beforeAll(() => {
                 ctrl = adminReward.controller({
-                    reward: m.prop({}),
-                    contribution: m.prop({})
+                    reward: prop({}),
+                    contribution: prop({})
                 });
                 $output = mq(adminReward.view(ctrl, {
-                    reward: m.prop({}),
-                    contribution: m.prop({})
+                    reward: prop({}),
+                    contribution: prop({})
                 }));
             });
 
@@ -27,8 +27,8 @@ describe('adminReward', () => {
             let reward, contribution;
 
             beforeAll(() => {
-                reward = m.prop(RewardDetailsMockery()[0]);
-                contribution = m.prop(ContributionAttrMockery()[0]);
+                reward = prop(RewardDetailsMockery()[0]);
+                contribution = prop(ContributionAttrMockery()[0]);
                 ctrl = adminReward.controller({
                     reward: reward,
                     contribution: contribution

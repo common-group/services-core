@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectSidebar from '../../src/c/project-sidebar';
 
 describe('ProjectSidebar', () => {
@@ -9,19 +10,19 @@ describe('ProjectSidebar', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 spyOn(m, 'component').and.callThrough();
-                let projectDetail = m.prop(_.extend({}, ProjectDetailsMockery()[0], newState)),
-                    component = m.component(projectSidebar, {
+                let projectDetail = prop(_.extend({}, ProjectDetailsMockery()[0], newState)),
+                    component = m(projectSidebar, {
                         project: projectDetail,
-                        userDetails: m.prop([]),
-                        goalDetails: m.prop([])
+                        userDetails: prop([]),
+                        goalDetails: prop([])
                     }),
                     ctrl = component.controller({
                         project: projectDetail,
-                        userDetails: m.prop([])
+                        userDetails: prop([])
                     }),
                     view = component.view(component.controller(), {
                         project: projectDetail,
-                        userDetails: m.prop([])
+                        userDetails: prop([])
                     });
 
                 return {

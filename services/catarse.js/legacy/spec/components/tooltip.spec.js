@@ -7,7 +7,7 @@ describe('Tooltip', () => {
         element = 'a#tooltip-trigger[href="#"]',
         text = 'tooltipText',
         tooltipEl = (el) => {
-            return m.component(tooltip, {
+            return m(tooltip, {
                 el: el,
                 text: text,
                 width: 320

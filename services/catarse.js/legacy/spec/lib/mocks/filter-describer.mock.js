@@ -4,7 +4,7 @@ beforeAll(function(){
       { //full_text_index
         component: filterMain,
         data: {
-          vm: m.prop(),
+          vm: prop(),
           placeholder: 'Busque por projeto, email, Ids do usuário e do apoio...'
         }
       },
@@ -13,7 +13,7 @@ beforeAll(function(){
         data: {
           label: 'Com o estado',
           name: 'state',
-          vm: m.prop(),
+          vm: prop(),
           options: [
             {value: '', option: 'Qualquer um'},
             {value: 'paid', option: 'paid'},
@@ -31,7 +31,7 @@ beforeAll(function(){
         data: {
           label: 'gateway',
           name: 'gateway',
-          vm: m.prop(),
+          vm: prop(),
           options: [
             {value: '', option: 'Qualquer um'},
             {value: 'Pagarme', option: 'Pagarme'},
@@ -45,16 +45,16 @@ beforeAll(function(){
         component: filterNumberRange,
         data: {
           label: 'Valores entre',
-          first: m.prop(),
-          last: m.prop()
+          first: prop(),
+          last: prop()
         }
       },
       { //created_at
         component: filterDateRange,
         data: {
           label: 'Período do apoio',
-          first: m.prop(),
-          last: m.prop()
+          first: prop(),
+          last: prop()
         }
       }
     ];

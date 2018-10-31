@@ -13,7 +13,7 @@ describe('PaymentStatus', () => {
                 state: contribution.state,
                 payment_method: contribution.payment_method
             };
-            ctrl = m.component(paymentStatus, {
+            ctrl = m(paymentStatus, {
                 item: payment
             }).controller();
         };
@@ -96,7 +96,7 @@ describe('PaymentStatus', () => {
                     state: contribution.state,
                     payment_method: contribution.payment_method
                 };
-            return mq(m.component(paymentStatus, {
+            return mq(m(paymentStatus, {
                 item: payment
             }));
         };

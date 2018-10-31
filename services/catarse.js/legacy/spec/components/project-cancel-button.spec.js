@@ -9,7 +9,7 @@ describe('ProjectCancelButton', () => {
     describe('view', () => {
         beforeAll(() => {
             project = ProjectMockery()[0];
-            $output = mq(m.component(projectCancelButton, {
+            $output = mq(m(projectCancelButton, {
                 project,
                 category: {
                     project

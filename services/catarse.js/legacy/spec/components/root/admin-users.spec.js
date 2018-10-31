@@ -5,7 +5,7 @@ describe('adminUsers', () => {
   let ctrl, $output;
 
   beforeAll(() => {
-    ctrl = m.component(adminUsers).controller();
+    ctrl = m(adminUsers).controller();
   });
 
   describe('controller', () => {

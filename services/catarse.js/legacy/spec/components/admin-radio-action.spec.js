@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import {catarse} from '../../src/api';
 import adminRadioAction from '../../src/c/admin-radio-action';
 
@@ -36,10 +37,10 @@ describe('AdminRadioAction', () => {
     describe('view', () => {
         beforeAll(() => {
             item = _.first(RewardDetailsMockery());
-            args.selectedItem = m.prop(item);
+            args.selectedItem = prop(item);
             $output = mq(adminRadioAction, {
                 data: args,
-                item: m.prop(item)
+                item: prop(item)
             });
         });
 
@@ -74,7 +75,7 @@ describe('AdminRadioAction', () => {
                 beforeAll(() => {
                     $output = mq(adminRadioAction, {
                         data: errorArgs,
-                        item: m.prop(item)
+                        item: prop(item)
                     });
                     $output.click('button');
                     $output.click('#r-0');

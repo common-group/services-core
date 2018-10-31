@@ -8,7 +8,7 @@ describe('pages.LiveStatistics', () => {
   describe('view', () => {
     beforeAll(() => {
       statistic = StatisticMockery()[0];
-      let component = m.component(liveStatistics);
+      let component = m(liveStatistics);
       $output = mq(component.view(component.controller(), {}));
     });
 

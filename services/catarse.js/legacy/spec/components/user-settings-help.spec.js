@@ -8,7 +8,7 @@ describe('UserSettingsHelp', () => {
     describe('view', () => {
 
         beforeAll(() => {
-            $output = mq(m.component(UserSettingsHelp, {}));
+            $output = mq(m(UserSettingsHelp, {}));
         });
 
         it('should contains the link to presentation of help', () => {

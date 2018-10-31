@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../../src/h';
 import userSettingsAddress from '../../src/c/user-settings-address';
@@ -8,11 +9,11 @@ describe('UserSettingsAddress', () => {
     let $output;
     
     const 
-        fields = m.prop({
-            owner_document: m.prop('12345678912'),
-            name: m.prop('USER NAME'),
-            state_inscription: m.prop('123123123'),
-            address: m.prop({
+        fields = prop({
+            owner_document: prop('12345678912'),
+            name: prop('USER NAME'),
+            state_inscription: prop('123123123'),
+            address: prop({
                 country_id: 36,
                 state_id: 1,
                 address_street: 'Praça da Alfândega',
@@ -24,8 +25,8 @@ describe('UserSettingsAddress', () => {
                 address_zip_code: '90010150',
                 phone_number: '1234567890'
             }),
-            birth_date: m.prop('01/12/1990'),
-            account_type: m.prop('pf')
+            birth_date: prop('01/12/1990'),
+            account_type: prop('pf')
         }),
         parsedErrors = {
             hasError: function(name) {
