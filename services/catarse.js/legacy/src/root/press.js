@@ -7,7 +7,7 @@ import models from '../models';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.press');
 const press = {
-    oninit: function() {
+    oninit: function(vnode) {
         const stats = prop([]);
         const loader = catarse.loader;
         const statsLoader = loader(models.statistic.getRowOptions());

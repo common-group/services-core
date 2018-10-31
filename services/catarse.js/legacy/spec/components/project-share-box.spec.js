@@ -10,13 +10,11 @@ describe('ProjectShareBox', () => {
         beforeAll(() => {
             projectDetail = prop(ProjectDetailsMockery()[0]);
             let args = {
-                    project: projectDetail,
-                    displayShareBox: {
-                        toggle: jasmine.any(Function)
-                    }
-                },
-                component = m(projectShareBox, args),
-                view = component.view(component.controller(), args);
+                project: projectDetail,
+                displayShareBox: {
+                    toggle: jasmine.any(Function)
+                }
+            };
             $output = mq(projectShareBox, args);
         });
 

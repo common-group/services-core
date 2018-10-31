@@ -3,9 +3,9 @@ import adminUsers from '../../../src/root/admin-users'
 
 describe('adminUsers', () => {
   let ctrl, $output;
-    beforeAll(() => {
-      $output = mq(adminUsers);
-    });
+  beforeAll(() => {
+    $output = mq(adminUsers);
+  });
 
     it('should instantiate a list view-model', () => {
       expect($output.vnode.state.listVM).toBeDefined();

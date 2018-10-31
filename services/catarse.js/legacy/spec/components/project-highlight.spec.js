@@ -14,7 +14,7 @@ describe('ProjectHighlight', () => {
         let component = m(projectHighlight, {
                 project: projectDetail
             }),
-            view = component.view(component.controller(), {
+            view = component.view(component.oninit(), {
                 project: projectDetail
             });
         $output = mq(view);

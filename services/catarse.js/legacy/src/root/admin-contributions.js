@@ -17,7 +17,7 @@ import filterDateRange from '../c/filter-date-range';
 import modalBox from '../c/modal-box';
 
 const adminContributions = {
-    oninit: function() {
+    oninit: function(vnode) {
         let listVM = contributionListVM,
             filterVM = contributionFilterVM,
             error = prop(''),

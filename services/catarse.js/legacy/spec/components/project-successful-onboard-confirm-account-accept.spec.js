@@ -11,13 +11,11 @@ describe('Project Successful Onboard Account Accept', () => {
             changeActionFn = jasmine.createSpy('change-action');
             acceptAccountFn = jasmine.createSpy('accept-account');
 
-            let component = m(projectSuccessfulOnboardConfirmAccountAccept);
-
-            $output = mq(component.view(null, {
+            $output = mq(projectSuccessfulOnboardConfirmAccountAccept, {
                 changeToAction: () => changeActionFn,
                 acceptAccount: acceptAccountFn,
                 acceptAccountLoader: prop(false)
-            }));
+            });
         });
 
         it('should render a form', () => {

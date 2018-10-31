@@ -4,24 +4,15 @@ import adminContributions from '../../../src/root/admin-contributions';
 describe('adminContributions', () => {
   let ctrl, $output;
 
-  beforeAll(() => {
-    ctrl = m(adminContributions).controller();
-  });
-
-  describe('controller', () => {
+    beforeAll(() => {
+      $output = mq(adminContributions);
+    });
     it('should instantiate a list view-model', () => {
-      expect(ctrl.listVM).toBeDefined();
+      expect($output.vnode.state.listVM).toBeDefined();
     });
 
     it('should instantiate a filter view-model', () => {
-      expect(ctrl.filterVM).toBeDefined();
-    });
-
-  });
-
-  describe('view', () => {
-    beforeAll(() => {
-      $output = mq(adminContributions);
+      expect($output.vnode.state.filterVM).toBeDefined();
     });
 
     it('should render AdminFilter nested component', () => {
@@ -31,4 +22,4 @@ describe('adminContributions', () => {
       expect($output.has('#admin-contributions-list')).toBeTrue();
     });
   });
-});
+

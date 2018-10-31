@@ -14,7 +14,7 @@ import filterMain from '../c/filter-main';
 import modalBox from '../c/modal-box';
 
 const adminSubscriptions = {
-    oninit: function() {
+    oninit: function(vnode) {
         let listVM = subscriptionListVM,
             filterVM = subscriptionFilterVM,
             error = prop(''),

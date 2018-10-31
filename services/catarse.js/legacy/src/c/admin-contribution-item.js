@@ -7,7 +7,7 @@ import adminContributionUser from './admin-contribution-user';
 import paymentStatus from './payment-status';
 
 const adminContributionItem = {
-    oninit: function() {
+    oninit: function(vnode) {
         vnode.state = {
             itemBuilder: [{
                 component: adminContributionUser,

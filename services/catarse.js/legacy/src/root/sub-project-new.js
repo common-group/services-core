@@ -9,7 +9,7 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const subProjectNew = {
-    oninit: function() {
+    oninit: function(vnode) {
         const categories = prop([]),
             filters = catarse.filtersVM,
             loadCategories = () => models.category.getPage(filters({}).order({

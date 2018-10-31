@@ -15,7 +15,7 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminProjects = {
-    oninit: function() {
+    oninit: function(vnode) {
         const listVM = projectListVM,
             filterVM = projectFilterVM,
             categories = prop([]),

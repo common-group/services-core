@@ -19,7 +19,7 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userCreators = {
-    oninit: function() {
+    oninit: function(vnode) {
         models.creatorSuggestion.pageSize(9);
         const creatorsListVM = catarse.paginationVM(
             models.creatorSuggestion,

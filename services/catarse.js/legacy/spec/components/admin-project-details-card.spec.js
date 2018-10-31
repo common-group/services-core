@@ -13,7 +13,7 @@ describe('AdminProjectDetailsCard', () => {
                 component = m(adminProjectDetailsCard, {
                     resource: projectDetail
                 });
-                return component.controller();
+                return component.oninit();
             };
         });
 
@@ -59,7 +59,7 @@ describe('AdminProjectDetailsCard', () => {
             component = m(adminProjectDetailsCard, {
                 resource: projectDetail
             });
-            ctrl = component.controller();
+            ctrl = component.oninit();
             view = component.view(ctrl, {
                 resource: projectDetail
             });

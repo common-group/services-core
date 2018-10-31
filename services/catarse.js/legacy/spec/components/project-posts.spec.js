@@ -14,7 +14,7 @@ describe('ProjectPosts', () => {
             const component = m(projectPosts, {
                     project: project
                 }),
-                view = component.view(component.controller({
+                view = component.view(component.oninit({
                     project: project
                 }));
 
