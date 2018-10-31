@@ -20,7 +20,7 @@ const projectRowWithHeader = {
                             _.map(collection.badges, badge => m(`img[src="/assets/catarse_bootstrap/${badge}.png"][width='105']`))
                         ),
                         m('.w-row', [
-                            m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title} populares`)),
+                            m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title}`)),
                             m('.w-col.w-col-4', [
                                 m(`a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=${ref}&filter=${collection.hash}"]`, 
                                     { config: m.route },
