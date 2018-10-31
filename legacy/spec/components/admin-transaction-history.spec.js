@@ -13,7 +13,7 @@ describe('adminTransactionHistory', () => {
         historyBox = m(adminTransactionHistory, {
             contribution: contribution()[0]
         });
-        ctrl = historyBox.controller();
+        ctrl = historyBox.oninit();
         view = historyBox.view(ctrl, {
             contribution: contribution
         });

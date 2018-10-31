@@ -9,7 +9,7 @@ import projectRow from '../c/project-row';
 import landingQA from '../c/landing-qa';
 
 const Flex = {
-    oninit: function() {
+    oninit: function(vnode) {
         const stats = prop([]),
             projects = prop([]),
             l = prop(),

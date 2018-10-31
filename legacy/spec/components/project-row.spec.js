@@ -18,11 +18,7 @@ describe('ProjectRow', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(true);
-                let component = m(projectRow),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRow, { collection });
             });
 
             it('should render loader', () => {
@@ -34,11 +30,7 @@ describe('ProjectRow', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(false);
-                let component = m(projectRow),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRow, { collection });
             });
 
             it('should render nothing', () => {
@@ -50,11 +42,7 @@ describe('ProjectRow', () => {
         describe('when collection has projects', () => {
             beforeAll(() => {
                 collection.collection(ProjectMockery());
-                let component = m(projectRow),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRow, { collection });
             });
 
             it('should render projects in row', () => {

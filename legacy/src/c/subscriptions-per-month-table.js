@@ -4,7 +4,7 @@ import moment from 'moment';
 import h from '../h';
 
 const subscriptionsPerMonthTable = {
-    oninit: function() {
+    oninit: function(vnode) {
         vnode.state = {
             emptyRow: {
                 total_amount: 0,

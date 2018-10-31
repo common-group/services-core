@@ -4,7 +4,7 @@ import prop from 'mithril/stream';
 import projectRowWithHeader from '../../src/c/project-row-with-header'
 
 describe('ProjectRowWithHeader', () => {
-    var $output;
+    let $output;
 
     describe('view', () => {
         let collection = {
@@ -18,11 +18,7 @@ describe('ProjectRowWithHeader', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(true);
-                let component = m(projectRowWithHeader),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRowWithHeader, { collection });
             });
 
             it('should render loader', () => {
@@ -34,11 +30,7 @@ describe('ProjectRowWithHeader', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(false);
-                let component = m(projectRowWithHeader),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRowWithHeader, { collection });
             });
 
             it('should render nothing', () => {
@@ -50,11 +42,7 @@ describe('ProjectRowWithHeader', () => {
         describe('when collection has projects', () => {
             beforeAll(() => {
                 collection.collection(ProjectMockery());
-                let component = m(projectRowWithHeader),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRowWithHeader, { collection });
             });
 
             it('should render projects in row', () => {

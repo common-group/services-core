@@ -4,7 +4,7 @@ import h from '../h';
 import filterMain from './filter-main';
 
 const adminFilter = {
-    oninit: function() {
+    oninit: function(vnode) {
         vnode.state = {
             toggler: h.toggleProp(false, true)
         };

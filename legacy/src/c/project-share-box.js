@@ -3,7 +3,7 @@ import h from '../h';
 import facebookButton from './facebook-button';
 
 const projectShareBox = {
-    oninit: function() {
+    oninit: function(vnode) {
         vnode.state = {
             displayEmbed: h.toggleProp(false, true)
         };

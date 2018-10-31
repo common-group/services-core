@@ -3,7 +3,7 @@ import h from '../h';
 import projectReport from './project-report';
 
 const projectComments = {
-    oninit: function() {
+    oninit: function(vnode) {
         const loadComments = (el, isInitialized) => (el, isInitialized) => {
             if (isInitialized) { return; }
             h.fbParse();

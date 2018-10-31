@@ -10,19 +10,18 @@ describe('ProjectRewardList', () => {
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
-                spyOn(m, 'component').and.callThrough();
                 let rewardDetail = RewardDetailsMockery(newState),
-                    component = m(projectRewardList, {
+                    component = m();
+
+                return {
+                    output: mq(projectRewardList, {
                         project: prop({
                             id: 1231,
                             open_for_contributions: true
                         }),
                         hasSubscription: prop(false),
                         rewardDetails: prop(rewardDetail)
-                    });
-
-                return {
-                    output: mq(component),
+                    }),
                     rewardDetail: rewardDetail[0]
                 };
             };

@@ -7,7 +7,7 @@ import adminSubscriptionUser from './admin-subscription-user';
 import subPaymentStatus from './sub-payment-status';
 
 const adminSubscriptionItem = {
-    oninit: function() {
+    oninit: function(vnode) {
         vnode.state = {
             itemBuilder: [{
                 component: adminSubscriptionUser,

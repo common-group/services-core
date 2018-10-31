@@ -12,7 +12,7 @@ import faqBox from '../c/faq-box';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsSubscriptionContribution = {
-    oninit: function() {
+    oninit: function(vnode) {
         const rewards = () => _.union(
             [{
                 id: null,

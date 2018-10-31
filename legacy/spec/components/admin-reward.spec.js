@@ -9,7 +9,7 @@ describe('adminReward', () => {
 
         describe("when contribution has no reward", function() {
             beforeAll(() => {
-                ctrl = adminReward.controller({
+                ctrl = adminReward.oninit({
                     reward: prop({}),
                     contribution: prop({})
                 });
@@ -29,7 +29,7 @@ describe('adminReward', () => {
             beforeAll(() => {
                 reward = prop(RewardDetailsMockery()[0]);
                 contribution = prop(ContributionAttrMockery()[0]);
-                ctrl = adminReward.controller({
+                ctrl = adminReward.oninit({
                     reward: reward,
                     contribution: contribution
                 });

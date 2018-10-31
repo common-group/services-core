@@ -13,7 +13,7 @@ import inlineError from '../c/inline-error';
 const I18nScope = _.partial(h.i18nScope, 'pages.start');
 
 const start = {
-    oninit: function() {
+    oninit: function(vnode) {
         h.analytics.windowScroll({ cat: 'project_start', act: 'start_page_scroll' });
         const stats = prop([]),
             categories = prop([]),

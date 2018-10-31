@@ -13,7 +13,7 @@ describe('AdminFilter', () => {
 
     describe('controller', () => {
         beforeAll(() => {
-            ctrl = adminFilter.controller();
+            ctrl = adminFilter.oninit();
         });
 
         it('should instantiate a toggler', () => {

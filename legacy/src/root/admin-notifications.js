@@ -7,7 +7,7 @@ import models from '../models';
 import projectEditSaveBtn from '../c/project-edit-save-btn';
 
 const adminNotifications = {
-    oninit: function() {
+    oninit: function(vnode) {
         const templates = commonNotification.paginationVM(
             models.notificationTemplates, 'label.asc'),
             loaderTemp = prop(true),

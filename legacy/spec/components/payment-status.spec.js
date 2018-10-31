@@ -15,7 +15,7 @@ describe('PaymentStatus', () => {
             };
             ctrl = m(paymentStatus, {
                 item: payment
-            }).controller();
+            }).oninit();
         };
 
     describe('stateClass function', () => {

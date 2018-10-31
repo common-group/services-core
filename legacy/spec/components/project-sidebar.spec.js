@@ -9,25 +9,14 @@ describe('ProjectSidebar', () => {
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
-                spyOn(m, 'component').and.callThrough();
-                let projectDetail = prop(_.extend({}, ProjectDetailsMockery()[0], newState)),
-                    component = m(projectSidebar, {
+                let projectDetail = prop(_.extend({}, ProjectDetailsMockery()[0], newState));
+
+                return {
+                    output: mq(projectSidebar, {
                         project: projectDetail,
                         userDetails: prop([]),
                         goalDetails: prop([])
                     }),
-                    ctrl = component.controller({
-                        project: projectDetail,
-                        userDetails: prop([])
-                    }),
-                    view = component.view(component.controller(), {
-                        project: projectDetail,
-                        userDetails: prop([])
-                    });
-
-                return {
-                    output: mq(view),
-                    ctrl: ctrl,
                     projectDetail: projectDetail
                 };
             };

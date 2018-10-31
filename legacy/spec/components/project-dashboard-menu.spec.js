@@ -14,7 +14,7 @@ describe('ProjectDashboardMenu', () => {
                     component = m(projectDashboardMenu, {
                         project: projectDetail
                     }),
-                    ctrl = component.controller({
+                    ctrl = component.oninit({
                         project: projectDetail
                     });
 

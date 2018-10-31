@@ -6,7 +6,7 @@ import modalBox from './modal-box';
 import announceExpirationModal from './announce-expiration-modal';
 
 const projectAnnounceExpiration = {
-    oninit: function() {
+    oninit: function(vnode) {
         const days = prop(2),
             showModal = h.toggleProp(false, true);
         vnode.state = {

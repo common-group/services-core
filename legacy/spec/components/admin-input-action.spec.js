@@ -23,7 +23,7 @@ describe('adminInputAction', () => {
 
     describe('controller', () => {
         beforeAll(() => {
-            ctrl = adminInputAction.controller({
+            ctrl = adminInputAction.oninit({
                 data: args,
                 item: item
             });
@@ -42,7 +42,7 @@ describe('adminInputAction', () => {
         describe('when forceValue is set', () => {
             beforeAll(() => {
                 args.forceValue = forced;
-                ctrl = adminInputAction.controller({
+                ctrl = adminInputAction.oninit({
                     data: args,
                     item: item
                 });
@@ -92,7 +92,7 @@ describe('adminInputAction', () => {
             describe('when forceValue is set', () => {
                 beforeAll(() => {
                     args.forceValue = forced;
-                    ctrl = adminInputAction.controller({
+                    ctrl = adminInputAction.oninit({
                         data: args,
                         item: item
                     });
