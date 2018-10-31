@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import projectSuccessfulOnboardProcessing from '../../src/c/project-successful-onboard-processing';
 import projectSuccessfulOnboardEnabledWithdraw from '../../src/c/project-successful-onboard-enabled-withdraw';

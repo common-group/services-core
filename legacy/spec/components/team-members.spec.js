@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import teamMembers from '../../src/c/team-members';
 
 describe('TeamMembers', () => {

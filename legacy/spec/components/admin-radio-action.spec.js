@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import {catarse} from '../../src/api';
 import adminRadioAction from '../../src/c/admin-radio-action';

@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import models from '../../src/models';
 import adminExternalAction from '../../src/c/admin-external-action';
 import {catarse} from '../../src/api';

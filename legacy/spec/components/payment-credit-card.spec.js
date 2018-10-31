@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import paymentCreditCard from '../../src/c/payment-credit-card';
 import paymentVM from '../../src/vms/payment-vm';

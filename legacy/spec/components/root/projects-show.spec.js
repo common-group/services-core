@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import projectsShow from '../../../src/root/projects-show';
 
 describe('ProjectsShow', () => {

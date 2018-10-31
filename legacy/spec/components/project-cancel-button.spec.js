@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import projectCancelButton from '../../src/c/project-cancel-button';
 

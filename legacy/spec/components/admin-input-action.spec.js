@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import {catarse} from '../../src/api';
 import adminInputAction from '../../src/c/admin-input-action';

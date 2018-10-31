@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import adminFilter from '../../src/c/admin-filter';
 import filterMain from '../../src/c/filter-main';

@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import projectTabs from '../../src/c/project-tabs';
 
