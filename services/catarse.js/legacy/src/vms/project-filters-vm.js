@@ -141,8 +141,8 @@ const projectFiltersVM = () => {
                 keyName: 'all_modes'
             },
             sub: {
-                title: 'Projetos recorrentes',
-                nicename: 'Projetos recorrentes',
+                title: 'Assinaturas',
+                nicename: 'Assinaturas',
                 filter: sub,
                 isContextual: false,
                 keyName: 'sub',
