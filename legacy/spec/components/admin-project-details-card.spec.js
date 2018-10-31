@@ -10,7 +10,7 @@ describe('AdminProjectDetailsCard', () => {
         beforeAll(() => {
             generateController = (attrs) => {
                 projectDetail = ProjectDetailsMockery(attrs)[0];
-                component = m.component(adminProjectDetailsCard, {
+                component = m(adminProjectDetailsCard, {
                     resource: projectDetail
                 });
                 return component.controller();
@@ -56,7 +56,7 @@ describe('AdminProjectDetailsCard', () => {
     describe('view', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
-            component = m.component(adminProjectDetailsCard, {
+            component = m(adminProjectDetailsCard, {
                 resource: projectDetail
             });
             ctrl = component.controller();

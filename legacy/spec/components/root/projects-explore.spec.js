@@ -7,7 +7,7 @@ describe('ProjectsExplore', () => {
     beforeAll(() => {
         window.location.hash = '#by_category_id/1';
 
-        component = m.component(projectsExplore, { root: { getAttribute: (x) => { return null; }} });
+        component = m(projectsExplore, { root: { getAttribute: (x) => { return null; }} });
         $output = mq(component);
     });
 
@@ -20,7 +20,7 @@ describe('ProjectsExplore', () => {
         let $outputWithSubscriptionsSelected, $outputWithAonFlexSelected;
 
         beforeAll(() => {
-            $outputWithSubscriptionsSelected = mq(m.component(projectsExplore, { filter: 'sub' }));
+            $outputWithSubscriptionsSelected = mq(m(projectsExplore, { filter: 'sub' }));
             $outputWithAonFlexSelected = mq(m(projectsExplore, { filter: 'not_sub' }));
         });
 

@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectContributions from '../../src/c/project-contributions';
 
 describe('projectContributions', () => {
@@ -13,10 +14,10 @@ describe('projectContributions', () => {
 
             spyOn(m, 'component').and.callThrough();
             projectContribution = ContributorMockery()[0];
-            const project = m.prop({
+            const project = prop({
                         id: 1231
             });
-            const component = m.component(projectContributions, {
+            const component = m(projectContributions, {
                     project: project
                 }),
                 view = component.view(component.controller({

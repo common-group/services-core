@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectShareBox from '../../src/c/project-share-box';
 
 describe('ProjectShareBox', () => {
@@ -7,14 +8,14 @@ describe('ProjectShareBox', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            projectDetail = m.prop(ProjectDetailsMockery()[0]);
+            projectDetail = prop(ProjectDetailsMockery()[0]);
             let args = {
                     project: projectDetail,
                     displayShareBox: {
                         toggle: jasmine.any(Function)
                     }
                 },
-                component = m.component(projectShareBox, args),
+                component = m(projectShareBox, args),
                 view = component.view(component.controller(), args);
             $output = mq(projectShareBox, args);
         });

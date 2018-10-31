@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import adminTransaction from '../../src/c/admin-transaction';
 
 describe('AdminTransaction', () => {
@@ -7,11 +8,11 @@ describe('AdminTransaction', () => {
         view, $output;
 
     beforeAll(() => {
-        contribution = m.prop(ContributionDetailMockery(1, {
+        contribution = prop(ContributionDetailMockery(1, {
             gateway_data: null
         }));
 
-        $output = mq(m.component(adminTransaction, {
+        $output = mq(m(adminTransaction, {
             contribution: contribution()[0]
         }).view);
     });

@@ -7,7 +7,7 @@ describe('DashboardSubscriptionCardDetailPaymentEntry', () => {
 
     beforeAll(() => {
         $paymentEntry = PaymentsMockery()[0];
-        $output = mq(m.component(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment: $paymentEntry }));
+        $output = mq(m(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment: $paymentEntry }));
     });
 
     it('Should show history of payment entry card brand', () => {

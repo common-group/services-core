@@ -1,12 +1,13 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import creditCardInput from '../../src/c/credit-card-input';
 
 describe('CreditCardInput', () => {
     let $output,
         test = {
             class: 'test_class',
-            value: m.prop('test_value'),
+            value: prop('test_value'),
             name: 'test_name',
             focusFn: jasmine.createSpy('onfocus')
         };

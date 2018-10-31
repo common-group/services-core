@@ -10,7 +10,7 @@ describe('ProjectCard', () => {
         beforeAll(() => {
             project = ProjectMockery()[0];
             remainingTimeObj = h.translatedTime(project.remaining_time);
-            $output = (type) => mq(m.component(projectCard, {
+            $output = (type) => mq(m(projectCard, {
                 project: project, type: type
             }));
         });

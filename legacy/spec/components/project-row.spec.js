@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectRow from '../../src/c/project-row';
 
 describe('ProjectRow', () => {
@@ -9,15 +10,15 @@ describe('ProjectRow', () => {
         let collection = {
             title: 'test collection',
             hash: 'testhash',
-            collection: m.prop([]),
-            loader: m.prop(false)
+            collection: prop([]),
+            loader: prop(false)
         };
 
         describe('when collection is empty and loader true', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(true);
-                let component = m.component(projectRow),
+                let component = m(projectRow),
                     view = component.view(null, {
                         collection: collection
                     });
@@ -33,7 +34,7 @@ describe('ProjectRow', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(false);
-                let component = m.component(projectRow),
+                let component = m(projectRow),
                     view = component.view(null, {
                         collection: collection
                     });
@@ -49,7 +50,7 @@ describe('ProjectRow', () => {
         describe('when collection has projects', () => {
             beforeAll(() => {
                 collection.collection(ProjectMockery());
-                let component = m.component(projectRow),
+                let component = m(projectRow),
                     view = component.view(null, {
                         collection: collection
                     });

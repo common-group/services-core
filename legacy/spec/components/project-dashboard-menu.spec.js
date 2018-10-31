@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectDashboardMenu from '../../src/c/project-dashboard-menu';
 
 describe('ProjectDashboardMenu', () => {
@@ -9,8 +10,8 @@ describe('ProjectDashboardMenu', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
                 let body = jasmine.createSpyObj('body', ['className']),
-                    projectDetail = m.prop(ProjectDetailsMockery(newState)[0]),
-                    component = m.component(projectDashboardMenu, {
+                    projectDetail = prop(ProjectDetailsMockery(newState)[0]),
+                    component = m(projectDashboardMenu, {
                         project: projectDetail
                     }),
                     ctrl = component.controller({

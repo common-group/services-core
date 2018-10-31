@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectHeader from '../../src/c/project-header';
 
 describe('ProjectHeader', () => {
@@ -7,15 +8,15 @@ describe('ProjectHeader', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            projectDetail = m.prop(ProjectDetailsMockery()[0]);
-            rewardDetails = m.prop(RewardDetailsMockery());
-            goalDetails = m.prop(GoalsMockery());
-            $output = mq(m.component(projectHeader, {
-                hasSubscription: m.prop(false),
-                userProjectSubscriptions: m.prop([]),
+            projectDetail = prop(ProjectDetailsMockery()[0]);
+            rewardDetails = prop(RewardDetailsMockery());
+            goalDetails = prop(GoalsMockery());
+            $output = mq(m(projectHeader, {
+                hasSubscription: prop(false),
+                userProjectSubscriptions: prop([]),
                 project: projectDetail,
-                userDetails: m.prop([]),
-                projectContributions: m.prop([]),
+                userDetails: prop([]),
+                projectContributions: prop([]),
                 rewardDetails: rewardDetails,
                 goalDetails
             }));

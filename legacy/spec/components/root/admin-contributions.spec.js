@@ -5,7 +5,7 @@ describe('adminContributions', () => {
   let ctrl, $output;
 
   beforeAll(() => {
-    ctrl = m.component(adminContributions).controller();
+    ctrl = m(adminContributions).controller();
   });
 
   describe('controller', () => {

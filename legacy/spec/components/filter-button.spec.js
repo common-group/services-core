@@ -7,7 +7,7 @@ describe('FilterButton', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(m.component(filterButton, {
+            $output = mq(m(filterButton, {
                 title: 'Test',
                 href: 'test'
             }));
