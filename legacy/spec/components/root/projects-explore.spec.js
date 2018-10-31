@@ -24,7 +24,7 @@ describe('ProjectsExplore', () => {
         });
 
         it('should render explorer selecting subscriptions', () => {
-            expect($outputWithSubscriptionsSelected.contains('Projetos recorrentes')).toBeTrue();
+            expect($outputWithSubscriptionsSelected.contains('Assinaturas')).toBeTrue();
             expect($outputWithSubscriptionsSelected.find('.explore-mobile-label').length).toEqual(2);
         });
 
