@@ -926,11 +926,11 @@ const
         return div.innerHTML;
     },
     sleep = (time) => {
-        const p = m.deferred();
+        const p = new Promise((resolve, reject) => {
+            setTimeout(resolve, time);
+        });
 
-        setTimeout(p.resolve, time);
-
-        return p.promise;
+        return p;
     };
 
 setMomentifyLocale();
