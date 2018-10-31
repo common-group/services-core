@@ -47,9 +47,11 @@ const prepareForUpload = (event, target) => {
 
 const uploadImage = (project_id) => {
     if (_.isEmpty(fields.upload_files_targets())) {
-        const deferred = m.deferred();
-        deferred.resolve({});
-        return deferred.promise;
+        const p = new Promise((resolve) => {
+            resolve({});
+        });
+
+        return p;
     }
     return m.request({
         method: 'POST',

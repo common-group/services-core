@@ -257,39 +257,40 @@ const paymentVM = () => {
     };
 
     const payWithNewCard = (contribution_id, installment) => {
-        const deferred = m.deferred();
-        m.request({
-            method: 'GET',
-            url: `/payment/pagarme/${contribution_id}/get_encryption_key`,
-            config: setCsrfToken
-        }).then((data) => {
-            window.PagarMe.encryption_key = data.key;
-            const card = setNewCreditCard();
-            const errors = card.fieldErrors();
-            if (_.keys(errors).length > 0) {
-                deferred.reject({ message: window.I18n.t('submission.card_invalid', scope()) });
-            } else {
-                card.generateHash((cardHash) => {
-                    const data = {
-                        card_hash: cardHash,
-                        save_card: creditCardFields.save().toString(),
-                        payment_card_installments: installment
-                    };
+        const p = new Promise((resolve, reject) => {
+            m.request({
+                method: 'GET',
+                url: `/payment/pagarme/${contribution_id}/get_encryption_key`,
+                config: setCsrfToken
+            }).then((data) => {
+                window.PagarMe.encryption_key = data.key;
+                const card = setNewCreditCard();
+                const errors = card.fieldErrors();
+                if (_.keys(errors).length > 0) {
+                    reject({ message: window.I18n.t('submission.card_invalid', scope()) });
+                } else {
+                    card.generateHash((cardHash) => {
+                        const data = {
+                            card_hash: cardHash,
+                            save_card: creditCardFields.save().toString(),
+                            payment_card_installments: installment
+                        };
 
-                    requestPayment(data, contribution_id)
-                        .then(deferred.resolve)
-                        .catch(deferred.reject);
-                });
-            }
-        }).catch((error) => {
-            if (!_.isEmpty(error.message)) {
-                deferred.reject(error);
-            } else {
-                deferred.reject({ message: window.I18n.t('submission.encryption_error', scope()) });
-            }
+                        requestPayment(data, contribution_id)
+                            .then(resolve)
+                            .catch(reject);
+                    });
+                }
+            }).catch((error) => {
+                if (!_.isEmpty(error.message)) {
+                    reject(error);
+                } else {
+                    reject({ message: window.I18n.t('submission.encryption_error', scope()) });
+                }
+            });
         });
 
-        return deferred.promise;
+        return p;
     };
 
     const updateContributionData = (contribution_id, project_id) => {
@@ -342,22 +343,24 @@ const paymentVM = () => {
     };
 
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
-        const deferred = m.deferred();
-        if (validate()) {
-            isLoading(true);
-            submissionError(false);
-            m.redraw();
-            updateContributionData(contribution_id, project_id)
-                .then(checkAndPayCreditCard(deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment))
-                .catch(() => {
-                    isLoading(false);
-                    deferred.reject();
-                });
-        } else {
-            isLoading(false);
-            deferred.reject();
-        }
-        return deferred.promise;
+        const p = new Promise((resolve, reject) => {
+            if (validate()) {
+                isLoading(true);
+                submissionError(false);
+                m.redraw();
+                updateContributionData(contribution_id, project_id)
+                    .then(checkAndPayCreditCard({resolve, reject}, selectedCreditCard, contribution_id, project_id, selectedInstallment))
+                    .catch(() => {
+                        isLoading(false);
+                        reject();
+                    });
+            } else {
+                isLoading(false);
+                reject();
+            }
+        });
+
+        return p;
     };
 
     const resetFieldError = fieldName => () => {
