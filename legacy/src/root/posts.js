@@ -8,7 +8,6 @@ import postsPreview from '../c/posts-preview';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 import popNotification from '../c/pop-notification';
-import postForRewardCheckbox from '../c/post-for-reward-checkbox';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
@@ -16,7 +15,6 @@ const posts = {
     controller: function(args) {
         let deleteFormSubmit;
         const showPreview = m.prop(false),
-            willSelectRewards = m.prop(false),
             isProjectLoaded = m.prop(false),
             isProjectPostsLoaded = m.prop(false),
             showSuccess = m.prop(false),
@@ -29,9 +27,7 @@ const posts = {
             fields = {
                 title: m.prop(''),
                 comment_html: m.prop(''),
-                reward_id: m.prop('-1'),
-                radio_checked: m.prop(false),
-                reward_checkbox: []
+                reward_id: m.prop('-1')
             },
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
@@ -151,12 +147,7 @@ const posts = {
     view: function(ctrl) {
         
         const project = _.first(ctrl.projectDetails()),
-            isSubscription = projectVM.isSubscription(project),
-            paidRewards = _.filter(rewardVM.rewards(), reward => isSubscription ? reward.subscribed_count : reward.paid_count > 0),
-            selectedRewardId = ctrl.fields.reward_id,
-            rewardsCheckboxCreator = (pr) => { return {id: (isSubscription ? pr.external_id : pr.id), checked: h.toggleProp(false, true) } };
-
-        ctrl.fields.reward_checkbox = ctrl.fields.reward_checkbox.length < paidRewards.length ? _.map(paidRewards, rewardsCheckboxCreator) : ctrl.fields.reward_checkbox;
+            paidRewards = _.filter(rewardVM.rewards(), reward => (projectVM.isSubscription(project) ? reward.subscribed_count : reward.paid_count) > 0);
 
         return ( (ctrl.isProjectLoaded() && ctrl.isProjectPostsLoaded()) ? m('.project-posts',
             (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
@@ -198,85 +189,38 @@ const posts = {
                     m('.w-row', [
                         m('.w-col.w-col-1'),
                         m('.w-col.w-col-10', [
-                            (
-                                isSubscription ? '' :
-                                m('.u-marginbottom-60.u-text-center',
-                                    m('._w-inline-block.card.fontsize-small.u-radius', [
-                                        m('span.fa.fa-lightbulb-o',
-                                            ''
-                                        ),
-                                        ' Veja ótimo motivos para ',
-                                        m('a.alt-link[href=\'https://catarse.attach.io/B1AHAGm1x\'][target=\'_blank\']',
-                                            'falar com seus apoiadores agora mesmo!'
-                                        )
-                                    ])
-                                )
-                            ),
+                            (projectVM.isSubscription(project) ? '' :
+                            m('.u-marginbottom-60.u-text-center',
+                                m('._w-inline-block.card.fontsize-small.u-radius', [
+                                    m('span.fa.fa-lightbulb-o',
+                                        ''
+                                    ),
+                                    ' Veja ótimo motivos para ',
+                                    m('a.alt-link[href=\'https://catarse.attach.io/B1AHAGm1x\'][target=\'_blank\']',
+                                        'falar com seus apoiadores agora mesmo!'
+                                    )
+                                ])
+                            )),
                             m('.card.card-terciary.medium.u-marginbottom-80.w-form', [
                                 m('form', [
                                     m('label.field-label.fontweight-semibold',
                                         'Destinatários'
                                     ),
-
-
-//////////// START DESTINATIONS
-
-m('.u-marginbottom-20', [
-    // TO EVERYONE
-    m('.fontsize-small.w-radio', [
-        m(`input.w-radio-input[type=radio][value='-1']`, {
-            checked: selectedRewardId() === -1,
-            onchange: () => selectedRewardId(-1)
-        }),
-        m('label.w-form-label', {
-            onclick: () => selectedRewardId(-1)
-        }, window.I18n.t(`everyone_${project.mode}`, I18nScope()))
-    ]),
-
-    // TO CONTRIBUTORS/SUBSCRIBERS
-    m('.fontsize-small.w-radio', [
-        m(`input.w-radio-input[type=radio][value='0']`, {
-            checked: selectedRewardId() === 0,
-            onchange: () => selectedRewardId(0)
-        }),
-        m('label.w-form-label', {
-            onclick: () => selectedRewardId(0)
-        }, window.I18n.t(`backers_${project.mode}`, I18nScope()))
-    ]),
-
-    // TO SOME CONTRIBUTORS/SUBSCRIBERS
-    (
-        paidRewards.length === 0 ? '' :
-        m('.fontsize-small.w-radio', [
-            m(`input.w-radio-input[type=radio][value='1']`, {
-                checked: selectedRewardId() === 1,
-                onchange: () => selectedRewardId(1)
-            }),
-            m('label.w-form-label', {
-                onclick: () => selectedRewardId(1)
-            }, window.I18n.t(`backers_some_${project.mode}`, I18nScope()))
-        ])
-    ),
-
-    // SOME SELECTION CHECKBOXES CONTRIBUTORS/SUBSCRIBERS
-    (
-        selectedRewardId() !== 1 ? '' : 
-        m('.card.u-radius',
-            _.map(_.sortBy(paidRewards, (pr) => parseInt(pr.data.minimum_value)), 
-                (pr, index) => m(postForRewardCheckbox, {
-                    index,
-                    reward_checkbox: ctrl.fields.reward_checkbox[index],
-                    reward: pr,
-                    contributions_count: isSubscription ? pr.subscribed_count : pr.paid_count,
-                    sublabel: isSubscription ? 'assinantes' : 'apoiadores'
-                })
-            )
-        )
-    )
-]),
-
-//////////// END DESTINATIONS
-
+                                    m('select.positive.text-field.w-select', {
+                                        onchange: m.withAttr('value', ctrl.fields.reward_id)
+                                    }, [
+                                        m('option[value=\'-1\']', {
+                                            selected: true
+                                        },
+                                            window.I18n.t(`everyone_${project.mode}`, I18nScope())
+                                        ),
+                                        m('option[value=\'0\']',
+                                            window.I18n.t(`backers_${project.mode}`, I18nScope())
+                                        ),
+                                        (_.map(paidRewards, reward => m(`option[value='${projectVM.isSubscription(project) ? reward.external_id : reward.id}']`,
+                                              ctrl.rewardText(projectVM.isSubscription(project) ? reward.external_id : reward.id, project)
+                                            )))
+                                    ]),
                                     m('label.field-label.fontweight-semibold',
                                         'Título'
                                     ),
