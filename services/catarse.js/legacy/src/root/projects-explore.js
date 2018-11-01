@@ -261,7 +261,7 @@ const projectsExplore = {
                 notWasTried = false;
             }
             else if (filterIsForContributedByFriends) {
-                currentFilter(filtersMap[defaultFilter]);
+                currentFilter(filtersMap[innerDefaultFilter]);
             }
         }
 
