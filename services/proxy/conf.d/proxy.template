@@ -83,6 +83,18 @@ server {
         include /etc/nginx/conf.d/locations/v1/addresses_location.conf;
     }
 
+    location ~ "^/v1/states(?:\/)?.*$" {
+        # Current mapped routes for /v1/states
+        # POST 			/v1/states
+        include /etc/nginx/conf.d/locations/v1/states_location.conf;
+    }
+
+    location ~ "^/v1/countries(?:\/)?.*$" {
+        # Current mapped routes for /v1/countries
+        # POST 			/v1/countries
+        include /etc/nginx/conf.d/locations/v1/countries_location.conf;
+    }
+
 		location ~ "^/v1/users(?:\/)?.*$" {
             # Current mapped routes for /v1/users
 			# POST 			/v1/users/login
