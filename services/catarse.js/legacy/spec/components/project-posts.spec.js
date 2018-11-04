@@ -8,17 +8,13 @@ describe('ProjectPosts', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            spyOn(m, 'component').and.callThrough();
             projectPostDetail = ProjectPostDetailsMockery()[0];
             const project = prop({id: 1231});
             const component = m(projectPosts, {
                     project: project
-                }),
-                view = component.view(component.oninit({
-                    project: project
-                }));
+                });
 
-            $output = mq(view);
+            $output = mq(component);
         });
 
         it('should render project post list', () => {

@@ -13,11 +13,8 @@ describe('ProjectHighlight', () => {
         }));
         let component = m(projectHighlight, {
                 project: projectDetail
-            }),
-            view = component.view(component.oninit(), {
-                project: projectDetail
             });
-        $output = mq(view);
+        $output = mq(component);
 
         expect($output.find('.project-image').length).toEqual(1);
         expect($output.find('iframe.embedly-embed').length).toEqual(0);
@@ -25,7 +22,6 @@ describe('ProjectHighlight', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            spyOn(m, 'component').and.callThrough();
             projectDetail = prop(ProjectDetailsMockery()[0]);
             $output = mq(projectHighlight, {
                 project: projectDetail
