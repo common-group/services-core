@@ -10,12 +10,9 @@ describe('ProjectReminderCount', () => {
         beforeAll(() => {
             projectDetail = prop(ProjectDetailsMockery()[0]);
             let component = m(projectReminderCount, {
-                    resource: projectDetail
-                }),
-                view = component.view(null, {
-                    resource: projectDetail
-                });
-            $output = mq(view);
+              resource: projectDetail
+            });
+            $output = mq(component);
         });
 
         it('should render reminder total count', () => {

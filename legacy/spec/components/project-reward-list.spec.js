@@ -10,8 +10,7 @@ describe('ProjectRewardList', () => {
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
-                let rewardDetail = RewardDetailsMockery(newState),
-                    component = m();
+                let rewardDetail = RewardDetailsMockery(newState);
 
                 return {
                     output: mq(projectRewardList, {
