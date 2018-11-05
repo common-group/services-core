@@ -9,23 +9,16 @@ describe('ProjectDashboardMenu', () => {
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
-                let body = jasmine.createSpyObj('body', ['className']),
-                    projectDetail = prop(ProjectDetailsMockery(newState)[0]),
+                let projectDetail = prop(ProjectDetailsMockery(newState)[0]),
                     component = m(projectDashboardMenu, {
                         project: projectDetail
-                    }),
-                    ctrl = component.oninit({
-                        project: projectDetail
                     });
-
-                spyOn(m, 'component').and.callThrough();
-                spyOn(ctrl, 'body').and.returnValue(body);
 
                 return {
                     output: mq(component, {
                         project: projectDetail
                     }),
-                    projectDetail: projectDetail
+                    projectDetail
                 };
             };
         });

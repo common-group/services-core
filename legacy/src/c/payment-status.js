@@ -78,6 +78,8 @@ const paymentStatus = {
             paymentMethodClass,
             stateClass
         };
+
+        return vnode.state;
     },
     view: function({state, attrs}) {
         const payment = attrs.item;
