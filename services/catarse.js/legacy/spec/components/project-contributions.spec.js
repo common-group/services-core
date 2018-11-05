@@ -12,19 +12,14 @@ describe('projectContributions', () => {
                 'responseText' : JSON.stringify(ContributorMockery())
             });
 
-            spyOn(m, 'component').and.callThrough();
             projectContribution = ContributorMockery()[0];
             const project = prop({
                         id: 1231
             });
-            const component = m(projectContributions, {
-                    project: project
-                }),
-                view = component.view(component.oninit({
-                    project: project
-                }));
 
-            $output = mq(view);
+            $output = mq(projectContributions, {
+                project: project
+            });
         });
 
         it('should render project contributions list', () => {

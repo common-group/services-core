@@ -3,14 +3,14 @@ import m from 'mithril';
 import paymentCreditCard from '../../src/c/payment-credit-card';
 import paymentVM from '../../src/vms/payment-vm';
 
-describe('paymentCreditCard', () => {
+fdescribe('paymentCreditCard', () => {
     let $output, $output2, vm;
     describe('view', () => {
         beforeAll(() => {
             window.PagarMe = {};
             vm = paymentVM();
             vm.fields.ownerDocument('568.905.638-32');
-            spyOn(vm, 'sendPayment').and.returnValue(m.deferred().promise);
+            spyOn(vm, 'sendPayment').and.returnValue(new Promise(() => {}));
             let test = {
                 vm: vm,
                 contribution_id: 1,
@@ -19,10 +19,10 @@ describe('paymentCreditCard', () => {
                 isSubscriptionEdit: () => false                
             };
             $output = mq(
-                m(paymentCreditCard, test)
+                paymentCreditCard, test
             );
             $output2 = mq(
-                m(paymentCreditCard, test)
+                paymentCreditCard, test
             );
         });
 

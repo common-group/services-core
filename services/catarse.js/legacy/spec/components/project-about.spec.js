@@ -10,14 +10,12 @@ describe('ProjectAbout', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
             rewardDetail = RewardDetailsMockery()[0];
-            let component = m(projectAbout, {
+            $output = mq(projectAbout, {
                 hasSubscription: prop(false),
                 project: prop(projectDetail),
                 rewardDetails: prop(RewardDetailsMockery()),
                 goalDetails: prop(GoalsMockery())
-            }),
-                view = component.view();
-            $output = mq(view);
+            });
         });
 
         it('should render project about and reward list', () => {
