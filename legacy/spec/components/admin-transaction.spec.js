@@ -12,9 +12,9 @@ describe('AdminTransaction', () => {
             gateway_data: null
         }));
 
-        $output = mq(m(adminTransaction, {
+        $output = mq(adminTransaction, {
             contribution: contribution()[0]
-        }).view);
+        });
     });
 
     describe('view', () => {

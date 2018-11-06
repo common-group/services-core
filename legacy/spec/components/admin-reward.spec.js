@@ -1,4 +1,5 @@
 import mq from 'mithril-query';
+import prop from 'mithril/stream';
 import adminReward from '../../src/c/admin-reward';
 
 describe('adminReward', () => {
@@ -9,14 +10,10 @@ describe('adminReward', () => {
 
         describe("when contribution has no reward", function() {
             beforeAll(() => {
-                ctrl = adminReward.oninit({
+                $output = mq(adminReward, {
                     reward: prop({}),
                     contribution: prop({})
                 });
-                $output = mq(adminReward.view(ctrl, {
-                    reward: prop({}),
-                    contribution: prop({})
-                }));
             });
 
             it('should render "no reward" text when reward_id is null', () => {
@@ -30,13 +27,15 @@ describe('adminReward', () => {
                 reward = prop(RewardDetailsMockery()[0]);
                 contribution = prop(ContributionAttrMockery()[0]);
                 ctrl = adminReward.oninit({
-                    reward: reward,
-                    contribution: contribution
+                    attrs: {
+                    reward,
+                    contribution
+                    }
                 });
-                $output = mq(adminReward.view(ctrl, {
-                    reward: reward,
-                    contribution: contribution
-                }));
+                $output = mq(adminReward, {
+                    reward,
+                    contribution
+                });
             });
 
             it("should render reward description when we have a reward_id", function() {

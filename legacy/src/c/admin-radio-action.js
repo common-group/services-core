@@ -67,6 +67,7 @@ const adminRadioAction = {
         };
 
         const submit = () => {
+            console.log('submit');
             if (newID()) {
                 const validation = validate(radios(), newID());
                 if (_.isUndefined(validation)) {
