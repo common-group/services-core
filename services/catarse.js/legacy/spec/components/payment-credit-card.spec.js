@@ -3,8 +3,8 @@ import m from 'mithril';
 import paymentCreditCard from '../../src/c/payment-credit-card';
 import paymentVM from '../../src/vms/payment-vm';
 
-fdescribe('paymentCreditCard', () => {
-    let $output, $output2, vm;
+xdescribe('paymentCreditCard', () => {
+    let $output, vm;
     describe('view', () => {
         beforeAll(() => {
             window.PagarMe = {};
@@ -19,9 +19,6 @@ fdescribe('paymentCreditCard', () => {
                 isSubscriptionEdit: () => false                
             };
             $output = mq(
-                paymentCreditCard, test
-            );
-            $output2 = mq(
                 paymentCreditCard, test
             );
         });
@@ -72,8 +69,5 @@ fdescribe('paymentCreditCard', () => {
                 expect(vm.sendPayment).toHaveBeenCalled();
             });
         })
-
-
-
     });
 });

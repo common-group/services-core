@@ -40,7 +40,9 @@ describe('AdminRadioAction', () => {
             args.selectedItem = prop(item);
             $output = mq(adminRadioAction, {
                 data: args,
-                item: prop(item)
+                item: prop(item),
+                getKeyValue: () => {},
+              updateKeyValue: () => {},
             });
         });
 

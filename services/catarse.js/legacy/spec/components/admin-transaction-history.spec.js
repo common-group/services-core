@@ -10,14 +10,10 @@ describe('adminTransactionHistory', () => {
 
     beforeAll(() => {
         contribution = prop(ContributionDetailMockery(1));
-        historyBox = m(adminTransactionHistory, {
+        ctrl = adminTransactionHistory.oninit({attrs: {contribution: contribution()[0]}});
+        $output = mq(adminTransactionHistory, {
             contribution: contribution()[0]
         });
-        ctrl = historyBox.oninit();
-        view = historyBox.view(ctrl, {
-            contribution: contribution
-        });
-        $output = mq(view);
     });
 
     describe('controller', () => {

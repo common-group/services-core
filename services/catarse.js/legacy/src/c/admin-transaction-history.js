@@ -39,6 +39,8 @@ const adminTransactionHistory = {
         vnode.state = {
             orderedEvents: _.sortBy(mapEvents, 'originalDate')
         };
+
+        return vnode.state;
     },
     view: function({state}) {
         return m('.w-col.w-col-4', [

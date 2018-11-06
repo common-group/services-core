@@ -10,6 +10,7 @@ const adminReward = {
         let l;
         const loadShippingFee = () => {
             const shippingFee = prop({});
+            console.log('models', models);
 
             if (vnode.attrs.contribution.shipping_fee_id) {
                 const options = models.shippingFee.getRowOptions(
@@ -27,6 +28,8 @@ const adminReward = {
         vnode.state = {
             shippingFee: loadShippingFee()
         };
+
+        return vnode.state;
     },
 
     view: function({state, attrs}) {
