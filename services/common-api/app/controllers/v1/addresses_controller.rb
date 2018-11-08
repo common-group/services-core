@@ -14,10 +14,19 @@ module V1
         render json: { address_id: @address.id }
       end
 
+      def update
+        authorize resource
+        resource.update_attributes(permitted_attributes(resource))
+        resource.save
+
+        return render json: resource.errors, status: 400 unless resource.valid?
+        render json: { project_id: resource.id }
+      end
+
       private
 
       def resource
-        @address ||= current_platform.addresses.find params[:id]
+        @address ||= CommonModels::Address.find params[:id]
       end
 
       def policy(record)

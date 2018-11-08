@@ -5,11 +5,11 @@ class AddressPolicy < ApplicationPolicy
 
   # TODO update permissions
   def update?
-    create
+    create?
   end
 
   def destroy?
-    create
+    create?
   end
 
   def permitted_attributes

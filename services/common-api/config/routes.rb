@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     end
     resources :api_keys, only: %i[create destroy]
     resources :direct_messages, only: %i[create]
-    resources :addresses, only: %i[create]
+    resources :addresses, only: %i[create update]
     resources :states, only: %i[create], controller: 'states'
     resources :countries, only: %i[create], controller: 'countries'
   end
