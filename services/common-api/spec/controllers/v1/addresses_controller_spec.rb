@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe V1::AddresssController, type: :controller do
+RSpec.describe V1::AddressController, type: :controller do
   let!(:platform) { create(:platform) }
   let!(:another_platform) { create(:platform) }
 
