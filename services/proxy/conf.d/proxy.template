@@ -69,12 +69,12 @@ server {
 			include /etc/nginx/conf.d/locations/v1/api_keys_location.conf;
         }
 
-    location ~ "^/v1/direct_messages(?:\/)?.*$" {
-        # Current mapped routes for /v1/direct_messages
-        # POST 			/v1/direct_messages
-        # GET 			/v1/direct_messages
-        include /etc/nginx/conf.d/locations/v1/direct_messages_location.conf;
-    }
+        location ~ "^/v1/direct_messages(?:\/)?.*$" {
+            # Current mapped routes for /v1/direct_messages
+            # POST 			/v1/direct_messages
+            # GET 			/v1/direct_messages
+            include /etc/nginx/conf.d/locations/v1/direct_messages_location.conf;
+        }
 
 		location ~ "^/v1/users(?:\/)?.*$" {
             # Current mapped routes for /v1/users
@@ -99,11 +99,11 @@ server {
 			# GET|PUT|DELETE 	/v1/projects/:project_id
 			# GET|POST 			/v1/projects/:project_id/goals
 			# GET|PUT|DELETE 	/v1/projects/:project_id/goals/:goal_id
-      # GET|POST 			/v1/projects/:project_id/posts
-      # GET|DELETE 	/v1/projects/:project_id/posts/:post_id
-      # GET|POST 		/v1/projects/:project_id/contributions
-      # GET         /v1/projects/:project_id/contributions/:contribution_id
-			# GET|POST 		/v1/projects/:project_id/rewards
+            # GET|POST 			/v1/projects/:project_id/posts
+            # GET|DELETE 	    /v1/projects/:project_id/posts/:post_id
+            # GET|POST 		    /v1/projects/:project_id/contributions
+            # GET               /v1/projects/:project_id/contributions/:contribution_id
+			# GET|POST 		    /v1/projects/:project_id/rewards
 			# GET|PUT|DELETE 	/v1/projects/:project_id/rewards/:reward_id
 			# GET 				/v1/projects/:project_id/fund_stats
 			# GET 				/v1/projects/:project_id/subscriptions_per_day
