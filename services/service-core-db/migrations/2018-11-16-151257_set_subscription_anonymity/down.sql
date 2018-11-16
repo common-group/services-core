@@ -1,0 +1,1 @@
+DROP FUNCTION payment_service_api.set_subscription_anonymity(subscription_id uuid, set_anonymity_state boolean);

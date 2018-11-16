@@ -18,6 +18,7 @@ const models = {
     commonCreditCard: commonPayment.model('rpc/credit_card'),
     commonCreditCards: commonPayment.model('credit_cards'),
     commonSubscriptionUpgrade: commonPayment.model('rpc/upgrade_subscription'),
+    setSubscriptionAnonymity: commonPayment.model('rpc/set_subscription_anonymity'),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     userBalanceTransfers: catarse.model('user_balance_transfers'),
