@@ -7,14 +7,17 @@ import {
     catarse
 } from '../api';
 import contributionVM from '../vms/contribution-vm';
+import subscriptionVM from '../vms/subscription-vm';
 import commonPaymentVM from '../vms/common-payment-vm';
 import ownerMessageContent from '../c/owner-message-content';
 import subscriptionStatusIcon from '../c/subscription-status-icon';
 import paymentMethodIcon from '../c/payment-method-icon';
 import cancelSubscriptionContent from '../c/cancel-subscription-content';
 import modalBox from '../c/modal-box';
+import checkboxUpdateIndividual from '../c/checkbox-update-individual';
 import userVM from '../vms/user-vm';
 import userSubscriptionPaymentHistoryModal from './user-subscription-payment-history-modal';
+
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
@@ -280,7 +283,12 @@ const userSubscriptionBox = {
                         m('.u-marginbottom-10', ctrl.showLastSubscriptionVersionPaymentMethodIfHasOne()),
                         m('a.alt-link.fontsize-smallest[href="javascript:void(0);"]', {
                             onclick: () => ctrl.displayPaymentHistoryModal.toggle()
-                        },'Histórico de pagamento')
+                        },'Histórico de pagamento'),
+                        m(checkboxUpdateIndividual, {
+                            text: window.I18n.t('anonymous_sub', contributionScope()),
+                            current_state: subscription.checkout_data.anonymous,
+                            onToggle: () => subscriptionVM.toogleAnonymous(subscription)
+                        })
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', ctrl.showLastSubscriptionVersionRewardTitleIfHasOne()),
                     m('.u-marginbottom-10.u-text-center.w-col.w-col-3',

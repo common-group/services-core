@@ -79,12 +79,29 @@ const getSubscription = (subscriptionId) => {
     return lSub.load();
 };
 
+const toogleAnonymous = (subscription) => {
+    const subscriptionAnonymity = {
+        subscription_id: subscription.id,
+        set_anonymity_state: !subscription.checkout_data.anonymous
+    }
+    
+    commonPayment
+        .loaderWithToken(models.setSubscriptionAnonymity.postOptions(subscriptionAnonymity, {}))
+        .load()
+        .then(d => {
+            const response = _.first(d)
+            subscription.checkout_data.anonymous = response.set_subscription_anonymity.anonymous
+            m.redraw()
+        })
+};
+
 const subscriptionVM = {
     getNewSubscriptions,
     getSubscriptionsPerMonth,
     getSubscriptionTransitions,
     getUserProjectSubscriptions,
-    getSubscription
+    getSubscription,
+    toogleAnonymous
 };
 
 export default subscriptionVM;
