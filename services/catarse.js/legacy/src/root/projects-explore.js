@@ -250,12 +250,18 @@ const projectsExplore = {
         let notWasTried = true;
 
         const tryLoadFromQueryPath = () => {
-            let innerDefaultFilter = h.paramByName('filter') || args.filter || 'all'
-            
-            if (notWasTried) {
+            const innerDefaultFilter = h.paramByName('filter') || args.filter || 'all'
+            const projectModes = ['sub', 'not_sub'];
+            const isSubscriptionOrAonFlex = projectModes.indexOf(innerDefaultFilter) >= 0;
+            const filterIsForContributedByFriends = innerDefaultFilter === 'contributed_by_friends';
+
+            if (notWasTried && isSubscriptionOrAonFlex) {
                 changeMode(innerDefaultFilter);
                 modeToggle(true);
                 notWasTried = false;
+            }
+            else if (filterIsForContributedByFriends) {
+                currentFilter(filtersMap[innerDefaultFilter]);
             }
         }
 
@@ -356,7 +362,7 @@ const projectsExplore = {
                                     },
                                     class: ctrl.currentMode() === 'sub' ? 'selected' : ''
                                 },
-                                'Projetos recorrentes'
+                                'Assinaturas'
                             ),
                             m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                                 onclick: ctrl.modeToggle.toggle

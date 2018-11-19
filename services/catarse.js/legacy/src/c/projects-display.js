@@ -40,7 +40,14 @@ const projectsDisplay = {
 
         const collectionsMapper = (sample_no, name) => {
             const f = filters[name],
-                cLoader = loader(project.getPageOptions(_.extend({}, { order: 'score.desc' }, f.filter.parameters()))),
+                forSubPledged = name === 'sub' ? { pledged: 'gte.1000' } : {},
+                defaultOptions = { 
+                    order: 'score.desc', 
+                    open_for_contributions: 'eq.true',
+                    limit: '10',
+                    offset: '0'
+                },
+                cLoader = loader(project.getPageOptions(_.extend(forSubPledged, defaultOptions, f.filter.parameters()))),
                 collection = m.prop([]);
 
             cLoader.load().then(_.compose(collection, sample_no));

@@ -17,8 +17,8 @@ const postsPreview = {
                 const notificationData = {
                     title: args.title(),
                     comment_html: args.comment_html(),
-                    reward_id: args.reward_id >= 1 ? args.reward_id : null,
-                    recipients: args.reward_id >= 1 ? 'reward' : args.reward_id == '-1' ? 'public' : 'backers'
+                    rewards: args.rewards,
+                    recipients: args.recipients
                 };
 
                 return m.request({
@@ -49,9 +49,9 @@ const postsPreview = {
     view: function(ctrl, args) {
         const comment_html = args.comment_html(),
             title = args.title(),
-            recipientsText = args.reward_id > 1 ?
+            recipientsText = args.recipients === 'rewards' ?
             m('.fontsize-small.u-marginbottom-30', [
-                'A novidade acima será enviada por email para os ',
+                `A novidade acima será enviada por email para os ${args.confirmationLabel} de `,
                 m('span.fontweight-semibold',
                     args.rewardText
                 ),
@@ -60,7 +60,7 @@ const postsPreview = {
                 window.I18n.t(`backers_only_${args.mode}`, I18nScope())
                 )
             ]) :
-            args.reward_id === '-1' ?
+            args.recipients === 'backers' ?
             m('.fontsize-small.u-marginbottom-30', [
                 'A novidade acima será  ',
                 m('span.fontweight-semibold',
