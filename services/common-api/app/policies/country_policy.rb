@@ -1,6 +1,6 @@
 class CountryPolicy < ApplicationPolicy
   def create?
-    user
+    is_platform_user?
   end
 
   def update?
