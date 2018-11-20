@@ -34,7 +34,17 @@ const posts = {
                 radio_checked: m.prop(false),
                 paid_rewards: m.prop([]),
                 get_selected_rewards_text: () => {
-                    return fields.get_selected_rewards().map(rc => `RS${rc.reward.data.minimum_value/100} - ${rc.reward.data.title}`).join(', ');
+                    if (fields.recipients === 'public') {
+                        return window.I18n.t(`everyone_${project.mode}`, I18nScope())
+                    }
+                    else if (fields.recipients === 'backers') {
+                        return window.I18n.t(`backers_${project.mode}`, I18nScope())
+                    }
+                    else {
+                        return fields
+                            .get_selected_rewards()
+                            .map(rc => `RS${rc.reward.data.minimum_value/100} - ${rc.reward.data.title}`).join(', ');
+                    }                    
                 },
                 get_selected_rewards: () => {                    
                     return _.filter(fields.paid_rewards(), rc => rc.checked());
@@ -146,12 +156,14 @@ const posts = {
             return rewards;
         };
 
+        const addDataFieldToNoCommonRewards = (rewards) => rewards.map(r => _.extend(r, { data: r }))
+
         l.load().then((data) => {
             projectDetails(data);
             if (projectVM.isSubscription(_.first(projectDetails()))) {
                 rewardVM.fetchCommonRewards(_.first(projectDetails()).common_id).then(createCheckboxesControlForRewardSelected);
             } else {
-                rewardVM.fetchRewards(project_id).then(createCheckboxesControlForRewardSelected);
+                rewardVM.fetchRewards(project_id).then(addDataFieldToNoCommonRewards).then(createCheckboxesControlForRewardSelected);
             }
 
             isProjectLoaded(true);
@@ -254,7 +266,7 @@ const posts = {
                                     m('.u-marginbottom-20', [
                                         // TO EVERYONE
                                         m('.fontsize-small.w-radio', [
-                                            m(`input.w-radio-input[type=radio][value=public]`, {
+                                            m(`input.w-radio-input[type=radio][value='public']`, {
                                                 checked: recipients() === 'public',
                                                 onchange: m.withAttr('value', recipients)
                                             }),
@@ -265,7 +277,7 @@ const posts = {
 
                                         // TO CONTRIBUTORS/SUBSCRIBERS
                                         m('.fontsize-small.w-radio', [
-                                            m(`input.w-radio-input[type=radio][value=backers]`, {
+                                            m(`input.w-radio-input[type=radio][value='backers']`, {
                                                 checked: recipients() === 'backers',
                                                 onchange: m.withAttr('value', recipients)
                                             }),
