@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     end
     resources :api_keys, only: %i[create destroy]
     resources :direct_messages, only: %i[create]
+    resources :subscriptions, only: %i[set_anonymity_state], controller: 'subscriptions'
   end
 
   draw :api_v1
