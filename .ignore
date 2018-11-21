@@ -1,0 +1,6 @@
+services/catarse/tmp
+services/catarse/logs
+services/common-api/logs
+services/common-api/tmp
+services/catarse/public/assets
+services/catarse/app/assets/images
