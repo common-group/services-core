@@ -2,6 +2,7 @@ import {
     commonPayment
 } from '../api';
 import m from 'mithril';
+import h from '../h';
 import _ from 'underscore';
 import models from '../models';
 
@@ -84,15 +85,22 @@ const toogleAnonymous = (subscription) => {
         subscription_id: subscription.id,
         set_anonymity_state: !subscription.checkout_data.anonymous
     }
-    
-    commonPayment
-        .loaderWithToken(models.setSubscriptionAnonymity.postOptions(subscriptionAnonymity, {}))
-        .load()
-        .then(d => {
-            const response = _.first(d)
-            subscription.checkout_data.anonymous = response.set_subscription_anonymity.anonymous
-            m.redraw()
-        })
+  
+    m.request({
+        method: 'POST',
+        url: `/v1/subscriptions/${subscription.id}/set_anonymity_state`,
+        data: subscriptionAnonymity,
+        config: h.setCsrfToken
+    })
+    .then(r => r.json())
+    .then(d => {
+        subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous
+        console.log('response', d)
+        m.redraw();
+    })
+    .catch((err) => {
+        m.redraw();
+    });
 };
 
 const subscriptionVM = {

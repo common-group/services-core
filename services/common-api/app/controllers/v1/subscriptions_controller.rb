@@ -1,9 +1,12 @@
 module V1
     class SubscriptionsController < ApiBaseController
         before_action :authenticate_user!
-        before_action :resource, except: %i[set_anonymity_state]
+        before_action :resource
   
         def set_anonymity_state
+            puts "================================"
+            puts params
+            puts "================================"
             anonymity_state = params[:set_anonymity_state]
             @subscription = CommonModels::Subscription.find_by_id(params[:subscription_id])
 
