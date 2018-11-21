@@ -13,7 +13,7 @@
     "test": "ava"
   },
   "dependencies": {
-    "ava": "^1.0.0-beta.3",
+    "ava": "^1.0.0-rc.2",
     "express": "^4.16.2",
     "get-stdin": "^5.0.1",
     "lodash": "^4.17.5",

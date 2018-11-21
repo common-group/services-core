@@ -49,3 +49,5 @@ gem 'jwt'
 
 gem 'common_models', path: './vendor/gems/common_models'
 #gem 'common_models', github: 'common-group/common_models', branch: 'develop'
+gem "rack", ">= 2.0.6"
+gem "loofah", ">= 2.2.3"
