@@ -22,7 +22,8 @@
     "pagarme": "^3",
     "pg": "^7",
     "ramda": "^0.25.0",
-    "raven": "^2.2.1"
+    "raven": "^2.2.1",
+    "atob": ">= 2.1.0"
   },
   "repository": {
     "type": "git",
