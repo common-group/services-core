@@ -40,9 +40,9 @@ const projectPosts = {
     view: function(ctrl, args) {
         const list = ctrl.listVM,
             project = args.project() || {},
-            postHeader = (post) => _.map(post.rewards_that_can_access_post, r => `R$${r.minimum_value} - ${r.title}`),
-            postTextSubscription = (post) => `Post exclusivo para assinantes de ${postHeader(post)}`,
-            postTextContribution = (post) => `Post exclusivo para apoiadores de ${postHeader(post)}`,
+            postHeader = (post) => _.map(post.rewards_that_can_access_post, r => ` R$${h.formatNumber(r.minimum_value)}${r.title ? ` - ${r.title}` : ''}`),
+            postTextSubscription = (post) => `Post exclusivo para assinantes${ post.rewards_that_can_access_post ? ' de' : ''}${postHeader(post)}`,
+            postTextContribution = (post) => `Post exclusivo para apoiadores${ post.rewards_that_can_access_post ? ' de' : ''}${postHeader(post)}`,
             minimumValueRewardId = (post) => _.first(_.sortBy(post.rewards_that_can_access_post, r => r.minimum_value)).id;
 
         return m('#posts.project-posts.w-section', {
@@ -71,12 +71,12 @@ const projectPosts = {
                             ),
                             project.mode === 'sub' ? [
                                 m('.fontsize-base.fontweight-semibold.u-marginbottom-20', postTextSubscription(post)),
-                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.reward_id ? `?reward_id=${minimumValueRewardId(post)}` : ''}"]`,
+                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.rewards_that_can_access_post ? `?reward_id=${minimumValueRewardId(post)}` : ''}"]`,
                                     'Acessar esse post'
                                 )
                             ] : [
                                 m('.fontsize-base.fontweight-semibold.u-marginbottom-20', postTextContribution(post)),
-                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.reward_id ? `?reward_id=${minimumValueRewardId(post)}` : ''}"]`,
+                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.rewards_that_can_access_post ? `?reward_id=${minimumValueRewardId(post)}` : ''}"]`,
                                     'Acessar esse post'
                                 )
                             ]
