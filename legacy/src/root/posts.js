@@ -22,6 +22,7 @@ const posts = {
             isProjectPostsLoaded = m.prop(false),
             showSuccess = m.prop(false),
             showError = m.prop(false),
+            selectedRewardsHasError = m.prop(false),
             titleHasError = m.prop(false),
             commentHasError = m.prop(false),
             projectPosts = m.prop(),
@@ -43,7 +44,7 @@ const posts = {
                     else {
                         return fields
                             .get_selected_rewards()
-                            .map(rc => `RS${rc.reward.data.minimum_value/100} - ${rc.reward.data.title}`).join(', ');
+                            .map(rc => `RS${h.formatNumber(parseInt(rc.reward.data.minimum_value))}${rc.reward.data.title ? ` - ${rc.reward.data.title}` : ''}`).join(', ');
                     }                    
                 },
                 get_selected_rewards: () => {                    
@@ -75,12 +76,24 @@ const posts = {
 
                 return !commentHasError();
             },
+            validateSelectedRewards = () => {
+                const wants_to_send_to_ones_who_paid_for_rewards = fields.recipients() === 'rewards';
+                const wants_to_send_to_backers_or_public = !wants_to_send_to_ones_who_paid_for_rewards;
+                const has_selected_at_least_one_reward = fields.get_selected_rewards().length > 0;
+                const validation_is_ok = wants_to_send_to_backers_or_public || (wants_to_send_to_ones_who_paid_for_rewards && has_selected_at_least_one_reward);
+                selectedRewardsHasError(!validation_is_ok);
+
+                return validation_is_ok;
+            },
             togglePreview = () => {
                 if (!validateTitle()) {
                     errors('Título não pode ficar em branco.');
                     showError(true);
                 } else if (!validateComment()) {
                     errors('Mensagem não pode ficar em branco.');
+                    showError(true);
+                } else if (!validateSelectedRewards()) {
+                    errors('É necessário selecionar pelo menos uma recompensa.');
                     showError(true);
                 } else {
                     h.scrollTop();
@@ -104,9 +117,12 @@ const posts = {
                     return window.I18n.t(`everyone_${project.mode}`, I18nScope());
                 } else if (post.recipients === 'backers') {
                     return window.I18n.t(`backers_${project.mode}`, I18nScope());
-                } else if (post.rewards_that_can_access_post) {
+                } else if (post.rewards_that_can_access_post && post.rewards_that_can_access_post.length) {
                     const preText = project.mode === 'sub' ? 'Assinantes de ' : 'Apoiadores de ';
-                    return preText + _.map(post.rewards_that_can_access_post, reward => `R$${reward.minimum_value} - ${reward.title}`).join(', ');
+                    return preText + _.map(
+                        post.rewards_that_can_access_post, 
+                        reward => `R$${h.formatNumber(reward.minimum_value)}${reward.title ? ` - ${reward.title}` : ''}`
+                    ).join(', ');
                 } else {
                     return '...';
                 }
@@ -156,12 +172,16 @@ const posts = {
             return rewards;
         };
 
-        const addDataFieldToNoCommonRewards = (rewards) => rewards.map(r => _.extend(r, { data: r }))
+        const addDataFieldToNoCommonRewards = (rewards) => rewards.map(r => _.extend(r, { data: r }));
+        const remapMinimumValue = (rewards) => rewards.map(r => {
+            r.data.minimum_value = parseInt(r.data.minimum_value) / 100; 
+            return r;
+        });
 
         l.load().then((data) => {
             projectDetails(data);
             if (projectVM.isSubscription(_.first(projectDetails()))) {
-                rewardVM.fetchCommonRewards(_.first(projectDetails()).common_id).then(createCheckboxesControlForRewardSelected);
+                rewardVM.fetchCommonRewards(_.first(projectDetails()).common_id).then(remapMinimumValue).then(createCheckboxesControlForRewardSelected);
             } else {
                 rewardVM.fetchRewards(project_id).then(addDataFieldToNoCommonRewards).then(createCheckboxesControlForRewardSelected);
             }
@@ -182,6 +202,7 @@ const posts = {
             rewardText,
             errors,
             showSuccess,
+            selectedRewardsHasError,
             titleHasError,
             commentHasError,
             showError,
@@ -303,7 +324,13 @@ const posts = {
                                         // SOME SELECTION CHECKBOXES CONTRIBUTORS/SUBSCRIBERS
                                         (
                                             recipients() !== 'rewards' ? '' : 
-                                            m('.card.u-radius',
+                                            m('.card.u-radius', {
+                                                class: ctrl.selectedRewardsHasError() ? 'card-message-error' : '',
+                                                onclick: () => { 
+                                                    ctrl.selectedRewardsHasError(false);
+                                                    ctrl.showError(false);
+                                                }
+                                            },
                                                 _.map(ctrl.fields.paid_rewards(), 
                                                     pr => m(postForRewardCheckbox, {
                                                         reward_checkbox: pr.checked,
@@ -324,7 +351,10 @@ const posts = {
                                     m('input.positive.text-field.w-input[id=\'post_title\'][maxlength=\'256\'][type=\'text\']', {
                                         name: 'posts[title]',
                                         value: ctrl.fields.title(),
-                                        onfocus: () => ctrl.titleHasError(false),
+                                        onfocus: () => {
+                                            ctrl.titleHasError(false);
+                                            ctrl.showError(false);
+                                        },
                                         class: ctrl.titleHasError() ? 'error' : '',
                                         onchange: m.withAttr('value', ctrl.fields.title)
                                     }),
@@ -333,7 +363,10 @@ const posts = {
                                     ),
                                     m('.preview-container.u-marginbottom-40', {
                                         class: ctrl.commentHasError() ? 'error' : '',
-                                        onclick: () => ctrl.commentHasError(false)
+                                        onclick: () => {
+                                            ctrl.commentHasError(false);
+                                            ctrl.showError(false);
+                                        }
                                     }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
                                     m('.u-marginbottom-20.w-row', [
                                         m('.w-col.w-col-3'),
@@ -371,13 +404,15 @@ const posts = {
                                     m('.table-col.w-col.w-col-1')
                                 ]),
                                 (ctrl.projectPosts() ? m('.fontsize-small.table-inner', [
-                                    _.map(ctrl.projectPosts(), post => m(postEntry, {
-                                        post,
-                                        project,
-                                        destinatedTo: ctrl.showRecipientes(post, project),
-                                        showOpenPercentage: ctrl.openedPercentage(post),
-                                        deletePost: () => ctrl.deletePost(post)
-                                    })),
+                                    _.map(ctrl.projectPosts(), 
+                                        post => m(postEntry, {
+                                            post,
+                                            project,
+                                            destinatedTo: ctrl.showRecipientes(post, project),
+                                            showOpenPercentage: ctrl.openedPercentage(post),
+                                            deletePost: () => ctrl.deletePost(post)
+                                        })
+                                    ),
                                     m('form.w-hidden', {
                                         action: `/${window.I18n.locale}/projects/${project.project_id}/posts/${ctrl.toDeletePost()}`,
                                         method: 'POST',
