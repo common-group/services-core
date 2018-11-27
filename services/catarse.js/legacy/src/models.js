@@ -1,4 +1,14 @@
-import { catarse, catarseMoments, commonPayment, commonAnalytics, commonProject, commonNotification, commonRecommender, commonCommunity } from './api';
+import { 
+    catarse, 
+    catarseMoments, 
+    commonPayment, 
+    commonAnalytics, 
+    commonProject, 
+    commonNotification, 
+    commonRecommender, 
+    commonCommunity,
+    commonProxy
+} from './api';
 
 const models = {
     recommendedProjects1: commonRecommender.model('predictions/1'),
@@ -18,7 +28,7 @@ const models = {
     commonCreditCard: commonPayment.model('rpc/credit_card'),
     commonCreditCards: commonPayment.model('credit_cards'),
     commonSubscriptionUpgrade: commonPayment.model('rpc/upgrade_subscription'),
-    setSubscriptionAnonymity: commonPayment.model('rpc/set_subscription_anonymity'),
+    setSubscriptionAnonymity: (uuid) => commonProxy.model(`v1/subscriptions/${uuid}/set_anonymity_state`),
     country: catarse.model('countries'),
     state: catarse.model('states'),
     userBalanceTransfers: catarse.model('user_balance_transfers'),

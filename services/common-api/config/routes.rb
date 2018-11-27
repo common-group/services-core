@@ -18,8 +18,12 @@ Rails.application.routes.draw do
     resources :direct_messages, only: %i[create]
     resources :subscriptions do
       member do
-        post  :set_anonymity_state, to: 'subscriptions#set_anonymity_state'
+        match 'set_anonymity_state' => 'subscriptions#set_anonymity_state', :as => 'set_anonymity_state', :via => [:post, :options]
       end
+      
+      #member do
+      #  post  :set_anonymity_state, to: 'subscriptions#set_anonymity_state'
+      #end
     end
   end
 

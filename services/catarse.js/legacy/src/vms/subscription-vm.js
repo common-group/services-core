@@ -1,5 +1,6 @@
 import {
-    commonPayment
+    commonPayment,
+    commonProxy
 } from '../api';
 import m from 'mithril';
 import h from '../h';
@@ -82,25 +83,20 @@ const getSubscription = (subscriptionId) => {
 
 const toogleAnonymous = (subscription) => {
     const subscriptionAnonymity = {
-        subscription_id: subscription.id,
         set_anonymity_state: !subscription.checkout_data.anonymous
     }
-  
-    m.request({
-        method: 'POST',
-        url: `/v1/subscriptions/${subscription.id}/set_anonymity_state`,
-        data: subscriptionAnonymity,
-        config: h.setCsrfToken
-    })
-    .then(r => r.json())
-    .then(d => {
-        subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous
-        console.log('response', d)
-        m.redraw();
-    })
-    .catch((err) => {
-        m.redraw();
-    });
+
+    const setAnonymityModel = models.setSubscriptionAnonymity(subscription.id)
+
+    return commonProxy
+        .loaderWithToken(setAnonymityModel.postOptions(subscriptionAnonymity, {}))
+        .load()
+        .then(d => {
+            const response = _.first(d)
+            subscription.checkout_data.anonymous = response.set_subscription_anonymity.anonymous
+            m.redraw()
+            return d;
+        });
 };
 
 const subscriptionVM = {
