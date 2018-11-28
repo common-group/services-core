@@ -132,6 +132,7 @@ const userAboutEdit = {
                         parsedErrors.resetFieldErrors();
                     }
                     parsedErrors = userAboutVM.mapRailsErrors(err.errors_json);
+                    emailHasError(parsedErrors.hasError('email'));
                     errors('Erro ao atualizar informações.');
 
                     showError(true);
@@ -154,6 +155,8 @@ const userAboutEdit = {
             validateEmailConfirmation = () => {
                 if (fields.email() !== fields.email_confirmation()) {
                     emailHasError(true);
+                    const emailConfirmationDiff = '{"email":["Confirmação de email está incorreta."]}';
+                    parsedErrors = userAboutVM.mapRailsErrors(emailConfirmationDiff);
                 } else {
                     emailHasError(false);
                 }
@@ -304,9 +307,7 @@ const userAboutEdit = {
                                                 onchange: m.withAttr('value', fields.email_confirmation)
                                             })
                                         ]),
-                                        ctrl.emailHasError() ? m(inlineError, {
-                                            message: 'Confirmação de email está incorreta.'
-                                        }) : ''
+                                        ctrl.emailHasError() ? ctrl.parsedErrors.inlineError('email') : ''
                                     ])
                                 ]),
                                 m('.w-row.u-marginbottom-30.card.card-terciary', [
