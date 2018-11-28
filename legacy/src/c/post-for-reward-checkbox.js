@@ -10,7 +10,7 @@ const postForRewardCheckbox = {
 
         return m('.u-marginbottom-10.w-checkbox', [
             m(`input.w-checkbox-input[type=checkbox]`, {
-                onchange: m.withAttr('checked', reward_checkbox),
+                onchange: () => reward_checkbox.toggle(),
                 checked: reward_checkbox()
             }),
             m('label.fontsize-smaller.fontweight-semibold.lineheight-tighter.w-form-label', {
