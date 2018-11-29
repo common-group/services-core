@@ -44,7 +44,7 @@ const posts = {
                     else {
                         return fields
                             .get_selected_rewards()
-                            .map(rc => `RS${h.formatNumber(parseInt(rc.reward.data.minimum_value))}${rc.reward.data.title ? ` - ${rc.reward.data.title}` : ''}`).join(', ');
+                            .map(rc => `R$${h.formatNumber(parseInt(rc.reward.data.minimum_value))}${rc.reward.data.title ? ` - ${rc.reward.data.title}` : ''}`).join(', ');
                     }                    
                 },
                 get_selected_rewards: () => {                    
