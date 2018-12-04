@@ -28,9 +28,14 @@ const downloadReports = {
                                         ]),
                                         m('.card.u-radius.u-marginbottom-20', [
                                             m('span.fontweight-semibold',
-                                                m.trust('Atenção:')
+                                                m.trust('Atenção: ')
                                             ),
-                                            'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
+                                            (
+                                                isFailed ?
+                                                    'Devido a nossa política de privacidade, não podemos informar dados pessoais de apoiadores em projetos que não tenham sido financiados.'
+                                                :
+                                                    'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
+                                            )                                            
                                         ]),
                                         (
                                             isFailed ? '' :
