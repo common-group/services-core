@@ -44,6 +44,7 @@ BEGIN;
                 ('refused', (now() - '10 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _invalid_subscription_2.id),
                 ('refused', (now() - '2 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _invalid_subscription_2.id),
                 ('refused', (now() - '2 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _invalid_subscription_2.id),
+                ('refused', (now() - '2 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _invalid_subscription_2.id),
                 ('refused', (now() - '10 days'::interval), 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _invalid_subscription_3.id);
 
             _result := payment_service.inactive_invalid_subscriptions();
