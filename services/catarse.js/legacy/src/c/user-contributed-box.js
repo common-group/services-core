@@ -40,8 +40,6 @@ const userContributedBox = {
             finishedAt = contribution.survey && contribution.survey.finished_at,
             answeredAt = contribution.survey_answered_at;
 
-            console.log('contribution', contribution);
-
         return (!_.isEmpty(contribution) ? m('div',
             (ctrl.displayModal() ? m.component(modalBox, {
                 displayModal: ctrl.displayModal,

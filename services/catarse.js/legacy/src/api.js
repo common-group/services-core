@@ -41,4 +41,19 @@ const commonCommunity = new Postgrest();
 const commonCommunityApiMeta = document.querySelector('[name="common-community-api-host"]');
 apiInit(commonCommunity, commonCommunityApiMeta, '/api_token/common', commonRequestHeader);
 
-export { catarse, catarseMoments, commonPayment, commonProject, commonAnalytics, commonNotification, commonRecommender, commonCommunity };
+const commonProxy = new Postgrest();
+const commonProxyApiMeta = document.querySelector('[name="common-proxy-api-host"]');
+apiInit(commonProxy, commonProxyApiMeta, '/api_token/common', commonRequestHeader);
+
+
+export {
+    catarse, 
+    catarseMoments, 
+    commonPayment, 
+    commonProject, 
+    commonAnalytics, 
+    commonNotification, 
+    commonRecommender, 
+    commonCommunity, 
+    commonProxy 
+};

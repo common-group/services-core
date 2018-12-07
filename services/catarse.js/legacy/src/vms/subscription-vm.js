@@ -1,7 +1,9 @@
 import {
-    commonPayment
+    commonPayment,
+    commonProxy
 } from '../api';
 import m from 'mithril';
+import h from '../h';
 import _ from 'underscore';
 import models from '../models';
 
@@ -79,12 +81,31 @@ const getSubscription = (subscriptionId) => {
     return lSub.load();
 };
 
+const toogleAnonymous = (subscription) => {
+    const subscriptionAnonymity = {
+        set_anonymity_state: !subscription.checkout_data.anonymous
+    }
+
+    const setAnonymityModel = models.setSubscriptionAnonymity(subscription.id)
+
+    return commonProxy
+        .loaderWithToken(setAnonymityModel.postOptions(subscriptionAnonymity, {}))
+        .load()
+        .then(d => {
+            const response = _.first(d)
+            subscription.checkout_data.anonymous = response.set_subscription_anonymity.anonymous
+            m.redraw()
+            return d;
+        });
+};
+
 const subscriptionVM = {
     getNewSubscriptions,
     getSubscriptionsPerMonth,
     getSubscriptionTransitions,
     getUserProjectSubscriptions,
-    getSubscription
+    getSubscription,
+    toogleAnonymous
 };
 
 export default subscriptionVM;
