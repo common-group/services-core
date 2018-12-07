@@ -23,7 +23,8 @@
     "pg": "^7",
     "ramda": "^0.25.0",
     "raven": "^2.2.1",
-    "atob": ">= 2.1.0"
+    "atob": ">= 2.1.0",
+    "deep-extend": ">= 0.5.1"
   },
   "repository": {
     "type": "git",
