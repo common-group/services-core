@@ -43,7 +43,7 @@ apiInit(commonCommunity, commonCommunityApiMeta, '/api_token/common', commonRequ
 
 const commonProxy = new Postgrest();
 const commonProxyApiMeta = document.querySelector('[name="common-proxy-api-host"]');
-apiInit(commonProxy, commonProxyApiMeta, '/api_token/common', commonRequestHeader);
+apiInit(commonProxy, commonProxyApiMeta, '/api_token/common_proxy', commonRequestHeader);
 
 
 export {
