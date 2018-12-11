@@ -23,7 +23,7 @@ describe('adminInputAction', () => {
 
     describe('controller', () => {
         beforeAll(() => {
-            ctrl = adminInputAction.oninit({
+            ctrl = m(adminInputAction, {
                 data: args,
                 item: item
             });
@@ -42,14 +42,15 @@ describe('adminInputAction', () => {
         describe('when forceValue is set', () => {
             beforeAll(() => {
                 args.forceValue = forced;
-                ctrl = adminInputAction.oninit({
+                ctrl = mq(m(adminInputAction, {
                     data: args,
                     item: item
-                });
+                }));
             });
 
             it('should initialize newValue with forced value', () => {
-                expect(ctrl.newValue()).toEqual(forced);
+                console.log(args.forceValue, forced)
+                expect(ctrl.contains(args.forceValue)).toEqual(forced);
             });
 
             afterAll(() => {

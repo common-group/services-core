@@ -16,7 +16,6 @@ describe('PaymentStatus', () => {
             ctrl = paymentStatus.oninit({
               attrs: { item: payment }
             });
-            console.log('ctrl', ctrl);
         };
 
     describe('stateClass function', () => {

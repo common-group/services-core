@@ -38,12 +38,12 @@ describe('AdminRadioAction', () => {
         beforeAll(() => {
             item = _.first(RewardDetailsMockery());
             args.selectedItem = prop(item);
-            $output = mq(adminRadioAction, {
+            $output = mq(m(adminRadioAction, {
                 data: args,
                 item: prop(item),
                 getKeyValue: () => {},
               updateKeyValue: () => {},
-            });
+            }));
         });
 
         it('shoud only render the outerLabel on first render', () => {
@@ -68,7 +68,9 @@ describe('AdminRadioAction', () => {
             it('should send an patch request on form submit', () => {
                 $output.click('#r-0');
                 $output.trigger('form', 'submit');
+                console.log('BEFORE')
                 const lastRequest = jasmine.Ajax.requests.mostRecent();
+                console.log('AFTER')
                 // Should make a patch request to update item
                 expect(lastRequest.method).toEqual('PATCH');
             });
