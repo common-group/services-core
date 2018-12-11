@@ -179,6 +179,31 @@ class CommonWrapper
     return
   end
 
+  def find_address(external_id)
+    @api_key = proxy_api_key
+    uri = services_endpoint[:proxy_service]
+    resource = Address.find external_id
+    uri.path = '/v1/addresses'
+    response = request(
+      uri.to_s,
+      params: {
+        "external_id::integer" => "eq.#{external_id}"
+      },
+      action: :get,
+      headers: { 'Accept' => 'application/vnd.pgrst.object+json' },
+    ).run
+
+    if response.success?
+      json = ActiveSupport::JSON.decode(response.body)
+      common_id = json.try(:[], 'id')
+      return common_id
+    else
+      Rails.logger.info(response.body)
+    end
+
+    return
+  end
+
   def find_contribution(external_id)
     @api_key = proxy_api_key
     uri = services_endpoint[:proxy_service]
@@ -404,6 +429,108 @@ class CommonWrapper
     common_id
   end
 
+  def index_country(resource)
+    return unless resource.id.present?
+
+    @api_key = proxy_api_key
+    uri = services_endpoint[:proxy_service]
+
+    uri.path = '/v1/countries'
+    response = request(
+      uri.to_s,
+      body: {
+        country:
+          resource.common_index
+      }.to_json,
+      action: :post,
+      headers: {'Content-Type' => 'application/json'},
+    ).run
+
+    if response.success?
+      json = ActiveSupport::JSON.decode(response.body)
+      common_id = json.try(:[], 'country_id')
+    end
+
+    resource.update_column(
+      :common_id, common_id
+    ) if common_id.present?
+
+    common_id
+  end
+
+  def index_state(resource)
+    return unless resource.id.present?
+
+    @api_key = proxy_api_key
+    uri = services_endpoint[:proxy_service]
+
+    uri.path = '/v1/states'
+    response = request(
+      uri.to_s,
+      body: {
+        state:
+        resource.common_index
+      }.to_json,
+      action: :post,
+      headers: {'Content-Type' => 'application/json'},
+    ).run
+
+    if response.success?
+      json = ActiveSupport::JSON.decode(response.body)
+      common_id = json.try(:[], 'state_id')
+    end
+
+    resource.update_column(
+      :common_id, common_id
+    ) if common_id.present?
+
+    common_id
+  end
+
+  def index_address(resource)
+    return unless resource.id.present?
+
+    if resource.state && !resource.state.common_id.present?
+      resource.country.index_on_common
+    end
+
+    if resource.country && !resource.country.common_id.present?
+      resource.country.index_on_common
+    end
+
+    @api_key = proxy_api_key
+    uri = services_endpoint[:proxy_service]
+
+    uri.path = if resource.common_id.present?
+                 '/v1/addresses/' + resource.common_id
+               else
+                 '/v1/addresses'
+               end
+    response = request(
+      uri.to_s,
+      body: {
+        address:
+        resource.common_index
+      }.to_json,
+      action: resource.common_id.present? ? :patch : :post,
+      headers: {'Content-Type' => 'application/json'},
+    ).run
+
+    if response.success?
+      json = ActiveSupport::JSON.decode(response.body)
+      common_id = json.try(:[], 'address_id')
+    else
+      Rails.logger.info(response.body)
+      common_id = find_address(resource.id)
+    end
+
+    resource.update_column(
+      :common_id, common_id
+    ) if common_id.present?
+
+    common_id
+  end
+
   def index_contribution(resource)
     return unless resource.id.present?
     unless resource.project.common_id.present?
@@ -526,8 +653,7 @@ class CommonWrapper
     response = request(
       uri.to_s,
       body: {
-        goal:
-        resource.common_index
+        goal: resource.common_index
       }.to_json,
       action: resource.common_id.present? ? :patch : :post,
       current_ip: resource.project.user.current_sign_in_ip,
@@ -570,9 +696,9 @@ class CommonWrapper
     response = request(
       uri.to_s,
       body: {
-        reward: {data: resource.common_index}
+        reward: resource.common_index
       }.to_json,
-      action: :post,
+      action: (resource.common_id.present? ? :put : :post),
       current_ip: resource.project.user.current_sign_in_ip,
       headers: {'Content-Type' => 'application/json'}
     ).run

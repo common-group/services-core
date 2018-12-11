@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe V1::ProjectsController, type: :controller do
+  describe 'routes' do
+    it { should route(:post, '/v1/projects').to(action: :create) }
+    it { should route(:put, '/v1/projects/10').to(action: :update, id: 10) }
+  end
+
+  describe 'filters' do
+    it { should use_before_action(:authenticate_user!) }
+  end
+
   let!(:platform) { create(:platform) }
   let!(:another_platform) { create(:platform) }
 

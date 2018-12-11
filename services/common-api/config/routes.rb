@@ -16,6 +16,18 @@ Rails.application.routes.draw do
     end
     resources :api_keys, only: %i[create destroy]
     resources :direct_messages, only: %i[create]
+    resources :addresses, only: %i[create update]
+    resources :states, only: %i[create], controller: 'states'
+    resources :countries, only: %i[create], controller: 'states'
+    resources :subscriptions do
+      member do
+        match 'set_anonymity_state' => 'subscriptions#set_anonymity_state', :as => 'set_anonymity_state', :via => [:post, :options]
+      end
+
+      #member do
+      #  post  :set_anonymity_state, to: 'subscriptions#set_anonymity_state'
+      #end
+    end
   end
 
   draw :api_v1

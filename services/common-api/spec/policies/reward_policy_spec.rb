@@ -35,10 +35,10 @@ RSpec.describe RewardPolicy do
     describe 'permitted_attributes' do
       subject { described_class.new(reward.project.user, reward).permitted_attributes }
 
-      it { is_expected.to include({ data: [:project_id, :minimum_value, :title, :description, :shipping_options,
+      it { is_expected.to include(:project_id, :minimum_value, :title, :description, :shipping_options,
                                            :welcome_message_body, :welcome_message_subject,
                                            :external_id, :current_ip, :maximum_contributions,
-                                           :deliver_at, :row_order, :created_at] }) }
+                                           :deliver_at, :row_order, :created_at) }
     end
   end
 end

@@ -1,6 +1,6 @@
 'use strict';
 
-const {test} = require('ava');
+const test = require('ava');
 const R = require('ramda');
 const nock = require('nock');
 const helpers = require('../support/helpers');

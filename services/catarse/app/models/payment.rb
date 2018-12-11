@@ -142,6 +142,10 @@ class Payment < ActiveRecord::Base
     !contribution.balance_refunded? && paid?
   end
 
+  def notify_about_pending_review
+    contribution.notify_to_contributor(:payment_card_pending_review) if is_credit_card? && gateway_data && pending?
+  end
+
   private
 
   def exists_duplicate?

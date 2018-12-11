@@ -1,6 +1,6 @@
 'use strict';
 
-const {test} = require('ava');
+const test = require('ava');
 const { DateTime } = require('luxon');
 const R = require('ramda');
 const nock = require('nock');
@@ -484,7 +484,7 @@ test('test processPayment with error on gateway', async t => {
         .get(/transactions\/\d+\/payables/)
         .reply(200, payablesReply());
 
-    const error = await t.throws( async ()=> {
+    const error = await t.throwsAsync( async ()=> {
         await processPayment(client, gen_payment.id);
     }, Error);
 

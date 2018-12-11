@@ -1,4 +1,4 @@
-const { test } = require('ava');
+const test = require('ava');
 const { Pool } = require('pg');
 const R = require('ramda');
 const helpers = require('../support/helpers');

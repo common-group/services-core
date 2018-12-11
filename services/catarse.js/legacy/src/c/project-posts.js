@@ -11,10 +11,8 @@ const I18nScope = _.partial(h.i18nScope, 'projects.posts');
 const projectPosts = {
     oninit: function(vnode) {
         const listVM = catarse.paginationVM(models.projectPostDetail),
-            filterVM = catarse.filtersVM({
-                project_id: 'eq',
-                id: 'eq'
-            });
+            filterVM = catarse.filtersVM({ project_id: 'eq', id: 'eq'});
+            
         const scrollTo = (el, isInit) => {
             if (!isInit) {
                 h.animateScrollTo(el);
@@ -39,7 +37,11 @@ const projectPosts = {
     },
     view: function({state, attrs}) {
         const list = state.listVM,
-            project = attrs.project() || {};
+            project = attrs.project() || {},
+            postHeader = (post) => _.map(post.rewards_that_can_access_post, r => ` R$${h.formatNumber(r.minimum_value)}${r.title ? ` - ${r.title}` : ''}`),
+            postTextSubscription = (post) => `Post exclusivo para assinantes${ post.rewards_that_can_access_post ? ' de' : ''}${postHeader(post)}`,
+            postTextContribution = (post) => `Post exclusivo para apoiadores${ post.rewards_that_can_access_post ? ' de' : ''}${postHeader(post)}`,
+            minimumValueRewardId = (post) => _.first(_.sortBy(post.rewards_that_can_access_post, r => r.minimum_value)).id;
 
         return m('#posts.project-posts.w-section', {
             config: state.scrollTo
@@ -66,17 +68,13 @@ const projectPosts = {
                                 ''
                             ),
                             project.mode === 'sub' ? [
-                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                    `Post exclusivo para assinantes${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
-                                ),
-                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
+                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20', postTextSubscription(post)),
+                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/subscriptions/start${post.rewards_that_can_access_post ? `?reward_id=${minimumValueRewardId(post)}` : ''}"]`,
                                     'Acessar esse post'
                                 )
                             ] : [
-                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                    `Post exclusivo para apoiadores${post.reward_id ? ` da recompensa de R$${post.minimum_value}` : ''}`
-                                ),
-                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.reward_id ? `?reward_id=${post.reward_id}` : ''}"]`,
+                                m('.fontsize-base.fontweight-semibold.u-marginbottom-20', postTextContribution(post)),
+                                m(`a.btn.btn-medium.btn-inline.w-button[href="/projects/${post.project_id}/contributions/new${post.rewards_that_can_access_post ? `?reward_id=${minimumValueRewardId(post)}` : ''}"]`,
                                     'Acessar esse post'
                                 )
                             ]

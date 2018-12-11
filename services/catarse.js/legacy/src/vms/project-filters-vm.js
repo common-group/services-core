@@ -64,20 +64,20 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'all'
             },
-            recommended_1: {
-                title: 'Recomendados para você',
-                filter: recommended,
-                nicename: 'Recomendados para você',
-                isContextual: false,
-                keyName: 'recommended_1'
-            },
-            recommended_2: {
-                title: 'Recomendados para você',
-                filter: recommended,
-                nicename: 'Recomendados para você',
-                isContextual: false,
-                keyName: 'recommended_2'
-            },
+            //recommended_1: {
+            //    title: 'Recomendados para você',
+            //    filter: recommended,
+            //    nicename: 'Recomendados para você',
+            //    isContextual: false,
+            //    keyName: 'recommended_1'
+            //},
+            //recommended_2: {
+            //    title: 'Recomendados para você',
+            //    filter: recommended,
+            //    nicename: 'Recomendados para você',
+            //    isContextual: false,
+            //    keyName: 'recommended_2'
+            //},
             contributed_by_friends: {
                 title: 'Amigos',
                 filter: contributed_by_friends,
@@ -141,8 +141,8 @@ const projectFiltersVM = () => {
                 keyName: 'all_modes'
             },
             sub: {
-                title: 'Projetos recorrentes',
-                nicename: 'Projetos recorrentes',
+                title: 'Assinaturas',
+                nicename: 'Assinaturas',
                 filter: sub,
                 isContextual: false,
                 keyName: 'sub',
