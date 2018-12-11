@@ -44,7 +44,7 @@ const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
 const fetchCommonRewards = (projectId) => {
     vm.project_id(projectId);
     const l = commonProject.loaderWithToken(models.projectReward.getPageOptions(vm.parameters()));
-    l.load().then(rewards);
+    return l.load().then(rewards);
 };
 
 const getFees = (reward) => {

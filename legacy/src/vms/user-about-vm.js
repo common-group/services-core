@@ -38,8 +38,7 @@ const mapRailsErrors = (rails_errors) => {
         }
     };
 
-    // extractAndSetErrorMsg("about_html", ["user.about_html", "about_html"]);
-    // extractAndSetErrorMsg("public_name", ["user.public_name", "public_name"]);
+    extractAndSetErrorMsg('email', ['email']);
 
     return e;
 };

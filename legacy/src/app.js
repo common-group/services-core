@@ -9,6 +9,10 @@ import Chart from 'chart.js';
     Chart.defaults.global.responsive = false;
     Chart.defaults.global.scaleFontFamily = 'proxima-nova';
 
+    // NOTE: comment when need to use multilanguage i18n support
+    window.I18n.defaultLocale = 'pt';
+    window.I18n.locale = 'pt';
+
     const adminRoot = document.getElementById('new-admin');
 
     if (adminRoot) {
@@ -154,6 +158,7 @@ import Chart from 'chart.js';
             [urlWithLocale('/projects/:project_id/subscriptions/checkout')]: wrap(c.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
             [urlWithLocale('/projects/subscriptions/thank_you')]: wrap(c.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false }),
             '/en': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
+            '/pt': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
             [urlWithLocale('/flexible_projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
             [urlWithLocale('/projects')]: wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
             '/projects': wrap(c.root.ProjectsHome, { menuTransparency: true, footerBig: true }),
