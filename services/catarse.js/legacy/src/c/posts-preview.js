@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
@@ -11,7 +12,7 @@ const postsPreview = {
                 h.scrollTop();
                 vnode.attrs.showPreview(false);
             },
-            isLoading = m.prop(false),
+            isLoading = prop(false),
             sendNotification = (e) => {
                 e.preventDefault();
                 isLoading(true);

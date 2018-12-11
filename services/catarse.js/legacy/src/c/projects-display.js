@@ -49,7 +49,7 @@ const projectsDisplay = {
                     offset: '0'
                 },
                 cLoader = loader(project.getPageOptions(_.extend(forSubPledged, defaultOptions, f.filter.parameters()))),
-                collection = m.prop([]);
+                collection = prop([]);
 
             cLoader.load().then(_.compose(collection, sample_no));
 

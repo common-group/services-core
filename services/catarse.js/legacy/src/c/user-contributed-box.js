@@ -184,7 +184,7 @@ const userContributedBox = {
                     ] : '')
                 ])
             ]
-        ) : m('div', '');
+        ) : m('div', ''))
     }
 };
 

@@ -23,7 +23,7 @@ const adminProjectDetailsCard = {
             remainingTextObj: h.translatedTime(project.remaining_time),
             elapsedTextObj: h.translatedTime(project.elapsed_time),
             isFinalLap
-        };
+        }
     },
     view: function({state}) {
         let project = state.project,

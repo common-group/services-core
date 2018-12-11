@@ -17,24 +17,24 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 const posts = {
     oninit: function(vnode) {
         let deleteFormSubmit;
-        const showPreview = m.prop(false),
-            willSelectRewards = m.prop(false),
-            isProjectLoaded = m.prop(false),
-            isProjectPostsLoaded = m.prop(false),
-            showSuccess = m.prop(false),
-            showError = m.prop(false),
-            selectedRewardsHasError = m.prop(false),
-            titleHasError = m.prop(false),
-            commentHasError = m.prop(false),
-            projectPosts = m.prop(),
+        const showPreview = prop(false),
+            willSelectRewards = prop(false),
+            isProjectLoaded = prop(false),
+            isProjectPostsLoaded = prop(false),
+            showSuccess = prop(false),
+            showError = prop(false),
+            selectedRewardsHasError = prop(false),
+            titleHasError = prop(false),
+            commentHasError = prop(false),
+            projectPosts = prop(),
             loader = catarse.loaderWithToken,
             errors = prop(''),
             fields = {
-                title: m.prop(''),
-                comment_html: m.prop(''),
-                recipients: m.prop('public'),
-                radio_checked: m.prop(false),
-                paid_rewards: m.prop([]),
+                title: prop(''),
+                comment_html: prop(''),
+                recipients: prop('public'),
+                radio_checked: prop(false),
+                paid_rewards: prop([]),
                 get_selected_rewards_text: () => {
                     if (fields.recipients === 'public') {
                         return window.I18n.t(`everyone_${project.mode}`, I18nScope())

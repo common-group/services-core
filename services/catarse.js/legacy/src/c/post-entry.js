@@ -3,16 +3,13 @@ import _ from 'underscore';
 import h from '../h';
 
 const postEntry = {
-    controller: (args) => {
-
-    },
-    view: (ctrl, args) => {
+    view: ({state, attrs}) => {
         const 
-            post = args.post,
-            project = args.project,
-            showOpenPercentage = args.showOpenPercentage,
-            deletePost = args.deletePost,
-            destinatedTo = args.destinatedTo;
+            post = attrs.post,
+            project = attrs.project,
+            showOpenPercentage = attrs.showOpenPercentage,
+            deletePost = attrs.deletePost,
+            destinatedTo = attrs.destinatedTo;
 
         return m('.table-row.w-row', [
             m('.table-col.w-col.w-col-5', [
