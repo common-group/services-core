@@ -67,7 +67,7 @@ const adminRadioAction = {
         };
 
         const submit = () => {
-            console.log('submit');
+            console.log('TESTINGGGG');
             if (newID()) {
                 const validation = validate(radios(), newID());
                 if (_.isUndefined(validation)) {
@@ -121,9 +121,7 @@ const adminRadioAction = {
             m('button.btn.btn-small.btn-terciary', {
                 onclick: state.toggler.toggle
             }, data.outerLabel), (state.toggler()) ?
-            m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: state.unload
-            }, [
+            m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', { config: state.unload }, [
                 m('form.w-form', {
                     onsubmit: state.submit
                 }, (!state.complete()) ? [
@@ -134,6 +132,7 @@ const adminRadioAction = {
                             onclick: () => {
                                 state.newID(radio.id);
                                 state.setDescription(radio.description);
+                                console.log('clicked radio id = ', radio.id);
                             }
                         }),
                         m(`label.w-form-label[for="r-${index}"]`, `R$${radio.minimum_value}`)

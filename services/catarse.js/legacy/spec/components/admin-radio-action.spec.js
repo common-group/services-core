@@ -38,12 +38,12 @@ describe('AdminRadioAction', () => {
         beforeAll(() => {
             item = _.first(RewardDetailsMockery());
             args.selectedItem = prop(item);
-            $output = mq(m(adminRadioAction, {
+            $output = mq(adminRadioAction, {
                 data: args,
                 item: prop(item),
                 getKeyValue: () => {},
-              updateKeyValue: () => {},
-            }));
+                updateKeyValue: () => {},
+            });
         });
 
         it('shoud only render the outerLabel on first render', () => {
@@ -54,6 +54,7 @@ describe('AdminRadioAction', () => {
         describe('on action button click', () => {
             beforeAll(() => {
                 $output.click('button');
+                
             });
 
             it('should render a row of radio inputs', () => {
@@ -66,11 +67,14 @@ describe('AdminRadioAction', () => {
             });
 
             it('should send an patch request on form submit', () => {
+                //$output.vnode.state.toggler.toggle();
                 $output.click('#r-0');
-                $output.trigger('form', 'submit');
-                console.log('BEFORE')
+                //$output.trigger('form.w-form', 'input.w-button.btn.btn-small[type="submit"]');
+                console.log($output.first('form').attrs.onsubmit());
+                $output.click('input.w-button.btn.btn-small[type="submit"]', 'submit');
+                console.log('BEFORE!!!!');
                 const lastRequest = jasmine.Ajax.requests.mostRecent();
-                console.log('AFTER')
+                console.log(lastRequest)
                 // Should make a patch request to update item
                 expect(lastRequest.method).toEqual('PATCH');
             });

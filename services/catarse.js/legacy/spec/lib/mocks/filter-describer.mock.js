@@ -1,5 +1,5 @@
 beforeAll(function(){
-  FilterDescriberMock = function(filterMain, filterDropdown, filterNumberRange, filterDateRange){
+  FilterDescriberMock = function(filterMain, filterDropdown, filterNumberRange, filterDateRange, prop){
     var describer = [
       { //full_text_index
         component: filterMain,

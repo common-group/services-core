@@ -28,6 +28,7 @@ const adminInputAction = {
 
         const submit = function () {
             data[key] = newValue();
+            console.log('Was submited?')
             l.load().then(updateItem, () => {
                 complete(true);
                 error(true);
