@@ -8,6 +8,8 @@ const adminFilter = {
         vnode.state = {
             toggler: h.toggleProp(false, true)
         };
+
+        return vnode.state;
     },
     view: function({state, attrs}) {
         const filterBuilder = attrs.filterBuilder,

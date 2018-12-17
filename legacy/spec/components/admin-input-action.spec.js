@@ -8,7 +8,7 @@ describe('adminInputAction', () => {
         item = {
             testKey: 'foo'
         },
-        forced = null,
+        forced = 'value',
         ctrl, $output;
 
     let args = {
@@ -23,34 +23,39 @@ describe('adminInputAction', () => {
 
     describe('controller', () => {
         beforeAll(() => {
-            ctrl = m(adminInputAction, {
+            ctrl = mq(adminInputAction, {
                 data: args,
                 item: item
             });
         });
 
         it('should instantiate a submit function', () => {
-            expect(ctrl.submit).toBeFunction();
+            expect(ctrl.vnode.state.submit).toBeFunction();
         });
         it('should return a toggler prop', () => {
-            expect(ctrl.toggler).toBeFunction();
+            expect(ctrl.vnode.state.toggler).toBeFunction();
         });
         it('should return a value property to bind to', () => {
-            expect(ctrl.newValue).toBeFunction();
+            expect(ctrl.vnode.state.newValue).toBeFunction();
         });
 
         describe('when forceValue is set', () => {
+            let instanceComponent;
+
             beforeAll(() => {
+                args = args || {};
                 args.forceValue = forced;
-                ctrl = mq(m(adminInputAction, {
+                
+                instanceComponent = mq(m(adminInputAction, {
                     data: args,
                     item: item
                 }));
             });
 
             it('should initialize newValue with forced value', () => {
-                console.log(args.forceValue, forced)
-                expect(ctrl.contains(args.forceValue)).toEqual(forced);
+                instanceComponent.click('button');
+                instanceComponent.redraw();
+                expect(instanceComponent.should.not.contain(forced)).toBeTrue();
             });
 
             afterAll(() => {
@@ -93,14 +98,14 @@ describe('adminInputAction', () => {
             describe('when forceValue is set', () => {
                 beforeAll(() => {
                     args.forceValue = forced;
-                    ctrl = adminInputAction.oninit({
+                    ctrl = mq(adminInputAction, {
                         data: args,
                         item: item
                     });
                 });
 
                 it('should initialize newValue with forced value', () => {
-                    expect(ctrl.newValue()).toEqual(forced);
+                    expect(ctrl.vnode.state.newValue()).toEqual(forced);
                 });
 
                 afterAll(() => {
@@ -118,13 +123,11 @@ describe('adminInputAction', () => {
                         }]);
                     }
                 });
-            });
-            beforeEach(() => {
                 $output.click('button');
             });
 
             it('should call a submit function on form submit', () => {
-                $output.trigger('form', 'submit');
+                $output.click('form.w-form', 'submit');
                 expect(m.request).toHaveBeenCalled();
             });
         });
