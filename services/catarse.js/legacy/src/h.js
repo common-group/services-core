@@ -931,6 +931,51 @@ const
         });
 
         return p;
+    },
+    eventProp = function(value) {
+
+        const 
+            v = value ? prop(value) : prop(),
+            changeCallbacks = [];
+
+        const getterSetter = (setValue) => {
+            if (setValue) {
+                for (let cbIndex = 0; cbIndex < changeCallbacks.length; cbIndex++) {
+                    changeCallbacks[cbIndex](setValue);
+                }
+
+                getterSetter.onchange(setValue);
+                return v(setValue);
+            }
+            else {
+                return v();
+            }
+        };
+
+        getterSetter.onchange = function() {};
+
+        getterSetter.addEventListener = function(eventName, callback) {
+            if (eventName === "change") changeCallbacks.push(callback);
+        };
+
+        return getterSetter;
+    },
+    waitForChangesToRedraw = function(minimumElementsThatNeedToChange) {
+
+        let changesCounter = 0;
+        const 
+            setArguments = Array.from(arguments).slice(1),
+            changeEvent = (newValue) => {
+                changesCounter++;
+                if (changesCounter >= minimumElementsThatNeedToChange) {
+                    m.redraw();
+                    changesCounter = 0;
+                }
+            };
+
+        for (let argIndex = 0; argIndex < setArguments.length; argIndex++) {
+            setArguments[argIndex].addEventListener('change', changeEvent);
+        }
     };
 
 setMomentifyLocale();
@@ -939,6 +984,8 @@ closeModal();
 checkReminder();
 
 export default {
+    eventProp,
+    waitForChangesToRedraw,
     sleep,
     stripScripts,
     authenticityParam,

@@ -8,7 +8,7 @@ import rewardVM from './reward-vm';
 import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
 
-const currentProject = prop(),
+const currentProject = h.eventProp(),
     userDetails = prop(),
     subscriptionData = prop(),
     projectContributions = prop([]),

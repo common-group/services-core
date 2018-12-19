@@ -3,7 +3,7 @@ import m from 'mithril';
 import paymentCreditCard from '../../src/c/payment-credit-card';
 import paymentVM from '../../src/vms/payment-vm';
 
-xdescribe('paymentCreditCard', () => {
+describe('paymentCreditCard', () => {
     let $output, vm;
     describe('view', () => {
         beforeAll(() => {
@@ -18,9 +18,7 @@ xdescribe('paymentCreditCard', () => {
                 user_id: 1,
                 isSubscriptionEdit: () => false                
             };
-            $output = mq(
-                paymentCreditCard, test
-            );
+            $output = mq(paymentCreditCard, test);
         });
 
         it('should build a credit card payment form', () => {
@@ -39,7 +37,7 @@ xdescribe('paymentCreditCard', () => {
                 $output.setValue('input[name="credit-card-number"]', '1234567812345678');
                 $output.setValue('input[name="credit-card-name"]', '123');
                 $output.setValue('input[name="credit-card-cvv"]', 'abc');
-                $output.trigger('form', 'submit');
+                $output.trigger('form', 'onsubmit');
             });
 
             it('should return an error if expiry date is not valid', () => {
@@ -57,15 +55,16 @@ xdescribe('paymentCreditCard', () => {
         });
         describe('when values are valid', () => {
             beforeAll(() => {
+                $output.vnode.state.showForm(false);
                 $output.setValue('select[name="expiration-date_month"]', '10');
                 $output.setValue('select[name="expiration-date_year"]', '2026');
                 vm.creditCardFields.number('4012 8888 8888 1881');
-                $output.setValue('input[name="credit-card-name"]', 'Tester');
                 $output.setValue('input[name="credit-card-cvv"]', '123');
+                $output.setValue('input[name="credit-card-name"]', 'Tester');
             });
 
             it('should send a payment request', () => {
-                $output.trigger('form', 'submit');
+                $output.trigger('form', 'onsubmit');
                 expect(vm.sendPayment).toHaveBeenCalled();
             });
         })
