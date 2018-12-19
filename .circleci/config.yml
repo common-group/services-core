@@ -129,7 +129,7 @@ jobs:
           set -ex \
           && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS \
           && cd services/catarse.js \
-          && nvm install 10 && nvm alias default 10
+          && nvm install 8.5.0 && nvm alias default 8.5.0
     - restore_cache:
         keys:
         - v1-dep-{{ .Branch }}-
