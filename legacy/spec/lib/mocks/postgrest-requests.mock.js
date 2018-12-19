@@ -42,10 +42,20 @@ commonRecommenderApiMeta.content = 'https://recommender.common.io';
 commonRecommenderApiMeta.name = 'common-recommender-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonRecommenderApiMeta);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 951947a4af95739ac452b7e54cc37ab1d632063f
 const commonProxyApiMeta = document.createElement('meta');
 commonProxyApiMeta.content = 'https://proxy.common.io';
 commonProxyApiMeta.name = 'common-proxy-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonProxyApiMeta);
+<<<<<<< HEAD
+=======
+
+// const apiPrefix = "https://api.catarse.me";
+// catarse.init(apiPrefix, {method: "GET", url: "/api_token"});
+>>>>>>> 951947a4af95739ac452b7e54cc37ab1d632063f
 
 const mockEndpoint = function(endpoint, result){
   return jasmine.Ajax.stubRequest(
