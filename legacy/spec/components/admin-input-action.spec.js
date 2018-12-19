@@ -116,19 +116,14 @@ describe('adminInputAction', () => {
 
         describe('on form submit', () => {
             beforeAll(() => {
-                spyOn(m, 'request').and.returnValue({
-                    then: function(callback) {
-                        callback([{
-                            test: true
-                        }]);
-                    }
-                });
-                $output.click('button');
+                spyOn($output.vnode.state, 'submit').and.returnValue(new Promise(() => {}));
             });
-
+            
             it('should call a submit function on form submit', () => {
-                $output.click('form.w-form', 'submit');
-                expect(m.request).toHaveBeenCalled();
+                $output.click('button');
+                $output.trigger('form', 'onsubmit');
+                //console.log('HERE', $output.vnode.state.submit.toString())
+                expect($output.vnode.state.submit).toHaveBeenCalled();
             });
         });
     });

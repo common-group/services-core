@@ -67,14 +67,10 @@ describe('AdminRadioAction', () => {
             });
 
             it('should send an patch request on form submit', () => {
-                //$output.vnode.state.toggler.toggle();
                 $output.click('#r-0');
-                //$output.trigger('form.w-form', 'input.w-button.btn.btn-small[type="submit"]');
-                console.log($output.first('form').attrs.onsubmit());
-                $output.click('input.w-button.btn.btn-small[type="submit"]', 'submit');
-                console.log('BEFORE!!!!');
+                $output.trigger('form', 'onsubmit');
+
                 const lastRequest = jasmine.Ajax.requests.mostRecent();
-                console.log(lastRequest)
                 // Should make a patch request to update item
                 expect(lastRequest.method).toEqual('PATCH');
             });
@@ -91,7 +87,7 @@ describe('AdminRadioAction', () => {
                 });
 
                 it('should present an error message when new value is invalid', () => {
-                    $output.trigger('form', 'submit');
+                    $output.trigger('form', 'onsubmit');
                     $output.should.contain(errorStr);
                 });
             });

@@ -21,19 +21,21 @@ const adminInputAction = {
         const l = catarse.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
         const updateItem = function (res) {
+            console.log('SUBMIT SUCCESS!!!', res);
             _.extend(item, res[0]);
             complete(true);
             error(false);
         };
 
+        const errorOnSubmit = () => {
+            console.log('SOME ERROR HAPPENED!!!');
+            complete(true);
+            error(true);
+        };
+
         const submit = function () {
             data[key] = newValue();
-            console.log('Was submited?')
-            l.load().then(updateItem, () => {
-                complete(true);
-                error(true);
-            });
-            return false;
+            return l.load().then(updateItem, errorOnSubmit);
         };
 
         const unload = function (el, isinit, context) {

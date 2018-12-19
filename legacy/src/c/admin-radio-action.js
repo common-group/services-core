@@ -67,7 +67,6 @@ const adminRadioAction = {
         };
 
         const submit = () => {
-            console.log('TESTINGGGG');
             if (newID()) {
                 const validation = validate(radios(), newID());
                 if (_.isUndefined(validation)) {
@@ -132,7 +131,6 @@ const adminRadioAction = {
                             onclick: () => {
                                 state.newID(radio.id);
                                 state.setDescription(radio.description);
-                                console.log('clicked radio id = ', radio.id);
                             }
                         }),
                         m(`label.w-form-label[for="r-${index}"]`, `R$${radio.minimum_value}`)

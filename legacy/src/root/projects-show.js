@@ -19,6 +19,10 @@ const projectsShow = {
         const currentUser = h.getUser(),
             loading = prop(true),
             userProjectSubscriptions = prop([]);
+        
+        projectVM.currentProject.addEventListener('change', (newValue) => {
+            m.redraw();
+        });
 
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
@@ -63,8 +67,7 @@ const projectsShow = {
             }
         };
 
-        const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id// && sub.status !== 'canceled';
-            );
+        const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id);
 
         vnode.state = {
             loadUserSubscriptions,
@@ -76,7 +79,7 @@ const projectsShow = {
     view: function({state, attrs}) {
         const project = state.projectVM.currentProject,
             projectVM = state.projectVM;
-
+        
         return m('.project-show', {
             config: projectVM.setProjectPageTitle()
         }, project() ? [
