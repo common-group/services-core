@@ -21,6 +21,7 @@ import userSubscriptionPaymentHistoryModal from './user-subscription-payment-his
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
+const subscriptionScope = _.partial(h.i18nScope, 'users.subscription_row');
 
 const userSubscriptionBox = {
     controller: function(args) {
@@ -285,7 +286,7 @@ const userSubscriptionBox = {
                             onclick: () => ctrl.displayPaymentHistoryModal.toggle()
                         },'Histórico de pagamento'),
                         m(checkboxUpdateIndividual, {
-                            text: window.I18n.t('anonymous_sub', contributionScope()),
+                            text: window.I18n.t('anonymous_sub', subscriptionScope()),
                             current_state: subscription.checkout_data.anonymous,
                             onToggle: () => subscriptionVM.toogleAnonymous(subscription)
                         })
