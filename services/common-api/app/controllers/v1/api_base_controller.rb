@@ -43,6 +43,11 @@ module V1
       jwt_role == 'platform_user'
     end
 
+    def is_admin?
+      user_role = current_platform.user_roles.find_by_user_id jwt_user_id
+      user_role.role_name == 'admin'
+    end
+
     protected
 
     def decoded_api

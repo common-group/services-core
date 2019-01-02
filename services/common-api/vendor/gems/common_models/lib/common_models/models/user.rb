@@ -13,6 +13,7 @@ module CommonModels
     has_many :user_api_keys
     belongs_to :platform
     belongs_to :address
+    belongs_to :user_role
 
     has_many :published_projects, -> do
       with_states(Project::PUBLISHED_STATES)
@@ -34,11 +35,13 @@ module CommonModels
     validates_length_of :public_name, { maximum: 70 }
     validates :account_type, inclusion: { in: %w[pf pj mei] }
 
+    def is_admin?      
+      user_role.role == 'admin'
+    end
 
     def password_required?
       !persisted? || !password.nil? || !password_confirmation.nil?
     end
-
 
     def password_confirmation_required?
       !new_record?
