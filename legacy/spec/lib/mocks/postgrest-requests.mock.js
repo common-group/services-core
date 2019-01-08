@@ -42,6 +42,11 @@ commonRecommenderApiMeta.content = 'https://recommender.common.io';
 commonRecommenderApiMeta.name = 'common-recommender-api-host';
 document.getElementsByTagName('head')[0].appendChild(commonRecommenderApiMeta);
 
+const commonProxyApiMeta = document.createElement('meta');
+commonProxyApiMeta.content = 'https://proxy.common.io';
+commonProxyApiMeta.name = 'common-proxy-api-host';
+document.getElementsByTagName('head')[0].appendChild(commonProxyApiMeta);
+
 // const apiPrefix = "https://api.catarse.me";
 // catarse.init(apiPrefix, {method: "GET", url: "/api_token"});
 
