@@ -51,7 +51,12 @@ const projectsDisplay = {
                 cLoader = loader(project.getPageOptions(_.extend(forSubPledged, defaultOptions, f.filter.parameters()))),
                 collection = prop([]);
 
-            cLoader.load().then(_.compose(collection, sample_no));
+            console.log('this is being called 3 times?')
+
+            cLoader.load().then().then(r => {
+                console.log('answer:',r)
+                return r;
+            }).then(_.compose(collection, sample_no));
 
             return {
                 title: f.nicename,

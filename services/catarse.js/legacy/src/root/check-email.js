@@ -10,7 +10,7 @@ const I18nScope = _.partial(h.i18nScope, 'users.edit.email_confirmation');
 const CheckEmail = {
     oninit: function(vnode) {
         const userID = h.getUserID(),
-            user = userVM.fetchUser(userID),
+            user = userVM.getCurrentUser(),
             confirmedEmail = prop(false),
             hideAlert = prop(false);
 
@@ -38,7 +38,9 @@ const CheckEmail = {
     },
 
     view: function({state, attrs}) {
+        
         const user = state.user();
+
         if (user) {
             const userCreatedRecently = moment().isBefore(moment(user.created_at).add(2, 'days'));
 
