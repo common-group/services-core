@@ -29,10 +29,10 @@ const dashboardSubscriptionCard = {
             });
         }
 
-        if (subscription.reward_external_id) {
+        if (subscription.current_reward_data && subscription.current_reward_data.external_id) {
             const filterRewVM = catarse.filtersVM({
                     id: 'eq'
-                }).id(subscription.reward_external_id),
+                }).id(subscription.current_reward_data.external_id),
                 lRew = catarse.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
 
             lRew.load().then((data) => {
