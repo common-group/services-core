@@ -13,7 +13,7 @@ module CommonModels
     has_many :user_api_keys
     belongs_to :platform
     belongs_to :address
-    belongs_to :user_role
+    has_many :user_role
 
     has_many :published_projects, -> do
       with_states(Project::PUBLISHED_STATES)

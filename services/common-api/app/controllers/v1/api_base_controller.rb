@@ -45,7 +45,8 @@ module V1
 
     def is_admin?
       user_role = current_platform.user_roles.find_by_user_id jwt_user_id
-      user_role.role_name == 'admin'
+      role_name = user_role[:role_name].presence || ''
+      role_name == 'admin'
     end
 
     protected
