@@ -9,6 +9,7 @@ module CommonModels
     has_many :platform_api_keys
     has_many :user_api_keys
     has_many :temp_login_api_keys
+    has_many :user_roles
 
     #store_accessor :data, FIELDS
     #validates_presence_of FIELDS
