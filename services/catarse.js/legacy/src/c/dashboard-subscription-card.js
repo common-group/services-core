@@ -11,6 +11,9 @@ import subscriptionStatusIcon from './subscription-status-icon';
 import paymentMethodIcon from './payment-method-icon';
 import subscriptionLastPaymentStatus from './subscription-last-payment-status';
 import h from '../h';
+import anonymousBadge from './anonymous-badge';
+
+const subscriptionScope = _.partial(h.i18nScope, 'users.subscription_row');
 
 const dashboardSubscriptionCard = {
     oninit: function(vnode) {
@@ -30,10 +33,10 @@ const dashboardSubscriptionCard = {
             });
         }
 
-        if (subscription.reward_external_id) {
+        if (subscription.current_reward_data && subscription.current_reward_data.external_id) {
             const filterRewVM = catarse.filtersVM({
                     id: 'eq'
-                }).id(subscription.reward_external_id),
+                }).id(subscription.current_reward_data.external_id),
                 lRew = catarse.loaderWithToken(models.rewardDetail.getRowOptions(filterRewVM.parameters()));
 
             lRew.load().then((data) => {
@@ -64,6 +67,10 @@ const dashboardSubscriptionCard = {
                                 m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
                                     state.user().name
                                 ),
+                                m(anonymousBadge, {
+                                    isAnonymous: subscription.anonymous,
+                                    text: ` ${window.I18n.t('anonymous_sub_title', subscriptionScope())}`
+                                }),
                                 m('.fontcolor-secondary.fontsize-smallest',
                                     subscription.user_email
                                 )

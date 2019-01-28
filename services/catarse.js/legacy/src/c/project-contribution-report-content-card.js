@@ -5,6 +5,7 @@ import moment from 'moment';
 import { catarse } from '../api';
 import models from '../models';
 import paymentStatus from './payment-status';
+import anonymousBadge from './anonymous-badge';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
@@ -133,7 +134,10 @@ const projectContributionReportContentCard = {
                                             (contribution.has_another ? [
                                                 m('a.link-hidden-light.badge.badge-light', '+1 apoio '),
                                             ] : ''),
-                                            (contribution.anonymous ? m('span.fa.fa-eye-slash.fontcolor-secondary', m('span.fontcolor-secondary[style="font-size:11px;"]', ` ${window.I18n.t('contribution.anonymous_contribution', contributionScope())}`)) : '')
+                                            m(anonymousBadge, {
+                                                isAnonymous: contribution.anonymous,
+                                                text: ` ${window.I18n.t('contribution.anonymous_contribution', contributionScope())}`
+                                            })
                                         ]),
                                         m('.fontsize-smallest.lineheight-looser', (contribution.email))
                                     ]),

@@ -15,7 +15,7 @@ const userCreated = {
             showDraft = vnode.attrs.showDraft || false,
             error = prop(false),
             pages = catarse.paginationVM(models.project),
-            loader = prop(true),
+            loader = h.autoRedrawProp(true),
             contextVM = catarse.filtersVM({
                 project_user_id: 'eq',
                 state: 'in'
@@ -30,12 +30,11 @@ const userCreated = {
         });
 
         models.project.pageSize(9);
-        pages.firstPage(contextVM.parameters()).then(() => {
+        pages.firstPage(contextVM.parameters()).then((data) => {
             loader(false);
         }).catch((err) => {
             error(true);
             loader(false);
-            m.redraw();
         });
 
         vnode.state = {
@@ -46,6 +45,7 @@ const userCreated = {
     },
     view: function({state, attrs}) {
         const projects_collection = state.projects.collection();
+        console.log(projects_collection);
 
         return m('.content[id=\'created-tab\']',
             (state.error() ? m(inlineError, {

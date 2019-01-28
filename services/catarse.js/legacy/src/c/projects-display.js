@@ -50,13 +50,8 @@ const projectsDisplay = {
                 },
                 cLoader = loader(project.getPageOptions(_.extend(forSubPledged, defaultOptions, f.filter.parameters()))),
                 collection = prop([]);
-
-            console.log('this is being called 3 times?')
-
-            cLoader.load().then().then(r => {
-                console.log('answer:',r)
-                return r;
-            }).then(_.compose(collection, sample_no));
+            
+            cLoader.load().then(_.compose(collection, sample_no));
 
             return {
                 title: f.nicename,
@@ -68,8 +63,8 @@ const projectsDisplay = {
             };
         }
 
-        const collections = _.map(collectionsMap, collectionsMapper.bind(collectionsMapper, sample6));
-        const aonAndFlex_Sub_6 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample6));
+        //const collections = _.map(collectionsMap, collectionsMapper.bind(collectionsMapper, sample6));
+        //const aonAndFlex_Sub_6 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample6));
         const aonAndFlex_Sub_3 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample3));
 
         window.addEventListener('optimize_load', (event) => {
@@ -80,8 +75,8 @@ const projectsDisplay = {
         });
 
         vnode.state = {
-            collections,
-            aonAndFlex_Sub_6,
+            //collections,
+            //aonAndFlex_Sub_6,
             aonAndFlex_Sub_3,
             currentCase,
             subHomeWith6,

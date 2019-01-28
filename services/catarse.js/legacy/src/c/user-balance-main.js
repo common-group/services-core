@@ -72,7 +72,7 @@ const userBalanceMain = {
         };
     },
     view: function({state, attrs}) {
-        const opts = _.extend({}, args, ctrl);
+        const opts = _.extend({}, attrs, state);
         return m('#balance-area', [
             m(userBalance, opts),
             m(userBalanceWithdrawHistory, { user_id: attrs.user_id }),

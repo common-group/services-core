@@ -12,6 +12,8 @@ const userSettingsAddress = {
             fields = attrs.fields,
             parsedErrors = attrs.parsedErrors;
 
+            console.log(fields());
+
         return m(bigCard, {
             label: window.I18n.t('address_title', I18nScope()),
             label_hint: window.I18n.t('address_subtitle', I18nScope()),

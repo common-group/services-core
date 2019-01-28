@@ -85,17 +85,17 @@ const usersEdit = {
                                 'Criados'
                             ),
                             m(`a.dashboard-nav-link${(state.hash() === '#about_me' ? '.selected' : '')}[data-target='#dashboard_about_me'][href='#about_me'][id='dashboard_about_me_link']`,
-                              'Perfil Público'
+                                'Perfil Público'
                             ),
                             m(`a.dashboard-nav-link${(state.hash() === '#settings' ? '.selected' : '')}[data-target='#dashboard_settings'][href='#settings'][id='dashboard_settings_link']`,
-                              'Dados cadastrais'
+                                'Dados cadastrais'
                             ),
                             m(`a.dashboard-nav-link${(state.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
                                 'Notificações'
                             ),
                             m(`a.dashboard-nav-link${(state.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
-                              'Saldo'
-                             ),
+                                'Saldo'
+                            ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/${window.I18n.locale}/users/${user.id}']`, {
                                 oncreate: m.route.link,
                                 onclick: () => {
@@ -110,10 +110,10 @@ const usersEdit = {
                     ),
 
                 m('section.section',
-                  m((state.hash() == '#projects' ? '.w-container' : '.w-section'),
-                            m('.w-row', user.id ? state.displayTabContent(user) : h.loader())
-                        )
+                    m((state.hash() == '#projects' ? '.w-container' : '.w-section'),
+                        m('.w-row', user.id ? state.displayTabContent(user) : h.loader())
                     )
+                )
 
             ] :
                 '')

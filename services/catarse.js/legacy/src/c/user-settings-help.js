@@ -1,9 +1,6 @@
 import m from 'mithril';
 
 const userSettingsHelp = {
-    oninit: function (vnode) {
-        return {};
-    },
     view: function ({state, attrs}) {
         return m('.w-col.w-col-4', [
             m('.card.u-radius.card-message.u-marginbottom-20',
