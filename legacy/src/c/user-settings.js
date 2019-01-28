@@ -17,7 +17,7 @@ const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettings = {
     oninit: function(vnode) {
-        let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
+        let parsedErrors = {hasError : function() { }, inlineError : function() { } };//userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = vnode.attrs.user,
             fields = prop({
@@ -85,7 +85,7 @@ const userSettings = {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
                     }
-                    parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
+                    //parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
                     error('Erro ao atualizar informações.');
                     loading(false);
                     if (showSuccess()) {

@@ -31,7 +31,7 @@ const userBalance = {
             positiveValue = balance.amount >= 0,
             balanceRequestModalC = [
                 userBalanceRequestModalContent,
-                _.extend({}, { balance }, args)
+                _.extend({}, { balance }, attrs)
             ];
 
         return m('.w-section.section.user-balance-section', [

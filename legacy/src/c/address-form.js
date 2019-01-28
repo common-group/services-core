@@ -13,6 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressForm = {
     oninit: function(vnode) {
+        
         const parsedErrors = vnode.attrs.parsedErrors;
         const statesLoader = catarse.loader(models.state.getPageOptions()),
             data = vnode.attrs.fields().address(),
@@ -59,6 +60,9 @@ const addressForm = {
             }
             return hasError;
         };
+
+        console.log("HERE WORKING!")
+        
         _.extend(vnode.attrs.fields(), {
             validate: () => {
                 let hasError = false;
@@ -69,7 +73,7 @@ const addressForm = {
                 });
                 // check for empty fields
                 _.mapObject(_.omit(fields, fieldsToIgnore), (val, key) => {
-                    if (!val()) {
+                    if (!val()) {                        
                         errors[key](true);
                         hasError = true;
                     }

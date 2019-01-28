@@ -4,6 +4,10 @@ import _ from 'underscore';
 import c from './c';
 import Chart from 'chart.js';
 
+window.externalRedraw = () => {
+    m.redraw();
+};
+
 (function () {
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.responsive = false;
