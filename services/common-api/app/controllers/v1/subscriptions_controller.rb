@@ -7,7 +7,11 @@ module V1
     def set_anonymity_state
       anonymity_state = params[:set_anonymity_state]
       @subscription = current_platform.subscriptions.find params[:id]
-      authorize @subscription, :update?
+      
+      if !is_admin?
+        authorize @subscription, :update?
+      end
+
       @subscription.checkout_data[:anonymous] = anonymity_state
       if @subscription.valid? && @subscription.save
         render json: { set_subscription_anonymity: { anonymous: anonymity_state } }
