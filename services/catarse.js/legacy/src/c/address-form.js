@@ -4,12 +4,10 @@ import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
-import inlineError from '../c/inline-error';
-import countrySelect from '../c/country-select';
 import nationalityRadio from '../c/nationality-radio';
 import addressVM from '../vms/address-vm';
-
-const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
+import addressFormInternational from './address-form-international';
+import addressFormNational from './address-form-national';
 
 const addressForm = {
     oninit: function(vnode) {
@@ -61,8 +59,6 @@ const addressForm = {
             return hasError;
         };
 
-        console.log("HERE WORKING!")
-        
         _.extend(vnode.attrs.fields(), {
             validate: () => {
                 let hasError = false;
@@ -131,6 +127,7 @@ const addressForm = {
             international = state.international,
             defaultCountryID = state.defaultCountryID,
             defaultForeignCountryID = state.defaultForeignCountryID,
+            countryName = attrs.countryName,
             errors = state.errors,
             // hash to send to rails
             address = {
@@ -145,7 +142,13 @@ const addressForm = {
                 address_state: fields.addressState(),
                 address_zip_code: fields.addressZipCode(),
                 phone_number: fields.phoneNumber()
-            };
+            },
+            applyZipcodeMask = state.applyZipcodeMask,
+            lookupZipCode = state.lookupZipCode,
+            zipCodeErrorMessage = state.zipCodeErrorMessage,
+            countryStates = state.states,
+            disableInternational = attrs.disableInternational,
+            hideNationality = attrs.hideNationality;
 
         attrs.fields().address(address);
         if (attrs.stateName) {
@@ -153,223 +156,49 @@ const addressForm = {
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            (!attrs.hideNationality ?
-                m('.u-marginbottom-30',
-                m(nationalityRadio, {
-                    fields,
-                    defaultCountryID,
-                    defaultForeignCountryID,
-                    international
-                })) : ''),
-            // @TODO move to another component
-            (international() ?
-                m('form', [
-                    attrs.disableInternational ? '' : m(countrySelect, {
-                        countryName: attrs.countryName,
+            (
+                !hideNationality ?
+                    m('.u-marginbottom-30',
+                        m(nationalityRadio, {
+                            fields,
+                            defaultCountryID,
+                            defaultForeignCountryID,
+                            international
+                        })
+                    ) 
+                : 
+                    ''
+            ),
+            (
+                international() ?
+                (
+                    m(addressFormInternational, {
                         fields,
+                        disableInternational,
                         addVM: attrs.addVM,
                         international,
                         defaultCountryID,
-                        defaultForeignCountryID
-                    }),
-                    m('div', [
-                        m('.w-row',
-                            m('.w-col.w-col-12', [
-                                m('.field-label.fontweight-semibold',
-                                    'Address *'
-                                ),
-                                m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                    class: errors.addressStreet() ? 'error' : '',
-                                    value: state.fields.addressStreet(),
-                                    onchange: m.withAttr('value', state.fields.addressStreet)
-                                }),
-                                errors.addressStreet() ? m(inlineError, {
-                                    message: 'Please fill in an address.'
-                                }) : ''
-                            ])),
-                        m('div',
-                            m('.w-row', [
-                                m('.w-sub-col.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        'Zip Code *'
-                                    ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressZipCode() ? 'error' : '',
-                                        value: state.fields.addressZipCode(),
-                                        onchange: m.withAttr('value', state.fields.addressZipCode)
-                                    }),
-                                    errors.addressZipCode() ? m(inlineError, {
-                                        message: 'ZipCode is required'
-                                    }) : '',
-                                ]),
-                                m('.w-sub-col.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        'City *'
-                                    ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressCity() ? 'error' : '',
-                                        value: state.fields.addressCity(),
-                                        onchange: m.withAttr('value', state.fields.addressCity)
-                                    }),
-                                    errors.addressCity() ? m(inlineError, {
-                                        message: 'City is required'
-                                    }) : ''
-                                ]),
-                                m('.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        'State *'
-                                    ),
-                                    m("input#address-state.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressState() ? 'error' : '',
-                                        value: state.fields.addressState(),
-                                        onchange: m.withAttr('value', state.fields.addressState)
-                                    }),
-                                    errors.addressState() ? m(inlineError, {
-                                        message: 'State is required'
-                                    }) : ''
-                                ])
-                            ])
-                        )
-                    ])
-                ]) :
-                m('.w-form', [
-                    m('div', [
-                        attrs.disableInternational ? null : m(countrySelect, {
-                            countryName: attrs.countryName,
-                            fields,
-                            international,
-                            defaultCountryID,
-                            defaultForeignCountryID
-                        }),
-                        m('div', [
-                            m('.w-row', [
-                                m('.w-col.w-col-6', [
-                                    m('.field-label', [
-                                        m('span.fontweight-semibold',
-                                            `${window.I18n.t('address_zip_code', I18nScope())} *`
-                                        ),
-                                        m("a.fontsize-smallest.alt-link.u-right[href='http://www.buscacep.correios.com.br/sistemas/buscacep/'][target='_blank']",
-                                            window.I18n.t('zipcode_unknown', I18nScope())
-                                        )
-                                    ]),
-                                    m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
-                                        class: errors.addressZipCode() ? 'error' : '',
-                                        value: state.fields.addressZipCode(),
-                                        onkeyup: m.withAttr('value', value => state.applyZipcodeMask(value)),
-                                        oninput: (e) => {
-                                            state.lookupZipCode(e.target.value);
-                                        }
-                                    }),
-                                    errors.addressZipCode() ? m(inlineError, {
-                                        message: state.zipCodeErrorMessage() ? state.zipCodeErrorMessage() : 'Informe um CEP válido.'
-                                    }) : ''
-                                ]),
-                                m('.w-col.w-col-6')
-                            ]),
-                            m('.w-row', [
-                                m('.field-label.fontweight-semibold',
-                                    `${window.I18n.t('address_street', I18nScope())} *`
-                                ),
-                                m("input.positive.text-field.w-input[maxlength='50'][required='required'][type='text']", {
-                                    class: errors.addressStreet() ? 'error' : '',
-                                    value: state.fields.addressStreet(),
-                                    onchange: m.withAttr('value', state.fields.addressStreet)
-                                }),
-                                errors.addressStreet() ? m(inlineError, {
-                                    message: 'Informe um endereço com no máximo 50 caracteres. Se for necessário, use abreviações..'
-                                }) : ''
-                            ]),
-                            m('.w-row', [
-                                m('.w-sub-col.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        `${window.I18n.t('address_number', I18nScope())} *`
-                                    ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressNumber() ? 'error' : '',
-                                        value: state.fields.addressNumber(),
-                                        onchange: m.withAttr('value', state.fields.addressNumber)
-                                    }),
-                                    errors.addressNumber() ? m(inlineError, {
-                                        message: 'Informe um número.'
-                                    }) : ''
-                                ]),
-                                m('.w-sub-col.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        window.I18n.t('address_complement', I18nScope())
-                                    ),
-                                    m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
-                                        value: state.fields.addressComplement(),
-                                        onchange: m.withAttr('value', state.fields.addressComplement)
-                                    })
-                                ]),
-                                m('.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        `${window.I18n.t('address_neighbourhood', I18nScope())} *`
-                                    ),
-                                    m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
-                                        class: errors.addressNeighbourhood() ? 'error' : '',
-                                        value: state.fields.addressNeighbourhood(),
-                                        onchange: m.withAttr('value', state.fields.addressNeighbourhood)
-                                    }),
-                                    errors.addressNeighbourhood() ? m(inlineError, {
-                                        message: 'Informe um bairro.'
-                                    }) : ''
-                                ])
-                            ]),
-                            m('.w-row', [
-                                m('.w-sub-col.w-col.w-col-6', [
-                                    m('.field-label.fontweight-semibold',
-                                        `${window.I18n.t('address_city', I18nScope())} *`
-                                    ),
-                                    m("input.positive.text-field.w-input[required='required'][type='text']", {
-                                        class: errors.addressCity() ? 'error' : '',
-                                        value: state.fields.addressCity(),
-                                        onchange: m.withAttr('value', state.fields.addressCity)
-                                    }),
-                                    errors.addressCity() ? m(inlineError, {
-                                        message: 'Informe uma cidade.'
-                                    }) : ''
-                                ]),
-                                m('.w-sub-col.w-col.w-col-2', [
-                                    m('.field-label.fontweight-semibold',
-                                        `${window.I18n.t('address_state', I18nScope())} *`
-                                    ),
-                                    m('select#address-state.positive.text-field.w-select', {
-                                        class: errors.stateID() ? 'error' : '',
-                                        onchange: m.withAttr('value', state.fields.stateID)
-                                    }, [
-                                        m('option', { value: '' }),
-                                        (!_.isEmpty(state.states()) ?
-                                            _.map(state.states(), state => m('option', {
-                                                value: state.id,
-                                                selected: state.id === state.fields.stateID()
-                                            },
-                                                state.acronym
-                                            )) : ''),
-                                    ]),
-                                    errors.stateID() ? m(inlineError, {
-                                        message: 'Informe um estado.'
-                                    }) : ''
-                                ]),
-                                m('.w-col.w-col-4', [
-                                    m('.field-label.fontweight-semibold',
-                                        `${window.I18n.t('phone_number', I18nScope())} *`
-                                    ),
-                                    m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
-                                        class: errors.phoneNumber() ? 'error' : '',
-                                        value: state.fields.phoneNumber(),
-                                        onkeyup: m.withAttr('value', value => state.applyPhoneMask(value)),
-                                        onchange: m.withAttr('value', state.fields.phoneNumber)
-                                    }),
-                                    errors.phoneNumber() ? m(inlineError, {
-                                        message: 'Informe um telefone válido.'
-                                    }) : ''
-                                ])
-                            ])
-
-                        ])
-                    ])
-                ]))
+                        defaultForeignCountryID,
+                        errors
+                    })
+                )
+                    :
+                (
+                    m(addressFormNational, {
+                        disableInternational,
+                        countryName,
+                        fields,
+                        international,
+                        defaultCountryID,
+                        defaultForeignCountryID,
+                        errors,
+                        applyZipcodeMask,
+                        lookupZipCode,
+                        zipCodeErrorMessage,
+                        countryStates
+                    })
+                )
+            )
         ]);
     }
 };
