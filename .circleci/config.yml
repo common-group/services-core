@@ -200,17 +200,17 @@ jobs:
       - run:
           name: Pushing subtress
           command: |
-            ./subtrees-push.sh
+            ./.circleci/subtrees-push.sh
 
 workflows:
   version: 2
   run-all-tests:
     jobs:
-      - test_services_core_db
-      - test_common_api
-      - test_common_models
       - test_catarse
+      - test_common_api
       - test_catarse_js
+      - test_common_models
+      - test_services_core_db
       - test_payment_service_lib
       - test_proxy_config
       - subtree_pushes:
