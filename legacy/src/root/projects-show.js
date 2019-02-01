@@ -20,10 +20,6 @@ const projectsShow = {
             loading = prop(true),
             userProjectSubscriptions = prop([]);
         
-        projectVM.currentProject.addEventListener('change', (newValue) => {
-            m.redraw();
-        });
-
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
         } else {
