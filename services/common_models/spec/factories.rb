@@ -182,4 +182,12 @@ FactoryBot.define do
       end
     end
   end
+
+  factory :subscription, class: CommonModels::Subscription do
+    platform
+    project
+    user
+    checkout_data {}
+    gateway 'Pagarme'
+  end
 end
