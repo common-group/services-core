@@ -28,25 +28,19 @@ jobs:
       - run: apk update && apk add git nodejs nodejs-npm bash
       - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
-      - run: npx heroku container:login
-
-      - run: npx heroku container:push web --recursive -a $PRODUCTION_COMMON_API_APP
-      - run: npx heroku container:release web -a $PRODUCTION_COMMON_API_APP
+      - run: sh .circleci/deploy-heroku.sh
 
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
     steps:
       - checkout
+      - add_ssh_keys
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git nodejs nodejs-npm bash
-      - run: npm install heroku
-      - run: bash .circleci/setup-heroku.sh
-      - run: npx heroku container:login
+      - run: apk update && apk add git
+      - run: sh .circleci/deploy-sandbox.sh
 
-      - run: npx heroku container:push web --recursive -a $SANDBOX_COMMON_API_APP
-      - run: npx heroku container:release web -a $SANDBOX_COMMON_API_APP
 
 workflows:
   version: 2

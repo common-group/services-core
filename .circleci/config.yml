@@ -224,4 +224,4 @@ workflows:
             - test_proxy_config
           filters:
             branches:
-              only: chore/circle-updates
+              only: develop

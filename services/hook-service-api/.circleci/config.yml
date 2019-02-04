@@ -9,21 +9,21 @@ jobs:
           version: 17.05.0-ce
       # build the application container
       - run: docker build -t comum/hook-service:latest .
-
-  push_image:
-    docker:
-      - image: comum/docker-build-env:latest
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 17.05.0-ce
-      # with credentials stored in the UI
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      # build the application container
-      - run: docker build -t comum/hook-service:latest .
-      # deploy the container
-      - run: docker push comum/hook-service:latest
-
+#
+#  push_image:
+#    docker:
+#      - image: comum/docker-build-env:latest
+#    steps:
+#      - checkout
+#      - setup_remote_docker:
+#          version: 17.05.0-ce
+#      # with credentials stored in the UI
+#      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+#      # build the application container
+#      - run: docker build -t comum/hook-service:latest .
+#      # deploy the container
+#      - run: docker push comum/hook-service:latest
+#
   deploy_production:
     docker:
       - image: comum/docker-build-env:latest
@@ -33,28 +33,20 @@ jobs:
           version: 17.05.0-ce
       - run: apk update && apk add nodejs nodejs-npm bash
       - run: npm install heroku-cli
-      - run: docker build -t comum/hook-service:latest .
       - run: bash .circleci/setup-heroku.sh
+      - run: sh .circleci/deploy-heroku.sh
 
-      - run: npx heroku container:login
-      - run: npx heroku container:push web --recursive -a $PRODUCTION_HOOK_SERVICE_API_APP
-      - run: npx heroku container:release web -a $PRODUCTION_HOOK_SERVICE_API_APP
 
   deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
     steps:
       - checkout
+      - add_ssh_keys
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add nodejs nodejs-npm bash
-      - run: npm install heroku-cli
-      - run: docker build -t comum/hook-service:latest .
-      - run: bash .circleci/setup-heroku.sh
-
-      - run: npx heroku container:login
-      - run: npx heroku container:push web --recursive -a $SANDBOX_HOOK_SERVICE_API
-      - run: npx heroku container:release web -a $SANDBOX_HOOK_SERVICE_API
+      - run: apk update && apk add git
+      - run: sh .circleci/deploy-sandbox.sh
 
 
 workflows:
@@ -62,12 +54,12 @@ workflows:
   build-and-push:
     jobs:
       - build
-      - push_image:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+#      - push_image:
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              only: master
       - deploy_sandbox:
           requires:
             - build
