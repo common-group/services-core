@@ -92,8 +92,12 @@ const toogleAnonymous = (subscription) => {
         .loaderWithToken(setAnonymityModel.postOptions(subscriptionAnonymity, {}))
         .load()
         .then(d => {
-            subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous
-            m.redraw()
+            if ('set_subscription_anonymity' in d) {
+                subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous;
+                m.redraw();
+            } else {
+                subscription.checkout_data.anonymous = !subscription.checkout_data.anonymous;
+            }
             return d;
         });
 };
