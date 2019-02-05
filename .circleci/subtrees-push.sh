@@ -14,25 +14,33 @@ git remote add notification-service-api $NOTIFICATION_SERVICE_SUBTREE_REMOTE
 git remote add payment-service-api $PAYMENT_SERVICE_SUBTREE_REMOTE
 
 echo 'pushing service-core-db...'
-git subtree push --prefix=services/service-core-db service-core-db $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/service-core-db service-core-db $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing catarse.js...'
-git subtree push --prefix=services/catarse.js catarse.js $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/catarse.js catarse.js $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing catarse...'
-git subtree push --prefix=services/catarse catarse $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/catarse catarse $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing common-api...'
-git subtree push --prefix=services/common-api common-api $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/common-api common-api $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing proxy...'
-git subtree push --prefix=services/proxy proxy $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/proxy proxy $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing hook-service-api...'
-git subtree push --prefix=services/hook-service-api hook-service-api $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/hook-service-api hook-service-api $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing notification-service-api...'
-git subtree push --prefix=services/notification-service-api notification-service-api $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/notification-service-api notification-service-api $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
 
 echo 'pushing payment-service-api...'
-git subtree push --prefix=services/payment-service-api payment-service-api $SUBTREE_BRANCH 1> /dev/null
+git subtree push --prefix=services/payment-service-api payment-service-api $SUBTREE_BRANCH 2> ~/push_subtree.log
+tail  ~/push_subtree.log
