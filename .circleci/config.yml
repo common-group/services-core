@@ -194,7 +194,7 @@ jobs:
     steps:
       - run: apk update && apk add git bash git-subtree openssl openssh
       - checkout
-      - add_ssh_keys
+ #      - add_ssh_keys
       - setup_remote_docker:
           version: 17.05.0-ce
       - run:
