@@ -87,6 +87,8 @@ const toogleAnonymous = (subscription) => {
     }
 
     const setAnonymityModel = models.setSubscriptionAnonymity(subscription.id)
+    subscription.checkout_data.anonymous = !subscription.checkout_data.anonymous;
+    m.redraw();
 
     return commonProxy
         .loaderWithToken(setAnonymityModel.postOptions(subscriptionAnonymity, {}))
@@ -95,10 +97,12 @@ const toogleAnonymous = (subscription) => {
             if ('set_subscription_anonymity' in d) {
                 subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous;
                 m.redraw();
-            } else {
-                subscription.checkout_data.anonymous = !subscription.checkout_data.anonymous;
             }
             return d;
+        })
+        .catch(err => {
+            subscription.checkout_data.anonymous = !subscription.checkout_data.anonymous;
+            m.redraw();
         });
 };
 
