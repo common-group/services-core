@@ -188,14 +188,40 @@ jobs:
             && cd services/proxy \
             && ./test.sh
 
+  subtree_pushes:
+    docker:
+      - image: alpine
+    steps:
+      - run: apk update && apk add git bash git-subtree openssl openssh
+      - checkout
+      - add_ssh_keys
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Pushing subtress
+          command: |
+            ./.circleci/subtrees-push.sh
+
 workflows:
   version: 2
   run-all-tests:
     jobs:
-      - test_services_core_db
-      - test_common_api
-      - test_common_models
       - test_catarse
+      - test_common_api
       - test_catarse_js
+      - test_common_models
+      - test_services_core_db
       - test_payment_service_lib
       - test_proxy_config
+      - subtree_pushes:
+          requires:
+            - test_services_core_db
+            - test_common_api
+            - test_common_models
+            - test_catarse
+            - test_catarse_js
+            - test_payment_service_lib
+            - test_proxy_config
+          filters:
+            branches:
+              only: develop

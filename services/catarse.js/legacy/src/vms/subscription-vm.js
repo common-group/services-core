@@ -96,8 +96,8 @@ const toogleAnonymous = (subscription) => {
         .then(d => {
             if ('set_subscription_anonymity' in d) {
                 subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous;
+                m.redraw();
             }
-            
             return d;
         })
         .catch(err => {
