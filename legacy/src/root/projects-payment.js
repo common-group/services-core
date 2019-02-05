@@ -39,7 +39,7 @@ const projectsPayment = {
 
         const validateForm = () => {
             if (vm.validate()) {
-                vm.similityExecute(contribution().id);
+                vm.kondutoExecute();
                 showPaymentForm(true);
             }
         };
@@ -92,7 +92,7 @@ const projectsPayment = {
                 data: vm.fields.address()
             }));
         });
-        vm.similityExecute(contribution().id);
+        vm.kondutoExecute();
         projectVM.getCurrentProject();
 
         return {

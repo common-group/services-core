@@ -1,6 +1,6 @@
 import m from 'mithril';
 import _ from 'underscore';
-import moment from 'moment';
+import moment, { defaultFormat } from 'moment';
 import h from '../h';
 import usersVM from './user-vm';
 
@@ -52,19 +52,19 @@ const paymentVM = () => {
     };
 
     const expMonthOptions = () => [
-            [null, 'Mês'],
-            [1, '01 - Janeiro'],
-            [2, '02 - Fevereiro'],
-            [3, '03 - Março'],
-            [4, '04 - Abril'],
-            [5, '05 - Maio'],
-            [6, '06 - Junho'],
-            [7, '07 - Julho'],
-            [8, '08 - Agosto'],
-            [9, '09 - Setembro'],
-            [10, '10 - Outubro'],
-            [11, '11 - Novembro'],
-            [12, '12 - Dezembro']
+        [null, 'Mês'],
+        [1, '01 - Janeiro'],
+        [2, '02 - Fevereiro'],
+        [3, '03 - Março'],
+        [4, '04 - Abril'],
+        [5, '05 - Maio'],
+        [6, '06 - Junho'],
+        [7, '07 - Julho'],
+        [8, '08 - Agosto'],
+        [9, '09 - Setembro'],
+        [10, '10 - Outubro'],
+        [11, '11 - Novembro'],
+        [12, '12 - Dezembro']
     ];
 
     const expYearOptions = () => {
@@ -81,8 +81,8 @@ const paymentVM = () => {
     const scope = data => isInternational() ? I18nIntScope(data) : I18nScope(data);
 
     const getLocale = () => isInternational()
-            ? { locale: 'en' }
-            : { locale: 'pt' };
+        ? { locale: 'en' }
+        : { locale: 'pt' };
 
     const faq = (mode = 'aon') => window.I18n.translations[window.I18n.currentLocale()].projects.faq[mode],
         currentUser = h.getUser() || {};
@@ -227,8 +227,34 @@ const paymentVM = () => {
         }
     };
 
+    const kondutoExecute = function () {
+        const deferred = m.deferred();
+        const customerID = h.getUserID();
+
+        if (customerID) {
+
+            (function () {
+                var period = 300;
+                var limit = 20 * 1e3;
+                var nTry = 0;
+                var intervalID = setInterval(function () { // loop para retentar o envio         
+                    var clear = limit / period <= ++nTry;
+                    if ((typeof (Konduto) !== "undefined") && (typeof (Konduto.setCustomerID) !== "undefined")) {
+                        window.Konduto.setCustomerID(customerID); // envia o ID para a Konduto             
+                        clear = true;
+                    }
+                    if (clear) {
+                        clearInterval(intervalID);
+                    }
+                }, period);
+            })();
+        }
+
+        return deferred;
+    };
+
     const requestPayment = (data, contribution_id) => {
-        similityExecute(contribution_id);
+        kondutoExecute();
         return m.request({
             method: 'POST',
             url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
@@ -336,8 +362,8 @@ const paymentVM = () => {
                 .catch(creditCardPaymentFail(deferred));
         }
         return payWithNewCard(contribution_id, selectedInstallment)
-                .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
-                .catch(creditCardPaymentFail(deferred));
+            .then(creditCardPaymentSuccess(deferred, project_id, contribution_id))
+            .catch(creditCardPaymentFail(deferred));
     };
 
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
@@ -412,7 +438,8 @@ const paymentVM = () => {
         pagarme,
         locale: getLocale,
         faq,
-        similityExecute
+        similityExecute,
+        kondutoExecute
     };
 };
 
