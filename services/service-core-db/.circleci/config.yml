@@ -29,7 +29,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git ssh nodejs nodejs-npm bash
+      - run: apk update && apk add git openssh nodejs nodejs-npm bash
       - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
       - run: sh .circleci/deploy-heroku.sh
@@ -43,7 +43,7 @@ jobs:
       - add_ssh_keys
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git ssh nodejs nodejs-npm bash
+      - run: apk update && apk add git openssh nodejs nodejs-npm bash
       - run: npm install heroku
       - run: bash .circleci/setup-heroku.sh
       - run: sh .circleci/deploy-sandbox.sh
