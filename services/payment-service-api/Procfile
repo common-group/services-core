@@ -1,1 +1,2 @@
-web: ./env-to-config ./postgrest postgrest.conf
+payment_stream: ./bin/start-payment-stream
+subscription_scheduler: ./scripts/subscription_scheduler.js
