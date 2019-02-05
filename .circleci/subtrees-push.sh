@@ -13,9 +13,11 @@ git remote add hook-service-api $HOOK_SERVICE_SUBTREE_REMOTE
 git remote add notification-service-api $NOTIFICATION_SERVICE_SUBTREE_REMOTE
 git remote add payment-service-api $PAYMENT_SERVICE_SUBTREE_REMOTE
 
-echo 'pushing service-core-db...'
-git subtree push --prefix=services/service-core-db service-core-db $SUBTREE_BRANCH &> ~/push_subtree.log
-tail  ~/push_subtree.log
+trap tail_log EXIT
+tail_log()
+{
+    tail  ~/push_subtree.log
+}
 
 echo 'pushing catarse.js...'
 git subtree push --prefix=services/catarse.js catarse.js $SUBTREE_BRANCH &> ~/push_subtree.log
@@ -23,6 +25,10 @@ tail  ~/push_subtree.log
 
 echo 'pushing catarse...'
 git subtree push --prefix=services/catarse catarse $SUBTREE_BRANCH &> ~/push_subtree.log
+tail  ~/push_subtree.log
+
+echo 'pushing service-core-db...'
+git subtree push --prefix=services/service-core-db service-core-db $SUBTREE_BRANCH &> ~/push_subtree.log
 tail  ~/push_subtree.log
 
 echo 'pushing common-api...'
