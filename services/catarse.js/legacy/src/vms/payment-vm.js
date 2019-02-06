@@ -228,29 +228,23 @@ const paymentVM = () => {
     };
 
     const kondutoExecute = function () {
-        const deferred = m.deferred();
         const customerID = h.getUserID();
 
         if (customerID) {
-
-            (function () {
-                var period = 300;
-                var limit = 20 * 1e3;
-                var nTry = 0;
-                var intervalID = setInterval(function () { // loop para retentar o envio         
-                    var clear = limit / period <= ++nTry;
-                    if ((typeof (Konduto) !== "undefined") && (typeof (Konduto.setCustomerID) !== "undefined")) {
-                        window.Konduto.setCustomerID(customerID); // envia o ID para a Konduto             
-                        clear = true;
-                    }
-                    if (clear) {
-                        clearInterval(intervalID);
-                    }
-                }, period);
-            })();
+            var period = 300;
+            var limit = 20 * 1e3;
+            var nTry = 0;
+            var intervalID = setInterval(function () {     
+                var clear = limit / period <= ++nTry;
+                if ((typeof (Konduto) !== "undefined") && (typeof (Konduto.setCustomerID) !== "undefined")) {
+                    window.Konduto.setCustomerID(customerID);
+                    clear = true;
+                }
+                if (clear) {
+                    clearInterval(intervalID);
+                }
+            }, period);
         }
-
-        return deferred;
     };
 
     const requestPayment = (data, contribution_id) => {
