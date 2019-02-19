@@ -311,7 +311,7 @@ const userSubscriptionBox = {
                                 && subscription.boleto_url
                                 && subscription.boleto_expiration_date ?
                                 [
-                                    moment(subscription.boleto_expiration_date).add(1, 'days').isBefore(Date.now())
+                                    moment(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now())
                                     ? [
                                         m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                             m('span.fa.fa-exclamation-triangle'),
@@ -400,7 +400,7 @@ const userSubscriptionBox = {
                                     && subscription.boleto_url
                                     && subscription.boleto_expiration_date ?
                                         [
-                                            moment(subscription.boleto_expiration_date).add(1, 'days').isBefore(Date.now())
+                                            moment(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now())
                                             ? [
                                                 m('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [
                                                     m('span.fa.fa-exclamation-triangle'),
