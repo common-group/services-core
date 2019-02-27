@@ -34,7 +34,10 @@ module V1
 
       def subscriptions_monthly_report_for_project_owners
         authorize resource, :update?
-        report = CommonModels::SubscriptionMonthlyReportForProjectOwner.project_id(resource.id).to_csv
+        report = CommonModels::SubscriptionMonthlyReportForProjectOwner.project_id(
+          resource.id
+        ).to_csv
+
         respond_to do |format|
           format.csv { send_data  report}
           format.xls do
