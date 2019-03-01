@@ -54,14 +54,15 @@ const countrySelect = {
                         state.changeCountry(e.target.value);
                     }
                 }, [
-                    (!_.isEmpty(state.countries()) ?
-                        _.map(state.countries(), country => m('option', {
-                            selected: country.id === state.fields.countryID(),
-                            value: country.id
-                        },
-                            country.name_en
-                        )) :
-                        '')
+                    (
+                        !_.isEmpty(state.countries()) ?
+                            _.map(state.countries(), country => m('option', {
+                                selected: country.id === state.fields.countryID(),
+                                value: country.id
+                            }, country.name_en))
+                        :
+                            ''
+                    )
                 ])
             ]),
             m('.w-col.w-col-6')

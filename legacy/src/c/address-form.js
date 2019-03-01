@@ -122,6 +122,7 @@ const addressForm = {
             states
         };
     },
+    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const fields = state.fields,
             international = state.international,
