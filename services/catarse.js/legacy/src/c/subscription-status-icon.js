@@ -42,6 +42,7 @@ const subscriptionStatusIcon = {
             statusClass
         };
     },
+    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const subscription = attrs.subscription,
             statusClass = state.statusClass,

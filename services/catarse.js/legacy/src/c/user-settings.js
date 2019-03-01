@@ -140,6 +140,7 @@ const userSettings = {
             parsedErrors
         };
     },
+    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const user = state.user,
             fields = state.fields,

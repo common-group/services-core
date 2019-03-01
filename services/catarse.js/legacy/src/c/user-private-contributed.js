@@ -12,7 +12,7 @@ const userPrivateContributed = {
     oninit: function(vnode) {
         const user_id = vnode.attrs.userId,
             userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
-            subscriptions = commonPayment.paginationVM(models.userSubscription),
+            subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', { Prefer: 'count=exact' }),
             onlinePages = catarse.paginationVM(models.userContribution),
             successfulPages = catarse.paginationVM(models.userContribution),
             failedPages = catarse.paginationVM(models.userContribution),
@@ -70,6 +70,7 @@ const userPrivateContributed = {
             loader
         };
     },
+    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const subsCollection = state.subscriptions.collection(),
             onlineCollection = state.onlinePages.collection(),
