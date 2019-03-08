@@ -7,7 +7,7 @@ import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
 const editRewardCard = {
-    controller: function(args) {
+    controller: function (args) {
         const project = projectVM.getCurrentProject(),
             reward = args.reward(),
             minimumValue = projectVM.isSubscription(project) ? 5 : 10,
@@ -170,12 +170,12 @@ const editRewardCard = {
             fees
         };
     },
-    view: function(ctrl, args) {
+    view: function (ctrl, args) {
         const newFee = {
-                id: m.prop(null),
-                value: m.prop(null),
-                destination: m.prop(null)
-            },
+            id: m.prop(null),
+            value: m.prop(null),
+            destination: m.prop(null)
+        },
             fees = ctrl.fees(),
             reward = args.reward(),
             inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
@@ -246,28 +246,28 @@ const editRewardCard = {
                                                 ctrl.reward.deliver_at(moment(ctrl.reward.deliver_at()).month(parseInt(e.target.value) - 1).format());
                                             }
                                         }, [
-                                            _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
-                                                value: monthIndex + 1,
-                                                selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
-                                            },
-                                                h.capitalize(month)
-                                            ))
-                                        ]),
+                                                _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
+                                                    value: monthIndex + 1,
+                                                    selected: moment(ctrl.reward.deliver_at()).format('M') == monthIndex + 1
+                                                },
+                                                    h.capitalize(month)
+                                                ))
+                                            ]),
                                         m('select.date.required.w-input.text-field.w-col-6.positive[aria-required=\'true\'][discard_day=\'true\'][required=\'required\'][use_short_month=\'true\']', {
                                             class: ctrl.deliverAtError() ? 'error' : false,
                                             onchange: (e) => {
                                                 ctrl.reward.deliver_at(moment(reward.deliver_at()).year(parseInt(e.target.value)).format());
                                             }
                                         }, [
-                                            _.map(_.range(moment().year(), moment().year() + 6), year =>
-                                                m('option', {
-                                                    value: year,
-                                                    selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
-                                                },
-                                                    year
+                                                _.map(_.range(moment().year(), moment().year() + 6), year =>
+                                                    m('option', {
+                                                        value: year,
+                                                        selected: moment(ctrl.reward.deliver_at()).format('YYYY') === String(year)
+                                                    },
+                                                        year
+                                                    )
                                                 )
-                                            )
-                                        ])
+                                            ])
                                     ])
                                 )
                             ),
@@ -290,6 +290,23 @@ const editRewardCard = {
                         )
                     ]),
                     ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+
+                    // REWARD IMAGE
+                    m("div.u-marginbottom-30.u-margintop-30",
+                        m("div.w-row", [
+                            m("div.w-col.w-col-5",
+                                m("label.fontsize-smaller", [
+                                    "Imagem ",
+                                    m("span.fontcolor-secondary", "(opcional)")
+                                ])
+                            ),
+                            m("div.w-col.w-col-7",
+                                m("input.text-field.w-input[type='file'][placeholder='Choose file'][required]")
+                            )
+                        ])
+                    ),
+                    // END REWARD IMAGE
+
                     ctrl.project.mode === 'sub' ? null : m('.u-marginbottom-30.w-row', [
                         m('.w-col.w-col-3',
                             m("label.fontsize-smaller[for='field-2']",
@@ -304,19 +321,19 @@ const editRewardCard = {
                                     ctrl.updateOptions();
                                 }
                             }, [
-                                m('option[value=\'international\']',
-                                    'Frete Nacional e Internacional'
-                                ),
-                                m('option[value=\'national\']',
-                                    'Frete Nacional'
-                                ),
-                                m('option[value=\'free\']',
-                                    'Sem frete envolvido'
-                                ),
-                                m('option[value=\'presential\']',
-                                    'Retirada presencial'
-                                )
-                            ]),
+                                    m('option[value=\'international\']',
+                                        'Frete Nacional e Internacional'
+                                    ),
+                                    m('option[value=\'national\']',
+                                        'Frete Nacional'
+                                    ),
+                                    m('option[value=\'free\']',
+                                        'Sem frete envolvido'
+                                    ),
+                                    m('option[value=\'presential\']',
+                                        'Retirada presencial'
+                                    )
+                                ]),
 
                             ((ctrl.reward.shipping_options() === 'national' || ctrl.reward.shipping_options() === 'international') ?
                                 m('.card.card-terciary', [
