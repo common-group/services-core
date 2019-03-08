@@ -9,4 +9,11 @@ grant admin to postgrest;
 grant scoped_user to postgrest;
 grant platform_user to postgrest;
 grant anonymous to postgrest;
-grant  usage on schema core to proxy_server;
+grant usage on schema core to proxy_server;
+grant usage on schema payment_service to catarse_fdw;
+grant usage on schema community_service to catarse_fdw;
+grant usage on schema project_service to catarse_fdw;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA payment_service  TO catarse_fdw;
+GRANT SELECT ON ALL TABLES IN SCHEMA community_service  TO catarse_fdw;
+GRANT SELECT ON ALL TABLES IN SCHEMA project_service  TO catarse_fdw;
