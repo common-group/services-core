@@ -10,6 +10,7 @@ const editRewardCard = {
     controller: function (args) {
         const project = projectVM.getCurrentProject(),
             reward = args.reward(),
+            imageFileToUpload = m.prop(null),
             minimumValue = projectVM.isSubscription(project) ? 5 : 10,
             destroyed = m.prop(false),
             acceptNumeric = (e) => {
@@ -70,6 +71,25 @@ const editRewardCard = {
                     }
                 });
             },
+            onSelectImageFile = () => {
+                const rewardImageFile = window.document.getElementById(`reward_image_file_open_card_${args.index}`);
+                if (rewardImageFile.files.length) {
+                    args.showImageToUpload(reward, imageFileToUpload, rewardImageFile.files[0]);
+                }
+            },
+            tryDeleteImage = (reward) => {
+            
+                if (reward.newReward || imageFileToUpload()) {
+                    reward.uploaded_image(null);
+                    imageFileToUpload(null);
+                } else {
+                    args.deleteImage(reward, args.project_id, reward.id())
+                        .then(r => {
+                            imageFileToUpload(null);
+                            reward.uploaded_image(null);
+                        });
+                }
+            },
             saveReward = () => {
                 validate();
                 if (args.error()) {
@@ -96,16 +116,32 @@ const editRewardCard = {
                 }
                 if (reward.newReward) {
                     rewardVM.createReward(args.project_id, data).then((r) => {
-                        args.showSuccess(true);
+                        
                         reward.newReward = false;
                         // save id so we can update without reloading the page
                         reward.id(r.reward_id);
                         reward.edit.toggle();
+                        
+                        args.uploadImage(reward, imageFileToUpload, args.project_id, r.reward_id)
+                            .then(r_with_image => {
+                                args.showSuccess(true);
+                            })
+                            .catch(error => {
+                                args.showSuccess(false);
+                            })
                     });
                 } else {
                     rewardVM.updateReward(args.project_id, reward.id(), data).then(() => {
-                        args.showSuccess(true);
+                        
                         reward.edit.toggle();
+                        
+                        args.uploadImage(reward, imageFileToUpload, args.project_id, reward.id())
+                            .then(r_with_image => {
+                                args.showSuccess(true);
+                            })
+                            .catch(error => {
+                                args.showSuccess(false);
+                            })
                     });
                 }
                 return false;
@@ -167,22 +203,22 @@ const editRewardCard = {
             states,
             project,
             reward,
-            fees
+            fees,
+            tryDeleteImage,
+            onSelectImageFile
         };
     },
     view: function (ctrl, args) {
-        const newFee = {
-            id: m.prop(null),
-            value: m.prop(null),
-            destination: m.prop(null)
-        },
+        const 
+            newFee = {
+                id: m.prop(null),
+                value: m.prop(null),
+                destination: m.prop(null)
+            },
             fees = ctrl.fees(),
             reward = args.reward(),
-            inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
-                m('span',
-                    message
-                )
-            );
+            inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle', m('span', message)),
+            index = args.index;
 
         return ctrl.destroyed() ? m('div', '') : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.card',
@@ -292,18 +328,46 @@ const editRewardCard = {
                     ctrl.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
 
                     // REWARD IMAGE
-                    m("div.u-marginbottom-30.u-margintop-30",
-                        m("div.w-row", [
-                            m("div.w-col.w-col-5",
-                                m("label.fontsize-smaller", [
-                                    "Imagem ",
-                                    m("span.fontcolor-secondary", "(opcional)")
-                                ])
-                            ),
-                            m("div.w-col.w-col-7",
-                                m("input.text-field.w-input[type='file'][placeholder='Choose file'][required]")
+                    (
+                        (reward.uploaded_image && reward.uploaded_image()) ? 
+                            (
+                                m("div.u-marginbottom-30.u-margintop-30", 
+                                    m("div.w-row", [
+                                        m("div.w-col.w-col-5", 
+                                            m("label.fontsize-smaller[for='field-8']", [
+                                                "Imagem",
+                                                m("span.fontcolor-secondary", "(opcional)")
+                                            ])
+                                        ),
+                                        m("div.w-col.w-col-7", 
+                                            m("div.u-marginbottom-20", [
+                                                m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+                                                    onclick: () => ctrl.tryDeleteImage(reward)
+                                                }),
+                                                m(`img[src='${reward.uploaded_image()}'][alt='']`)
+                                            ])
+                                        )
+                                    ])
+                                )
+                            ) 
+                        :
+                            (
+                                m("div.u-marginbottom-30.u-margintop-30",
+                                    m("div.w-row", [
+                                        m("div.w-col.w-col-5",
+                                            m("label.fontsize-smaller", [
+                                                "Imagem ",
+                                                m("span.fontcolor-secondary", "(opcional)")
+                                            ])
+                                        ),
+                                        m("div.w-col.w-col-7",
+                                            m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_open_card_${index}']`, {
+                                                oninput: () => ctrl.onSelectImageFile()
+                                            })
+                                        )
+                                    ])
+                                )                                
                             )
-                        ])
                     ),
                     // END REWARD IMAGE
 
