@@ -121,6 +121,16 @@ const footer = {
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']',
                                                     ' Publicações Independentes'
                                                 ),
+                                                m('a.link-footer[href=\'https://crowdfunding.catarse.me/jornalismo?ref=ctrse_footer\']',
+                                                    [
+                                                        'Jornalismo',
+                                                        m.trust('&nbsp;'),
+                                                        m('span.badge.badge-success',
+                                                            'Novidade'
+                                                        )
+                                                    ]
+
+                                                ),
                                                 m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
                                                     'Catarse Assinaturas'
                                                  ),
