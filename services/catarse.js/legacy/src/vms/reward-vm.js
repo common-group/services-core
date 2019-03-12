@@ -210,6 +210,28 @@ const updateReward = (projectId, rewardId, rewardData) => m.request({
     config: h.setCsrfToken
 });
 
+const uploadImage = (projectId, rewardId, rewardImageFile) => {
+    const formData = new FormData();
+    formData.append('uploaded_image', rewardImageFile);
+    return m.request({
+        method: 'POST',
+        url: `/projects/${projectId}/rewards/${rewardId}/upload_image`,
+        data: formData,
+        config: h.setCsrfToken,
+        serialize(data) {
+            return data;
+        }
+    });
+}
+
+const deleteImage = (projectId, rewardId) => {
+    return m.request({
+        method: 'DELETE',
+        url: `/projects/${projectId}/rewards/${rewardId}/delete_image`,
+        config: h.setCsrfToken
+    });
+}
+
 const canEdit = (reward, projectState, user) => (user || {}).is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count() <= 0 && (_.isFunction(reward.waiting_payment_count) ? reward.waiting_payment_count() <= 0 : true)));
 
 const canAdd = (projectState, user) => (user || {}).is_admin || projectState === 'draft' || projectState === 'online';
@@ -243,7 +265,9 @@ const rewardVM = {
     feeDestination,
     getValue: contributionValue,
     setValue: contributionValue,
-    hasShippingOptions
+    hasShippingOptions,
+    uploadImage,
+    deleteImage
 };
 
 export default rewardVM;
