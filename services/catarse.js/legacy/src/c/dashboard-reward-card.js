@@ -58,9 +58,11 @@ const dashboardRewardCard = {
                     isUploadingRewardImage(true);
                     args.uploadImage(reward, imageFileToUpload, args.project().id, reward.id())
                         .then(r_with_image => {
-                            reward.uploaded_image(r_with_image.uploaded_image);
-                            imageFileToUpload(null);
-                            args.showSuccess(true);
+                            if (r_with_image) {
+                                reward.uploaded_image(r_with_image.uploaded_image);
+                                imageFileToUpload(null);
+                                args.showSuccess(true);
+                            }
                             isUploadingRewardImage(false);
                         })
                         .catch(error => {
@@ -78,13 +80,17 @@ const dashboardRewardCard = {
                     isDeletingRewardImage(true);
                     args.deleteImage(reward, args.project().id, reward.id())
                         .then(r => {
-                            imageFileToUpload(null);
-                            reward.uploaded_image(null);
+                            if (r) {
+                                imageFileToUpload(null);
+                                reward.uploaded_image(null);
+                            }
                             isDeletingRewardImage(false);
                         })
                         .catch(error => {
                             // TODO: Show error on deleting the image
                             isDeletingRewardImage(false);
+                            m.redraw();
+                            console.log('herer')
                         });
                 }
             };

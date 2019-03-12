@@ -88,12 +88,14 @@ const projectEditReward = {
                 return rewardVM
                     .uploadImage(projectId, rewardId, imageFileToUpload())
                     .then(r => {
-                        reward.uploaded_image(r.uploaded_image);
+                        if (r) {
+                            reward.uploaded_image(r.uploaded_image);
+                        }
                         return r;
                     })
-                    .catch(error => {
-                        args.error(true);
-                        args.errors('Erro ao fazer upload da imagem da recompensa. Favor tentar novamente.');
+                    .catch(err => {
+                        error(true);
+                        errors('Erro ao fazer upload da imagem da recompensa. Favor tentar novamente.');
                     })
             } else {
                 return Promise.resolve();
@@ -103,11 +105,14 @@ const projectEditReward = {
         const deleteImage = (reward, projectId, rewardId) => {
             return rewardVM.deleteImage(projectId, rewardId)
                 .then(r => {
-                    reward.uploaded_image(r.uploaded_image);
+                    if (r) {
+                        reward.uploaded_image(r.uploaded_image);
+                    }
+                    return r;
                 })
-                .catch(error => {
-                    args.error(true);
-                    args.errors('Erro ao deletar a imagem da recompensa. Favor tentar novamente.');
+                .catch(err => {
+                    error(true);
+                    errors('Erro ao deletar a imagem da recompensa. Favor tentar novamente.');
                 })
         };
         
