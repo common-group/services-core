@@ -2,6 +2,11 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   concern :api_base do
     resources :projects, only: %i[update destroy create] do
+      member do
+        get 'subscriptions_report_for_project_owners'
+        get 'subscriptions_monthly_report_for_project_owners'
+      end
+
       resources :goals, only: %i[update destroy create], controller: 'projects/goals'
       resources :contributions, only: %i[update create], controller: 'projects/contributions'
       resources :reports, only: %i[create], controller: 'projects/reports'
