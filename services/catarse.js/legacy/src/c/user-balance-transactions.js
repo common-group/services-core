@@ -19,9 +19,13 @@ const userBalanceTransactions = {
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
             m('.w-container', [
-                m('.u-marginbottom-20', m('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope())))
-            ].concat(
-                _.map(list.collection(), (item, index) => m(userBalanceTransactionRow, { item, index })))
+                    m('.u-marginbottom-20', m('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope())))
+                ].concat(
+                    _.map(
+                        list.collection(), 
+                        (item, index) => m(userBalanceTransactionRow, { item, index })
+                    )
+                )
             ),
             m('.container', [
                 m('.w-row.u-margintop-40', [

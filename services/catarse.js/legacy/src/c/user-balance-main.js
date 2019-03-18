@@ -25,7 +25,10 @@ const userBalanceMain = {
         const balanceManager = (() => {
                 const collection = prop([{ amount: 0, user_id: vnode.attrs.user_id }]),
                     load = () => {
-                        models.balance.getRowWithToken(userIdVM.parameters()).then(collection);
+                        models.balance
+                            .getRowWithToken(userIdVM.parameters())
+                            .then(collection)
+                            .then(_ => m.redraw());
                     };
 
                 return {
@@ -36,10 +39,13 @@ const userBalanceMain = {
 
               // Handles with user balance transactions list data
             balanceTransactionManager = (() => {
-                const listVM = catarse.paginationVM(
-                      models.balanceTransaction, 'created_at.desc'),
+                const listVM = catarse.paginationVM(models.balanceTransaction, 'created_at.desc'),
                     load = () => {
-                        listVM.firstPage(userIdVM.parameters());
+                        listVM
+                            .firstPage(userIdVM.parameters())
+                            .then(r => {
+                                m.redraw();
+                            });
                     };
 
                 return {
@@ -55,7 +61,10 @@ const userBalanceMain = {
                                 models.bankAccount.getRowOptions(
                                     userIdVM.parameters())))(),
                     load = () => {
-                        loader.load().then(collection);
+                        loader
+                            .load()
+                            .then(collection)
+                            .then(_ => m.redraw());
                     };
 
                 return {
