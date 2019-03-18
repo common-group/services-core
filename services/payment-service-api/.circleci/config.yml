@@ -18,21 +18,21 @@ jobs:
       - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core ./scripts/run_migrations.sh
 
       - run: docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/payment-service npm test -- -v
-
-  push_image:
-    docker:
-      - image: comum/docker-build-env:latest
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 17.05.0-ce
-      # with credentials stored in the UI
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      # build the application container
-      - run: docker build -t comum/payment-service:latest .
-      # deploy the container
-      - run: docker push comum/payment-service:latest
-
+#
+#  push_image:
+#    docker:
+#      - image: comum/docker-build-env:latest
+#    steps:
+#      - checkout
+#      - setup_remote_docker:
+#          version: 17.05.0-ce
+#      # with credentials stored in the UI
+#      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+#      # build the application container
+#      - run: docker build -t comum/payment-service:latest .
+#      # deploy the container
+#      - run: docker push comum/payment-service:latest
+#
   deploy_production:
     docker:
       - image: comum/docker-build-env:latest
@@ -40,35 +40,21 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git nodejs nodejs-npm bash
+      - run: apk update && apk add git nodejs nodejs-npm bash openssh
       - run: npm install heroku-cli
-      - run: docker build -t comum/payment-service:latest .
       - run: bash .circleci/setup-heroku.sh
+      - run: sh .circleci/deploy-heroku.sh
 
-      - run: npx heroku container:login
-      - run: npx heroku container:push payment_stream_processor --recursive -a $PRODUCTION_PAYMENT_STREAM_APP
-      - run: npx heroku container:push subscriptions_scheduler --recursive -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
-      - run: npx heroku container:release payment_stream_processor -a $PRODUCTION_PAYMENT_STREAM_APP
-      - run: npx heroku container:release subscriptions_scheduler -a $PRODUCTION_SUBSCRIPTION_SCHEDULER_APP
-
-  deploy_sandbox:
+ deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
     steps:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: apk update && apk add git nodejs nodejs-npm bash
+      - run: apk update && apk add git nodejs nodejs-npm bash openssh
       - run: npm install heroku-cli
-      - run: docker build -t comum/payment-service:latest .
-      - run: bash .circleci/setup-heroku.sh
-
-      - run: npx heroku container:login
-      - run: npx heroku container:push payment_stream_processor --recursive -a $SANDBOX_PAYMENT_STREAM_APP
-      - run: npx heroku container:push subscriptions_scheduler --recursive -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
-      - run: npx heroku container:release payment_stream_processor -a $SANDBOX_PAYMENT_STREAM_APP
-      - run: npx heroku container:release subscriptions_scheduler -a $SANDBOX_SUBSCRIPTION_SCHEDULER_APP
-
+      - run: sh .circleci/deploy-sandbox.sh
 
 workflows:
   version: 2

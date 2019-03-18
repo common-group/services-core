@@ -35,8 +35,8 @@ const footer = {
                                                 m(`a.link-footer[href=\'https://www.catarse.me/${window.I18n.locale}/press?ref=ctrse_footer\']`,
                                                     ' Imprensa'
                                                 ),
-                                                m('a.u-marginbottom-30.link-footer[href=\'http://ano.catarse.me/2017?ref=ctrse_footer\']',
-                                                    ' Retrospectiva 2017'
+                                                m('a.u-marginbottom-30.link-footer[href=\'http://ano.catarse.me/2018?ref=ctrse_footer\']',
+                                                    ' Retrospectiva 2018'
                                                 ),
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Redes Sociais'
@@ -121,14 +121,18 @@ const footer = {
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/publicacoes-independentes-financiamento-coletivo?ref=ctrse_footer\']',
                                                     ' Publicações Independentes'
                                                 ),
-                                                m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
+                                                m('a.link-footer[href=\'https://crowdfunding.catarse.me/jornalismo?ref=ctrse_footer\']',
                                                     [
-                                                        'Catarse Assinaturas',
+                                                        'Jornalismo',
                                                         m.trust('&nbsp;'),
                                                         m('span.badge.badge-success',
-                                                        'Novidade‍'
-                                                       )
+                                                            'Novidade'
+                                                        )
                                                     ]
+
+                                                ),
+                                                m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
+                                                    'Catarse Assinaturas'
                                                  ),
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Apoie projetos no Catarse'

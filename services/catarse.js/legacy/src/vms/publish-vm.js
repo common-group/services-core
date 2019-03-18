@@ -232,7 +232,7 @@ const subTerms = project => [
             m('span.fontweight-semibold',
                 'Você não poderá alterar:'
             ),
-            ' a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria escolhida, as metas de arrecadação já atingidas e as recompensas onde existirem apoios já efetuados.',
+            ' a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria escolhida e as recompensas onde existirem apoios já efetuados.',
             m('br'),
             m('br'),
             m('span.fontweight-semibold',
@@ -266,7 +266,7 @@ const subTerms = project => [
             )
         ]),
         m('div',
-            'Você só poderá alterar, durante a campanha no ar, metas de arrecadação futuras. Ou seja, sua meta de arrecadação ativa e suas metas já atingidas não poderão ser alteradas.'
+            'Você poderá alterar, durante a campanha no ar, as suas metas de arrecadação em qualquer momento, independente de já tê-las atingido ou não. A única restrição imposta é que o seu projeto tenha sempre ao menos uma meta definida.'
         )
     ]),
 
