@@ -374,7 +374,7 @@ const projectSubscriptionReport = {
                                     ),
                                     m('.table-col.w-col.w-col-2.u-text-center',
                                         m('div',
-                                            'Último pagamento'
+                                            'Última cobrança'
                                         )
                                     ),
                                     m('.table-col.w-col.w-col-2.u-text-center',
