@@ -87,14 +87,22 @@ const toogleAnonymous = (subscription) => {
     }
 
     const setAnonymityModel = models.setSubscriptionAnonymity(subscription.id)
+    subscription.checkout_data.anonymous = !subscription.checkout_data.anonymous;
+    m.redraw();
 
     return commonProxy
         .loaderWithToken(setAnonymityModel.postOptions(subscriptionAnonymity, {}))
         .load()
         .then(d => {
-            subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous
-            m.redraw()
+            if ('set_subscription_anonymity' in d) {
+                subscription.checkout_data.anonymous = d.set_subscription_anonymity.anonymous;
+                m.redraw();
+            }
             return d;
+        })
+        .catch(err => {
+            subscription.checkout_data.anonymous = !subscription.checkout_data.anonymous;
+            m.redraw();
         });
 };
 
