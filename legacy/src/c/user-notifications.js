@@ -13,29 +13,44 @@ const userNotifications = {
             mailMarketingLists = prop(),
             user_id = vnode.attrs.userId,
             showNotifications = h.toggleProp(false, true),
-            error = prop(false);
+            error = prop(false),
+            loadNewsCounter = prop(3);
 
-        userVM.getUserProjectReminders(user_id).then(
-            projectReminders
-        ).catch((err) => {
-            error(true);
-            m.redraw();
-        });
-
-        userVM.getMailMarketingLists().then((data) => {
-            mailMarketingLists(generateListHandler(data));
+        const countDownToDraw = () => {
+            loadNewsCounter(Math.max(0, loadNewsCounter() - 1));
+            
+            if (loadNewsCounter() == 0) {
+                m.redraw();
+            }
         }
-        ).catch((err) => {
-            error(true);
-            m.redraw();
-        });
+        
 
-        userVM.getUserContributedProjects(user_id, null).then(
-            contributedProjects
-        ).catch((err) => {
-            error(true);
-            m.redraw();
-        });
+        userVM
+            .getUserProjectReminders(user_id)
+            .then(projectReminders)
+            .then(countDownToDraw)
+            .catch((err) => {
+                error(true);
+                countDownToDraw();
+            });
+
+        userVM
+            .getMailMarketingLists()
+            .then((data) => mailMarketingLists(generateListHandler(data)))
+            .then(countDownToDraw)
+            .catch((err) => {
+                error(true);
+                countDownToDraw();
+            });
+
+        userVM
+            .getUserContributedProjects(user_id, null)
+            .then(contributedProjects)
+            .then(countDownToDraw)
+            .catch((err) => {
+                error(true);
+                countDownToDraw();
+            });
 
         const generateListHandler = (list) => {
             const user_lists = vnode.attrs.user.mail_marketing_lists;

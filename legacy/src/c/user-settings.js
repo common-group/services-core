@@ -17,7 +17,7 @@ const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettings = {
     oninit: function(vnode) {
-        let parsedErrors = {hasError : function() { }, inlineError : function() { } };//userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
+        let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = vnode.attrs.user,
             fields = prop({
