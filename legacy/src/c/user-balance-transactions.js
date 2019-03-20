@@ -19,7 +19,9 @@ const userBalanceTransactions = {
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
             m('.w-container', [
-                    m('.u-marginbottom-20', m('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope())))
+                    m('.u-marginbottom-20', 
+                        m('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope()))
+                    )
                 ].concat(
                     _.map(
                         list.collection(), 
@@ -30,12 +32,17 @@ const userBalanceTransactions = {
             m('.container', [
                 m('.w-row.u-margintop-40', [
                     m('.w-col.w-col-2.w-col-push-5', [
-                        !list.isLoading() ? (
-                            list.isLastPage() ? '' : m('button#load-more.btn.btn-medium.btn-terciary', {
-                                onclick: list.nextPage
-                            }, 'Carregar mais')
-                        ) :
-                        h.loader()
+                        !list.isLoading() ? 
+                            (
+                                list.isLastPage() ? 
+                                    '' 
+                                : 
+                                    m('button#load-more.btn.btn-medium.btn-terciary', { 
+                                        onclick: list.nextPage
+                                    }, 'Carregar mais')
+                            ) 
+                        :
+                            h.loader()
                     ])
                 ])
             ])
