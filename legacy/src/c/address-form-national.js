@@ -7,6 +7,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressFormNational = {
+    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
 
         const disableInternational = attrs.disableInternational;
@@ -128,13 +129,17 @@ const addressFormNational = {
                                 onchange: m.withAttr('value', fields.stateID)
                             }, [
                                 m('option', { value: '' }),
-                                (!_.isEmpty(countryStates()) ?
-                                    _.map(countryStates(), countryState => m('option', {
-                                        value: countryState.id,
-                                        selected: fields && state.id === fields.stateID()
-                                    },
-                                        countryState.acronym
-                                    )) : ''),
+                                (
+                                    !_.isEmpty(countryStates()) ?
+                                        _.map(countryStates(), countryState => m('option', {
+                                            value: countryState.id,
+                                            selected: fields && countryState.id === fields.stateID()
+                                        },
+                                            countryState.acronym
+                                        )) 
+                                    : 
+                                        ''
+                                ),
                             ]),
                             errors.stateID() ? m(inlineError, {
                                 message: 'Informe um estado.'
