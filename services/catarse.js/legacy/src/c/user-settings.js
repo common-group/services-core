@@ -39,10 +39,13 @@ const userSettings = {
             birthDayMask = _.partial(h.mask, '99/99/9999'),
             creditCards = prop(),
             toDeleteCard = prop(-1),
+            requestRedraw = () => {
+                m.redraw();
+            },
             deleteCard = id => () => {
                 toDeleteCard(id);
                 // We must redraw here to update the action output of the hidden form on the DOM.
-                m.redraw(true);
+                requestRedraw();
                 deleteFormSubmit();
                 return false;
             },
@@ -81,6 +84,7 @@ const userSettings = {
                         showSuccess.toggle();
                     }
                     railsErrorsVM.validatePublish();
+                    requestRedraw();
                 }).catch((err) => {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
@@ -94,11 +98,12 @@ const userSettings = {
                     if (!showError()) {
                         showError.toggle();
                     }
+                    requestRedraw();
                 });
             },
             onSubmit = () => {
                 loading(true);
-                m.redraw();
+                requestRedraw();
                 updateUserData();
                 return false;
             },
@@ -109,11 +114,12 @@ const userSettings = {
                 } else {
                     fields().owner_document(documentMask(value));
                 }
+                requestRedraw();
             },
             handleError = () => {
                 error(true);
                 loader(false);
-                m.redraw();
+                requestRedraw();
             };
 
         userVM.getUserCreditCards(vnode.attrs.userId).then(creditCards).catch(handleError);
@@ -157,18 +163,26 @@ const userSettings = {
             isProjectUserEdit = !!attrs.isProjectUserEdit;
 
         return m('[id=\'settings-tab\']', [
-            (state.showSuccess() ? m(popNotification, {
-                message: window.I18n.t('update_success_msg', I18nScope()),
-                toggleOpt: state.showSuccess
-            }) : ''),
-            (state.showError() ? m(popNotification, {
-                message: m.trust(state.error()),
-                toggleOpt: state.showError,
-                error: true
-            }) : ''),
-            m('form.w-form', {
-                onsubmit: state.onSubmit
-            }, [
+            (
+                state.showSuccess() ? 
+                    m(popNotification, {
+                        message: window.I18n.t('update_success_msg', I18nScope()),
+                        toggleOpt: state.showSuccess
+                    }) 
+                : 
+                ''
+            ),
+            (
+                state.showError() ? 
+                    m(popNotification, {
+                        message: m.trust(state.error()),
+                        toggleOpt: state.showError,
+                        error: true
+                    }) 
+                : 
+                    ''
+            ),
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('div', [
                     m('.w-container',
                         (
