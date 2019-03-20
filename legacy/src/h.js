@@ -906,8 +906,10 @@ const
         path: '/assets/redactor-rails',
         css: 'style.css'
     }),
-    setRedactor = prop => (el, isInit) => {
+    setRedactor = (prop, isInit=false) => //(el, isInit) => {
+    (vnode) => {
         if (!isInit) {
+            const el = vnode.dom;
             const $editor = window.$(el);
             const csrf_token = authenticityToken();
             const csrf_param = authenticityParam();
@@ -926,7 +928,9 @@ const
     },
 
     redactor = (name, prop) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
-        name, config: setRedactor(prop)
+        name, 
+        //config: setRedactor(prop)
+        oncreate: setRedactor(prop)
     }),
 
     setCsrfToken = (xhr) => {
