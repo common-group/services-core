@@ -18,10 +18,17 @@ const userPrivateContributed = {
             failedPages = catarse.paginationVM(models.userContribution),
             error = prop(false),
             loader = prop(true),
+            requestCountdown = prop(4),
+            requestRedraw = () => {
+                requestCountdown(Math.max(0, requestCountdown() - 1));
+                if (requestCountdown() == 0) {
+                    m.redraw();
+                }
+            },
             handleError = () => {
                 error(true);
                 loader(false);
-                m.redraw();
+                requestRedraw();
             },
             contextVM = catarse.filtersVM({
                 user_id: 'eq',
@@ -40,26 +47,30 @@ const userPrivateContributed = {
             created_at: 'desc'
         });
 
-        subscriptions.firstPage(contextSubVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        subscriptions.firstPage(contextSubVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 
         contextVM.project_state(['online', 'waiting_funds']);
-        onlinePages.firstPage(contextVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        onlinePages.firstPage(contextVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         contextVM.project_state(['failed']);
-        failedPages.firstPage(contextVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        failedPages.firstPage(contextVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         contextVM.project_state(['successful']).state(['paid', 'refunded', 'pending_refund']);
-        successfulPages.firstPage(contextVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        successfulPages.firstPage(contextVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         vnode.state = {
             subscriptions,
