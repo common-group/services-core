@@ -37,7 +37,7 @@ const userBalanceMain = {
                 };
             })(),
 
-              // Handles with user balance transactions list data
+            // Handles with user balance transactions list data
             balanceTransactionManager = (() => {
                 const listVM = catarse.paginationVM(models.balanceTransaction, 'created_at.desc'),
                     load = () => {
@@ -54,7 +54,7 @@ const userBalanceMain = {
                 };
             })(),
 
-              // Handles with bank account to check
+            // Handles with bank account to check
             bankAccountManager = (() => {
                 const collection = prop([]),
                     loader = (() => catarse.loaderWithToken(

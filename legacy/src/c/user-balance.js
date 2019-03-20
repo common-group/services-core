@@ -35,10 +35,15 @@ const userBalance = {
             ];
 
         return m('.w-section.section.user-balance-section', [
-            (state.displayModal() ? m(modalBox, {
-                displayModal: state.displayModal,
-                content: balanceRequestModalC
-            }) : ''),
+            (
+                state.displayModal() ? 
+                    m(modalBox, {
+                        displayModal: state.displayModal,
+                        content: balanceRequestModalC
+                    }) 
+                : 
+                    ''
+            ),
             m('.w-container', [
                 m('.card.card-terciary.u-radius.w-row', [
                     m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [
@@ -66,7 +71,6 @@ const userBalance = {
                         m('.fontcolor-secondary.fontsize-smallest.lineheight-tight',
                           balance.has_cancelation_request ? window.I18n.t('withdraw_canceling_msg', I18nScope()) : window.I18n.t('withdraw_limits_msg', I18nScope())
                         )
-
                     ])
                 ])
             ])
