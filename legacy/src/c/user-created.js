@@ -4,7 +4,7 @@ import models from '../models';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
-import userVM from '../vms/user-vm';
+import userCreatedProjects from '../vms/user-created-projects-vm';
 import inlineError from './inline-error';
 import loadMoreBtn from './load-more-btn';
 import projectCard from './project-card';
@@ -12,48 +12,32 @@ import projectCard from './project-card';
 const userCreated = {
     oninit: function(vnode) {
         const user_id = vnode.attrs.userId,
-            showDraft = vnode.attrs.showDraft || false,
-            error = prop(false),
-            pages = catarse.paginationVM(models.project),
-            loader = h.autoRedrawProp(true),
-            contextVM = catarse.filtersVM({
-                project_user_id: 'eq',
-                state: 'in'
-            });
+            showDraft = vnode.attrs.showDraft || false;
 
         const states = ['online', 'waiting_funds', 'successful', 'failed'];
         if (showDraft) {
             states.push('draft');
         }
-        contextVM.state(states).project_user_id(user_id).order({
-            updated_at: 'desc'
-        });
 
-        models.project.pageSize(9);
-        pages.firstPage(contextVM.parameters()).then((data) => {
-            loader(false);
-        }).catch((err) => {
-            error(true);
-            loader(false);
-        });
+        const projects = userCreatedProjects.getCreatedProjects(user_id, states);
+        projects.firstPage();
 
         vnode.state = {
-            projects: pages,
-            loader,
-            error
+            projects
         };
     },
     view: function({state, attrs}) {
         const projects_collection = state.projects.collection();
+        const isLoadingProjects = state.projects.isLoading();
+        const hasError = state.projects.error();
 
         return m('.content[id=\'created-tab\']',
             (
-                state.error() ? 
+                hasError ? 
                     m(inlineError, { message: 'Erro ao carregar os projetos.' }) 
-                : 
-                
+                :
                     (
-                        !state.loader() ? 
+                        !isLoadingProjects ? 
                             [
                                 (
                                     !_.isEmpty(projects_collection) ? 
