@@ -32,6 +32,35 @@ module V1
         render status: 200, json: { deleted: 'OK' }
       end
 
+      def subscriptions_monthly_report_for_project_owners
+        authorize resource, :update?
+        report = CommonModels::SubscriptionMonthlyReportForProjectOwner.project_id(
+          resource.id
+        ).to_csv
+
+        respond_to do |format|
+          format.csv { send_data  report}
+          format.xls do
+            send_data Excelinator.csv_to_xls(report)
+          end
+        end
+      end
+
+      def subscriptions_report_for_project_owners
+        authorize resource, :update?
+        report = SubscriptionReportForProjectOwner.project_id(
+          resource.id
+        ).to_csv
+
+        respond_to do |format|
+          format.csv { send_data  report}
+          format.xls do
+            send_data Excelinator.csv_to_xls(report)
+          end
+        end
+      end
+
+
       private
 
       def resource
