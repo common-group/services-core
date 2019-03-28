@@ -125,13 +125,22 @@ const projectEdit = {
     view: function({state, attrs}) {
         const project = state.project;
 
-        return m('.project-dashboard-edit', (project() ? [
-            m(`.w-section.section-product.${project().mode}`),
-            state.displayTabContent(),
-            (project() ? m(projectDashboardMenu, {
-                project
-            }) : '')
-        ] : ''));
+        return m('.project-dashboard-edit', 
+            (
+                project() ? [
+                        m(`.w-section.section-product.${project().mode}`),
+                        state.displayTabContent(),
+                        (
+                            project() ? 
+                                m(projectDashboardMenu, { project }) 
+                            : 
+                                ''
+                        )
+                    ] 
+                : 
+                    ''
+            )
+        );
     }
 };
 
