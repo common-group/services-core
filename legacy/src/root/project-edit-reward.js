@@ -18,21 +18,23 @@ const projectEditReward = {
             error = prop(false),
             errors = prop([]),
             showSuccess = prop(false),
-            newReward = () => ({
-                id: prop(null),
-                minimum_value: prop(null),
-                title: prop(''),
-                shipping_options: prop('free'),
-                edit: h.toggleProp(true, false),
-                deliver_at: prop(moment().date(1).format()),
-                description: prop(''),
-                paid_count: prop(0),
-                waiting_payment_count: prop(0),
-                limited: h.toggleProp(false, true),
-                maximum_contributions: prop(null),
-                newReward: true,
-                row_order: prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
-            });
+            newReward = () => {
+                return {
+                    id: prop(null),
+                    minimum_value: prop(null),
+                    title: prop(''),
+                    shipping_options: prop('free'),
+                    edit: h.toggleProp(true, false),
+                    deliver_at: prop(moment().date(1).format()),
+                    description: prop(''),
+                    paid_count: prop(0),
+                    waiting_payment_count: prop(0),
+                    limited: h.toggleProp(false, true),
+                    maximum_contributions: prop(null),
+                    newReward: true,
+                    row_order: prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
+                }
+            };
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
             method: 'POST',
@@ -74,12 +76,18 @@ const projectEditReward = {
                     title: prop(reward.title),
                     waiting_payment_count: prop(reward.waiting_payment_count)
                 });
-                rewards().push(rewardProp);
+                const rewardsArray = rewards();
+                rewardsArray.push(rewardProp);
+                rewards(rewardsArray);
             });
 
             if (rewardVM.rewards().length === 0) {
-                rewards().push(prop(newReward()));
+                rewards([ prop(newReward())]);
             }
+
+            // const l = rewards();
+
+            m.redraw();
         });
 
         const tips = window.I18n.translations[window.I18n.currentLocale()].projects.reward_fields.faq;
@@ -159,7 +167,10 @@ const projectEditReward = {
                                 ]),
                                 rewardVM.canAdd(project().state, state.user()) ? [
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                        onclick: () => state.rewards().push(prop(state.newReward()))
+                                        onclick: () => {
+                                            console.log()
+                                            state.rewards().push(prop(state.newReward()))
+                                        }
                                     },
                                         window.I18n.t('add_reward', I18nScope())
                                     )

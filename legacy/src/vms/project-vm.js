@@ -57,7 +57,10 @@ const init = (project_id, project_user_id) => {
 
     fetchParallelData(project_id, project_user_id);
 
-    return lProject.load().then(setProject(project_user_id));
+    return lProject
+        .load()
+        .then(setProject(project_user_id))
+        .then(_ => m.redraw());
 };
 
 const resetData = () => {
@@ -124,7 +127,15 @@ const fetchProject = (projectId, handlePromise = true, customProp = currentProje
 
     const lproject = catarse.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
 
-    return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
+    if (!handlePromise) {
+        return lproject.load();
+    } else {
+        lproject
+            .load()
+            .then(_.compose(customProp, _.first))
+            .then(_ => m.redraw());
+        return customProp;
+    }
 };
 
 

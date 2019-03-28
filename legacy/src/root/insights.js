@@ -76,7 +76,7 @@ const insights = {
                 (
                     state.load() ?
                     m(projectInsightsSub, {
-                        args,
+                        attrs,
                         subscribersDetails,
                         project,
                         l: state.isProjectNotLoader,
@@ -86,7 +86,7 @@ const insights = {
                     :
                 (
                     m(projectInsights, {
-                        args,
+                        attrs,
                         project,
                         l: state.isProjectNotLoader,
                         filtersVM: state.filtersVM

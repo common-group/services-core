@@ -27,7 +27,7 @@ const projectPreview = {
                     ])
                 )
             ),
-            m(projectsShow, args)
+            m(projectsShow, attrs)
         ]) : h.loader();
     }
 };
