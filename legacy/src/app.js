@@ -3,6 +3,7 @@ import h from './h';
 import _ from 'underscore';
 import c from './c';
 import Chart from 'chart.js';
+import { isNumber } from 'util';
 
 (function () {
     Chart.defaults.global.responsive = true;
@@ -199,13 +200,31 @@ import Chart from 'chart.js';
             [urlWithLocale('/jobs')]: wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
             '/jobs': wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
             '/press': wrap(c.root.Press, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/press')]: wrap(c.root.Press, { menuTransparency: true, footerBig: true })
+            [urlWithLocale('/press')]: wrap(c.root.Press, { menuTransparency: true, footerBig: true }),
+
+            [urlWithLocale('/projects/:project_id/publish')]: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true  }),
+            ['/projects/:project_id/publish']: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true  })
         });
     }
-    _.each(document.querySelectorAll('div[data-mithril]'), (el) => {
-        const component = c.root[el.attributes['data-mithril'].value],
-            paramAttr = el.attributes['data-parameters'],
-            params = paramAttr && JSON.parse(paramAttr.value);
-        m.mount(el, m(component, _.extend({ root: el }, params)));
-    });
+
+    // TON >>>>>>>>>
+    // _.each(document.querySelectorAll('div[data-mithril]'), (el) => {
+    //     console.log('value', el.attributes['data-mithril'].value);
+    //     console.log('params', el.attributes['data-parameters']);
+    //     const 
+    //         component = c.root[el.attributes['data-mithril'].value],
+    //         paramAttr = el.attributes['data-parameters'],
+    //         params = paramAttr && JSON.parse(paramAttr.value);
+
+    //         const classes = `.${el.classList.value.replace(/\s/g, '.')}`;
+    //         const nodeName = el.nodeName.toLocaleLowerCase();
+    //         const attributes = el.attributes
+    //     console.log(el)
+    //     console.log(classes);
+    //     console.log(nodeName);
+    //     console.log(attributes);
+
+        
+    //     m(el, m(component, _.extend({ root: el }, params)));
+    // });
 }());

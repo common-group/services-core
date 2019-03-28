@@ -131,7 +131,16 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
 
     const lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
-    return !handlePromise ? lUser.load() : lUser.load().then(_.compose(customProp, _.first));
+    if (!handlePromise) {
+        return lUser
+            .load();
+    } else {
+        lUser
+            .load()
+            .then(_.compose(customProp, _.first))
+            .then(_ => m.redraw());
+        return customProp;
+    }
 };
 
 const getCurrentUser = () => {
