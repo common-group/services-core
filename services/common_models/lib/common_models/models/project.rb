@@ -19,10 +19,10 @@ module CommonModels
 
     scope :with_states, ->(state) { with_state(state) }
 
-    validates_presence_of :name, :user, :service_fee
+    validates_presence_of :name, :user#, :service_fee
     validates_length_of :headline, maximum: HEADLINE_MAXLENGTH
     validates_numericality_of :goal, greater_than: 9, allow_blank: true
-    validates_numericality_of :service_fee, greater_than: 0, less_than_or_equal_to: 1
+    #validates_numericality_of :service_fee, greater_than: 0, less_than_or_equal_to: 1
     validates_uniqueness_of :permalink, case_sensitive: false
     validates_format_of :permalink, with: /\A(\w|-)*\Z/
     validates_presence_of :permalink, allow_nil: true
