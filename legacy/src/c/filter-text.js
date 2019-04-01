@@ -4,7 +4,7 @@ const filterText = {
     view: function ({attrs}) {
         const buttonOptions = {};
 
-        if ('onclick' in args)
+        if ('onclick' in attrs)
             buttonOptions.onclick = attrs.onclick;
 
         return m(attrs.wrapper_class, [

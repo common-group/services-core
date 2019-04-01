@@ -40,6 +40,7 @@ const insights = {
                     subscribersDetails(subData); 
                     load(true); 
                     isProjectNotLoader(false);
+                    m.redraw();
                 });
             }
             else {

@@ -35,6 +35,7 @@ const projectInsightsSub = {
         const lastWeekTransitions = prop([]);
         const subscriptionsPerMonth = prop([]);
         const isSubscriptionsPerMonthLoaded = prop(false);
+        const balanceData = prop(null);
         const subVM = commonAnalytics.filtersVM({
             project_id: 'eq'
         });
@@ -44,31 +45,61 @@ const projectInsightsSub = {
                 visitorsTotal(_.first(data).total);
             }
         };
+        const requestRedraw = h.createRequestAutoRedraw(
+            weekSubscriptions,
+            subscriptionsPerDay,
+            lastWeekSubscriptions,
+            weekTransitions,
+            lastWeekTransitions,
+            subscriptionsPerMonth,
+            isSubscriptionsPerMonthLoaded,
+            balanceData
+        );
 
         subVM.project_id(vnode.attrs.project.common_id);
         const lVisitorsPerDay = visitorLoader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
-        lVisitorsPerDay.load().then(processVisitors);
+        lVisitorsPerDay
+            .load()
+            .then(processVisitors)
+            .then(requestRedraw);
 
         const lSubscriptionsPerDay = loader(models.projectSubscriptionsPerDay.getRowOptions(subVM.parameters()));
-        lSubscriptionsPerDay.load().then(subscriptionsPerDay);
+        lSubscriptionsPerDay
+            .load()
+            .then(subscriptionsPerDay)
+            .then(requestRedraw);
 
-        subscriptionVM.getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
-            .then(weekSubscriptions);
-        subscriptionVM.getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
-            .then(lastWeekSubscriptions);
+        subscriptionVM
+            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+            .then(weekSubscriptions)
+            .then(requestRedraw);
 
-        subscriptionVM.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
-            .then(weekTransitions);
-        subscriptionVM.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
-            .then(lastWeekTransitions);
-        subscriptionVM.getSubscriptionsPerMonth(vnode.attrs.project.common_id)
+        subscriptionVM
+            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .then(lastWeekSubscriptions)
+            .then(requestRedraw);
+
+        subscriptionVM
+            .getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+            .then(weekTransitions)
+            .then(requestRedraw);
+
+        subscriptionVM
+            .getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .then(lastWeekTransitions)
+            .then(requestRedraw);
+
+        subscriptionVM
+            .getSubscriptionsPerMonth(vnode.attrs.project.common_id)
             .then((subscriptions) => {
                 subscriptionsPerMonth(subscriptions);
                 isSubscriptionsPerMonthLoaded(true);
+                requestRedraw();
             });
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
         const balanceLoader = userVM.getUserBalance(vnode.attrs.project.user_id);
+        balanceLoader.then(balanceData).then(requestRedraw);
 
         vnode.state = {
             weekSubscriptions,
@@ -83,6 +114,7 @@ const projectInsightsSub = {
             visitorsTotal,
             visitorsPerDay,
             balanceLoader,
+            balanceData,
             isSubscriptionsPerMonthLoaded
         };
     },
@@ -94,7 +126,7 @@ const projectInsightsSub = {
         const canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         const project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
-            balanceData = (state.balanceLoader() && !_.isNull(_.first(state.balanceLoader())) ? _.first(state.balanceLoader()) : null);
+            balanceData = (state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null);
         const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : null;
 
         return m('.project-insights', !attrs.l() ? [

@@ -2,11 +2,11 @@ import m from 'mithril';
 
 const anonymousBadge = {
 
-    view: function(ctrl, args) {
+    view: function({attrs}) {
         
-        if (args.isAnonymous) {
+        if (attrs.isAnonymous) {
             return m('span.fa.fa-eye-slash.fontcolor-secondary', 
-                m('span.fontcolor-secondary[style="font-size:11px;"]', args.text)
+                m('span.fontcolor-secondary[style="font-size:11px;"]', attrs.text)
             );
         }
         else {
