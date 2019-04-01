@@ -35,6 +35,13 @@ const surveysShow = {
             multipleChoiceQuestions = prop([]),
             user = prop({}),
             reward = prop(),
+            countDownToRedraw = prop(2),
+            requestRedraw = () => {
+                countDownToRedraw(Math.max(0, countDownToRedraw() - 1));
+                if (countDownToRedraw() <= 0) {
+                    m.redraw();
+                }
+            },
             sendMessage = () => {
                 displayModal(true);
             },
@@ -111,6 +118,7 @@ const surveysShow = {
                         fields({
                             address: prop(surveyData.address || _.omit(user().address, 'id') || {})
                         });
+                        requestRedraw();
                     });
 
                     _.map(surveyData.open_questions, (question) => {
@@ -125,6 +133,8 @@ const surveysShow = {
                             value: prop(question.survey_question_choice_id)
                         });
                     });
+
+                    requestRedraw();
                 });
             }
         };

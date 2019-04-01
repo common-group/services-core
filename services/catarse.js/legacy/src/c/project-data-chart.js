@@ -30,15 +30,13 @@ const projectDataChart = {
                 pointHighlightStroke: 'rgba(220,220,220,1)',
                 data: _.map(source, item => item[vnode.attrs.dataKey])
             }],
-            renderChart = (element, isInitialized) => {
-                if (!isInitialized) {
-                    const ctx = element.getContext('2d');
+            renderChart = (vnodeCanvas) => {
+                const ctx = vnodeCanvas.dom.getContext('2d');
 
-                    new Chart(ctx).Line({
-                        labels: vnode.attrs.xAxis ? _.map(source, item => vnode.attrs.xAxis(item)) : [],
-                        datasets: mountDataset()
-                    });
-                }
+                new Chart(ctx).Line({
+                    labels: vnode.attrs.xAxis ? _.map(source, item => vnode.attrs.xAxis(item)) : [],
+                    datasets: mountDataset()
+                });
             };
 
         vnode.state = {
@@ -53,7 +51,7 @@ const projectDataChart = {
             m('.w-row', [
                 m('.w-col.w-col-12.overflow-auto', [
                     !_.isEmpty(state.source) ? m('canvas[id="chart"][width="860"][height="300"]', {
-                        config: state.renderChart
+                        oncreate: state.renderChart
                     }) : m('.w-col.w-col-8.w-col-push-2', m('p.fontsize-base', attrs.emptyState))
                 ]),
             ])

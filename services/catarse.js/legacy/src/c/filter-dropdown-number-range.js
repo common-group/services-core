@@ -31,9 +31,9 @@ const innerFieldInput = {
 
         let inputExtraProps = '';
 
-        if ('min' in args) inputExtraProps += `[min='${attrs.min}']`;
-        if ('max' in args) inputExtraProps += `[max='${attrs.max}']`;
-        if ('placeholder' in args) inputExtraProps += `[placeholder='${attrs.placeholder}']`;
+        if ('min' in attrs) inputExtraProps += `[min='${attrs.min}']`;
+        if ('max' in attrs) inputExtraProps += `[max='${attrs.max}']`;
+        if ('placeholder' in attrs) inputExtraProps += `[placeholder='${attrs.placeholder}']`;
         else inputExtraProps += `[placeholder=' ']`;
 
         return attrs.shouldRenderInnerFieldLabel ? 
@@ -87,7 +87,16 @@ const filterDropdownNumberRange = {
                 return placeholder;
             },
             showDropdown = h.toggleProp(false, true);
-        return {firstValue, secondValue, clearFieldValues, getLowerValue, getHigherValue, renderPlaceholder, showDropdown};
+        
+        vnode.state = {
+            firstValue, 
+            secondValue, 
+            clearFieldValues, 
+            getLowerValue, 
+            getHigherValue, 
+            renderPlaceholder, 
+            showDropdown
+        };
     },
     view: function ({state, attrs}) {
         
@@ -103,7 +112,7 @@ const filterDropdownNumberRange = {
             state.showDropdown.toggle();
         };
         
-        if ('dropdown_inline_style' in args) {
+        if ('dropdown_inline_style' in attrs) {
             dropdownOptions.style = attrs.dropdown_inline_style;
         }
 

@@ -25,6 +25,7 @@ const projectContributionReport = {
             rewards = prop([]),
             showDownloads = prop(false),
             contributionStateOptions = prop([]),
+            requestRedraw = h.createRequestAutoRedraw(project, rewards),
             reloadSelectOptions = (projectState) => {
                 let opts = [{
                     value: '',
@@ -79,9 +80,9 @@ const projectContributionReport = {
             },
             submit = () => {
                 if (filterVM.reward_id() === 'null') {
-                    listVM.firstPage(filterVM.withNullParameters()).then(null);
+                    listVM.firstPage(filterVM.withNullParameters()).then(requestRedraw);
                 } else {
-                    listVM.firstPage(filterVM.parameters()).then(null);
+                    listVM.firstPage(filterVM.parameters()).then(requestRedraw);
                 }
 
                 return false;
@@ -202,10 +203,11 @@ const projectContributionReport = {
             project_id: `eq.${filterVM.project_id()}`
         }));
 
-        lReward.load().then(rewards);
+        lReward.load().then(rewards).then(requestRedraw);
         lProject.load().then((data) => {
             project(data);
             reloadSelectOptions(_.first(data).state);
+            requestRedraw();
         });
 
         const mapRewardsToOptions = () => {
@@ -234,7 +236,7 @@ const projectContributionReport = {
             if (m.route.param('rewardId')) {
                 filterVM.reward_id(m.route.param('rewardId'));
             }
-            listVM.firstPage(filterVM.parameters());
+            listVM.firstPage(filterVM.parameters()).then(requestRedraw);
         }
 
         vnode.state = {
