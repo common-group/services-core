@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import prop from 'mithril/stream';
 
 const { CatarseAnalytics } = window;
 
@@ -120,7 +121,7 @@ const setCardType = (e, type) => {
     return type(cardType);
 };
 
-const formatBackCardNumber = (e, prop) => {
+const formatBackCardNumber = (e, cardNumberProp) => {
     let $target,
         value;
     $target = e.currentTarget;
@@ -133,10 +134,10 @@ const formatBackCardNumber = (e, prop) => {
     }
     if (/\d\s$/.test(value)) {
         e.preventDefault();
-        return setTimeout(() => $target.value = prop(value.replace(/\d\s$/, '')));
+        return setTimeout(() => $target.value = cardNumberProp(value.replace(/\d\s$/, '')));
     } else if (/\s\d?$/.test(value)) {
         e.preventDefault();
-        return setTimeout(() => $target.value = prop(value.replace(/\d$/, '')));
+        return setTimeout(() => $target.value = cardNumberProp(value.replace(/\d$/, '')));
     }
 };
 
@@ -167,7 +168,7 @@ const replaceFullWidthChars = (str) => {
     return value;
 };
 
-const safeVal = (value, $target, prop) => {
+const safeVal = (value, $target, cardNumberProp) => {
     let currPair,
         cursor,
         digit,
@@ -182,7 +183,7 @@ const safeVal = (value, $target, prop) => {
         cursor = null;
     }
     last = $target.value;
-    $target.value = prop(value);
+    $target.value = cardNumberProp(value);
     if (cursor !== null && ($target === document.activeElement)) {
         if (cursor === last.length) {
             cursor = value.length;
@@ -200,14 +201,14 @@ const safeVal = (value, $target, prop) => {
     }
 };
 
-const reFormatCardNumber = (e, prop) => {
+const reFormatCardNumber = (e, cardNumberProp) => {
     const $target = e.currentTarget;
     return setTimeout(() => {
         let value;
         value = $target.value;
         value = replaceFullWidthChars(value);
         value = formatCardNumber(value);
-        return safeVal(value, $target, prop);
+        return safeVal(value, $target, cardNumberProp);
     });
 };
 
@@ -235,7 +236,7 @@ const formatCardNumber = function (num) {
     return groups.join(' ');
 };
 
-const formatCardInputNumber = (e, prop) => {
+const formatCardInputNumber = (e, cardNumberProp) => {
     let $target,
         card,
         digit,
@@ -268,10 +269,10 @@ const formatCardInputNumber = (e, prop) => {
     }
     if (re.test(value)) {
         e.preventDefault();
-        return setTimeout(() => $target.value = prop(`${value} ${digit}`));
+        return setTimeout(() => $target.value = cardNumberProp(`${value} ${digit}`));
     } else if (re.test(value + digit)) {
         e.preventDefault();
-        return setTimeout(() => $target.value = prop(`${value + digit} `));
+        return setTimeout(() => $target.value = cardNumberProp(`${value + digit} `));
     }
 };
 
@@ -349,24 +350,24 @@ const restrictCardNumber = (e) => {
     }
     return value.length <= 16;
 };
-const setEvents = (el, cardType, prop) => {
+const setEvents = (el, cardType, cardNumberProp) => {
     el.onkeypress = (event) => {
         restrictNumeric(event);
         restrictCardNumber(event);
-        formatCardInputNumber(event, prop);
+        formatCardInputNumber(event, cardNumberProp);
     };
     el.oninput = (event) => {
-        reFormatCardNumber(event, prop);
+        reFormatCardNumber(event, cardNumberProp);
         setCardType(event, cardType);
     };
-    el.onkeydown = event => formatBackCardNumber(event, prop);
+    el.onkeydown = event => formatBackCardNumber(event, cardNumberProp);
     el.onkeyup = (event) => {
         setCardType(event, cardType);
     };
-    el.onpaste = event => reFormatCardNumber(event, prop);
+    el.onpaste = event => reFormatCardNumber(event, cardNumberProp);
     el.onchange = (event) => {
         CatarseAnalytics.oneTimeEvent({ cat: 'contribution_finish', act: 'contribution_cc_edit' });
-        reFormatCardNumber(event, prop);
+        reFormatCardNumber(event, cardNumberProp);
     };
 };
 
