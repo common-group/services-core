@@ -985,6 +985,18 @@ const
         });
 
         return p;
+    },
+    createRequestRedrawWithCountdown = (countdown) => {
+        countdown = countdown || 0;
+        return () => {
+            countdown = Math.max(0, countdown - 1);
+            if (countdown <= 0) {
+                m.redraw();
+            }
+        }
+    },
+    createRequestAutoRedraw = function() {
+        return createRequestRedrawWithCountdown(arguments.length)
     };
 
 setMomentifyLocale();
@@ -993,6 +1005,8 @@ closeModal();
 checkReminder();
 
 export default {
+    createRequestRedrawWithCountdown,
+    createRequestAutoRedraw,
     autoRedrawProp,
     sleep,
     stripScripts,

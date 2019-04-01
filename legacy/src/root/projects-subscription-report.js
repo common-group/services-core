@@ -43,6 +43,7 @@ const projectSubscriptionReport = {
             isProjectDataLoaded = prop(false),
             isRewardsDataLoaded = prop(false),
             rewards = prop([]),
+            requestRedraw = h.createRequestAutoRedraw(isProjectDataLoaded, rewards),
             subscriptions = commonPayment.paginationVM(models.userSubscription, 'last_payment_data_created_at.desc', {
                 Prefer: 'count=exact'
             }),
@@ -50,9 +51,9 @@ const projectSubscriptionReport = {
                 // Set order by last paid on filters too
                 filterVM.order({ last_payment_data_created_at: 'desc' });
                 if (filterVM.reward_external_id() === 'null') {
-                    subscriptions.firstPage(filterVM.withNullParameters()).then(null);
+                    subscriptions.firstPage(filterVM.withNullParameters()).then(requestRedraw);
                 } else {
-                    subscriptions.firstPage(filterVM.parameters()).then(null);
+                    subscriptions.firstPage(filterVM.parameters()).then(requestRedraw);
                 }
 
                 return false;
@@ -201,6 +202,7 @@ const projectSubscriptionReport = {
                 loader(false);
                 isProjectDataLoaded(true);
                 m.redraw();
+                requestRedraw()
             },
             project = prop([{}]);
 
@@ -213,6 +215,7 @@ const projectSubscriptionReport = {
         lReward.load().then((loadedRewards) => {
             rewards(loadedRewards);
             isRewardsDataLoaded(true);
+            requestRedraw();
         });
         const mapRewardsToOptions = () => {
             let options = [];
@@ -247,6 +250,7 @@ const projectSubscriptionReport = {
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
                 isProjectDataLoaded(true);
+                requestRedraw();
             }).catch(handleError);
             project(data);
         });

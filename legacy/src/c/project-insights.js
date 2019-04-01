@@ -31,7 +31,14 @@ const projectInsights = {
             contributionsPerDay = prop([]),
             visitorsTotal = prop(0),
             visitorsPerDay = prop([]),
-            loader = catarse.loaderWithToken;
+            loader = catarse.loaderWithToken,
+            countDownToRedraw = prop(4),
+            requestRedraw = () => {
+                countDownToRedraw(Math.max(0, countDownToRedraw() - 1));
+                if (countDownToRedraw() <= 0) {
+                    m.redraw();
+                }
+            };
 
         if (h.paramByName('online_success') === 'true') {
             displayModal.toggle();
@@ -45,10 +52,16 @@ const projectInsights = {
         };
 
         const lVisitorsPerDay = catarseMoments.loaderWithToken(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
-        lVisitorsPerDay.load().then(processVisitors);
+        lVisitorsPerDay
+            .load()
+            .then(processVisitors)
+            .then(requestRedraw);
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
-        lContributionsPerDay.load().then(contributionsPerDay);
+        lContributionsPerDay
+            .load()
+            .then(contributionsPerDay)
+            .then(requestRedraw);
 
         const contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
         const buildPerLocationTable = contributions => (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
@@ -66,7 +79,10 @@ const projectInsights = {
         }) : [];
 
         const lContributionsPerLocation = loader(models.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
-        lContributionsPerLocation.load().then(buildPerLocationTable);
+        lContributionsPerLocation
+            .load()
+            .then(buildPerLocationTable)
+            .then(requestRedraw);
 
         const contributionsPerRefTable = [[
             window.I18n.t('ref_table.header.origin', I18nScope()),
@@ -98,7 +114,10 @@ const projectInsights = {
         }) : [];
 
         const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
-        lContributionsPerRef.load().then(buildPerRefTable);
+        lContributionsPerRef
+            .load()
+            .then(buildPerRefTable)
+            .then(requestRedraw);
 
         vnode.state = {
             lContributionsPerRef,

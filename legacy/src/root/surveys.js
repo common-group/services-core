@@ -287,9 +287,7 @@ const surveys = {
                                             // m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.u-marginright-10.w-button'),
                                             (!canBeCreated(reward) && !cannotBeCreated(reward)) ?
                                             m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.w-button[target=\'_blank\']', {
-                                                onclick: () => m.route(`/projects/${project.project_id}/contributions_report`, {
-                                                    rewardId: reward.id
-                                                })
+                                                href : `/projects/${project.project_id}/contributions_report?rewardId=${reward.id}`
                                             }) : ''
                                         ]),
                                         availableAction(reward)
