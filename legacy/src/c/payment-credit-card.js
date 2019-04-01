@@ -166,15 +166,13 @@ const paymentCreditCard = {
 
         const isCreditCardSelected = (card, idx) => selectedCreditCard() === card;
 
-        const loadPagarme = (el, isInit) => {
-            if (!isInit) {
-                const script = document.createElement('script');
-                script.src = '//assets.pagar.me/js/pagarme.min.js';
-                document.body.appendChild(script);
-                script.onload = () => {
-                    vm.pagarme(window.PagarMe);
-                };
-            }
+        const loadPagarme = (vnode) => {
+            const script = document.createElement('script');
+            script.src = '//assets.pagar.me/js/pagarme.min.js';
+            document.body.appendChild(script);
+            script.onload = () => {
+                vm.pagarme(window.PagarMe);
+            };
         };
 
         const selectCreditCard = (card) => {
@@ -251,7 +249,7 @@ const paymentCreditCard = {
         const isInternational = state.vm.isInternational();
 
         return m('.w-form.u-marginbottom-40', {
-            config: state.loadPagarme
+            oncreate: state.loadPagarme
         }, [
             m('form[name="email-form"]', {
                 onsubmit: state.onSubmit
@@ -414,27 +412,32 @@ const paymentCreditCard = {
                             )
                         ])
                     ]),
-                    projectVM.isSubscription() || (state.loadingInstallments() || (state.installments().length <= 1)) ? '' : m('.w-row', [
-                        m('.w-clearfix.w-col.w-col-6', [
-                            m('label.field-label.fontweight-semibold[for="split"]',
-                                window.I18n.t('credit_card.installments', state.scope())
-                            ),
-                            m('select.text-field.text-field-creditcard.w-select[name="split"]', {
-                                onchange: m.withAttr('value', state.selectedInstallment),
-                                value: state.selectedInstallment()
-                            }, _.map(state.installments(), installment => m(`option[value="${installment.number}"]`,
-                                     `${installment.number} X R$ ${ h.formatNumber(installment.amount, 2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, state.scope())}`
-                            ))),
-                            (
-	                            state.selectedInstallment() > 1 ?
-        	                        m('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [
-                	                    window.I18n.t('credit_card.total', state.scope()), `R$ ${state.totalAmountOfInstallment(state.installments(), state.selectedInstallment())}`
-                                	])
-                            	    : ''
-            			    )
-                        ]),
-                        m('.w-col.w-col-6')
-                    ]),
+                    (
+                        (projectVM.isSubscription() || (state.loadingInstallments() || (state.installments().length <= 1))) ? 
+                            '' 
+                        : 
+                            m('.w-row', [
+                                m('.w-clearfix.w-col.w-col-6', [
+                                    m('label.field-label.fontweight-semibold[for="split"]',
+                                        window.I18n.t('credit_card.installments', state.scope())
+                                    ),
+                                    m('select.text-field.text-field-creditcard.w-select[name="split"]', {
+                                        onchange: m.withAttr('value', state.selectedInstallment),
+                                        value: state.selectedInstallment()
+                                    }, _.map(state.installments(), installment => m(`option[value="${installment.number}"]`,
+                                            `${installment.number} X R$ ${ h.formatNumber(installment.amount, 2) } ${window.I18n.t(`credit_card.installments_number.${installment.number}`, state.scope())}`
+                                    ))),
+                                    (
+                                        state.selectedInstallment() > 1 ?
+                                            m('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [
+                                                window.I18n.t('credit_card.total', state.scope()), `R$ ${state.totalAmountOfInstallment(state.installments(), state.selectedInstallment())}`
+                                            ])
+                                            : ''
+                                    )
+                                ]),
+                                m('.w-col.w-col-6')
+                            ])
+                    ),
                     attrs.hideSave ? '' : m('.card.card-terciary.u-radius.u-margintop-30',
                         m('.fontsize-small.w-clearfix.w-checkbox', [
                             m('input#payment_save_card.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
@@ -449,13 +452,28 @@ const paymentCreditCard = {
                 ]),
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', [
-                        !_.isEmpty(state.vm.submissionError()) ? m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
-                            m('.u-marginbottom-10.fontweight-bold', m.trust(state.vm.submissionError()))) : '',
-                        state.vm.isLoading() ? h.loader() : m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value:
-                        state.isSubscriptionEdit() && !attrs.isReactivation()
-                                ? window.I18n.t('subscription_edit', state.scope())
-                                : window.I18n.t('credit_card.finish_payment', state.scope())
-                        }),
+                        (
+                            !_.isEmpty(state.vm.submissionError()) ? 
+                                (
+                                    m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
+                                        m('.u-marginbottom-10.fontweight-bold', m.trust(state.vm.submissionError()))) 
+                                )
+                            : 
+                                ''
+                        ),
+                        (
+                            state.vm.isLoading() ? 
+                                h.loader() 
+                            : 
+                                m('input.btn.btn-large.u-marginbottom-20[type="submit"]', { 
+                                    value: (
+                                        state.isSubscriptionEdit() && !attrs.isReactivation() ? 
+                                            window.I18n.t('subscription_edit', state.scope())
+                                        : 
+                                            window.I18n.t('credit_card.finish_payment', state.scope())
+                                    )
+                                })
+                        ),
                         m('.fontsize-smallest.u-text-center.u-marginbottom-30',
                             m.trust(
                                 window.I18n.t('credit_card.terms_of_use_agreement', state.scope())
