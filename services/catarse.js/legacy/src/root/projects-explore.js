@@ -98,7 +98,10 @@ const projectsExplore = {
             category = _.compose(findCategory, categoryId),
             loadCategories = () => models.category.getPageWithToken(filters({}).order({
                 name: 'asc'
-            }).parameters()).then(categoryCollection),
+            }).parameters()).then(c => {
+                categoryCollection(c);
+                m.redraw();
+            }),
             externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories,
             hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]),
             // just small fix when have two scored projects only
@@ -152,7 +155,9 @@ const projectsExplore = {
                             filter.filter.parameters(),
                             rFilter.parameters(),
                             currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages.firstPage(parameters);
+                        pages
+                            .firstPage(parameters)
+                            .then(_ => m.redraw());
                         return pages;
                     },
 
@@ -166,7 +171,13 @@ const projectsExplore = {
                                 isLastPage: () => true,
                                 nextPage: () => false
                             };
-                        l.load().then(page.collection);
+                        l
+                            .load()
+                            .then(p => {
+                                page.collection(p);
+                                m.redraw();
+                                return p;
+                            });
                         return page;
                     },
 
@@ -182,7 +193,9 @@ const projectsExplore = {
                             score: 'desc',
                             pledged: 'desc'
                         }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages.firstPage(parameters);
+                        pages
+                            .firstPage(parameters)
+                            .then(_ => m.redraw());
                         return pages;
                     },
 
@@ -195,7 +208,9 @@ const projectsExplore = {
                                 state: 'desc',
                                 pledged: 'desc'
                             }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages.firstPage(parameters);
+                        pages
+                            .firstPage(parameters)
+                            .then(_ => m.redraw());
 
                         return pages;
                     };
@@ -517,7 +532,10 @@ const projectsExplore = {
                         m('.w-col.w-col-2.w-col-push-5', [
                             (state.projects().isLastPage() || state.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
                                 onclick: () => {
-                                    state.projects().nextPage();
+                                    state
+                                        .projects()
+                                        .nextPage()
+                                        .then(_ => m.redraw());
                                     return false;
                                 }
                             }, 'Carregar mais')
