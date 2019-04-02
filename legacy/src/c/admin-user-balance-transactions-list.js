@@ -15,7 +15,8 @@ const adminUserBalanceTransactionsList = {
                   models.balanceTransaction,
                   'created_at.desc',
                   { Prefer: 'count=exact' }
-              );
+              ),
+            loadNextPage = () => state.transactionsListVM.nextPage().then(_ => m.redraw());
 
         models.balanceTransaction.pageSize(2);
         userVM.getUserBalance(vnode.attrs.user_id).then(_.compose(userBalance, _.first));
@@ -23,7 +24,8 @@ const adminUserBalanceTransactionsList = {
 
         vnode.state = {
             userBalance,
-            transactionsListVM
+            transactionsListVM,
+            loadNextPage
         };
     },
     view: function({state, attrs}) {
@@ -51,25 +53,29 @@ const adminUserBalanceTransactionsList = {
                 ]),
                 m('.w-row', [
                     _.map(item.source, (source, index) => {
-                        const negativeV = source.amount < 0;
-                        return m('.divider.fontsize-smallest.lineheight-looser.w-row', [
-                            m('.w-col.w-col-2', []),
-                            m('.w-col.w-col-6', [
-                                m('div', window.I18n.t(`event_names.${source.event_name}`, I18nScope({
-                                    service_fee: source.origin_objects.service_fee ? (source.origin_objects.service_fee * 100.0) : '',
-                                    project_name: source.origin_objects.project_name,
-                                    contributitor_name: source.origin_objects.contributor_name
-                                })))
-                            ]),
-                            m('.w-col.w-col-2', [
-                                m((negativeV ? '.text-error' : '.text-success'), [
-                                    negativeV ? '- ' : '+ ',
-                                    window.I18n.t('shared.currency', {
-                                        amount: h.formatNumber(Math.abs(source.amount), 2, 3)
-                                    })
+                        if (source) {
+                            const negativeV = source.amount < 0;
+                            return m('.divider.fontsize-smallest.lineheight-looser.w-row', [
+                                m('.w-col.w-col-2', []),
+                                m('.w-col.w-col-6', [
+                                    m('div', window.I18n.t(`event_names.${source.event_name}`, I18nScope({
+                                        service_fee: source.origin_objects.service_fee ? (source.origin_objects.service_fee * 100.0) : '',
+                                        project_name: source.origin_objects.project_name,
+                                        contributitor_name: source.origin_objects.contributor_name
+                                    })))
+                                ]),
+                                m('.w-col.w-col-2', [
+                                    m((negativeV ? '.text-error' : '.text-success'), [
+                                        negativeV ? '- ' : '+ ',
+                                        window.I18n.t('shared.currency', {
+                                            amount: h.formatNumber(Math.abs(source.amount), 2, 3)
+                                        })
+                                    ])
                                 ])
-                            ])
-                        ]);
+                            ]);
+                        } else {
+                            return '';
+                        }
                     })
                 ])
             ])),
@@ -78,7 +84,7 @@ const adminUserBalanceTransactionsList = {
                     state.transactionsListVM.isLoading() ?
                         h.loader() :
                         m('button#load-more.btn.btn-terciary', {
-                            onclick: state.transactionsListVM.nextPage
+                            onclick: loadNextPage
                         }, window.I18n.t('shared.load_more'))
                 ])
             ])

@@ -7,12 +7,24 @@ const adminList = {
         const list = vnode.attrs.vm.list;
 
         if (!list.collection().length && list.firstPage) {
-            list.firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null).then(null, (serverError) => {
-                vnode.attrs.vm.error(serverError.message);
-            });
+            list
+                .firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null)
+                .then(_ => m.redraw(), (serverError) => {
+                    vnode.attrs.vm.error(serverError.message);
+                });
         }
+
+        const loadNextPage = () => {
+            list
+                .nextPage()
+                .then(_ => m.redraw())
+        };
+
+        vnode.state = {
+            loadNextPage
+        };
     },
-    view: function({attrs}) {
+    view: function({state, attrs}) {
         const list = attrs.vm.list,
             error = attrs.vm.error,
             label = attrs.label || '',
@@ -53,7 +65,7 @@ const adminList = {
                                         list.isLoading() ?
                                         h.loader() :
                                         m('button#load-more.btn.btn-medium.btn-terciary', {
-                                            onclick: list.nextPage
+                                            onclick: state.loadNextPage
                                         }, 'Carregar mais'),
                                     ])
                                 ])

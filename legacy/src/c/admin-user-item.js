@@ -7,7 +7,7 @@ const adminUserItem = {
         return m(
             '.w-row', [
                 m('.w-col.w-col-4', [
-                    m(adminUser, args)
+                    m(adminUser, attrs)
                 ])
             ]
         );
