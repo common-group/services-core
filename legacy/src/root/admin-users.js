@@ -46,9 +46,11 @@ const adminUsers = {
                 }
             }],
             submit = () => {
-                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
-                    error(serverError.message);
-                });
+                listVM
+                    .firstPage(filterVM.parameters())
+                    .then(_ => m.redraw(), (serverError) => {
+                        error(serverError.message);
+                    });
                 return false;
             };
 
