@@ -11,13 +11,16 @@ const adminList = {
                 .firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null)
                 .then(_ => m.redraw(), (serverError) => {
                     vnode.attrs.vm.error(serverError.message);
-                });
+                    m.redraw();
+                })
+                .catch(_ => m.redraw());
         }
 
         const loadNextPage = () => {
             list
                 .nextPage()
                 .then(_ => m.redraw())
+                .catch(_ => m.redraw());
         };
 
         vnode.state = {

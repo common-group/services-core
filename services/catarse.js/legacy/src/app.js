@@ -206,25 +206,4 @@ import { isNumber } from 'util';
             ['/projects/:project_id/publish']: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true  })
         });
     }
-
-    // TON >>>>>>>>>
-    // _.each(document.querySelectorAll('div[data-mithril]'), (el) => {
-    //     console.log('value', el.attributes['data-mithril'].value);
-    //     console.log('params', el.attributes['data-parameters']);
-    //     const 
-    //         component = c.root[el.attributes['data-mithril'].value],
-    //         paramAttr = el.attributes['data-parameters'],
-    //         params = paramAttr && JSON.parse(paramAttr.value);
-
-    //         const classes = `.${el.classList.value.replace(/\s/g, '.')}`;
-    //         const nodeName = el.nodeName.toLocaleLowerCase();
-    //         const attributes = el.attributes
-    //     console.log(el)
-    //     console.log(classes);
-    //     console.log(nodeName);
-    //     console.log(attributes);
-
-        
-    //     m(el, m(component, _.extend({ root: el }, params)));
-    // });
 }());
