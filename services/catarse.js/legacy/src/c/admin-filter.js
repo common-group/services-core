@@ -29,7 +29,10 @@ const adminFilter = {
                         main ? m(main.component, main.data) : '',
                         m('.u-marginbottom-20.w-row',
                             m('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"][type="button"]', {
-                                onclick: state.toggler.toggle
+                                onclick: () => {
+                                    state.toggler.toggle();
+                                    m.redraw();
+                                }
                             }, 'Filtros avançados  >')), (state.toggler() ?
                             m('#advanced-search.w-row.admin-filters', [
                                 _.map(filterBuilder, f => (f.component !== filterMain) ? m(f.component, f.data) : '')
