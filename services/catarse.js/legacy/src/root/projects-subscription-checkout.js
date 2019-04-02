@@ -25,7 +25,10 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 
 const projectsSubscriptionCheckout = {
     oninit: function(vnode) {
+        projectVM.getCurrentProject();
+
         const project = projectVM.currentProject,
+            project_id = m.route.param('project_id'),
             vm = paymentVM(),
             showPaymentForm = prop(false),
             addVM = prop(),
@@ -52,7 +55,7 @@ const projectsSubscriptionCheckout = {
 
         if (_.isNull(currentUserID)) {
             projectVM.storeSubscribeAction(m.route.get());
-            h.navigateToDevise(`?redirect_to=/projects/${m.route.param('project_id')}`);
+            h.navigateToDevise(`?redirect_to=/projects/${project_id}`);
         }
 
         const reward = prop(rewardVM.selectedReward() || rewardVM.noReward);
@@ -67,12 +70,13 @@ const projectsSubscriptionCheckout = {
         const valueParam = m.route.param('contribution_value');
         const rewardIdParam = m.route.param('reward_id');
 
+
         if (valueParam) {
             value = rewardVM.contributionValue(Number(valueParam));
         }
 
         if (rewardIdParam) {
-            rewardVM.fetchRewards(projectVM.getCurrentProject().project_id).then(() => {
+            rewardVM.fetchRewards(project_id).then(() => {
                 reward(_.findWhere(rewardVM.rewards(), { id: Number(rewardIdParam) }));
                 rewardVM.selectedReward(reward());
                 m.redraw();
@@ -133,10 +137,8 @@ const projectsSubscriptionCheckout = {
                 });
         });
 
-
-        projectVM.getCurrentProject();
-
         vnode.state = {
+            project_id,
             addressChange,
             applyDocumentMask,
             fieldHasError,
@@ -161,6 +163,7 @@ const projectsSubscriptionCheckout = {
     },
     view: function({state}) {
         const user = state.user(),
+            project_id = state.project_id,
             addVM = state.addVM(),
             project = state.project(),
             formatedValue = h.formatNumber(state.value, 2, 3),
@@ -204,7 +207,7 @@ const projectsSubscriptionCheckout = {
                             m('.fontsize-larger.text-success.u-left',
                                 `R$ ${formatedValue}`
                             ),
-                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${state.reward().id ? `reward_id=${state.reward().id}` : ''}${state.isEdit() ? `&subscription_id=${state.subscriptionId()}` : ''}${state.subscriptionStatus ? `&subscription_status=${state.subscriptionStatus}` : ''}"]`,
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${project_id}/subscriptions/start?${state.reward().id ? `reward_id=${state.reward().id}` : ''}${state.isEdit() ? `&subscription_id=${state.subscriptionId()}` : ''}${state.subscriptionStatus ? `&subscription_status=${state.subscriptionStatus}` : ''}"]`,
                                 'Editar'
                             )
                         ]),
@@ -351,7 +354,7 @@ const projectsSubscriptionCheckout = {
                         state.showPaymentForm() ? m(paymentForm, {
                             addressVM: addVM,
                             vm: state.vm,
-                            project_id: projectVM.currentProject().project_id,
+                            project_id,
                             isSubscriptionEdit: state.isEdit,
                             isReactivation: state.isReactivation,
                             subscriptionId: state.subscriptionId,
@@ -375,7 +378,7 @@ const projectsSubscriptionCheckout = {
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${state.reward().id ? `reward_id=${state.reward().id}` : ''}${state.isEdit() ? `&subscription_id=${state.subscriptionId()}` : ''}${state.subscriptionStatus ? `&subscription_status=${state.subscriptionStatus}` : ''}"]`,
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${project_id}/subscriptions/start?${state.reward().id ? `reward_id=${state.reward().id}` : ''}${state.isEdit() ? `&subscription_id=${state.subscriptionId()}` : ''}${state.subscriptionStatus ? `&subscription_status=${state.subscriptionStatus}` : ''}"]`,
                                     { oncreate: m.route.link },
                                     window.I18n.t('selected_reward.edit', state.scope())
                                 )
