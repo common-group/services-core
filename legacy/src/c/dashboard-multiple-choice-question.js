@@ -37,7 +37,7 @@ const dashboardMultipleChoiceQuestion = {
         };
     },
     view: function({state, attrs}) {
-        const { question, index } = args;
+        const { question, index } = attrs;
 
         return m('.card.u-marginbottom-30.u-radius.w-form', [
             m('.dashboard-question', [

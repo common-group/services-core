@@ -84,7 +84,7 @@ const adminUserBalanceTransactionsList = {
                     state.transactionsListVM.isLoading() ?
                         h.loader() :
                         m('button#load-more.btn.btn-terciary', {
-                            onclick: loadNextPage
+                            onclick: state.loadNextPage
                         }, window.I18n.t('shared.load_more'))
                 ])
             ])

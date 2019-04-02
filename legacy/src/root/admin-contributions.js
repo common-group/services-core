@@ -122,8 +122,9 @@ const adminContributions = {
             }],
             submit = () => {
                 error(false);
-                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
+                listVM.firstPage(filterVM.parameters()).then(_ => m.redraw(), (serverError) => {
                     error(serverError.message);
+                    m.redraw();
                 });
                 return false;
             },

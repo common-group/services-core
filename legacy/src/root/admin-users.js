@@ -50,6 +50,7 @@ const adminUsers = {
                     .firstPage(filterVM.parameters())
                     .then(_ => m.redraw(), (serverError) => {
                         error(serverError.message);
+                        m.redraw();
                     });
                 return false;
             };
