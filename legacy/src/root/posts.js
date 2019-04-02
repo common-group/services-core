@@ -150,6 +150,7 @@ const posts = {
         listVM.load().then((posts) => {
             projectPosts(posts);
             isProjectPostsLoaded(true);
+            m.redraw();
         });
 
         const filterOnlyPaidRewards = (r) => {
@@ -169,6 +170,7 @@ const posts = {
                 };
             });
 
+            m.redraw();
             fields.paid_rewards(checkboxesArray);
             return rewards;
         };
@@ -182,9 +184,15 @@ const posts = {
         l.load().then((data) => {
             projectDetails(data);
             if (projectVM.isSubscription(_.first(projectDetails()))) {
-                rewardVM.fetchCommonRewards(_.first(projectDetails()).common_id).then(remapMinimumValue).then(createCheckboxesControlForRewardSelected);
+                rewardVM
+                    .fetchCommonRewards(_.first(projectDetails()).common_id)
+                    .then(remapMinimumValue)
+                    .then(createCheckboxesControlForRewardSelected);
             } else {
-                rewardVM.fetchRewards(project_id).then(addDataFieldToNoCommonRewards).then(createCheckboxesControlForRewardSelected);
+                rewardVM
+                    .fetchRewards(project_id)
+                    .then(addDataFieldToNoCommonRewards)
+                    .then(createCheckboxesControlForRewardSelected);
             }
 
             isProjectLoaded(true);
