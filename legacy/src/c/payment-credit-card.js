@@ -484,7 +484,7 @@ const paymentCreditCard = {
                 state.showSubscriptionModal()
                     ? m(subscriptionEditModal,
                         {
-                            args,
+                            attrs,
                             vm: state.vm,
                             showModal: state.showSubscriptionModal,
                             confirm: state.subscriptionEditConfirmed,

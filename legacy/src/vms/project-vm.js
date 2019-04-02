@@ -80,21 +80,26 @@ const fetchParallelData = (projectId, projectUserId) => {
 // FIXME: should work with data-parameters that don't have project struct
 // just ids: {project_id project_user_id user_id }
 const getCurrentProject = () => {
-    const root = document.getElementById('application'),
-        data = root && root.getAttribute('data-parameters');
+    const root = document.getElementById('application');
+    const data = root && root.getAttribute('data-parameters');
 
     if (data) {
         const jsonData = JSON.parse(data);
-
+            
         const { projectId, projectUserId } = jsonData; // legacy
         const { project_id, project_user_id } = jsonData;
 
+        const project_data = {
+            project_id : (project_id || projectId),
+            project_user_id : (project_user_id || projectUserId)
+        };
+
         // fill currentProject when jsonData has id and mode (legacy code)
         if (jsonData.id && jsonData.mode) {
-            currentProject(jsonData);
+            currentProject(project_data);
         }
 
-        init((project_id || projectId), (project_user_id || projectUserId));
+        init(project_data.project_id, project_data.project_user_id);
 
         m.redraw();
 
