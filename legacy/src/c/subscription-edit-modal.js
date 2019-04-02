@@ -23,7 +23,7 @@ const subscriptionEditModal = {
     },
     view: function({state, attrs}) {
         const vmIsLoading = attrs.vm.isLoading;
-        const newSubscription = attrs.args;
+        const newSubscription = attrs.attrs;
         const oldSubscription = attrs.attrs.oldSubscription;
 
         return newSubscription && oldSubscription ? m('.modal-backdrop',
