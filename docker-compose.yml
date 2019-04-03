@@ -80,6 +80,7 @@ services:
     volumes:
       - ./services/service-core-db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./services/service-core-db/sample.seed.sql:/sample.seed.sql
+      - ./services/service-core-db/setup_fdw_grants.sql.example:/setup_fdw_grants.sql
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5444:5432"
