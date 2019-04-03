@@ -1,0 +1,2 @@
+grant usage on schema payment_service to catarse_fdw;
+grant select on all tables in schema payment_service to catarse_fdw;
