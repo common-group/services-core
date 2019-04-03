@@ -77,7 +77,7 @@ const projectGoalsEdit = {
                                     m('.fontsize-smaller', [
                                         'As metas mensais são a melhor maneira de informar aos seus assinantes como os recursos arrecadados mensalmente serão usados e o que vocês estão conquistando juntos.',
                                         m.trust('&nbsp;'),
-                                        'Lembre-se: uma vez que a arrecadação for iniciada, você não poderá mais alterar a sua meta de arrecadação inicial.'
+                                        'Você pode alterar suas metas a qualquer momento durante sua campanha.'
                                     ])
                                 ]),
                                 _.map(ctrl.goals(), (goal) => {

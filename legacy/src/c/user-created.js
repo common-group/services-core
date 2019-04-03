@@ -80,7 +80,7 @@ const userCreated = {
                     m('.w-row.u-marginbottom-40.u-margintop-30', [
                         m(loadMoreBtn, {
                             collection: ctrl.projects,
-                            cssClass: '.w-col-push-5'
+                            cssClass: '.w-col-push-4'
                         })
                     ]) : '')
             ] : h.loader())
