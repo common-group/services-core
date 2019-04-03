@@ -172,6 +172,19 @@ const rewardSelectCard = {
                     reward.title
                 ),
                 m('.back-reward-reward-description', [
+                    (
+                        reward.uploaded_image ? 
+                            (
+                                m("div.u-marginbottom-20.w-row", [
+                                    m("div.w-col.w-col-8", 
+                                        m(`img[src='${reward.uploaded_image}'][alt='']`)
+                                    ),
+                                    m("div.w-col.w-col-4")
+                                ])
+                            )
+                        :
+                            ''
+                    ),
                     m('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description),
                     m('.u-marginbottom-20.w-row', [!reward.deliver_at || args.isSubscription ? '' : m('.w-col.w-col-6', [
                         m('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'),
