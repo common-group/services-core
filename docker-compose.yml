@@ -371,7 +371,7 @@ services:
     ports:
       - "3011:3011"
       - "3012:3012"
-    command: ["mdbook", "serve", "-p", "3011", "-w", "3012", "-i", "0.0.0.0"]
+    command: ["mdbook", "serve", "-p", "3011", "-w", "3012", "-n", "0.0.0.0"]
     networks:
       cluster:
         ipv4_address: 10.0.1.60
