@@ -24,7 +24,7 @@ module.exports = {
     devServer: {
         contentBase: './dist'
     },
-    devtool: isProd ? false : 'inline-source-map',
+    devtool: isProd ? false : 'source-map',
     output: {
       filename: 'catarse.js',
       path: path.resolve(__dirname, 'dist'),
