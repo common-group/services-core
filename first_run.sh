@@ -2,7 +2,7 @@
 set -x
 
 # check if service core db and catarse db are up
-docker-compose up -d service_core_db catarse_db catarse
+docker-compose up -d service_core_db catarse_db
 
 #wait small time 
 sleep 5
@@ -13,12 +13,12 @@ docker-compose up migrations
 #docker-compose exec service_core_db psql -d service_core -h localhost -U postgres < /sample.seed.sql
 psql -h localhost -p 5444 -U postgres service_core < services/service-core-db/sample.seed.sql
 
+# running catarse migrations
+docker-compose up catarse_migrations
+
 # up catarse rails
 docker-compose up -d catarse
 sleep 10
-
-# running catarse migrations
-docker-compose exec catarse bundle exec rake db:migrate
 
 # running dev demo settings
 docker-compose exec catarse bundle exec rake dev_seed:demo_settings
