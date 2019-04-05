@@ -12,11 +12,14 @@ describe('UserSubscriptionBox', () => {
             paymentInfoData = PaymentInfoMockery({
                 "boleto_expiration_date": '2018-06-20T00:00:00'
             }); // generate with a fixed pass date to avoid yesterday fixed timestamp
+
+            console.log('paymentInfoData', paymentInfoData);
             $subscriptionVersionWithNewDataShow = mq(m(userSubscriptionBox, {
                 subscription: _.extend({}, subscriptionData, {
                     boleto_url: paymentInfoData.boleto_url,
                     boleto_expiration_date: paymentInfoData.boleto_expiration_date,
-                    payment_status: paymentInfoData.status
+                    payment_status: paymentInfoData.status,
+                    status: 'active'
                 })
             }));
         });

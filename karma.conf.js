@@ -14,7 +14,7 @@ module.exports = (config) => {
             'node_modules/mithril/mithril.js',
             'node_modules/underscore/underscore.js',
             'node_modules/liquidjs/dist/liquid.js',
-            'node_modules/mithril-postgrest/dist/mithril-postgrest.js',
+            'node_modules/mithril-postgrest/mithril-postgrest.umd.js',
             'node_modules/chart.js/Chart.js',
             'node_modules/moment/moment.js',
             'node_modules/select/dist/select.js',
@@ -32,7 +32,12 @@ module.exports = (config) => {
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
-        browsers: ['ChromeHeadless'],
-        singleRun: true
+        // browsers: ['ChromeHeadless'],
+        //singleRun: true,
+        browsers: ['Chrome'],
+        singleRun: false,
+        webpack: {
+            mode: 'development'
+        }
     });
 };
