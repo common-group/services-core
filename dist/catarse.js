@@ -6846,6 +6846,46 @@ var dashboardRewardCard = {
                 _mithril2.default.redraw();
             });
             return false;
+        },
+            onSelectImageFile = function onSelectImageFile() {
+            var rewardImageFile = window.document.getElementById('reward_image_file_closed_card_' + args.index);
+            if (rewardImageFile.files.length) {
+
+                imageFileToUpload(rewardImageFile.files[0]);
+                isUploadingRewardImage(true);
+                args.uploadImage(reward, imageFileToUpload, args.project().id, reward.id()).then(function (r_with_image) {
+                    if (r_with_image) {
+                        reward.uploaded_image(r_with_image.uploaded_image);
+                        imageFileToUpload(null);
+                        args.showSuccess(true);
+                    }
+                    isUploadingRewardImage(false);
+                }).catch(function (error) {
+                    args.showSuccess(false);
+                    isUploadingRewardImage(false);
+                });
+            }
+        },
+            tryDeleteImage = function tryDeleteImage() {
+
+            if (reward.newReward || imageFileToUpload()) {
+                reward.uploaded_image(null);
+                imageFileToUpload(null);
+            } else {
+                isDeletingRewardImage(true);
+                args.deleteImage(reward, args.project().id, reward.id()).then(function (r) {
+                    if (r) {
+                        imageFileToUpload(null);
+                        reward.uploaded_image(null);
+                    }
+                    isDeletingRewardImage(false);
+                }).catch(function (error) {
+                    // TODO: Show error on deleting the image
+                    isDeletingRewardImage(false);
+                    _mithril2.default.redraw();
+                    console.log('herer');
+                });
+            }
         };
 
         vnode.state = {
@@ -6854,7 +6894,12 @@ var dashboardRewardCard = {
             toggleLimit: toggleLimit,
             saveReward: saveReward,
             showLimited: showLimited,
-            limitError: limitError
+            limitError: limitError,
+
+            onSelectImageFile: onSelectImageFile,
+            tryDeleteImage: tryDeleteImage,
+            isUploadingRewardImage: isUploadingRewardImage,
+            isDeletingRewardImage: isDeletingRewardImage
         };
     },
     view: function view(_ref) {
@@ -6864,6 +6909,8 @@ var dashboardRewardCard = {
         var reward = attrs.reward();
         var project = attrs.project();
         var isSubscription = _projectVm2.default.isSubscription(project);
+        var isUploadingRewardImage = ctrl.isUploadingRewardImage();
+        var isDeletingRewardImage = ctrl.isDeletingRewardImage();
 
         return (0, _mithril2.default)('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [(0, _mithril2.default)('.card', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-11.w-col-small-11.w-col-tiny-11', (0, _mithril2.default)('.fontsize-base.fontweight-semibold', window.I18n.t(isSubscription ? 'minimum_value_subscription_title' : 'minimum_value_title', I18nScope({
             minimum_value: reward.minimum_value()
@@ -7759,6 +7806,31 @@ var editRewardCard = {
                 }
             });
         },
+            onSelectImageFile = function onSelectImageFile() {
+            var rewardImageFile = window.document.getElementById('reward_image_file_open_card_' + args.index);
+            if (rewardImageFile.files.length) {
+                args.showImageToUpload(reward, imageFileToUpload, rewardImageFile.files[0]);
+            }
+        },
+            tryDeleteImage = function tryDeleteImage(reward) {
+
+            if (reward.newReward || imageFileToUpload()) {
+                reward.uploaded_image(null);
+                imageFileToUpload(null);
+            } else {
+                isDeletingImage(true);
+                args.deleteImage(reward, args.project_id, reward.id()).then(function (r) {
+                    if (r) {
+                        imageFileToUpload(null);
+                        reward.uploaded_image(null);
+                    }
+
+                    isDeletingImage(false);
+                }).catch(function (err) {
+                    isDeletingImage(false);
+                });
+            }
+        },
             saveReward = function saveReward() {
             validate();
             if (vnode.attrs.error()) {
@@ -7792,11 +7864,32 @@ var editRewardCard = {
                     // save id so we can update without reloading the page
                     reward.id(r.reward_id);
                     reward.edit.toggle();
+
+                    isUploadingImage(true);
+                    args.uploadImage(reward, imageFileToUpload, args.project_id, r.reward_id).then(function (r_with_image) {
+                        args.showSuccess(true);
+                        isUploadingImage(false);
+                    }).catch(function (error) {
+                        args.showSuccess(false);
+                        isUploadingImage(false);
+                    });
+                }).catch(function (err) {
+                    args.error(true);
+                    args.errors('Erro ao salvar recompensa.');
                 });
             } else {
                 _rewardVm2.default.updateReward(vnode.attrs.project_id, reward.id(), data).then(function () {
                     vnode.attrs.showSuccess(true);
                     reward.edit.toggle();
+
+                    isUploadingImage(true);
+                    args.uploadImage(reward, imageFileToUpload, args.project_id, reward.id()).then(function (r_with_image) {
+                        args.showSuccess(true);
+                        isUploadingImage(false);
+                    }).catch(function (error) {
+                        args.showSuccess(false);
+                        isUploadingImage(false);
+                    });
                 });
             }
             return false;
@@ -7862,7 +7955,11 @@ var editRewardCard = {
             states: states,
             project: project,
             reward: reward,
-            fees: fees
+            fees: fees,
+            tryDeleteImage: tryDeleteImage,
+            onSelectImageFile: onSelectImageFile,
+            isUploadingImage: isUploadingImage,
+            isDeletingImage: isDeletingImage
         };
     },
     view: function view(_ref) {
@@ -7878,7 +7975,10 @@ var editRewardCard = {
             reward = attrs.reward(),
             inlineError = function inlineError(message) {
             return (0, _mithril2.default)('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle', (0, _mithril2.default)('span', message));
-        };
+        },
+            index = args.index,
+            isUploadingImage = ctrl.isUploadingImage(),
+            isDeletingImage = ctrl.isDeletingImage();
 
         return state.destroyed() ? (0, _mithril2.default)('div', '') : (0, _mithril2.default)('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [(0, _mithril2.default)('.card', (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-5', (0, _mithril2.default)('label.fontsize-smaller', 'Título:')), (0, _mithril2.default)('.w-col.w-col-7', (0, _mithril2.default)('input.w-input.text-field.positive[aria-required=\'true\'][autocomplete=\'off\'][type=\'tel\']', {
             value: state.reward.title(),
@@ -27933,6 +28033,45 @@ var projectEditReward = {
             });
         };
 
+        var uploadImage = function uploadImage(reward, imageFileToUpload, projectId, rewardId) {
+            if (imageFileToUpload()) {
+                return _rewardVm2.default.uploadImage(projectId, rewardId, imageFileToUpload()).then(function (r) {
+                    if (r) {
+                        reward.uploaded_image(r.uploaded_image);
+                    }
+                    return r;
+                }).catch(function (err) {
+                    error(true);
+                    errors('Erro ao fazer upload da imagem da recompensa. Favor tentar novamente.');
+                });
+            } else {
+                return Promise.resolve();
+            }
+        };
+
+        var deleteImage = function deleteImage(reward, projectId, rewardId) {
+            return _rewardVm2.default.deleteImage(projectId, rewardId).then(function (r) {
+                if (r) {
+                    reward.uploaded_image(r.uploaded_image);
+                }
+                return r;
+            }).catch(function (err) {
+                error(true);
+                errors('Erro ao deletar a imagem da recompensa. Favor tentar novamente.');
+            });
+        };
+
+        var showImageToUpload = function showImageToUpload(reward, imageFileToUpload, imageInputElementFile) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                imageFileToUpload(imageInputElementFile);
+                var dataURL = reader.result;
+                reward.uploaded_image(dataURL);
+                _mithril2.default.redraw();
+            };
+            reader.readAsDataURL(imageInputElementFile);
+        };
+
         var tips = window.I18n.translations[window.I18n.currentLocale()].projects.reward_fields.faq;
 
         loadRewards();
@@ -27946,7 +28085,11 @@ var projectEditReward = {
             user: _userVm2.default.fetchUser(vnode.attrs.user_id),
             newReward: newReward,
             setSorting: setSorting,
-            tips: tips
+            tips: tips,
+
+            showImageToUpload: showImageToUpload,
+            deleteImage: deleteImage,
+            uploadImage: uploadImage
         };
     },
 
@@ -36886,6 +37029,28 @@ var updateReward = function updateReward(projectId, rewardId, rewardData) {
     });
 };
 
+var uploadImage = function uploadImage(projectId, rewardId, rewardImageFile) {
+    var formData = new FormData();
+    formData.append('uploaded_image', rewardImageFile);
+    return _mithril2.default.request({
+        method: 'POST',
+        url: '/projects/' + projectId + '/rewards/' + rewardId + '/upload_image',
+        data: formData,
+        config: _h2.default.setCsrfToken,
+        serialize: function serialize(data) {
+            return data;
+        }
+    });
+};
+
+var deleteImage = function deleteImage(projectId, rewardId) {
+    return _mithril2.default.request({
+        method: 'DELETE',
+        url: '/projects/' + projectId + '/rewards/' + rewardId + '/delete_image',
+        config: _h2.default.setCsrfToken
+    });
+};
+
 var canEdit = function canEdit(reward, projectState, user) {
     return (user || {}).is_admin || projectState === 'draft' || projectState === 'online' && reward.paid_count() <= 0 && (_underscore2.default.isFunction(reward.waiting_payment_count) ? reward.waiting_payment_count() <= 0 : true);
 };
@@ -36925,7 +37090,9 @@ var rewardVM = {
     feeDestination: feeDestination,
     getValue: contributionValue,
     setValue: contributionValue,
-    hasShippingOptions: hasShippingOptions
+    hasShippingOptions: hasShippingOptions,
+    uploadImage: uploadImage,
+    deleteImage: deleteImage
 };
 
 exports.default = rewardVM;
