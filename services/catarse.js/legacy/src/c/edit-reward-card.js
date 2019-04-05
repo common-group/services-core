@@ -8,11 +8,14 @@ import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 
 const editRewardCard = {
-    oninit: function(vnode) {
+    controller: function (vnode) {
         const project = projectVM.getCurrentProject(),
             reward = vnode.attrs.reward(),
+            imageFileToUpload = prop(null),
             minimumValue = projectVM.isSubscription(project) ? 5 : 10,
             destroyed = prop(false),
+            isDeletingImage = prop(false),
+            isUploadingImage = prop(false),
             acceptNumeric = (e) => {
                 reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
                 return true;
@@ -71,6 +74,33 @@ const editRewardCard = {
                     }
                 });
             },
+            onSelectImageFile = () => {
+                const rewardImageFile = window.document.getElementById(`reward_image_file_open_card_${vnode.attrs.index}`);
+                if (rewardImageFile.files.length) {
+                    vnode.attrs.showImageToUpload(reward, imageFileToUpload, rewardImageFile.files[0]);
+                }
+            },
+            tryDeleteImage = (reward) => {
+            
+                if (reward.newReward || imageFileToUpload()) {
+                    reward.uploaded_image(null);
+                    imageFileToUpload(null);
+                } else {
+                    isDeletingImage(true);
+                    vnode.attrs.deleteImage(reward, vnode.attrs.project_id, reward.id())
+                        .then(r => {
+                            if (r) {
+                                imageFileToUpload(null);
+                                reward.uploaded_image(null);
+                            }
+
+                            isDeletingImage(false);
+                        })
+                        .catch(err => {
+                            isDeletingImage(false);
+                        });
+                }
+            },
             saveReward = () => {
                 validate();
                 if (vnode.attrs.error()) {
@@ -102,11 +132,37 @@ const editRewardCard = {
                         // save id so we can update without reloading the page
                         reward.id(r.reward_id);
                         reward.edit.toggle();
+                        
+                        isUploadingImage(true);
+                        vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, r.reward_id)
+                            .then(r_with_image => {
+                                vnode.attrs.showSuccess(true);
+                                isUploadingImage(false);
+                            })
+                            .catch(error => {
+                                vnode.attrs.showSuccess(false);
+                                isUploadingImage(false);
+                            })
+                    })
+                    .catch(err => {
+                        vnode.attrs.error(true);
+                        vnode.attrs.errors('Erro ao salvar recompensa.');
                     });
                 } else {
                     rewardVM.updateReward(vnode.attrs.project_id, reward.id(), data).then(() => {
                         vnode.attrs.showSuccess(true);
                         reward.edit.toggle();
+                        
+                        isUploadingImage(true);
+                        vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, reward.id())
+                            .then(r_with_image => {
+                                vnode.attrs.showSuccess(true);
+                                isUploadingImage(false);
+                            })
+                            .catch(error => {
+                                vnode.attrs.showSuccess(false);
+                                isUploadingImage(false);
+                            })
                     });
                 }
                 return false;
@@ -168,7 +224,11 @@ const editRewardCard = {
             states,
             project,
             reward,
-            fees
+            fees,
+            tryDeleteImage,
+            onSelectImageFile,
+            isUploadingImage,
+            isDeletingImage
         };
     },
     view: function({state, attrs}) {
@@ -183,7 +243,10 @@ const editRewardCard = {
                 m('span',
                     message
                 )
-            );
+            ),
+            index = attrs.index,
+            isUploadingImage = state.isUploadingImage(),
+            isDeletingImage = state.isDeletingImage();
 
         return state.destroyed() ? m('div', '') : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.card',
@@ -264,10 +327,7 @@ const editRewardCard = {
                                                 m('option', {
                                                     value: year,
                                                     selected: moment(state.reward.deliver_at()).format('YYYY') === String(year)
-                                                },
-                                                    year
-                                                )
-                                            )
+                                                }, year))
                                         ])
                                     ])
                                 )
@@ -291,6 +351,58 @@ const editRewardCard = {
                         )
                     ]),
                     state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+
+                    // REWARD IMAGE
+                    (
+                        (isUploadingImage || isDeletingImage) ?
+                            (
+                                h.loader()
+                            )
+                        :
+                            (
+                                (reward.uploaded_image && reward.uploaded_image()) ? 
+                                    (
+                                        m("div.u-marginbottom-30.u-margintop-30", 
+                                            m("div.w-row", [
+                                                m("div.w-col.w-col-5", 
+                                                    m("label.fontsize-smaller[for='field-8']", [
+                                                        "Imagem",
+                                                        m("span.fontcolor-secondary", "(opcional)")
+                                                    ])
+                                                ),
+                                                m("div.w-col.w-col-7", 
+                                                    m("div.u-marginbottom-20", [
+                                                        m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+                                                            onclick: () => state.tryDeleteImage(reward)
+                                                        }),
+                                                        m(`img[src='${reward.uploaded_image()}'][alt='']`)
+                                                    ])
+                                                )
+                                            ])
+                                        )
+                                    ) 
+                                :
+                                    (
+                                        m("div.u-marginbottom-30.u-margintop-30",
+                                            m("div.w-row", [
+                                                m("div.w-col.w-col-5",
+                                                    m("label.fontsize-smaller", [
+                                                        "Imagem ",
+                                                        m("span.fontcolor-secondary", "(opcional)")
+                                                    ])
+                                                ),
+                                                m("div.w-col.w-col-7",
+                                                    m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_open_card_${index}']`, {
+                                                        oninput: () => state.onSelectImageFile()
+                                                    })
+                                                )
+                                            ])
+                                        )                                
+                                    )
+                            )    
+                    ),
+                    // END REWARD IMAGE
+
                     state.project.mode === 'sub' ? null : m('.u-marginbottom-30.w-row', [
                         m('.w-col.w-col-3',
                             m("label.fontsize-smaller[for='field-2']",
@@ -305,19 +417,19 @@ const editRewardCard = {
                                     state.updateOptions();
                                 }
                             }, [
-                                m('option[value=\'international\']',
-                                    'Frete Nacional e Internacional'
-                                ),
-                                m('option[value=\'national\']',
-                                    'Frete Nacional'
-                                ),
-                                m('option[value=\'free\']',
-                                    'Sem frete envolvido'
-                                ),
-                                m('option[value=\'presential\']',
-                                    'Retirada presencial'
-                                )
-                            ]),
+                                    m('option[value=\'international\']',
+                                        'Frete Nacional e Internacional'
+                                    ),
+                                    m('option[value=\'national\']',
+                                        'Frete Nacional'
+                                    ),
+                                    m('option[value=\'free\']',
+                                        'Sem frete envolvido'
+                                    ),
+                                    m('option[value=\'presential\']',
+                                        'Retirada presencial'
+                                    )
+                                ]),
 
                             ((state.reward.shipping_options() === 'national' || state.reward.shipping_options() === 'international') ?
                                 m('.card.card-terciary', [
