@@ -47,16 +47,15 @@ const adminExternalAction = {
         };
 
         const submit = () => {
+            console.log('Is submitting????');
             l(true);
             m.request(builder.requestOptions).then(reloadItem, requestError);
             return false;
         };
 
-        const unload = (el, isinit, context) => {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-            };
+        const unload = () => {
+            complete(false);
+            error(false);
         };
 
         vnode.state = {
@@ -75,25 +74,31 @@ const adminExternalAction = {
         return m('.w-col.w-col-2', [
             m('button.btn.btn-small.btn-terciary', {
                 onclick: state.toggler.toggle
-            }, data.outerLabel), (state.toggler()) ?
-            m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: state.unload
-            }, [
-                m('form.w-form', {
-                    onsubmit: state.submit
-                }, (!state.complete()) ? [
-                    m('label', data.innerLabel),
-                    m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
-                ] : (!state.error()) ? [
-                    m('.w-form-done[style="display:block;"]', [
-                        m('p', 'Requisição feita com sucesso.')
-                    ])
-                ] : [
-                    m('.w-form-error[style="display:block;"]', [
-                        m('p', 'Houve um problema na requisição.')
-                    ])
-                ])
-            ]) : ''
+            }, data.outerLabel), 
+            
+            (
+                state.toggler() ?
+                    m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
+                        onremove: state.unload
+                    }, [
+                        m('form.w-form', {
+                            onsubmit: state.submit
+                        }, (!state.complete()) ? [
+                            m('label', data.innerLabel),
+                            m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
+                        ] : (!state.error()) ? [
+                            m('.w-form-done[style="display:block;"]', [
+                                m('p', 'Requisição feita com sucesso.')
+                            ])
+                        ] : [
+                            m('.w-form-error[style="display:block;"]', [
+                                m('p', 'Houve um problema na requisição.')
+                            ])
+                        ])
+                    ]) 
+                : 
+                    ''
+            )
         ]);
     }
 };
