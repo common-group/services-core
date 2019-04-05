@@ -118,12 +118,10 @@ const projectRewardCard = {
             config: state.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
         }, [
             m('.u-marginbottom-20', [
-                m('.fontsize-base.fontweight-semibold', `R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`)
+                m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`),
+                m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', reward.title),
+                (reward.uploaded_image ? m(`img[src='${reward.uploaded_image}']`) : '')
             ]),
-            m('.fontsize-smaller.fontweight-semibold',
-              reward.title
-             ),
-
             m(`.fontsize-smaller.reward-description${h.rewardSouldOut(reward) ? '' : '.fontcolor-secondary'}`, {
                 class: state.isLongDescription()
                     ? state.isRewardOpened()

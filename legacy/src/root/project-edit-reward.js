@@ -32,6 +32,7 @@ const projectEditReward = {
                     limited: h.toggleProp(false, true),
                     maximum_contributions: prop(null),
                     newReward: true,
+                    uploaded_image: prop(null),
                     row_order: prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
                 }
             };
@@ -74,6 +75,7 @@ const projectEditReward = {
                     row_order: prop(reward.row_order),
                     shipping_options: prop(reward.shipping_options),
                     title: prop(reward.title),
+                    uploaded_image: prop(reward.uploaded_image),
                     waiting_payment_count: prop(reward.waiting_payment_count)
                 });
                 const rewardsArray = rewards();
@@ -90,6 +92,50 @@ const projectEditReward = {
             m.redraw();
         });
 
+        const uploadImage = (reward, imageFileToUpload, projectId, rewardId) => {
+            if (imageFileToUpload()) {
+                return rewardVM
+                    .uploadImage(projectId, rewardId, imageFileToUpload())
+                    .then(r => {
+                        if (r) {
+                            reward.uploaded_image(r.uploaded_image);
+                        }
+                        return r;
+                    })
+                    .catch(err => {
+                        error(true);
+                        errors('Erro ao fazer upload da imagem da recompensa. Favor tentar novamente.');
+                    })
+            } else {
+                return Promise.resolve();
+            }
+        };
+
+        const deleteImage = (reward, projectId, rewardId) => {
+            return rewardVM.deleteImage(projectId, rewardId)
+                .then(r => {
+                    if (r) {
+                        reward.uploaded_image(r.uploaded_image);
+                    }
+                    return r;
+                })
+                .catch(err => {
+                    error(true);
+                    errors('Erro ao deletar a imagem da recompensa. Favor tentar novamente.');
+                })
+        };
+        
+        const showImageToUpload = (reward, imageFileToUpload, imageInputElementFile) => {
+            const reader = new FileReader();
+            reader.onload = function(){
+                imageFileToUpload(imageInputElementFile);
+                var dataURL = reader.result;
+                reward.uploaded_image(dataURL);
+                m.redraw();
+            };
+            reader.readAsDataURL(imageInputElementFile);
+        };
+
         const tips = window.I18n.translations[window.I18n.currentLocale()].projects.reward_fields.faq;
 
         loadRewards();
@@ -103,13 +149,20 @@ const projectEditReward = {
             user: userVM.fetchUser(vnode.attrs.user_id),
             newReward,
             setSorting,
-            tips
+            tips,
+
+            showImageToUpload,
+            deleteImage,
+            uploadImage
         };
     },
 
     view: function({state, attrs}) {
         const error = state.error,
-            project = attrs.project;
+            project = attrs.project,
+            showImageToUpload = state.showImageToUpload,
+            deleteImage = state.deleteImage,
+            uploadImage = state.uploadImage;
 
         return m("[id='dashboard-rewards-tab']",
             (project() ? [
@@ -147,14 +200,22 @@ const projectEditReward = {
                                                             errors: state.errors,
                                                             user: state.user(),
                                                             showSuccess: state.showSuccess,
-                                                            project
+                                                            project,
+                                                            showImageToUpload,
+                                                            deleteImage,
+                                                            uploadImage,
+                                                            index
                                                         }) :
                                                         m(editRewardCard, {
                                                             project_id: attrs.project_id,
                                                             error,
                                                             showSuccess: state.showSuccess,
                                                             errors: state.errors,
-                                                            reward
+                                                            reward,
+                                                            showImageToUpload,
+                                                            deleteImage,
+                                                            uploadImage,
+                                                            index
                                                         }))
                                                 ])
                                             ),
