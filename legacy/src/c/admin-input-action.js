@@ -34,16 +34,15 @@ const adminInputAction = {
         };
 
         const submit = function () {
+            console.log('IS SUBMITTING!!!!!!!!');
             data[key] = newValue();
             return l.load().then(updateItem, errorOnSubmit);
         };
 
-        const unload = function (el, isinit, context) {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-                newValue(forceValue);
-            };
+        const unload = function () {
+            complete(false);
+            error(false);
+            newValue(forceValue);
         };
 
         vnode.state = {
@@ -65,7 +64,7 @@ const adminInputAction = {
                 onclick: state.toggler.toggle
             }, data.outerLabel), (state.toggler()) ?
             m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: state.unload
+                onremove: state.unload
             }, [
                 m('form.w-form', {
                     onsubmit: state.submit
