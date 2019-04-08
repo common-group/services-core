@@ -11,6 +11,9 @@ const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const dashboardRewardCard = {
     controller: function(args) {
         const reward = args.reward(),
+            imageFileToUpload = m.prop(null),
+            isUploadingRewardImage = m.prop(false),
+            isDeletingRewardImage = m.prop(false),
             availableCount = () => reward.maximum_contributions() - reward.paid_count() - reward.waiting_payment_count(),
             limitError = m.prop(false),
             showLimited = h.toggleProp(false, true),
@@ -46,6 +49,50 @@ const dashboardRewardCard = {
                     m.redraw();
                 });
                 return false;
+            },
+            onSelectImageFile = () => {
+                const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${args.index}`);
+                if (rewardImageFile.files.length) {
+
+                    imageFileToUpload(rewardImageFile.files[0]);
+                    isUploadingRewardImage(true);
+                    args.uploadImage(reward, imageFileToUpload, args.project().id, reward.id())
+                        .then(r_with_image => {
+                            if (r_with_image) {
+                                reward.uploaded_image(r_with_image.uploaded_image);
+                                imageFileToUpload(null);
+                                args.showSuccess(true);
+                            }
+                            isUploadingRewardImage(false);
+                        })
+                        .catch(error => {
+                            args.showSuccess(false);
+                            isUploadingRewardImage(false);
+                        })
+                }
+            },
+            tryDeleteImage = () => {
+                
+                if (reward.newReward || imageFileToUpload()) {
+                    reward.uploaded_image(null);
+                    imageFileToUpload(null);
+                } else {
+                    isDeletingRewardImage(true);
+                    args.deleteImage(reward, args.project().id, reward.id())
+                        .then(r => {
+                            if (r) {
+                                imageFileToUpload(null);
+                                reward.uploaded_image(null);
+                            }
+                            isDeletingRewardImage(false);
+                        })
+                        .catch(error => {
+                            // TODO: Show error on deleting the image
+                            isDeletingRewardImage(false);
+                            m.redraw();
+                            console.log('herer')
+                        });
+                }
             };
 
         return {
@@ -54,13 +101,20 @@ const dashboardRewardCard = {
             toggleLimit,
             saveReward,
             showLimited,
-            limitError
+            limitError,
+
+            onSelectImageFile,
+            tryDeleteImage,
+            isUploadingRewardImage,
+            isDeletingRewardImage
         };
     },
     view: function(ctrl, args) {
         const reward = args.reward();
         const project = args.project();
         const isSubscription = projectVM.isSubscription(project);
+        const isUploadingRewardImage = ctrl.isUploadingRewardImage();
+        const isDeletingRewardImage = ctrl.isDeletingRewardImage();
 
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
@@ -100,6 +154,62 @@ const dashboardRewardCard = {
                         count: reward.waiting_payment_count()
                     })))
                 ]),
+
+                // REWARD IMAGE
+                (
+                    (isUploadingRewardImage || isDeletingRewardImage) ?
+                        (
+                            h.loader()
+                        )
+                    :
+                        (
+                            (reward.uploaded_image && reward.uploaded_image()) ? 
+                                (
+                                    m("div.u-marginbottom-30.w-row", [
+                                        m("div.w-col.w-col-7", [
+                                            m("div.fontsize-smaller.fontweight-semibold", [
+                                                "Imagem",
+                                                m("span.fontcolor-secondary",  " (opcional)")
+                                            ]),
+                                            m("div.u-marginbottom-20", 
+                                                m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+                                                    onclick: () => ctrl.tryDeleteImage()
+                                                })
+                                            ),
+                                            m(`img[src='${reward.uploaded_image()}'][alt='']`)
+                                        ]),
+                                        m("div.w-col.w-col-5")
+                                    ])
+                                ) 
+                            :
+                                (
+                                    m("div.u-marginbottom-30.w-row", [
+                                        m("div.w-col.w-col-7", [
+                                            m("div.fontsize-smaller.fontweight-semibold", [
+                                                "Imagem",
+                                                m("span.fontcolor-secondary", " (opcional)")
+                                            ]),
+                                            m("div.w-form", [
+                                                m("form", 
+                                                    m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_closed_card_${args.index}']`, {
+                                                        oninput: () => ctrl.onSelectImageFile()
+                                                    })
+                                                ),
+                                                m("div.w-form-done", 
+                                                    m("div", "Thank you! Your submission has been received!")
+                                                ),
+                                                m("div.w-form-fail", 
+                                                    m("div", "Oops! Something went wrong while submitting the form.")
+                                                )
+                                            ])
+                                        ]),
+                                        m("div.w-col.w-col-5")
+                                    ])                             
+                                )
+                        )
+                ),
+                // END REWARD IMAGE
+
                 m('.fontsize-small.fontweight-semibold',
                     reward.title()
                 ),
