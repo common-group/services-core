@@ -115,7 +115,7 @@ const projectDashboardMenu = {
                                 window.I18n.t('posts_tab', I18nScope()),
                                 project.posts_count > 0 ?
                                 m('span.badge', project.posts_count) :
-                                m('span.badge.badge-attention', 'Nenhuma')
+                                m('span.badge.badge-attention', '0')
                             ]),
 
                             (projectVM.isSubscription(project) ? '' :
