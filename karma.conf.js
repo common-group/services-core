@@ -32,12 +32,7 @@ module.exports = (config) => {
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
-        // browsers: ['ChromeHeadless'],
-        //singleRun: true,
-        browsers: ['Chrome'],
-        singleRun: false,
-        webpack: {
-            mode: 'development'
-        }
+        browsers: ['ChromeHeadless'],
+        singleRun: true
     });
 };

@@ -113,7 +113,7 @@ const userSubscriptionBox = {
             const is_active = subscription.status === 'active';
             const current_paid_subscription = subscription.current_paid_subscription;
             const last_paid_sub_data = is_active || !current_paid_subscription ? subscription : current_paid_subscription;
-
+            
             if (is_active && current_paid_subscription && subscription.checkout_data.payment_method != current_paid_subscription.payment_method) {
                 return [
                     m(subscriptionStatusIcon, { subscription }),
@@ -260,7 +260,7 @@ const userSubscriptionBox = {
                             content: [userSubscriptionPaymentHistoryModal, { subscription, project }]
                         })
                     : 
-                    ''
+                        ''
                 ), 
                 [
                     m('.card.w-row', [
@@ -304,7 +304,7 @@ const userSubscriptionBox = {
                             })
                         ]),
                         m('.u-marginbottom-20.w-col.w-col-3', state.showLastSubscriptionVersionRewardTitleIfHasOne()),
-                        m('.u-marginbottom-10.u-text-center.w-col.w-col-3',
+                        m('.u-marginbottom-10.u-text-center.w-col.w-col-3', 
                             (
                                 (subscription.status === 'started') ? 
                                 
@@ -338,10 +338,7 @@ const userSubscriptionBox = {
                                                                     :
                                                                         m('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
                                                                             disabled: state.isGeneratingSecondSlip(),
-                                                                            onclick: state.generateSecondSlip,
-                                                                            oncreate: function(vnode) {
-                                                                                console.log('Criou botão para gerar dsegunda via!');
-                                                                            }
+                                                                            onclick: state.generateSecondSlip
                                                                         }, 'Gerar segunda via')
                                                                 )
                                                             ]
@@ -453,7 +450,7 @@ const userSubscriptionBox = {
                                                                     ''
                                                             ),
                                                             (
-                                                                (subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date) ?
+                                                                (subscription.payment_status === 'pending' && !!subscription.boleto_url && !!subscription.boleto_expiration_date) ?
                                                                     [
                                                                         moment(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? 
                                                                             [
@@ -467,10 +464,7 @@ const userSubscriptionBox = {
                                                                                     :
                                                                                         m('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
                                                                                             disabled: state.isGeneratingSecondSlip(),
-                                                                                            onclick: state.generateSecondSlip,
-                                                                                            oncreate: function(vnode) {
-                                                                                                console.log('will show segunda via')
-                                                                                            }
+                                                                                            onclick: state.generateSecondSlip
                                                                                         }, 'Gerar segunda via')
                                                                                 )
                                                                             ]
