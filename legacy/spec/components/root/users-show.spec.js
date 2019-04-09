@@ -7,14 +7,16 @@ describe('UsersShow', () => {
   beforeAll(() => {
     window.location.hash = '';
     userDetail = UserDetailMockery()[0];
-    let component = m(usersShow, {user_id: '405699'});
-    $output = mq(component);
+    $output = mq(m(usersShow, {user_id: '405699'}));
   });
 
   it('should render some user details', () => {
-    expect($output.contains(userDetail.name)).toEqual(true);
     $output.should.have('#contributed_link');
     $output.should.have('#created_link');
     $output.should.have('#about_link');
+    
+    setTimeout(() => {
+      expect($output.contains(userDetail.name)).toEqual(true);
+    }, 50);
   });
 });
