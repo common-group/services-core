@@ -1,5 +1,6 @@
 import mq from 'mithril-query';
 import m from 'mithril';
+// import * as render from 'mithril-node-render';
 import _ from 'underscore';
 import h from '../../src/h';
 import userBalanceWithdrawHistoryItemRequest from '../../src/c/user-balance-withdraw-history-item-request';
@@ -7,7 +8,7 @@ import userBalanceWithdrawHistoryItemRequest from '../../src/c/user-balance-with
 
 describe('UserBalanceWithdrawHistoryItem', function() {
 
-    let $cardPending, $cardRejected, $cardTransferred, transfers;
+    let $cardPending, $cardRejected, $cardTransferred, transfers, $cardPendingComponent;
 
     describe('view', function() {
 
@@ -18,8 +19,8 @@ describe('UserBalanceWithdrawHistoryItem', function() {
 
             index = 0;
             transfer = transfers[index];
-
-            $cardPending = mq(m(userBalanceWithdrawHistoryItemRequest, { transfer, index }));
+            $cardPendingComponent = m(userBalanceWithdrawHistoryItemRequest, { transfer, index });
+            $cardPending = mq($cardPendingComponent);
 
             index = 1;
             transfer = transfers[index];
@@ -30,6 +31,7 @@ describe('UserBalanceWithdrawHistoryItem', function() {
             transfer = transfers[index];
 
             $cardTransferred = mq(m(userBalanceWithdrawHistoryItemRequest, { transfer, index }));
+            
         });
 
         it('Should show pending card', function() {

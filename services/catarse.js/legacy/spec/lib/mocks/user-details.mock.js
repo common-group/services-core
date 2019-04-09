@@ -12,7 +12,8 @@ beforeAll(function() {
           state: 'test state',
           zipcode: '12323-123',
           country: "Brasil",
-          city: 'Sampa'
+          city: 'Sampa',
+          phone: '51123456789'
       },
       address_city: 'São Paulo',
       profile_img_thumbnail: 'https://s3.amazonaws.com/cdn.catarse/uploads/user/uploaded_image/405699/thumb_avatar_ryaneleao.jpg',

@@ -20,7 +20,7 @@ const addressForm = {
             }),
             defaultCountryID = vm.defaultCountryID,
             defaultForeignCountryID = vm.defaultForeignCountryID,
-            states = prop(),
+            states = prop([]),
             zipCodeErrorMessage = prop(''),
             fields = vnode.attrs.addressFields || vm.fields,
             errors = {
@@ -39,12 +39,12 @@ const addressForm = {
             zipcodeMask = _.partial(h.mask, '99999-999'),
             applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
             applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = vnode.attrs.disableInternational ? prop(false) : vnode.attrs.international || vm.international;
+            international = vnode.attrs.disableInternational ? prop(false) : (vnode.attrs.international || vm.international);
 
         const checkPhone = () => {
             let hasError = false;
             const phone = fields.phoneNumber(),
-                strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, '');
+                strippedPhone = String(phone || '').replace(/[\(|\)|\-|\s]*/g, '');
 
             if (strippedPhone.length < 10) {
                 errors.phoneNumber(true);
@@ -150,6 +150,7 @@ const addressForm = {
             countryStates = state.states,
             disableInternational = attrs.disableInternational,
             hideNationality = attrs.hideNationality;
+
 
         attrs.fields().address(address);
         if (attrs.stateName) {
