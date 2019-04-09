@@ -86,2356 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "../../../mithril-postgrest/mithril-postgrest.umd.js":
-/*!**************************************************************************!*\
-  !*** /home/gilberto/Projects/mithril-postgrest/mithril-postgrest.umd.js ***!
-  \**************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-(function (global, factory) {
-    ( false ? undefined : _typeof(exports)) === 'object' && typeof module !== 'undefined' ? module.exports = factory(__webpack_require__(/*! mithril/stream */ "../../../mithril-postgrest/node_modules/mithril/stream.js"), __webpack_require__(/*! underscore */ "../../../mithril-postgrest/node_modules/underscore/underscore.js")) :  true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! mithril/stream */ "../../../mithril-postgrest/node_modules/mithril/stream.js"), __webpack_require__(/*! underscore */ "../../../mithril-postgrest/node_modules/underscore/underscore.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : undefined;
-})(this, function (prop, _) {
-    'use strict';
-
-    prop = prop && prop.hasOwnProperty('default') ? prop['default'] : prop;
-    _ = _ && _.hasOwnProperty('default') ? _['default'] : _;
-
-    var filtersVM = function filtersVM(attributes) {
-        var newVM = {},
-            filter = function filter() {
-            var innerProp = prop(''),
-                filterProp = function filterProp(value) {
-                if (arguments.length > 0) {
-                    innerProp(value);
-                    return newVM;
-                }
-                return innerProp();
-            };
-            // Just so we can have a default to_filter and avoid if _.isFunction calls
-            filterProp.toFilter = function () {
-                return _.isString(filterProp()) ? filterProp().trim() : filterProp();
-            };
-            return filterProp;
-        },
-            getters = _.reduce(attributes, function (memo, operator, attr) {
-            // The operator between is implemented with two properties, one for greater than value and another for lesser than value.
-            // Both properties are sent in the queurystring with the same name,
-            // that's why we need the special case here, so we can use a simple map as argument to filtersVM.
-            if (operator === 'between') {
-                memo[attr] = {
-                    lte: filter(),
-                    gte: filter()
-                };
-            } else {
-                memo[attr] = filter();
-            }
-            return memo;
-        }, {
-            order: filter()
-        }),
-            parametersWithoutOrder = function parametersWithoutOrder() {
-            return _.reduce(getters, function (memo, getter, attr) {
-                if (attr !== 'order') {
-                    var operator = attributes[attr];
-
-                    if (_.isFunction(getter.toFilter) && (getter.toFilter() === undefined || getter.toFilter() === '')) {
-                        return memo;
-                    }
-
-                    // Bellow we use different formatting rules for the value depending on the operator
-                    // These rules are used regardless of the toFilter function,
-                    // so the user can use a custom toFilter without having to worry with basic filter syntax
-                    if (operator === 'ilike' || operator === 'like') {
-                        memo[attr] = operator + '.*' + getter.toFilter() + '*';
-                    } else if (operator === '@@') {
-                        memo[attr] = operator + '.' + getter.toFilter().replace(/\s+/g, '&');
-                    } else if (operator === 'between') {
-                        if (!getter.lte.toFilter() && !getter.gte.toFilter()) {
-                            return memo;
-                        }
-                        memo[attr] = [];
-                        if (getter.gte()) {
-                            memo[attr].push('gte.' + getter.gte.toFilter());
-                        }
-                        if (getter.lte()) {
-                            memo[attr].push('lte.' + getter.lte.toFilter());
-                        }
-                    } else if (operator === 'is.null') {
-                        memo[attr] = getter.toFilter() === null ? 'is.null' : 'not.is.null';
-                    } else {
-                        memo[attr] = operator + '.' + getter.toFilter();
-                    }
-                }
-                return memo;
-            }, {});
-        },
-            parameters = function parameters() {
-            // The order parameters have a special syntax (just like an order by SQL clause)
-            // https://github.com/begriffs/postgrest/wiki/Routing#filtering-and-ordering
-            var order = function order() {
-                return getters.order() && _.reduce(getters.order(), function (memo, direction, attr) {
-                    memo.push(attr + '.' + direction);
-                    return memo;
-                }, []).join(',');
-            },
-                orderParameter = order() ? {
-                order: order()
-            } : {};
-
-            return _.extend({}, orderParameter, parametersWithoutOrder());
-        };
-
-        return _.extend(newVM, getters, {
-            parameters: parameters,
-            parametersWithoutOrder: parametersWithoutOrder
-        });
-    };
-
-    var _slicedToArray = function () {
-        function sliceIterator(arr, i) {
-            var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
-                for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                    _arr.push(_s.value);if (i && _arr.length === i) break;
-                }
-            } catch (err) {
-                _d = true;_e = err;
-            } finally {
-                try {
-                    if (!_n && _i["return"]) _i["return"]();
-                } finally {
-                    if (_d) throw _e;
-                }
-            }return _arr;
-        }return function (arr, i) {
-            if (Array.isArray(arr)) {
-                return arr;
-            } else if (Symbol.iterator in Object(arr)) {
-                return sliceIterator(arr, i);
-            } else {
-                throw new TypeError("Invalid attempt to destructure non-iterable instance");
-            }
-        };
-    }();
-
-    var paginationVM = function paginationVM(mithilInstance) {
-        return function (model, order) {
-            var extraHeaders = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-            var authenticate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-            var collection = prop([]),
-                defaultOrder = order || 'id.desc',
-                filters = prop({
-                order: defaultOrder
-            }),
-                isLoading = prop(false),
-                page = prop(1),
-                resultsCount = prop(),
-                pageRequest = authenticate ? model.getPageWithToken : model.getPage,
-                total = prop();
-
-            var fetch = function fetch() {
-                return new Promise(function (resolve, reject) {
-
-                    var getTotal = function getTotal(xhr) {
-                        if (!xhr || xhr.status === 0) {
-                            return JSON.stringify({
-                                hint: null,
-                                details: null,
-                                code: 0,
-                                message: 'Connection error'
-                            });
-                        }
-                        var rangeHeader = xhr.getResponseHeader('Content-Range');
-                        if (_.isString(rangeHeader)) {
-                            var _rangeHeader$split = rangeHeader.split('/'),
-                                _rangeHeader$split2 = _slicedToArray(_rangeHeader$split, 2),
-                                headerSize = _rangeHeader$split2[0],
-                                headerCount = _rangeHeader$split2[1],
-                                _headerSize$split = headerSize.split('-'),
-                                _headerSize$split2 = _slicedToArray(_headerSize$split, 2),
-                                headerFrom = _headerSize$split2[0],
-                                headerTo = _headerSize$split2[1],
-                                to = parseInt(headerTo) + 1 || 0,
-                                from = parseInt(headerFrom) || 0;
-
-                            total(parseInt(headerCount));
-                            resultsCount(to - from);
-                        }
-
-                        try {
-                            return JSON.parse(xhr.responseText);
-                        } catch (ex) {
-                            return JSON.stringify({
-                                hint: null,
-                                details: null,
-                                code: 0,
-                                message: xhr.responseText
-                            });
-                        }
-                    };
-                    isLoading(true);
-                    pageRequest(filters(), page(), {
-                        background: false,
-                        extract: getTotal
-                    }, extraHeaders).then(function (data) {
-                        collection(_.union(collection(), data));
-                        isLoading(false);
-                        resolve(collection());
-                    }).catch(function (error) {
-                        isLoading(false);
-                        total(0);
-                        reject(error);
-                    });
-                });
-            },
-                firstPage = function firstPage(parameters) {
-                filters(_.extend({
-                    order: defaultOrder
-                }, parameters));
-                collection([]);
-                page(1);
-                return fetch();
-            },
-                isLastPage = function isLastPage() {
-                return model.pageSize() > resultsCount();
-            },
-                nextPage = function nextPage() {
-                page(page() + 1);
-                return fetch();
-            };
-
-            return {
-                collection: collection,
-                firstPage: firstPage,
-                isLoading: isLoading,
-                nextPage: nextPage,
-                isLastPage: isLastPage,
-                total: total,
-                resultsCount: resultsCount
-            };
-        };
-    };
-
-    function Postgrest(mithrilInstance) {
-        var m = mithrilInstance;
-        var postgrest = {};
-        var token = prop(),
-            mergeConfig = function mergeConfig(config, options) {
-            return options && _.isFunction(options.config) ? _.compose(options.config, config) : config;
-        },
-            addHeaders = function addHeaders(headers) {
-            return function (xhr) {
-                _.each(headers, function (value, key) {
-                    xhr.setRequestHeader(key, value);
-                });
-                return xhr;
-            };
-        },
-            addConfigHeaders = function addConfigHeaders(headers, options) {
-            return _.extend({}, options, {
-                config: mergeConfig(addHeaders(headers), options)
-            });
-        },
-            createLoader = function createLoader(requestFunction, options) {
-            var defaultState = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var loader = prop(defaultState);
-            loader.load = function () {
-
-                return new Promise(function (resolve, reject) {
-                    loader(true);
-                    requestFunction(_.extend({}, options, {
-                        background: false
-                    })).then(function (data) {
-                        loader(false);
-                        resolve(data);
-                    }).catch(function (error) {
-                        loader(false);
-                        reject(error);
-                    });
-                });
-            };
-            return loader;
-        },
-            representationHeader = {
-            'Prefer': 'return=representation'
-        };
-
-        postgrest.token = token;
-
-        postgrest.init = function (apiPrefix, authenticationOptions) {
-            var globalHeader = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            postgrest.request = function (options) {
-                var errorHandler = function errorHandler(xhr) {
-                    try {
-                        return JSON.parse(xhr.responseText);
-                    } catch (ex) {
-                        return JSON.stringify({
-                            hint: null,
-                            details: null,
-                            code: 0,
-                            message: xhr.responseText
-                        });
-                    }
-                };
-                var configHeadersToAdd = addConfigHeaders(globalHeader, _.extend({ extract: errorHandler }, options, {
-                    url: apiPrefix + options.url
-                }));
-                return m.request(configHeadersToAdd);
-            };
-
-            var authenticationRequested = prop(false);
-            postgrest.authenticate = function (delegatedDeferred) {
-                var deferred = delegatedDeferred || new Promise(function (resolve, reject) {
-                    var workingCall = function workingCall() {
-                        if (token()) {
-                            resolve({ token: token() });
-                        } else if (!authenticationRequested()) {
-
-                            authenticationRequested(true);
-                            m.request(_.extend({}, authenticationOptions)).then(function (data) {
-                                authenticationRequested(false);
-                                token(data.token);
-                                resolve({ token: token() });
-                            }).catch(function (data) {
-                                authenticationRequested(false);
-                                reject(data);
-                            });
-                        } else {
-                            setTimeout(workingCall, 250);
-                        }
-                    };
-                    workingCall();
-                });
-                return deferred;
-            };
-
-            postgrest.requestWithToken = function (options) {
-
-                return postgrest.authenticate().then(function () {
-                    return postgrest.request(addConfigHeaders({
-                        'Authorization': 'Bearer ' + token()
-                    }, options));
-                }).catch(function () {
-                    return postgrest.request(options);
-                });
-            };
-
-            postgrest.loader = _.partial(createLoader, postgrest.request);
-
-            postgrest.loaderWithToken = _.partial(createLoader, postgrest.requestWithToken);
-
-            postgrest.model = function (name) {
-                var paginationHeaders = function paginationHeaders(page, pageSize) {
-                    if (!pageSize) {
-                        return;
-                    }
-
-                    var toRange = function toRange() {
-                        var from = (page - 1) * pageSize,
-                            to = from + pageSize - 1;
-                        return from + '-' + to;
-                    };
-
-                    return {
-                        'Range-unit': 'items',
-                        'Range': toRange()
-                    };
-                },
-                    pageSize = prop(10),
-                    nameOptions = {
-                    url: '/' + name
-                },
-                    getOptions = function getOptions(data, page, pageSize, options) {
-                    var headers = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-
-                    var extraHeaders = _.extend({}, {
-                        'Prefer': 'count=none'
-                    }, headers, paginationHeaders(page, pageSize));
-                    return addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
-                        method: 'GET',
-                        data: data
-                    }));
-                },
-                    querystring = function querystring(filters, options) {
-                    options.url += '?' + m.route.buildQueryString(filters);
-                    return options;
-                },
-                    options = function options(_options) {
-                    return postgrest.request(_.extend({}, _options, nameOptions, {
-                        method: 'OPTIONS'
-                    }));
-                },
-                    postOptions = function postOptions(attributes, options) {
-                    var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-                    var extraHeaders = _.extend({}, representationHeader, headers);
-                    return addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
-                        method: 'POST',
-                        data: attributes
-                    }));
-                },
-                    deleteOptions = function deleteOptions(filters, options) {
-                    var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-                    var extraHeaders = _.extend({}, representationHeader, headers);
-                    return querystring(filters, addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
-                        method: 'DELETE'
-                    })));
-                },
-                    patchOptions = function patchOptions(filters, attributes, options) {
-                    var headers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-                    var extraHeaders = _.extend({}, representationHeader, headers);
-                    return querystring(filters, addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
-                        method: 'PATCH',
-                        data: attributes
-                    })));
-                },
-                    getPageOptions = function getPageOptions(data, page, options) {
-                    var headers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-                    return getOptions(data, page || 1, pageSize(), options, headers);
-                },
-                    getRowOptions = function getRowOptions(data, options) {
-                    var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-                    return getOptions(data, 1, 1, options, headers);
-                };
-
-                return {
-                    pageSize: pageSize,
-                    getPageOptions: getPageOptions,
-                    getRowOptions: getRowOptions,
-                    patchOptions: patchOptions,
-                    postOptions: postOptions,
-                    deleteOptions: deleteOptions,
-                    getPage: _.compose(postgrest.request, getPageOptions),
-                    getRow: _.compose(postgrest.request, getRowOptions),
-                    patch: _.compose(postgrest.request, patchOptions),
-                    post: _.compose(postgrest.request, postOptions),
-                    deleteRequest: _.compose(postgrest.request, deleteOptions),
-                    getPageWithToken: _.compose(postgrest.requestWithToken, getPageOptions),
-                    getRowWithToken: _.compose(postgrest.requestWithToken, getRowOptions),
-                    patchWithToken: _.compose(postgrest.requestWithToken, patchOptions),
-                    postWithToken: _.compose(postgrest.requestWithToken, postOptions),
-                    deleteWithToken: _.compose(postgrest.requestWithToken, deleteOptions),
-                    options: options
-                };
-            };
-
-            return postgrest;
-        };
-
-        postgrest.filtersVM = filtersVM;
-        postgrest.paginationVM = paginationVM(mithrilInstance);
-
-        return postgrest;
-    }
-
-    return Postgrest;
-});
-
-/***/ }),
-
-/***/ "../../../mithril-postgrest/node_modules/mithril/stream.js":
-/*!********************************************************************************!*\
-  !*** /home/gilberto/Projects/mithril-postgrest/node_modules/mithril/stream.js ***!
-  \********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(/*! ./stream/stream */ "../../../mithril-postgrest/node_modules/mithril/stream/stream.js")
-
-
-/***/ }),
-
-/***/ "../../../mithril-postgrest/node_modules/mithril/stream/stream.js":
-/*!***************************************************************************************!*\
-  !*** /home/gilberto/Projects/mithril-postgrest/node_modules/mithril/stream/stream.js ***!
-  \***************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* eslint-disable */
-;(function() {
-"use strict"
-/* eslint-enable */
-
-var guid = 0, HALT = {}
-function createStream() {
-	function stream() {
-		if (arguments.length > 0 && arguments[0] !== HALT) updateStream(stream, arguments[0])
-		return stream._state.value
-	}
-	initStream(stream)
-
-	if (arguments.length > 0 && arguments[0] !== HALT) updateStream(stream, arguments[0])
-
-	return stream
-}
-function initStream(stream) {
-	stream.constructor = createStream
-	stream._state = {id: guid++, value: undefined, state: 0, derive: undefined, recover: undefined, deps: {}, parents: [], endStream: undefined, unregister: undefined}
-	stream.map = stream["fantasy-land/map"] = map, stream["fantasy-land/ap"] = ap, stream["fantasy-land/of"] = createStream
-	stream.valueOf = valueOf, stream.toJSON = toJSON, stream.toString = valueOf
-
-	Object.defineProperties(stream, {
-		end: {get: function() {
-			if (!stream._state.endStream) {
-				var endStream = createStream()
-				endStream.map(function(value) {
-					if (value === true) {
-						unregisterStream(stream)
-						endStream._state.unregister = function(){unregisterStream(endStream)}
-					}
-					return value
-				})
-				stream._state.endStream = endStream
-			}
-			return stream._state.endStream
-		}}
-	})
-}
-function updateStream(stream, value) {
-	updateState(stream, value)
-	for (var id in stream._state.deps) updateDependency(stream._state.deps[id], false)
-	if (stream._state.unregister != null) stream._state.unregister()
-	finalize(stream)
-}
-function updateState(stream, value) {
-	stream._state.value = value
-	stream._state.changed = true
-	if (stream._state.state !== 2) stream._state.state = 1
-}
-function updateDependency(stream, mustSync) {
-	var state = stream._state, parents = state.parents
-	if (parents.length > 0 && parents.every(active) && (mustSync || parents.some(changed))) {
-		var value = stream._state.derive()
-		if (value === HALT) return false
-		updateState(stream, value)
-	}
-}
-function finalize(stream) {
-	stream._state.changed = false
-	for (var id in stream._state.deps) stream._state.deps[id]._state.changed = false
-}
-
-function combine(fn, streams) {
-	if (!streams.every(valid)) throw new Error("Ensure that each item passed to stream.combine/stream.merge is a stream")
-	return initDependency(createStream(), streams, function() {
-		return fn.apply(this, streams.concat([streams.filter(changed)]))
-	})
-}
-
-function initDependency(dep, streams, derive) {
-	var state = dep._state
-	state.derive = derive
-	state.parents = streams.filter(notEnded)
-
-	registerDependency(dep, state.parents)
-	updateDependency(dep, true)
-
-	return dep
-}
-function registerDependency(stream, parents) {
-	for (var i = 0; i < parents.length; i++) {
-		parents[i]._state.deps[stream._state.id] = stream
-		registerDependency(stream, parents[i]._state.parents)
-	}
-}
-function unregisterStream(stream) {
-	for (var i = 0; i < stream._state.parents.length; i++) {
-		var parent = stream._state.parents[i]
-		delete parent._state.deps[stream._state.id]
-	}
-	for (var id in stream._state.deps) {
-		var dependent = stream._state.deps[id]
-		var index = dependent._state.parents.indexOf(stream)
-		if (index > -1) dependent._state.parents.splice(index, 1)
-	}
-	stream._state.state = 2 //ended
-	stream._state.deps = {}
-}
-
-function map(fn) {return combine(function(stream) {return fn(stream())}, [this])}
-function ap(stream) {return combine(function(s1, s2) {return s1()(s2())}, [stream, this])}
-function valueOf() {return this._state.value}
-function toJSON() {return this._state.value != null && typeof this._state.value.toJSON === "function" ? this._state.value.toJSON() : this._state.value}
-
-function valid(stream) {return stream._state }
-function active(stream) {return stream._state.state === 1}
-function changed(stream) {return stream._state.changed}
-function notEnded(stream) {return stream._state.state !== 2}
-
-function merge(streams) {
-	return combine(function() {
-		return streams.map(function(s) {return s()})
-	}, streams)
-}
-
-function scan(reducer, seed, stream) {
-	var newStream = combine(function (s) {
-		return seed = reducer(seed, s._state.value)
-	}, [stream])
-
-	if (newStream._state.state === 0) newStream(seed)
-
-	return newStream
-}
-
-function scanMerge(tuples, seed) {
-	var streams = tuples.map(function(tuple) {
-		var stream = tuple[0]
-		if (stream._state.state === 0) stream(undefined)
-		return stream
-	})
-
-	var newStream = combine(function() {
-		var changed = arguments[arguments.length - 1]
-
-		streams.forEach(function(stream, idx) {
-			if (changed.indexOf(stream) > -1) {
-				seed = tuples[idx][1](seed, stream._state.value)
-			}
-		})
-
-		return seed
-	}, streams)
-
-	return newStream
-}
-
-createStream["fantasy-land/of"] = createStream
-createStream.merge = merge
-createStream.combine = combine
-createStream.scan = scan
-createStream.scanMerge = scanMerge
-createStream.HALT = HALT
-
-if (true) module["exports"] = createStream
-else {}
-
-}());
-
-
-/***/ }),
-
-/***/ "../../../mithril-postgrest/node_modules/underscore/underscore.js":
-/*!***************************************************************************************!*\
-  !*** /home/gilberto/Projects/mithril-postgrest/node_modules/underscore/underscore.js ***!
-  \***************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Underscore.js 1.9.1
-//     http://underscorejs.org
-//     (c) 2009-2018 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Underscore may be freely distributed under the MIT license.
-
-(function() {
-
-  // Baseline setup
-  // --------------
-
-  // Establish the root object, `window` (`self`) in the browser, `global`
-  // on the server, or `this` in some virtual machines. We use `self`
-  // instead of `window` for `WebWorker` support.
-  var root = typeof self == 'object' && self.self === self && self ||
-            typeof global == 'object' && global.global === global && global ||
-            this ||
-            {};
-
-  // Save the previous value of the `_` variable.
-  var previousUnderscore = root._;
-
-  // Save bytes in the minified (but not gzipped) version:
-  var ArrayProto = Array.prototype, ObjProto = Object.prototype;
-  var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
-
-  // Create quick reference variables for speed access to core prototypes.
-  var push = ArrayProto.push,
-      slice = ArrayProto.slice,
-      toString = ObjProto.toString,
-      hasOwnProperty = ObjProto.hasOwnProperty;
-
-  // All **ECMAScript 5** native function implementations that we hope to use
-  // are declared here.
-  var nativeIsArray = Array.isArray,
-      nativeKeys = Object.keys,
-      nativeCreate = Object.create;
-
-  // Naked function reference for surrogate-prototype-swapping.
-  var Ctor = function(){};
-
-  // Create a safe reference to the Underscore object for use below.
-  var _ = function(obj) {
-    if (obj instanceof _) return obj;
-    if (!(this instanceof _)) return new _(obj);
-    this._wrapped = obj;
-  };
-
-  // Export the Underscore object for **Node.js**, with
-  // backwards-compatibility for their old module API. If we're in
-  // the browser, add `_` as a global object.
-  // (`nodeType` is checked to ensure that `module`
-  // and `exports` are not HTML elements.)
-  if (typeof exports != 'undefined' && !exports.nodeType) {
-    if (typeof module != 'undefined' && !module.nodeType && module.exports) {
-      exports = module.exports = _;
-    }
-    exports._ = _;
-  } else {
-    root._ = _;
-  }
-
-  // Current version.
-  _.VERSION = '1.9.1';
-
-  // Internal function that returns an efficient (for current engines) version
-  // of the passed-in callback, to be repeatedly applied in other Underscore
-  // functions.
-  var optimizeCb = function(func, context, argCount) {
-    if (context === void 0) return func;
-    switch (argCount == null ? 3 : argCount) {
-      case 1: return function(value) {
-        return func.call(context, value);
-      };
-      // The 2-argument case is omitted because we’re not using it.
-      case 3: return function(value, index, collection) {
-        return func.call(context, value, index, collection);
-      };
-      case 4: return function(accumulator, value, index, collection) {
-        return func.call(context, accumulator, value, index, collection);
-      };
-    }
-    return function() {
-      return func.apply(context, arguments);
-    };
-  };
-
-  var builtinIteratee;
-
-  // An internal function to generate callbacks that can be applied to each
-  // element in a collection, returning the desired result — either `identity`,
-  // an arbitrary callback, a property matcher, or a property accessor.
-  var cb = function(value, context, argCount) {
-    if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
-    if (value == null) return _.identity;
-    if (_.isFunction(value)) return optimizeCb(value, context, argCount);
-    if (_.isObject(value) && !_.isArray(value)) return _.matcher(value);
-    return _.property(value);
-  };
-
-  // External wrapper for our callback generator. Users may customize
-  // `_.iteratee` if they want additional predicate/iteratee shorthand styles.
-  // This abstraction hides the internal-only argCount argument.
-  _.iteratee = builtinIteratee = function(value, context) {
-    return cb(value, context, Infinity);
-  };
-
-  // Some functions take a variable number of arguments, or a few expected
-  // arguments at the beginning and then a variable number of values to operate
-  // on. This helper accumulates all remaining arguments past the function’s
-  // argument length (or an explicit `startIndex`), into an array that becomes
-  // the last argument. Similar to ES6’s "rest parameter".
-  var restArguments = function(func, startIndex) {
-    startIndex = startIndex == null ? func.length - 1 : +startIndex;
-    return function() {
-      var length = Math.max(arguments.length - startIndex, 0),
-          rest = Array(length),
-          index = 0;
-      for (; index < length; index++) {
-        rest[index] = arguments[index + startIndex];
-      }
-      switch (startIndex) {
-        case 0: return func.call(this, rest);
-        case 1: return func.call(this, arguments[0], rest);
-        case 2: return func.call(this, arguments[0], arguments[1], rest);
-      }
-      var args = Array(startIndex + 1);
-      for (index = 0; index < startIndex; index++) {
-        args[index] = arguments[index];
-      }
-      args[startIndex] = rest;
-      return func.apply(this, args);
-    };
-  };
-
-  // An internal function for creating a new object that inherits from another.
-  var baseCreate = function(prototype) {
-    if (!_.isObject(prototype)) return {};
-    if (nativeCreate) return nativeCreate(prototype);
-    Ctor.prototype = prototype;
-    var result = new Ctor;
-    Ctor.prototype = null;
-    return result;
-  };
-
-  var shallowProperty = function(key) {
-    return function(obj) {
-      return obj == null ? void 0 : obj[key];
-    };
-  };
-
-  var has = function(obj, path) {
-    return obj != null && hasOwnProperty.call(obj, path);
-  }
-
-  var deepGet = function(obj, path) {
-    var length = path.length;
-    for (var i = 0; i < length; i++) {
-      if (obj == null) return void 0;
-      obj = obj[path[i]];
-    }
-    return length ? obj : void 0;
-  };
-
-  // Helper for collection methods to determine whether a collection
-  // should be iterated as an array or as an object.
-  // Related: http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
-  // Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-  var getLength = shallowProperty('length');
-  var isArrayLike = function(collection) {
-    var length = getLength(collection);
-    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
-  };
-
-  // Collection Functions
-  // --------------------
-
-  // The cornerstone, an `each` implementation, aka `forEach`.
-  // Handles raw objects in addition to array-likes. Treats all
-  // sparse array-likes as if they were dense.
-  _.each = _.forEach = function(obj, iteratee, context) {
-    iteratee = optimizeCb(iteratee, context);
-    var i, length;
-    if (isArrayLike(obj)) {
-      for (i = 0, length = obj.length; i < length; i++) {
-        iteratee(obj[i], i, obj);
-      }
-    } else {
-      var keys = _.keys(obj);
-      for (i = 0, length = keys.length; i < length; i++) {
-        iteratee(obj[keys[i]], keys[i], obj);
-      }
-    }
-    return obj;
-  };
-
-  // Return the results of applying the iteratee to each element.
-  _.map = _.collect = function(obj, iteratee, context) {
-    iteratee = cb(iteratee, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length,
-        results = Array(length);
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys ? keys[index] : index;
-      results[index] = iteratee(obj[currentKey], currentKey, obj);
-    }
-    return results;
-  };
-
-  // Create a reducing function iterating left or right.
-  var createReduce = function(dir) {
-    // Wrap code that reassigns argument variables in a separate function than
-    // the one that accesses `arguments.length` to avoid a perf hit. (#1991)
-    var reducer = function(obj, iteratee, memo, initial) {
-      var keys = !isArrayLike(obj) && _.keys(obj),
-          length = (keys || obj).length,
-          index = dir > 0 ? 0 : length - 1;
-      if (!initial) {
-        memo = obj[keys ? keys[index] : index];
-        index += dir;
-      }
-      for (; index >= 0 && index < length; index += dir) {
-        var currentKey = keys ? keys[index] : index;
-        memo = iteratee(memo, obj[currentKey], currentKey, obj);
-      }
-      return memo;
-    };
-
-    return function(obj, iteratee, memo, context) {
-      var initial = arguments.length >= 3;
-      return reducer(obj, optimizeCb(iteratee, context, 4), memo, initial);
-    };
-  };
-
-  // **Reduce** builds up a single result from a list of values, aka `inject`,
-  // or `foldl`.
-  _.reduce = _.foldl = _.inject = createReduce(1);
-
-  // The right-associative version of reduce, also known as `foldr`.
-  _.reduceRight = _.foldr = createReduce(-1);
-
-  // Return the first value which passes a truth test. Aliased as `detect`.
-  _.find = _.detect = function(obj, predicate, context) {
-    var keyFinder = isArrayLike(obj) ? _.findIndex : _.findKey;
-    var key = keyFinder(obj, predicate, context);
-    if (key !== void 0 && key !== -1) return obj[key];
-  };
-
-  // Return all the elements that pass a truth test.
-  // Aliased as `select`.
-  _.filter = _.select = function(obj, predicate, context) {
-    var results = [];
-    predicate = cb(predicate, context);
-    _.each(obj, function(value, index, list) {
-      if (predicate(value, index, list)) results.push(value);
-    });
-    return results;
-  };
-
-  // Return all the elements for which a truth test fails.
-  _.reject = function(obj, predicate, context) {
-    return _.filter(obj, _.negate(cb(predicate)), context);
-  };
-
-  // Determine whether all of the elements match a truth test.
-  // Aliased as `all`.
-  _.every = _.all = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length;
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys ? keys[index] : index;
-      if (!predicate(obj[currentKey], currentKey, obj)) return false;
-    }
-    return true;
-  };
-
-  // Determine if at least one element in the object matches a truth test.
-  // Aliased as `any`.
-  _.some = _.any = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var keys = !isArrayLike(obj) && _.keys(obj),
-        length = (keys || obj).length;
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys ? keys[index] : index;
-      if (predicate(obj[currentKey], currentKey, obj)) return true;
-    }
-    return false;
-  };
-
-  // Determine if the array or object contains a given item (using `===`).
-  // Aliased as `includes` and `include`.
-  _.contains = _.includes = _.include = function(obj, item, fromIndex, guard) {
-    if (!isArrayLike(obj)) obj = _.values(obj);
-    if (typeof fromIndex != 'number' || guard) fromIndex = 0;
-    return _.indexOf(obj, item, fromIndex) >= 0;
-  };
-
-  // Invoke a method (with arguments) on every item in a collection.
-  _.invoke = restArguments(function(obj, path, args) {
-    var contextPath, func;
-    if (_.isFunction(path)) {
-      func = path;
-    } else if (_.isArray(path)) {
-      contextPath = path.slice(0, -1);
-      path = path[path.length - 1];
-    }
-    return _.map(obj, function(context) {
-      var method = func;
-      if (!method) {
-        if (contextPath && contextPath.length) {
-          context = deepGet(context, contextPath);
-        }
-        if (context == null) return void 0;
-        method = context[path];
-      }
-      return method == null ? method : method.apply(context, args);
-    });
-  });
-
-  // Convenience version of a common use case of `map`: fetching a property.
-  _.pluck = function(obj, key) {
-    return _.map(obj, _.property(key));
-  };
-
-  // Convenience version of a common use case of `filter`: selecting only objects
-  // containing specific `key:value` pairs.
-  _.where = function(obj, attrs) {
-    return _.filter(obj, _.matcher(attrs));
-  };
-
-  // Convenience version of a common use case of `find`: getting the first object
-  // containing specific `key:value` pairs.
-  _.findWhere = function(obj, attrs) {
-    return _.find(obj, _.matcher(attrs));
-  };
-
-  // Return the maximum element (or element-based computation).
-  _.max = function(obj, iteratee, context) {
-    var result = -Infinity, lastComputed = -Infinity,
-        value, computed;
-    if (iteratee == null || typeof iteratee == 'number' && typeof obj[0] != 'object' && obj != null) {
-      obj = isArrayLike(obj) ? obj : _.values(obj);
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value != null && value > result) {
-          result = value;
-        }
-      }
-    } else {
-      iteratee = cb(iteratee, context);
-      _.each(obj, function(v, index, list) {
-        computed = iteratee(v, index, list);
-        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
-          result = v;
-          lastComputed = computed;
-        }
-      });
-    }
-    return result;
-  };
-
-  // Return the minimum element (or element-based computation).
-  _.min = function(obj, iteratee, context) {
-    var result = Infinity, lastComputed = Infinity,
-        value, computed;
-    if (iteratee == null || typeof iteratee == 'number' && typeof obj[0] != 'object' && obj != null) {
-      obj = isArrayLike(obj) ? obj : _.values(obj);
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value != null && value < result) {
-          result = value;
-        }
-      }
-    } else {
-      iteratee = cb(iteratee, context);
-      _.each(obj, function(v, index, list) {
-        computed = iteratee(v, index, list);
-        if (computed < lastComputed || computed === Infinity && result === Infinity) {
-          result = v;
-          lastComputed = computed;
-        }
-      });
-    }
-    return result;
-  };
-
-  // Shuffle a collection.
-  _.shuffle = function(obj) {
-    return _.sample(obj, Infinity);
-  };
-
-  // Sample **n** random values from a collection using the modern version of the
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
-  // If **n** is not specified, returns a single random element.
-  // The internal `guard` argument allows it to work with `map`.
-  _.sample = function(obj, n, guard) {
-    if (n == null || guard) {
-      if (!isArrayLike(obj)) obj = _.values(obj);
-      return obj[_.random(obj.length - 1)];
-    }
-    var sample = isArrayLike(obj) ? _.clone(obj) : _.values(obj);
-    var length = getLength(sample);
-    n = Math.max(Math.min(n, length), 0);
-    var last = length - 1;
-    for (var index = 0; index < n; index++) {
-      var rand = _.random(index, last);
-      var temp = sample[index];
-      sample[index] = sample[rand];
-      sample[rand] = temp;
-    }
-    return sample.slice(0, n);
-  };
-
-  // Sort the object's values by a criterion produced by an iteratee.
-  _.sortBy = function(obj, iteratee, context) {
-    var index = 0;
-    iteratee = cb(iteratee, context);
-    return _.pluck(_.map(obj, function(value, key, list) {
-      return {
-        value: value,
-        index: index++,
-        criteria: iteratee(value, key, list)
-      };
-    }).sort(function(left, right) {
-      var a = left.criteria;
-      var b = right.criteria;
-      if (a !== b) {
-        if (a > b || a === void 0) return 1;
-        if (a < b || b === void 0) return -1;
-      }
-      return left.index - right.index;
-    }), 'value');
-  };
-
-  // An internal function used for aggregate "group by" operations.
-  var group = function(behavior, partition) {
-    return function(obj, iteratee, context) {
-      var result = partition ? [[], []] : {};
-      iteratee = cb(iteratee, context);
-      _.each(obj, function(value, index) {
-        var key = iteratee(value, index, obj);
-        behavior(result, value, key);
-      });
-      return result;
-    };
-  };
-
-  // Groups the object's values by a criterion. Pass either a string attribute
-  // to group by, or a function that returns the criterion.
-  _.groupBy = group(function(result, value, key) {
-    if (has(result, key)) result[key].push(value); else result[key] = [value];
-  });
-
-  // Indexes the object's values by a criterion, similar to `groupBy`, but for
-  // when you know that your index values will be unique.
-  _.indexBy = group(function(result, value, key) {
-    result[key] = value;
-  });
-
-  // Counts instances of an object that group by a certain criterion. Pass
-  // either a string attribute to count by, or a function that returns the
-  // criterion.
-  _.countBy = group(function(result, value, key) {
-    if (has(result, key)) result[key]++; else result[key] = 1;
-  });
-
-  var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
-  // Safely create a real, live array from anything iterable.
-  _.toArray = function(obj) {
-    if (!obj) return [];
-    if (_.isArray(obj)) return slice.call(obj);
-    if (_.isString(obj)) {
-      // Keep surrogate pair characters together
-      return obj.match(reStrSymbol);
-    }
-    if (isArrayLike(obj)) return _.map(obj, _.identity);
-    return _.values(obj);
-  };
-
-  // Return the number of elements in an object.
-  _.size = function(obj) {
-    if (obj == null) return 0;
-    return isArrayLike(obj) ? obj.length : _.keys(obj).length;
-  };
-
-  // Split a collection into two arrays: one whose elements all satisfy the given
-  // predicate, and one whose elements all do not satisfy the predicate.
-  _.partition = group(function(result, value, pass) {
-    result[pass ? 0 : 1].push(value);
-  }, true);
-
-  // Array Functions
-  // ---------------
-
-  // Get the first element of an array. Passing **n** will return the first N
-  // values in the array. Aliased as `head` and `take`. The **guard** check
-  // allows it to work with `_.map`.
-  _.first = _.head = _.take = function(array, n, guard) {
-    if (array == null || array.length < 1) return n == null ? void 0 : [];
-    if (n == null || guard) return array[0];
-    return _.initial(array, array.length - n);
-  };
-
-  // Returns everything but the last entry of the array. Especially useful on
-  // the arguments object. Passing **n** will return all the values in
-  // the array, excluding the last N.
-  _.initial = function(array, n, guard) {
-    return slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));
-  };
-
-  // Get the last element of an array. Passing **n** will return the last N
-  // values in the array.
-  _.last = function(array, n, guard) {
-    if (array == null || array.length < 1) return n == null ? void 0 : [];
-    if (n == null || guard) return array[array.length - 1];
-    return _.rest(array, Math.max(0, array.length - n));
-  };
-
-  // Returns everything but the first entry of the array. Aliased as `tail` and `drop`.
-  // Especially useful on the arguments object. Passing an **n** will return
-  // the rest N values in the array.
-  _.rest = _.tail = _.drop = function(array, n, guard) {
-    return slice.call(array, n == null || guard ? 1 : n);
-  };
-
-  // Trim out all falsy values from an array.
-  _.compact = function(array) {
-    return _.filter(array, Boolean);
-  };
-
-  // Internal implementation of a recursive `flatten` function.
-  var flatten = function(input, shallow, strict, output) {
-    output = output || [];
-    var idx = output.length;
-    for (var i = 0, length = getLength(input); i < length; i++) {
-      var value = input[i];
-      if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
-        // Flatten current level of array or arguments object.
-        if (shallow) {
-          var j = 0, len = value.length;
-          while (j < len) output[idx++] = value[j++];
-        } else {
-          flatten(value, shallow, strict, output);
-          idx = output.length;
-        }
-      } else if (!strict) {
-        output[idx++] = value;
-      }
-    }
-    return output;
-  };
-
-  // Flatten out an array, either recursively (by default), or just one level.
-  _.flatten = function(array, shallow) {
-    return flatten(array, shallow, false);
-  };
-
-  // Return a version of the array that does not contain the specified value(s).
-  _.without = restArguments(function(array, otherArrays) {
-    return _.difference(array, otherArrays);
-  });
-
-  // Produce a duplicate-free version of the array. If the array has already
-  // been sorted, you have the option of using a faster algorithm.
-  // The faster algorithm will not work with an iteratee if the iteratee
-  // is not a one-to-one function, so providing an iteratee will disable
-  // the faster algorithm.
-  // Aliased as `unique`.
-  _.uniq = _.unique = function(array, isSorted, iteratee, context) {
-    if (!_.isBoolean(isSorted)) {
-      context = iteratee;
-      iteratee = isSorted;
-      isSorted = false;
-    }
-    if (iteratee != null) iteratee = cb(iteratee, context);
-    var result = [];
-    var seen = [];
-    for (var i = 0, length = getLength(array); i < length; i++) {
-      var value = array[i],
-          computed = iteratee ? iteratee(value, i, array) : value;
-      if (isSorted && !iteratee) {
-        if (!i || seen !== computed) result.push(value);
-        seen = computed;
-      } else if (iteratee) {
-        if (!_.contains(seen, computed)) {
-          seen.push(computed);
-          result.push(value);
-        }
-      } else if (!_.contains(result, value)) {
-        result.push(value);
-      }
-    }
-    return result;
-  };
-
-  // Produce an array that contains the union: each distinct element from all of
-  // the passed-in arrays.
-  _.union = restArguments(function(arrays) {
-    return _.uniq(flatten(arrays, true, true));
-  });
-
-  // Produce an array that contains every item shared between all the
-  // passed-in arrays.
-  _.intersection = function(array) {
-    var result = [];
-    var argsLength = arguments.length;
-    for (var i = 0, length = getLength(array); i < length; i++) {
-      var item = array[i];
-      if (_.contains(result, item)) continue;
-      var j;
-      for (j = 1; j < argsLength; j++) {
-        if (!_.contains(arguments[j], item)) break;
-      }
-      if (j === argsLength) result.push(item);
-    }
-    return result;
-  };
-
-  // Take the difference between one array and a number of other arrays.
-  // Only the elements present in just the first array will remain.
-  _.difference = restArguments(function(array, rest) {
-    rest = flatten(rest, true, true);
-    return _.filter(array, function(value){
-      return !_.contains(rest, value);
-    });
-  });
-
-  // Complement of _.zip. Unzip accepts an array of arrays and groups
-  // each array's elements on shared indices.
-  _.unzip = function(array) {
-    var length = array && _.max(array, getLength).length || 0;
-    var result = Array(length);
-
-    for (var index = 0; index < length; index++) {
-      result[index] = _.pluck(array, index);
-    }
-    return result;
-  };
-
-  // Zip together multiple lists into a single array -- elements that share
-  // an index go together.
-  _.zip = restArguments(_.unzip);
-
-  // Converts lists into objects. Pass either a single array of `[key, value]`
-  // pairs, or two parallel arrays of the same length -- one of keys, and one of
-  // the corresponding values. Passing by pairs is the reverse of _.pairs.
-  _.object = function(list, values) {
-    var result = {};
-    for (var i = 0, length = getLength(list); i < length; i++) {
-      if (values) {
-        result[list[i]] = values[i];
-      } else {
-        result[list[i][0]] = list[i][1];
-      }
-    }
-    return result;
-  };
-
-  // Generator function to create the findIndex and findLastIndex functions.
-  var createPredicateIndexFinder = function(dir) {
-    return function(array, predicate, context) {
-      predicate = cb(predicate, context);
-      var length = getLength(array);
-      var index = dir > 0 ? 0 : length - 1;
-      for (; index >= 0 && index < length; index += dir) {
-        if (predicate(array[index], index, array)) return index;
-      }
-      return -1;
-    };
-  };
-
-  // Returns the first index on an array-like that passes a predicate test.
-  _.findIndex = createPredicateIndexFinder(1);
-  _.findLastIndex = createPredicateIndexFinder(-1);
-
-  // Use a comparator function to figure out the smallest index at which
-  // an object should be inserted so as to maintain order. Uses binary search.
-  _.sortedIndex = function(array, obj, iteratee, context) {
-    iteratee = cb(iteratee, context, 1);
-    var value = iteratee(obj);
-    var low = 0, high = getLength(array);
-    while (low < high) {
-      var mid = Math.floor((low + high) / 2);
-      if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;
-    }
-    return low;
-  };
-
-  // Generator function to create the indexOf and lastIndexOf functions.
-  var createIndexFinder = function(dir, predicateFind, sortedIndex) {
-    return function(array, item, idx) {
-      var i = 0, length = getLength(array);
-      if (typeof idx == 'number') {
-        if (dir > 0) {
-          i = idx >= 0 ? idx : Math.max(idx + length, i);
-        } else {
-          length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
-        }
-      } else if (sortedIndex && idx && length) {
-        idx = sortedIndex(array, item);
-        return array[idx] === item ? idx : -1;
-      }
-      if (item !== item) {
-        idx = predicateFind(slice.call(array, i, length), _.isNaN);
-        return idx >= 0 ? idx + i : -1;
-      }
-      for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {
-        if (array[idx] === item) return idx;
-      }
-      return -1;
-    };
-  };
-
-  // Return the position of the first occurrence of an item in an array,
-  // or -1 if the item is not included in the array.
-  // If the array is large and already in sort order, pass `true`
-  // for **isSorted** to use binary search.
-  _.indexOf = createIndexFinder(1, _.findIndex, _.sortedIndex);
-  _.lastIndexOf = createIndexFinder(-1, _.findLastIndex);
-
-  // Generate an integer Array containing an arithmetic progression. A port of
-  // the native Python `range()` function. See
-  // [the Python documentation](http://docs.python.org/library/functions.html#range).
-  _.range = function(start, stop, step) {
-    if (stop == null) {
-      stop = start || 0;
-      start = 0;
-    }
-    if (!step) {
-      step = stop < start ? -1 : 1;
-    }
-
-    var length = Math.max(Math.ceil((stop - start) / step), 0);
-    var range = Array(length);
-
-    for (var idx = 0; idx < length; idx++, start += step) {
-      range[idx] = start;
-    }
-
-    return range;
-  };
-
-  // Chunk a single array into multiple arrays, each containing `count` or fewer
-  // items.
-  _.chunk = function(array, count) {
-    if (count == null || count < 1) return [];
-    var result = [];
-    var i = 0, length = array.length;
-    while (i < length) {
-      result.push(slice.call(array, i, i += count));
-    }
-    return result;
-  };
-
-  // Function (ahem) Functions
-  // ------------------
-
-  // Determines whether to execute a function as a constructor
-  // or a normal function with the provided arguments.
-  var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
-    if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
-    var self = baseCreate(sourceFunc.prototype);
-    var result = sourceFunc.apply(self, args);
-    if (_.isObject(result)) return result;
-    return self;
-  };
-
-  // Create a function bound to a given object (assigning `this`, and arguments,
-  // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
-  // available.
-  _.bind = restArguments(function(func, context, args) {
-    if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
-    var bound = restArguments(function(callArgs) {
-      return executeBound(func, bound, context, this, args.concat(callArgs));
-    });
-    return bound;
-  });
-
-  // Partially apply a function by creating a version that has had some of its
-  // arguments pre-filled, without changing its dynamic `this` context. _ acts
-  // as a placeholder by default, allowing any combination of arguments to be
-  // pre-filled. Set `_.partial.placeholder` for a custom placeholder argument.
-  _.partial = restArguments(function(func, boundArgs) {
-    var placeholder = _.partial.placeholder;
-    var bound = function() {
-      var position = 0, length = boundArgs.length;
-      var args = Array(length);
-      for (var i = 0; i < length; i++) {
-        args[i] = boundArgs[i] === placeholder ? arguments[position++] : boundArgs[i];
-      }
-      while (position < arguments.length) args.push(arguments[position++]);
-      return executeBound(func, bound, this, this, args);
-    };
-    return bound;
-  });
-
-  _.partial.placeholder = _;
-
-  // Bind a number of an object's methods to that object. Remaining arguments
-  // are the method names to be bound. Useful for ensuring that all callbacks
-  // defined on an object belong to it.
-  _.bindAll = restArguments(function(obj, keys) {
-    keys = flatten(keys, false, false);
-    var index = keys.length;
-    if (index < 1) throw new Error('bindAll must be passed function names');
-    while (index--) {
-      var key = keys[index];
-      obj[key] = _.bind(obj[key], obj);
-    }
-  });
-
-  // Memoize an expensive function by storing its results.
-  _.memoize = function(func, hasher) {
-    var memoize = function(key) {
-      var cache = memoize.cache;
-      var address = '' + (hasher ? hasher.apply(this, arguments) : key);
-      if (!has(cache, address)) cache[address] = func.apply(this, arguments);
-      return cache[address];
-    };
-    memoize.cache = {};
-    return memoize;
-  };
-
-  // Delays a function for the given number of milliseconds, and then calls
-  // it with the arguments supplied.
-  _.delay = restArguments(function(func, wait, args) {
-    return setTimeout(function() {
-      return func.apply(null, args);
-    }, wait);
-  });
-
-  // Defers a function, scheduling it to run after the current call stack has
-  // cleared.
-  _.defer = _.partial(_.delay, _, 1);
-
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time. Normally, the throttled function will run
-  // as much as it can, without ever going more than once per `wait` duration;
-  // but if you'd like to disable the execution on the leading edge, pass
-  // `{leading: false}`. To disable execution on the trailing edge, ditto.
-  _.throttle = function(func, wait, options) {
-    var timeout, context, args, result;
-    var previous = 0;
-    if (!options) options = {};
-
-    var later = function() {
-      previous = options.leading === false ? 0 : _.now();
-      timeout = null;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    };
-
-    var throttled = function() {
-      var now = _.now();
-      if (!previous && options.leading === false) previous = now;
-      var remaining = wait - (now - previous);
-      context = this;
-      args = arguments;
-      if (remaining <= 0 || remaining > wait) {
-        if (timeout) {
-          clearTimeout(timeout);
-          timeout = null;
-        }
-        previous = now;
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-      } else if (!timeout && options.trailing !== false) {
-        timeout = setTimeout(later, remaining);
-      }
-      return result;
-    };
-
-    throttled.cancel = function() {
-      clearTimeout(timeout);
-      previous = 0;
-      timeout = context = args = null;
-    };
-
-    return throttled;
-  };
-
-  // Returns a function, that, as long as it continues to be invoked, will not
-  // be triggered. The function will be called after it stops being called for
-  // N milliseconds. If `immediate` is passed, trigger the function on the
-  // leading edge, instead of the trailing.
-  _.debounce = function(func, wait, immediate) {
-    var timeout, result;
-
-    var later = function(context, args) {
-      timeout = null;
-      if (args) result = func.apply(context, args);
-    };
-
-    var debounced = restArguments(function(args) {
-      if (timeout) clearTimeout(timeout);
-      if (immediate) {
-        var callNow = !timeout;
-        timeout = setTimeout(later, wait);
-        if (callNow) result = func.apply(this, args);
-      } else {
-        timeout = _.delay(later, wait, this, args);
-      }
-
-      return result;
-    });
-
-    debounced.cancel = function() {
-      clearTimeout(timeout);
-      timeout = null;
-    };
-
-    return debounced;
-  };
-
-  // Returns the first function passed as an argument to the second,
-  // allowing you to adjust arguments, run code before and after, and
-  // conditionally execute the original function.
-  _.wrap = function(func, wrapper) {
-    return _.partial(wrapper, func);
-  };
-
-  // Returns a negated version of the passed-in predicate.
-  _.negate = function(predicate) {
-    return function() {
-      return !predicate.apply(this, arguments);
-    };
-  };
-
-  // Returns a function that is the composition of a list of functions, each
-  // consuming the return value of the function that follows.
-  _.compose = function() {
-    var args = arguments;
-    var start = args.length - 1;
-    return function() {
-      var i = start;
-      var result = args[start].apply(this, arguments);
-      while (i--) result = args[i].call(this, result);
-      return result;
-    };
-  };
-
-  // Returns a function that will only be executed on and after the Nth call.
-  _.after = function(times, func) {
-    return function() {
-      if (--times < 1) {
-        return func.apply(this, arguments);
-      }
-    };
-  };
-
-  // Returns a function that will only be executed up to (but not including) the Nth call.
-  _.before = function(times, func) {
-    var memo;
-    return function() {
-      if (--times > 0) {
-        memo = func.apply(this, arguments);
-      }
-      if (times <= 1) func = null;
-      return memo;
-    };
-  };
-
-  // Returns a function that will be executed at most one time, no matter how
-  // often you call it. Useful for lazy initialization.
-  _.once = _.partial(_.before, 2);
-
-  _.restArguments = restArguments;
-
-  // Object Functions
-  // ----------------
-
-  // Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
-  var hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');
-  var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
-    'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];
-
-  var collectNonEnumProps = function(obj, keys) {
-    var nonEnumIdx = nonEnumerableProps.length;
-    var constructor = obj.constructor;
-    var proto = _.isFunction(constructor) && constructor.prototype || ObjProto;
-
-    // Constructor is a special case.
-    var prop = 'constructor';
-    if (has(obj, prop) && !_.contains(keys, prop)) keys.push(prop);
-
-    while (nonEnumIdx--) {
-      prop = nonEnumerableProps[nonEnumIdx];
-      if (prop in obj && obj[prop] !== proto[prop] && !_.contains(keys, prop)) {
-        keys.push(prop);
-      }
-    }
-  };
-
-  // Retrieve the names of an object's own properties.
-  // Delegates to **ECMAScript 5**'s native `Object.keys`.
-  _.keys = function(obj) {
-    if (!_.isObject(obj)) return [];
-    if (nativeKeys) return nativeKeys(obj);
-    var keys = [];
-    for (var key in obj) if (has(obj, key)) keys.push(key);
-    // Ahem, IE < 9.
-    if (hasEnumBug) collectNonEnumProps(obj, keys);
-    return keys;
-  };
-
-  // Retrieve all the property names of an object.
-  _.allKeys = function(obj) {
-    if (!_.isObject(obj)) return [];
-    var keys = [];
-    for (var key in obj) keys.push(key);
-    // Ahem, IE < 9.
-    if (hasEnumBug) collectNonEnumProps(obj, keys);
-    return keys;
-  };
-
-  // Retrieve the values of an object's properties.
-  _.values = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var values = Array(length);
-    for (var i = 0; i < length; i++) {
-      values[i] = obj[keys[i]];
-    }
-    return values;
-  };
-
-  // Returns the results of applying the iteratee to each element of the object.
-  // In contrast to _.map it returns an object.
-  _.mapObject = function(obj, iteratee, context) {
-    iteratee = cb(iteratee, context);
-    var keys = _.keys(obj),
-        length = keys.length,
-        results = {};
-    for (var index = 0; index < length; index++) {
-      var currentKey = keys[index];
-      results[currentKey] = iteratee(obj[currentKey], currentKey, obj);
-    }
-    return results;
-  };
-
-  // Convert an object into a list of `[key, value]` pairs.
-  // The opposite of _.object.
-  _.pairs = function(obj) {
-    var keys = _.keys(obj);
-    var length = keys.length;
-    var pairs = Array(length);
-    for (var i = 0; i < length; i++) {
-      pairs[i] = [keys[i], obj[keys[i]]];
-    }
-    return pairs;
-  };
-
-  // Invert the keys and values of an object. The values must be serializable.
-  _.invert = function(obj) {
-    var result = {};
-    var keys = _.keys(obj);
-    for (var i = 0, length = keys.length; i < length; i++) {
-      result[obj[keys[i]]] = keys[i];
-    }
-    return result;
-  };
-
-  // Return a sorted list of the function names available on the object.
-  // Aliased as `methods`.
-  _.functions = _.methods = function(obj) {
-    var names = [];
-    for (var key in obj) {
-      if (_.isFunction(obj[key])) names.push(key);
-    }
-    return names.sort();
-  };
-
-  // An internal function for creating assigner functions.
-  var createAssigner = function(keysFunc, defaults) {
-    return function(obj) {
-      var length = arguments.length;
-      if (defaults) obj = Object(obj);
-      if (length < 2 || obj == null) return obj;
-      for (var index = 1; index < length; index++) {
-        var source = arguments[index],
-            keys = keysFunc(source),
-            l = keys.length;
-        for (var i = 0; i < l; i++) {
-          var key = keys[i];
-          if (!defaults || obj[key] === void 0) obj[key] = source[key];
-        }
-      }
-      return obj;
-    };
-  };
-
-  // Extend a given object with all the properties in passed-in object(s).
-  _.extend = createAssigner(_.allKeys);
-
-  // Assigns a given object with all the own properties in the passed-in object(s).
-  // (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
-  _.extendOwn = _.assign = createAssigner(_.keys);
-
-  // Returns the first key on an object that passes a predicate test.
-  _.findKey = function(obj, predicate, context) {
-    predicate = cb(predicate, context);
-    var keys = _.keys(obj), key;
-    for (var i = 0, length = keys.length; i < length; i++) {
-      key = keys[i];
-      if (predicate(obj[key], key, obj)) return key;
-    }
-  };
-
-  // Internal pick helper function to determine if `obj` has key `key`.
-  var keyInObj = function(value, key, obj) {
-    return key in obj;
-  };
-
-  // Return a copy of the object only containing the whitelisted properties.
-  _.pick = restArguments(function(obj, keys) {
-    var result = {}, iteratee = keys[0];
-    if (obj == null) return result;
-    if (_.isFunction(iteratee)) {
-      if (keys.length > 1) iteratee = optimizeCb(iteratee, keys[1]);
-      keys = _.allKeys(obj);
-    } else {
-      iteratee = keyInObj;
-      keys = flatten(keys, false, false);
-      obj = Object(obj);
-    }
-    for (var i = 0, length = keys.length; i < length; i++) {
-      var key = keys[i];
-      var value = obj[key];
-      if (iteratee(value, key, obj)) result[key] = value;
-    }
-    return result;
-  });
-
-  // Return a copy of the object without the blacklisted properties.
-  _.omit = restArguments(function(obj, keys) {
-    var iteratee = keys[0], context;
-    if (_.isFunction(iteratee)) {
-      iteratee = _.negate(iteratee);
-      if (keys.length > 1) context = keys[1];
-    } else {
-      keys = _.map(flatten(keys, false, false), String);
-      iteratee = function(value, key) {
-        return !_.contains(keys, key);
-      };
-    }
-    return _.pick(obj, iteratee, context);
-  });
-
-  // Fill in a given object with default properties.
-  _.defaults = createAssigner(_.allKeys, true);
-
-  // Creates an object that inherits from the given prototype object.
-  // If additional properties are provided then they will be added to the
-  // created object.
-  _.create = function(prototype, props) {
-    var result = baseCreate(prototype);
-    if (props) _.extendOwn(result, props);
-    return result;
-  };
-
-  // Create a (shallow-cloned) duplicate of an object.
-  _.clone = function(obj) {
-    if (!_.isObject(obj)) return obj;
-    return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
-  };
-
-  // Invokes interceptor with the obj, and then returns obj.
-  // The primary purpose of this method is to "tap into" a method chain, in
-  // order to perform operations on intermediate results within the chain.
-  _.tap = function(obj, interceptor) {
-    interceptor(obj);
-    return obj;
-  };
-
-  // Returns whether an object has a given set of `key:value` pairs.
-  _.isMatch = function(object, attrs) {
-    var keys = _.keys(attrs), length = keys.length;
-    if (object == null) return !length;
-    var obj = Object(object);
-    for (var i = 0; i < length; i++) {
-      var key = keys[i];
-      if (attrs[key] !== obj[key] || !(key in obj)) return false;
-    }
-    return true;
-  };
-
-
-  // Internal recursive comparison function for `isEqual`.
-  var eq, deepEq;
-  eq = function(a, b, aStack, bStack) {
-    // Identical objects are equal. `0 === -0`, but they aren't identical.
-    // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
-    if (a === b) return a !== 0 || 1 / a === 1 / b;
-    // `null` or `undefined` only equal to itself (strict comparison).
-    if (a == null || b == null) return false;
-    // `NaN`s are equivalent, but non-reflexive.
-    if (a !== a) return b !== b;
-    // Exhaust primitive checks
-    var type = typeof a;
-    if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
-    return deepEq(a, b, aStack, bStack);
-  };
-
-  // Internal recursive comparison function for `isEqual`.
-  deepEq = function(a, b, aStack, bStack) {
-    // Unwrap any wrapped objects.
-    if (a instanceof _) a = a._wrapped;
-    if (b instanceof _) b = b._wrapped;
-    // Compare `[[Class]]` names.
-    var className = toString.call(a);
-    if (className !== toString.call(b)) return false;
-    switch (className) {
-      // Strings, numbers, regular expressions, dates, and booleans are compared by value.
-      case '[object RegExp]':
-      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
-      case '[object String]':
-        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
-        // equivalent to `new String("5")`.
-        return '' + a === '' + b;
-      case '[object Number]':
-        // `NaN`s are equivalent, but non-reflexive.
-        // Object(NaN) is equivalent to NaN.
-        if (+a !== +a) return +b !== +b;
-        // An `egal` comparison is performed for other numeric values.
-        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-      case '[object Date]':
-      case '[object Boolean]':
-        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
-        // millisecond representations. Note that invalid dates with millisecond representations
-        // of `NaN` are not equivalent.
-        return +a === +b;
-      case '[object Symbol]':
-        return SymbolProto.valueOf.call(a) === SymbolProto.valueOf.call(b);
-    }
-
-    var areArrays = className === '[object Array]';
-    if (!areArrays) {
-      if (typeof a != 'object' || typeof b != 'object') return false;
-
-      // Objects with different constructors are not equivalent, but `Object`s or `Array`s
-      // from different frames are.
-      var aCtor = a.constructor, bCtor = b.constructor;
-      if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
-                               _.isFunction(bCtor) && bCtor instanceof bCtor)
-                          && ('constructor' in a && 'constructor' in b)) {
-        return false;
-      }
-    }
-    // Assume equality for cyclic structures. The algorithm for detecting cyclic
-    // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-
-    // Initializing stack of traversed objects.
-    // It's done here since we only need them for objects and arrays comparison.
-    aStack = aStack || [];
-    bStack = bStack || [];
-    var length = aStack.length;
-    while (length--) {
-      // Linear search. Performance is inversely proportional to the number of
-      // unique nested structures.
-      if (aStack[length] === a) return bStack[length] === b;
-    }
-
-    // Add the first object to the stack of traversed objects.
-    aStack.push(a);
-    bStack.push(b);
-
-    // Recursively compare objects and arrays.
-    if (areArrays) {
-      // Compare array lengths to determine if a deep comparison is necessary.
-      length = a.length;
-      if (length !== b.length) return false;
-      // Deep compare the contents, ignoring non-numeric properties.
-      while (length--) {
-        if (!eq(a[length], b[length], aStack, bStack)) return false;
-      }
-    } else {
-      // Deep compare objects.
-      var keys = _.keys(a), key;
-      length = keys.length;
-      // Ensure that both objects contain the same number of properties before comparing deep equality.
-      if (_.keys(b).length !== length) return false;
-      while (length--) {
-        // Deep compare each member
-        key = keys[length];
-        if (!(has(b, key) && eq(a[key], b[key], aStack, bStack))) return false;
-      }
-    }
-    // Remove the first object from the stack of traversed objects.
-    aStack.pop();
-    bStack.pop();
-    return true;
-  };
-
-  // Perform a deep comparison to check if two objects are equal.
-  _.isEqual = function(a, b) {
-    return eq(a, b);
-  };
-
-  // Is a given array, string, or object empty?
-  // An "empty" object has no enumerable own-properties.
-  _.isEmpty = function(obj) {
-    if (obj == null) return true;
-    if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;
-    return _.keys(obj).length === 0;
-  };
-
-  // Is a given value a DOM element?
-  _.isElement = function(obj) {
-    return !!(obj && obj.nodeType === 1);
-  };
-
-  // Is a given value an array?
-  // Delegates to ECMA5's native Array.isArray
-  _.isArray = nativeIsArray || function(obj) {
-    return toString.call(obj) === '[object Array]';
-  };
-
-  // Is a given variable an object?
-  _.isObject = function(obj) {
-    var type = typeof obj;
-    return type === 'function' || type === 'object' && !!obj;
-  };
-
-  // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError, isMap, isWeakMap, isSet, isWeakSet.
-  _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function(name) {
-    _['is' + name] = function(obj) {
-      return toString.call(obj) === '[object ' + name + ']';
-    };
-  });
-
-  // Define a fallback version of the method in browsers (ahem, IE < 9), where
-  // there isn't any inspectable "Arguments" type.
-  if (!_.isArguments(arguments)) {
-    _.isArguments = function(obj) {
-      return has(obj, 'callee');
-    };
-  }
-
-  // Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
-  // IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).
-  var nodelist = root.document && root.document.childNodes;
-  if (typeof /./ != 'function' && typeof Int8Array != 'object' && typeof nodelist != 'function') {
-    _.isFunction = function(obj) {
-      return typeof obj == 'function' || false;
-    };
-  }
-
-  // Is a given object a finite number?
-  _.isFinite = function(obj) {
-    return !_.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj));
-  };
-
-  // Is the given value `NaN`?
-  _.isNaN = function(obj) {
-    return _.isNumber(obj) && isNaN(obj);
-  };
-
-  // Is a given value a boolean?
-  _.isBoolean = function(obj) {
-    return obj === true || obj === false || toString.call(obj) === '[object Boolean]';
-  };
-
-  // Is a given value equal to null?
-  _.isNull = function(obj) {
-    return obj === null;
-  };
-
-  // Is a given variable undefined?
-  _.isUndefined = function(obj) {
-    return obj === void 0;
-  };
-
-  // Shortcut function for checking if an object has a given property directly
-  // on itself (in other words, not on a prototype).
-  _.has = function(obj, path) {
-    if (!_.isArray(path)) {
-      return has(obj, path);
-    }
-    var length = path.length;
-    for (var i = 0; i < length; i++) {
-      var key = path[i];
-      if (obj == null || !hasOwnProperty.call(obj, key)) {
-        return false;
-      }
-      obj = obj[key];
-    }
-    return !!length;
-  };
-
-  // Utility Functions
-  // -----------------
-
-  // Run Underscore.js in *noConflict* mode, returning the `_` variable to its
-  // previous owner. Returns a reference to the Underscore object.
-  _.noConflict = function() {
-    root._ = previousUnderscore;
-    return this;
-  };
-
-  // Keep the identity function around for default iteratees.
-  _.identity = function(value) {
-    return value;
-  };
-
-  // Predicate-generating functions. Often useful outside of Underscore.
-  _.constant = function(value) {
-    return function() {
-      return value;
-    };
-  };
-
-  _.noop = function(){};
-
-  // Creates a function that, when passed an object, will traverse that object’s
-  // properties down the given `path`, specified as an array of keys or indexes.
-  _.property = function(path) {
-    if (!_.isArray(path)) {
-      return shallowProperty(path);
-    }
-    return function(obj) {
-      return deepGet(obj, path);
-    };
-  };
-
-  // Generates a function for a given object that returns a given property.
-  _.propertyOf = function(obj) {
-    if (obj == null) {
-      return function(){};
-    }
-    return function(path) {
-      return !_.isArray(path) ? obj[path] : deepGet(obj, path);
-    };
-  };
-
-  // Returns a predicate for checking whether an object has a given set of
-  // `key:value` pairs.
-  _.matcher = _.matches = function(attrs) {
-    attrs = _.extendOwn({}, attrs);
-    return function(obj) {
-      return _.isMatch(obj, attrs);
-    };
-  };
-
-  // Run a function **n** times.
-  _.times = function(n, iteratee, context) {
-    var accum = Array(Math.max(0, n));
-    iteratee = optimizeCb(iteratee, context, 1);
-    for (var i = 0; i < n; i++) accum[i] = iteratee(i);
-    return accum;
-  };
-
-  // Return a random integer between min and max (inclusive).
-  _.random = function(min, max) {
-    if (max == null) {
-      max = min;
-      min = 0;
-    }
-    return min + Math.floor(Math.random() * (max - min + 1));
-  };
-
-  // A (possibly faster) way to get the current timestamp as an integer.
-  _.now = Date.now || function() {
-    return new Date().getTime();
-  };
-
-  // List of HTML entities for escaping.
-  var escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '`': '&#x60;'
-  };
-  var unescapeMap = _.invert(escapeMap);
-
-  // Functions for escaping and unescaping strings to/from HTML interpolation.
-  var createEscaper = function(map) {
-    var escaper = function(match) {
-      return map[match];
-    };
-    // Regexes for identifying a key that needs to be escaped.
-    var source = '(?:' + _.keys(map).join('|') + ')';
-    var testRegexp = RegExp(source);
-    var replaceRegexp = RegExp(source, 'g');
-    return function(string) {
-      string = string == null ? '' : '' + string;
-      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-    };
-  };
-  _.escape = createEscaper(escapeMap);
-  _.unescape = createEscaper(unescapeMap);
-
-  // Traverses the children of `obj` along `path`. If a child is a function, it
-  // is invoked with its parent as context. Returns the value of the final
-  // child, or `fallback` if any child is undefined.
-  _.result = function(obj, path, fallback) {
-    if (!_.isArray(path)) path = [path];
-    var length = path.length;
-    if (!length) {
-      return _.isFunction(fallback) ? fallback.call(obj) : fallback;
-    }
-    for (var i = 0; i < length; i++) {
-      var prop = obj == null ? void 0 : obj[path[i]];
-      if (prop === void 0) {
-        prop = fallback;
-        i = length; // Ensure we don't continue iterating.
-      }
-      obj = _.isFunction(prop) ? prop.call(obj) : prop;
-    }
-    return obj;
-  };
-
-  // Generate a unique integer id (unique within the entire client session).
-  // Useful for temporary DOM ids.
-  var idCounter = 0;
-  _.uniqueId = function(prefix) {
-    var id = ++idCounter + '';
-    return prefix ? prefix + id : id;
-  };
-
-  // By default, Underscore uses ERB-style template delimiters, change the
-  // following template settings to use alternative delimiters.
-  _.templateSettings = {
-    evaluate: /<%([\s\S]+?)%>/g,
-    interpolate: /<%=([\s\S]+?)%>/g,
-    escape: /<%-([\s\S]+?)%>/g
-  };
-
-  // When customizing `templateSettings`, if you don't want to define an
-  // interpolation, evaluation or escaping regex, we need one that is
-  // guaranteed not to match.
-  var noMatch = /(.)^/;
-
-  // Certain characters need to be escaped so that they can be put into a
-  // string literal.
-  var escapes = {
-    "'": "'",
-    '\\': '\\',
-    '\r': 'r',
-    '\n': 'n',
-    '\u2028': 'u2028',
-    '\u2029': 'u2029'
-  };
-
-  var escapeRegExp = /\\|'|\r|\n|\u2028|\u2029/g;
-
-  var escapeChar = function(match) {
-    return '\\' + escapes[match];
-  };
-
-  // JavaScript micro-templating, similar to John Resig's implementation.
-  // Underscore templating handles arbitrary delimiters, preserves whitespace,
-  // and correctly escapes quotes within interpolated code.
-  // NB: `oldSettings` only exists for backwards compatibility.
-  _.template = function(text, settings, oldSettings) {
-    if (!settings && oldSettings) settings = oldSettings;
-    settings = _.defaults({}, settings, _.templateSettings);
-
-    // Combine delimiters into one regular expression via alternation.
-    var matcher = RegExp([
-      (settings.escape || noMatch).source,
-      (settings.interpolate || noMatch).source,
-      (settings.evaluate || noMatch).source
-    ].join('|') + '|$', 'g');
-
-    // Compile the template source, escaping string literals appropriately.
-    var index = 0;
-    var source = "__p+='";
-    text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-      source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
-      index = offset + match.length;
-
-      if (escape) {
-        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-      } else if (interpolate) {
-        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-      } else if (evaluate) {
-        source += "';\n" + evaluate + "\n__p+='";
-      }
-
-      // Adobe VMs need the match returned to produce the correct offset.
-      return match;
-    });
-    source += "';\n";
-
-    // If a variable is not specified, place data values in local scope.
-    if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
-
-    source = "var __t,__p='',__j=Array.prototype.join," +
-      "print=function(){__p+=__j.call(arguments,'');};\n" +
-      source + 'return __p;\n';
-
-    var render;
-    try {
-      render = new Function(settings.variable || 'obj', '_', source);
-    } catch (e) {
-      e.source = source;
-      throw e;
-    }
-
-    var template = function(data) {
-      return render.call(this, data, _);
-    };
-
-    // Provide the compiled source as a convenience for precompilation.
-    var argument = settings.variable || 'obj';
-    template.source = 'function(' + argument + '){\n' + source + '}';
-
-    return template;
-  };
-
-  // Add a "chain" function. Start chaining a wrapped Underscore object.
-  _.chain = function(obj) {
-    var instance = _(obj);
-    instance._chain = true;
-    return instance;
-  };
-
-  // OOP
-  // ---------------
-  // If Underscore is called as a function, it returns a wrapped object that
-  // can be used OO-style. This wrapper holds altered versions of all the
-  // underscore functions. Wrapped objects may be chained.
-
-  // Helper function to continue chaining intermediate results.
-  var chainResult = function(instance, obj) {
-    return instance._chain ? _(obj).chain() : obj;
-  };
-
-  // Add your own custom functions to the Underscore object.
-  _.mixin = function(obj) {
-    _.each(_.functions(obj), function(name) {
-      var func = _[name] = obj[name];
-      _.prototype[name] = function() {
-        var args = [this._wrapped];
-        push.apply(args, arguments);
-        return chainResult(this, func.apply(_, args));
-      };
-    });
-    return _;
-  };
-
-  // Add all of the Underscore functions to the wrapper object.
-  _.mixin(_);
-
-  // Add all mutator Array functions to the wrapper.
-  _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      var obj = this._wrapped;
-      method.apply(obj, arguments);
-      if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
-      return chainResult(this, obj);
-    };
-  });
-
-  // Add all accessor Array functions to the wrapper.
-  _.each(['concat', 'join', 'slice'], function(name) {
-    var method = ArrayProto[name];
-    _.prototype[name] = function() {
-      return chainResult(this, method.apply(this._wrapped, arguments));
-    };
-  });
-
-  // Extracts the result from a wrapped and chained object.
-  _.prototype.value = function() {
-    return this._wrapped;
-  };
-
-  // Provide unwrapping proxy for some methods used in engine operations
-  // such as arithmetic and JSON stringification.
-  _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
-
-  _.prototype.toString = function() {
-    return String(this._wrapped);
-  };
-
-  // AMD registration happens at the end for compatibility with AMD loaders
-  // that may not enforce next-turn semantics on modules. Even though general
-  // practice for AMD registration is to be anonymous, underscore registers
-  // as a named module because, like jQuery, it is a base library that is
-  // popular enough to be bundled in a third party lib, but not be part of
-  // an AMD load request. Those cases could generate an error when an
-  // anonymous define() is called outside of a loader request.
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-      return _;
-    }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  }
-}());
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../services-core/services/catarse.js/node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../../../services-core/services/catarse.js/node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
-
-/***/ }),
-
 /***/ "./legacy/src/api.js":
 /*!***************************!*\
   !*** ./legacy/src/api.js ***!
@@ -2455,7 +105,7 @@ var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithri
 
 var _mithril2 = _interopRequireDefault(_mithril);
 
-var _mithrilPostgrest = __webpack_require__(/*! mithril-postgrest */ "../../../mithril-postgrest/mithril-postgrest.umd.js");
+var _mithrilPostgrest = __webpack_require__(/*! mithril-postgrest */ "./node_modules/mithril-postgrest/mithril-postgrest.umd.js");
 
 var _mithrilPostgrest2 = _interopRequireDefault(_mithrilPostgrest);
 
@@ -2547,6 +197,8 @@ var _c2 = _interopRequireDefault(_c);
 var _chart = __webpack_require__(/*! chart.js */ "./node_modules/chart.js/Chart.js");
 
 var _chart2 = _interopRequireDefault(_chart);
+
+var _util = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2700,14 +352,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             '/projects/:project_id/subscriptions/start': wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
             '/projects/:project_id/subscriptions/checkout': wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
             '/projects/:project_id/subscriptions/thank_you': wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })
-        }, _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/new'), wrap(_c2.default.root.ProjectsContribution)), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit'), wrap(_c2.default.root.ProjectsPayment, { menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/start'), wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/checkout'), wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/subscriptions/thank_you'), wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })), _defineProperty(_m$route, '/en', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/pt', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/flexible_projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/projects', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/explore'), wrap(_c2.default.root.ProjectsExplore, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/start'), wrap(_c2.default.root.Start, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id'), wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions/:contribution_id', wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/:project'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/insights', wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/insights'), wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions_report', wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions_report'), wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report', wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report'), wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report_download', wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report_download'), wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/surveys', wrap(_c2.default.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/fiscal', wrap(_c2.default.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/posts', wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/posts/:post_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts'), wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts/:post_id'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, '/projects/:project_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id', wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id'), wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/contributions/:contribution_id/surveys/:survey_id', wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/contributions/:contribution_id/surveys/:survey_id'), wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id/edit', wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id/edit'), wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/edit', wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/edit'), wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/rewards/:reward_id/surveys/new', wrap(_c2.default.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/:project', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/follow-fb-friends'), wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/follow-fb-friends', wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/team'), wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/team', wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/jobs'), wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/jobs', wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/press', wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/press'), wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _m$route));
+        }, _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/new'), wrap(_c2.default.root.ProjectsContribution)), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit'), wrap(_c2.default.root.ProjectsPayment, { menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/start'), wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/checkout'), wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/subscriptions/thank_you'), wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })), _defineProperty(_m$route, '/en', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/pt', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/flexible_projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/projects', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/explore'), wrap(_c2.default.root.ProjectsExplore, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/start'), wrap(_c2.default.root.Start, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id'), wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions/:contribution_id', wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/:project'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/insights', wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/insights'), wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions_report', wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions_report'), wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report', wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report'), wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report_download', wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report_download'), wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/surveys', wrap(_c2.default.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/fiscal', wrap(_c2.default.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/posts', wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/posts/:post_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts'), wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts/:post_id'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, '/projects/:project_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id', wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id'), wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/contributions/:contribution_id/surveys/:survey_id', wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/contributions/:contribution_id/surveys/:survey_id'), wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id/edit', wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id/edit'), wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/edit', wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/edit'), wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/rewards/:reward_id/surveys/new', wrap(_c2.default.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/:project', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/follow-fb-friends'), wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/follow-fb-friends', wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/team'), wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/team', wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/jobs'), wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/jobs', wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/press', wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/press'), wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/publish'), wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/publish', wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _m$route));
     }
-    _underscore2.default.each(document.querySelectorAll('div[data-mithril]'), function (el) {
-        var component = _c2.default.root[el.attributes['data-mithril'].value],
-            paramAttr = el.attributes['data-parameters'],
-            params = paramAttr && JSON.parse(paramAttr.value);
-        _mithril2.default.mount(el, (0, _mithril2.default)(component, _underscore2.default.extend({ root: el }, params)));
-    });
 })();
 
 /***/ }),
@@ -2858,6 +504,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'activerecord.attributes.address');
 
 var addressFormNational = {
+    onbeforeupdate: function onbeforeupdate(vnode) {},
     view: function view(_ref) {
         var state = _ref.state,
             attrs = _ref.attrs;
@@ -2925,7 +572,7 @@ var addressFormNational = {
         }, [(0, _mithril2.default)('option', { value: '' }), !_underscore2.default.isEmpty(countryStates()) ? _underscore2.default.map(countryStates(), function (countryState) {
             return (0, _mithril2.default)('option', {
                 value: countryState.id,
-                selected: fields && state.id === fields.stateID()
+                selected: fields && countryState.id === fields.stateID()
             }, countryState.acronym);
         }) : '']), errors.stateID() ? (0, _mithril2.default)(_inlineError2.default, {
             message: 'Informe um estado.'
@@ -3011,7 +658,7 @@ var addressForm = {
         }),
             defaultCountryID = vm.defaultCountryID,
             defaultForeignCountryID = vm.defaultForeignCountryID,
-            states = (0, _stream2.default)(),
+            states = (0, _stream2.default)([]),
             zipCodeErrorMessage = (0, _stream2.default)(''),
             fields = vnode.attrs.addressFields || vm.fields,
             errors = {
@@ -3035,7 +682,7 @@ var addressForm = {
         var checkPhone = function checkPhone() {
             var hasError = false;
             var phone = fields.phoneNumber(),
-                strippedPhone = String(phone).replace(/[\(|\)|\-|\s]*/g, '');
+                strippedPhone = String(phone || '').replace(/[\(|\)|\-|\s]*/g, '');
 
             if (strippedPhone.length < 10) {
                 errors.phoneNumber(true);
@@ -3868,16 +1515,15 @@ var adminExternalAction = {
         };
 
         var submit = function submit() {
+            console.log('Is submitting????');
             l(true);
             _mithril2.default.request(builder.requestOptions).then(reloadItem, requestError);
             return false;
         };
 
-        var unload = function unload(el, isinit, context) {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-            };
+        var unload = function unload() {
+            complete(false);
+            error(false);
         };
 
         vnode.state = {
@@ -3899,7 +1545,7 @@ var adminExternalAction = {
         return (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('button.btn.btn-small.btn-terciary', {
             onclick: state.toggler.toggle
         }, data.outerLabel), state.toggler() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-            config: state.unload
+            onremove: state.unload
         }, [(0, _mithril2.default)('form.w-form', {
             onsubmit: state.submit
         }, !state.complete() ? [(0, _mithril2.default)('label', data.innerLabel), (0, _mithril2.default)('input.w-button.btn.btn-small[type="submit"][value="' + btnValue + '"]')] : !state.error() ? [(0, _mithril2.default)('.w-form-done[style="display:block;"]', [(0, _mithril2.default)('p', 'Requisição feita com sucesso.')])] : [(0, _mithril2.default)('.w-form-error[style="display:block;"]', [(0, _mithril2.default)('p', 'Houve um problema na requisição.')])])]) : '']);
@@ -3964,7 +1610,10 @@ var adminFilter = {
         return (0, _mithril2.default)('#admin-contributions-filter.w-section.page-header', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.fontsize-larger.u-text-center.u-marginbottom-30', label), (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('form', {
             onsubmit: attrs.submit
         }, [main ? (0, _mithril2.default)(main.component, main.data) : '', (0, _mithril2.default)('.u-marginbottom-20.w-row', (0, _mithril2.default)('button.w-col.w-col-12.fontsize-smallest.link-hidden-light[style="background: none; border: none; outline: none; text-align: left;"][type="button"]', {
-            onclick: state.toggler.toggle
+            onclick: function onclick() {
+                state.toggler.toggle();
+                _mithril2.default.redraw();
+            }
         }, 'Filtros avançados  >')), state.toggler() ? (0, _mithril2.default)('#advanced-search.w-row.admin-filters', [_underscore2.default.map(filterBuilder, function (f) {
             return f.component !== _filterMain2.default ? (0, _mithril2.default)(f.component, f.data) : '';
         })]) : ''])])])]);
@@ -4039,16 +1688,15 @@ var adminInputAction = {
         };
 
         var submit = function submit() {
+            console.log('IS SUBMITTING!!!!!!!!');
             data[key] = newValue();
             return l.load().then(updateItem, errorOnSubmit);
         };
 
-        var unload = function unload(el, isinit, context) {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-                newValue(forceValue);
-            };
+        var unload = function unload() {
+            complete(false);
+            error(false);
+            newValue(forceValue);
         };
 
         vnode.state = {
@@ -4071,7 +1719,7 @@ var adminInputAction = {
         return (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('button.btn.btn-small.btn-terciary', {
             onclick: state.toggler.toggle
         }, data.outerLabel), state.toggler() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-            config: state.unload
+            onremove: state.unload
         }, [(0, _mithril2.default)('form.w-form', {
             onsubmit: state.submit
         }, !state.complete() ? [(0, _mithril2.default)('label', data.innerLabel), data.forceValue === undefined ? (0, _mithril2.default)('input.w-input.text-field[type="text"][placeholder="' + data.placeholder + '"]', {
@@ -4179,13 +1827,31 @@ var adminList = {
         var list = vnode.attrs.vm.list;
 
         if (!list.collection().length && list.firstPage) {
-            list.firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null).then(null, function (serverError) {
+            list.firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null).then(function (_) {
+                return _mithril2.default.redraw();
+            }, function (serverError) {
                 vnode.attrs.vm.error(serverError.message);
+                _mithril2.default.redraw();
+            }).catch(function (_) {
+                return _mithril2.default.redraw();
             });
         }
+
+        var loadNextPage = function loadNextPage() {
+            list.nextPage().then(function (_) {
+                return _mithril2.default.redraw();
+            }).catch(function (_) {
+                return _mithril2.default.redraw();
+            });
+        };
+
+        vnode.state = {
+            loadNextPage: loadNextPage
+        };
     },
     view: function view(_ref) {
-        var attrs = _ref.attrs;
+        var state = _ref.state,
+            attrs = _ref.attrs;
 
         var list = attrs.vm.list,
             error = attrs.vm.error,
@@ -4201,7 +1867,7 @@ var adminList = {
                 key: item.id
             });
         }), (0, _mithril2.default)('.w-section.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2.w-col-push-5', [list.isLoading() ? _h2.default.loader() : (0, _mithril2.default)('button#load-more.btn.btn-medium.btn-terciary', {
-            onclick: list.nextPage
+            onclick: state.loadNextPage
         }, 'Carregar mais')])])])])])])]);
     }
 };
@@ -5667,7 +3333,12 @@ var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'users.balan
 var adminUserBalanceTransactionsList = {
     oninit: function oninit(vnode) {
         var userBalance = (0, _stream2.default)({}),
-            transactionsListVM = _api.catarse.paginationVM(_models2.default.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' });
+            transactionsListVM = _api.catarse.paginationVM(_models2.default.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' }),
+            loadNextPage = function loadNextPage() {
+            return state.transactionsListVM.nextPage().then(function (_) {
+                return _mithril2.default.redraw();
+            });
+        };
 
         _models2.default.balanceTransaction.pageSize(2);
         _userVm2.default.getUserBalance(vnode.attrs.user_id).then(_underscore2.default.compose(userBalance, _underscore2.default.first));
@@ -5675,7 +3346,8 @@ var adminUserBalanceTransactionsList = {
 
         vnode.state = {
             userBalance: userBalance,
-            transactionsListVM: transactionsListVM
+            transactionsListVM: transactionsListVM,
+            loadNextPage: loadNextPage
         };
     },
     view: function view(_ref) {
@@ -5690,17 +3362,21 @@ var adminUserBalanceTransactionsList = {
         }))), _underscore2.default.map(collection, function (item, intex) {
             return (0, _mithril2.default)('.divider.fontsize-smallest.lineheight-looser', [(0, _mithril2.default)('.w-row.fontweight-semibold', [(0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('.fontcolor-secondary', _h2.default.momentify(item.created_at))]), (0, _mithril2.default)('.w-col.w-col-6', [window.I18n.t('day_balance', I18nScope())]), (0, _mithril2.default)('.w-col.w-col-2', _mithril2.default.trust('&nbsp;')), (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('span', window.I18n.t('shared.currency', {
                 amount: _h2.default.formatNumber(item.total_amount, 2, 3) }))])]), (0, _mithril2.default)('.w-row', [_underscore2.default.map(item.source, function (source, index) {
-                var negativeV = source.amount < 0;
-                return (0, _mithril2.default)('.divider.fontsize-smallest.lineheight-looser.w-row', [(0, _mithril2.default)('.w-col.w-col-2', []), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('div', window.I18n.t('event_names.' + source.event_name, I18nScope({
-                    service_fee: source.origin_objects.service_fee ? source.origin_objects.service_fee * 100.0 : '',
-                    project_name: source.origin_objects.project_name,
-                    contributitor_name: source.origin_objects.contributor_name
-                })))]), (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)(negativeV ? '.text-error' : '.text-success', [negativeV ? '- ' : '+ ', window.I18n.t('shared.currency', {
-                    amount: _h2.default.formatNumber(Math.abs(source.amount), 2, 3)
-                })])])]);
+                if (source) {
+                    var negativeV = source.amount < 0;
+                    return (0, _mithril2.default)('.divider.fontsize-smallest.lineheight-looser.w-row', [(0, _mithril2.default)('.w-col.w-col-2', []), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('div', window.I18n.t('event_names.' + source.event_name, I18nScope({
+                        service_fee: source.origin_objects.service_fee ? source.origin_objects.service_fee * 100.0 : '',
+                        project_name: source.origin_objects.project_name,
+                        contributitor_name: source.origin_objects.contributor_name
+                    })))]), (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)(negativeV ? '.text-error' : '.text-success', [negativeV ? '- ' : '+ ', window.I18n.t('shared.currency', {
+                        amount: _h2.default.formatNumber(Math.abs(source.amount), 2, 3)
+                    })])])]);
+                } else {
+                    return '';
+                }
             })])]);
         }), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3.w-col-push-4', [state.transactionsListVM.isLoading() ? _h2.default.loader() : (0, _mithril2.default)('button#load-more.btn.btn-terciary', {
-            onclick: state.transactionsListVM.nextPage
+            onclick: state.loadNextPage
         }, window.I18n.t('shared.load_more'))])])]);
     }
 };
@@ -5882,7 +3558,7 @@ var adminUserItem = {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        return (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)(_adminUser2.default, args)])]);
+        return (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)(_adminUser2.default, attrs)])]);
     }
 };
 
@@ -5984,10 +3660,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var anonymousBadge = {
 
-    view: function view(ctrl, args) {
+    view: function view(_ref) {
+        var attrs = _ref.attrs;
 
-        if (args.isAnonymous) {
-            return (0, _mithril2.default)('span.fa.fa-eye-slash.fontcolor-secondary', (0, _mithril2.default)('span.fontcolor-secondary[style="font-size:11px;"]', args.text));
+
+        if (attrs.isAnonymous) {
+            return (0, _mithril2.default)('span.fa.fa-eye-slash.fontcolor-secondary', (0, _mithril2.default)('span.fontcolor-secondary[style="font-size:11px;"]', attrs.text));
         } else {
             return (0, _mithril2.default)('div');
         }
@@ -6563,10 +4241,9 @@ var creditCardInput = {
         var cardType = vnode.attrs.type || (0, _stream2.default)('unknown');
         // TODO: move all input logic to vdom paradigm
         // CreditCard Input still handle events on a dom-based model.
-        var setCreditCardHandlers = function setCreditCardHandlers(el, isInitialized) {
-            if (!isInitialized) {
-                _creditCardVm2.default.setEvents(el, cardType, vnode.attrs.value);
-            }
+        var cardNumberProp = vnode.attrs.value;
+        var setCreditCardHandlers = function setCreditCardHandlers(vnode) {
+            _creditCardVm2.default.setEvents(vnode.dom, cardType, cardNumberProp);
         };
 
         vnode.state = {
@@ -6581,7 +4258,7 @@ var creditCardInput = {
         return (0, _mithril2.default)('input.w-input.text-field[name="' + attrs.name + '"][required="required"][type="tel"]', {
             onfocus: attrs.onfocus,
             class: attrs.class,
-            config: state.setCreditCardHandlers,
+            oncreate: state.setCreditCardHandlers,
             onblur: attrs.onblur
         });
     }
@@ -6666,9 +4343,8 @@ var dashboardMultipleChoiceQuestion = {
     view: function view(_ref) {
         var state = _ref.state,
             attrs = _ref.attrs;
-        var _args = args,
-            question = _args.question,
-            index = _args.index;
+        var question = attrs.question,
+            index = attrs.index;
 
 
         return (0, _mithril2.default)('.card.u-marginbottom-30.u-radius.w-form', [(0, _mithril2.default)('.dashboard-question', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('label.fontsize-smaller', 'Pergunta')), (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('input.positive.text-field.w-input[type="text"]', {
@@ -6807,8 +4483,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.reward_fields');
 
 var dashboardRewardCard = {
-    oninit: function oninit(vnode) {
+    controller: function controller(vnode) {
         var reward = vnode.attrs.reward(),
+            imageFileToUpload = (0, _stream2.default)(null),
+            isUploadingRewardImage = (0, _stream2.default)(false),
+            isDeletingRewardImage = (0, _stream2.default)(false),
             availableCount = function availableCount() {
             return reward.maximum_contributions() - reward.paid_count() - reward.waiting_payment_count();
         },
@@ -6848,20 +4527,20 @@ var dashboardRewardCard = {
             return false;
         },
             onSelectImageFile = function onSelectImageFile() {
-            var rewardImageFile = window.document.getElementById('reward_image_file_closed_card_' + args.index);
+            var rewardImageFile = window.document.getElementById('reward_image_file_closed_card_' + vnode.attrs.index);
             if (rewardImageFile.files.length) {
 
                 imageFileToUpload(rewardImageFile.files[0]);
                 isUploadingRewardImage(true);
-                args.uploadImage(reward, imageFileToUpload, args.project().id, reward.id()).then(function (r_with_image) {
+                vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project().id, reward.id()).then(function (r_with_image) {
                     if (r_with_image) {
                         reward.uploaded_image(r_with_image.uploaded_image);
                         imageFileToUpload(null);
-                        args.showSuccess(true);
+                        vnode.attrs.showSuccess(true);
                     }
                     isUploadingRewardImage(false);
                 }).catch(function (error) {
-                    args.showSuccess(false);
+                    vnode.attrs.showSuccess(false);
                     isUploadingRewardImage(false);
                 });
             }
@@ -6873,7 +4552,7 @@ var dashboardRewardCard = {
                 imageFileToUpload(null);
             } else {
                 isDeletingRewardImage(true);
-                args.deleteImage(reward, args.project().id, reward.id()).then(function (r) {
+                vnode.attrs.deleteImage(reward, vnode.attrs.project().id, reward.id()).then(function (r) {
                     if (r) {
                         imageFileToUpload(null);
                         reward.uploaded_image(null);
@@ -6909,8 +4588,11 @@ var dashboardRewardCard = {
         var reward = attrs.reward();
         var project = attrs.project();
         var isSubscription = _projectVm2.default.isSubscription(project);
-        var isUploadingRewardImage = ctrl.isUploadingRewardImage();
-        var isDeletingRewardImage = ctrl.isDeletingRewardImage();
+        var isUploadingRewardImage = state.isUploadingRewardImage;
+        var isDeletingRewardImage = state.isDeletingRewardImage;
+        var tryDeleteImage = state.tryDeleteImage;
+        var onSelectImageFile = state.onSelectImageFile;
+        var availableCount = state.availableCount;
 
         return (0, _mithril2.default)('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [(0, _mithril2.default)('.card', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-11.w-col-small-11.w-col-tiny-11', (0, _mithril2.default)('.fontsize-base.fontweight-semibold', window.I18n.t(isSubscription ? 'minimum_value_subscription_title' : 'minimum_value_title', I18nScope({
             minimum_value: reward.minimum_value()
@@ -6922,8 +4604,22 @@ var dashboardRewardCard = {
             count: reward.paid_count()
         }))), (0, _mithril2.default)('.fontsize-smaller.fontcolor-secondary', window.I18n.t('index.contributions_to_confirm', I18nScope({
             count: reward.waiting_payment_count()
-        })))]), (0, _mithril2.default)('.fontsize-small.fontweight-semibold', reward.title()), (0, _mithril2.default)('.fontsize-small.fontcolor-secondary', _mithril2.default.trust(_h2.default.simpleFormat(_h2.default.strip(reward.description())))), reward.limited() ? state.availableCount() <= 0 ? (0, _mithril2.default)('.u-margintop-10', (0, _mithril2.default)('span.badge.badge-gone.fontsize-smaller', window.I18n.t('reward_gone', I18nScope()))) : (0, _mithril2.default)('.u-margintop-10', (0, _mithril2.default)('span.badge.badge-attention.fontsize-smaller', [(0, _mithril2.default)('span.fontweight-bold', window.I18n.t('reward_limited', I18nScope())), window.I18n.t('reward_available', I18nScope({
-            available: state.availableCount(),
+        })))]),
+
+        // REWARD IMAGE
+        isUploadingRewardImage() || isDeletingRewardImage() ? _h2.default.loader() : reward.uploaded_image && reward.uploaded_image() ? (0, _mithril2.default)("div.u-marginbottom-30.w-row", [(0, _mithril2.default)("div.w-col.w-col-7", [(0, _mithril2.default)("div.fontsize-smaller.fontweight-semibold", ["Imagem", (0, _mithril2.default)("span.fontcolor-secondary", " (opcional)")]), (0, _mithril2.default)("div.u-marginbottom-20", (0, _mithril2.default)("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+            onclick: function onclick() {
+                return tryDeleteImage();
+            }
+        })), (0, _mithril2.default)('img[src=\'' + reward.uploaded_image() + '\'][alt=\'\']')]), (0, _mithril2.default)("div.w-col.w-col-5")]) : (0, _mithril2.default)("div.u-marginbottom-30.w-row", [(0, _mithril2.default)("div.w-col.w-col-7", [(0, _mithril2.default)("div.fontsize-smaller.fontweight-semibold", ["Imagem", (0, _mithril2.default)("span.fontcolor-secondary", " (opcional)")]), (0, _mithril2.default)("div.w-form", [(0, _mithril2.default)("form", (0, _mithril2.default)('input.text-field.w-input[type=\'file\'][placeholder=\'Choose file\'][id=\'reward_image_file_closed_card_' + attrs.index + '\']', {
+            oninput: function oninput() {
+                return onSelectImageFile();
+            }
+        })), (0, _mithril2.default)("div.w-form-done", (0, _mithril2.default)("div", "Thank you! Your submission has been received!")), (0, _mithril2.default)("div.w-form-fail", (0, _mithril2.default)("div", "Oops! Something went wrong while submitting the form."))])]), (0, _mithril2.default)("div.w-col.w-col-5")]),
+        // END REWARD IMAGE
+
+        (0, _mithril2.default)('.fontsize-small.fontweight-semibold', reward.title()), (0, _mithril2.default)('.fontsize-small.fontcolor-secondary', _mithril2.default.trust(_h2.default.simpleFormat(_h2.default.strip(reward.description())))), reward.limited() ? availableCount() <= 0 ? (0, _mithril2.default)('.u-margintop-10', (0, _mithril2.default)('span.badge.badge-gone.fontsize-smaller', window.I18n.t('reward_gone', I18nScope()))) : (0, _mithril2.default)('.u-margintop-10', (0, _mithril2.default)('span.badge.badge-attention.fontsize-smaller', [(0, _mithril2.default)('span.fontweight-bold', window.I18n.t('reward_limited', I18nScope())), window.I18n.t('reward_available', I18nScope({
+            available: availableCount(),
             maximum: reward.maximum_contributions()
         }))])) : '', reward.deliver_at() && !isSubscription ? (0, _mithril2.default)('.fontsize-smallest', [(0, _mithril2.default)('b', window.I18n.t('delivery_estimation', I18nScope())), _h2.default.momentify(reward.deliver_at(), 'MMM/YYYY')]) : null, isSubscription ? null : (0, _mithril2.default)('.fontsize-smallest', (0, _mithril2.default)('b', window.I18n.t('delivery', I18nScope()) + ': '), window.I18n.t('shipping_options.' + reward.shipping_options(), I18nScope())), (0, _mithril2.default)('.u-margintop-40.w-row', [state.showLimited() ? '' : (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('button.btn.btn-small.btn-terciary.w-button', {
             onclick: state.toggleShowLimit
@@ -7743,11 +5439,14 @@ var _projectVm2 = _interopRequireDefault(_projectVm);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var editRewardCard = {
-    oninit: function oninit(vnode) {
+    controller: function controller(vnode) {
         var project = _projectVm2.default.getCurrentProject(),
             reward = vnode.attrs.reward(),
+            imageFileToUpload = (0, _stream2.default)(null),
             minimumValue = _projectVm2.default.isSubscription(project) ? 5 : 10,
             destroyed = (0, _stream2.default)(false),
+            isDeletingImage = (0, _stream2.default)(false),
+            isUploadingImage = (0, _stream2.default)(false),
             acceptNumeric = function acceptNumeric(e) {
             reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
             return true;
@@ -7807,9 +5506,9 @@ var editRewardCard = {
             });
         },
             onSelectImageFile = function onSelectImageFile() {
-            var rewardImageFile = window.document.getElementById('reward_image_file_open_card_' + args.index);
+            var rewardImageFile = window.document.getElementById('reward_image_file_open_card_' + vnode.attrs.index);
             if (rewardImageFile.files.length) {
-                args.showImageToUpload(reward, imageFileToUpload, rewardImageFile.files[0]);
+                vnode.attrs.showImageToUpload(reward, imageFileToUpload, rewardImageFile.files[0]);
             }
         },
             tryDeleteImage = function tryDeleteImage(reward) {
@@ -7819,7 +5518,7 @@ var editRewardCard = {
                 imageFileToUpload(null);
             } else {
                 isDeletingImage(true);
-                args.deleteImage(reward, args.project_id, reward.id()).then(function (r) {
+                vnode.attrs.deleteImage(reward, vnode.attrs.project_id, reward.id()).then(function (r) {
                     if (r) {
                         imageFileToUpload(null);
                         reward.uploaded_image(null);
@@ -7866,16 +5565,16 @@ var editRewardCard = {
                     reward.edit.toggle();
 
                     isUploadingImage(true);
-                    args.uploadImage(reward, imageFileToUpload, args.project_id, r.reward_id).then(function (r_with_image) {
-                        args.showSuccess(true);
+                    vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, r.reward_id).then(function (r_with_image) {
+                        vnode.attrs.showSuccess(true);
                         isUploadingImage(false);
                     }).catch(function (error) {
-                        args.showSuccess(false);
+                        vnode.attrs.showSuccess(false);
                         isUploadingImage(false);
                     });
                 }).catch(function (err) {
-                    args.error(true);
-                    args.errors('Erro ao salvar recompensa.');
+                    vnode.attrs.error(true);
+                    vnode.attrs.errors('Erro ao salvar recompensa.');
                 });
             } else {
                 _rewardVm2.default.updateReward(vnode.attrs.project_id, reward.id(), data).then(function () {
@@ -7883,11 +5582,11 @@ var editRewardCard = {
                     reward.edit.toggle();
 
                     isUploadingImage(true);
-                    args.uploadImage(reward, imageFileToUpload, args.project_id, reward.id()).then(function (r_with_image) {
-                        args.showSuccess(true);
+                    vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, reward.id()).then(function (r_with_image) {
+                        vnode.attrs.showSuccess(true);
                         isUploadingImage(false);
                     }).catch(function (error) {
-                        args.showSuccess(false);
+                        vnode.attrs.showSuccess(false);
                         isUploadingImage(false);
                     });
                 });
@@ -7976,9 +5675,9 @@ var editRewardCard = {
             inlineError = function inlineError(message) {
             return (0, _mithril2.default)('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle', (0, _mithril2.default)('span', message));
         },
-            index = args.index,
-            isUploadingImage = ctrl.isUploadingImage(),
-            isDeletingImage = ctrl.isDeletingImage();
+            index = attrs.index,
+            isUploadingImage = state.isUploadingImage(),
+            isDeletingImage = state.isDeletingImage();
 
         return state.destroyed() ? (0, _mithril2.default)('div', '') : (0, _mithril2.default)('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [(0, _mithril2.default)('.card', (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-5', (0, _mithril2.default)('label.fontsize-smaller', 'Título:')), (0, _mithril2.default)('.w-col.w-col-7', (0, _mithril2.default)('input.w-input.text-field.positive[aria-required=\'true\'][autocomplete=\'off\'][type=\'tel\']', {
             value: state.reward.title(),
@@ -8014,7 +5713,21 @@ var editRewardCard = {
             value: state.reward.description(),
             class: state.descriptionError() ? 'error' : false,
             oninput: _mithril2.default.withAttr('value', state.reward.description)
-        }), (0, _mithril2.default)(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']", 'Descrição não pode ficar em branco')]), state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '', state.project.mode === 'sub' ? null : (0, _mithril2.default)('.u-marginbottom-30.w-row', [(0, _mithril2.default)('.w-col.w-col-3', (0, _mithril2.default)("label.fontsize-smaller[for='field-2']", 'Tipo de entrega')), (0, _mithril2.default)('.w-col.w-col-9', [(0, _mithril2.default)('select.positive.text-field.w-select', {
+        }), (0, _mithril2.default)(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']", 'Descrição não pode ficar em branco')]), state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+
+        // REWARD IMAGE
+        isUploadingImage || isDeletingImage ? _h2.default.loader() : reward.uploaded_image && reward.uploaded_image() ? (0, _mithril2.default)("div.u-marginbottom-30.u-margintop-30", (0, _mithril2.default)("div.w-row", [(0, _mithril2.default)("div.w-col.w-col-5", (0, _mithril2.default)("label.fontsize-smaller[for='field-8']", ["Imagem", (0, _mithril2.default)("span.fontcolor-secondary", "(opcional)")])), (0, _mithril2.default)("div.w-col.w-col-7", (0, _mithril2.default)("div.u-marginbottom-20", [(0, _mithril2.default)("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+            onclick: function onclick() {
+                return state.tryDeleteImage(reward);
+            }
+        }), (0, _mithril2.default)('img[src=\'' + reward.uploaded_image() + '\'][alt=\'\']')]))])) : (0, _mithril2.default)("div.u-marginbottom-30.u-margintop-30", (0, _mithril2.default)("div.w-row", [(0, _mithril2.default)("div.w-col.w-col-5", (0, _mithril2.default)("label.fontsize-smaller", ["Imagem ", (0, _mithril2.default)("span.fontcolor-secondary", "(opcional)")])), (0, _mithril2.default)("div.w-col.w-col-7", (0, _mithril2.default)('input.text-field.w-input[type=\'file\'][placeholder=\'Choose file\'][id=\'reward_image_file_open_card_' + index + '\']', {
+            oninput: function oninput() {
+                return state.onSelectImageFile();
+            }
+        }))])),
+        // END REWARD IMAGE
+
+        state.project.mode === 'sub' ? null : (0, _mithril2.default)('.u-marginbottom-30.w-row', [(0, _mithril2.default)('.w-col.w-col-3', (0, _mithril2.default)("label.fontsize-smaller[for='field-2']", 'Tipo de entrega')), (0, _mithril2.default)('.w-col.w-col-9', [(0, _mithril2.default)('select.positive.text-field.w-select', {
             value: state.reward.shipping_options() || 'free',
             onchange: function onchange(e) {
                 state.reward.shipping_options(e.target.value);
@@ -8373,9 +6086,9 @@ var innerFieldInput = {
 
         var inputExtraProps = '';
 
-        if ('min' in args) inputExtraProps += '[min=\'' + attrs.min + '\']';
-        if ('max' in args) inputExtraProps += '[max=\'' + attrs.max + '\']';
-        if ('placeholder' in args) inputExtraProps += '[placeholder=\'' + attrs.placeholder + '\']';else inputExtraProps += '[placeholder=\' \']';
+        if ('min' in attrs) inputExtraProps += '[min=\'' + attrs.min + '\']';
+        if ('max' in attrs) inputExtraProps += '[max=\'' + attrs.max + '\']';
+        if ('placeholder' in attrs) inputExtraProps += '[placeholder=\'' + attrs.placeholder + '\']';else inputExtraProps += '[placeholder=\' \']';
 
         return attrs.shouldRenderInnerFieldLabel ? (0, _mithril2.default)('input.text-field.positive.w-input[type=\'number\']' + inputExtraProps, defaultInputOptions) : (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.text-field.positive.prefix.no-hover.w-col.w-col-3.w-col-small-3.w-col-tiny-3', (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.u-text-center', attrs.label)), (0, _mithril2.default)('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', (0, _mithril2.default)('input.text-field.postfix.positive.w-input[type=\'number\']' + inputExtraProps, defaultInputOptions))]);
     }
@@ -8418,7 +6131,16 @@ var filterDropdownNumberRange = {
             return placeholder;
         },
             showDropdown = _h2.default.toggleProp(false, true);
-        return { firstValue: firstValue, secondValue: secondValue, clearFieldValues: clearFieldValues, getLowerValue: getLowerValue, getHigherValue: getHigherValue, renderPlaceholder: renderPlaceholder, showDropdown: showDropdown };
+
+        vnode.state = {
+            firstValue: firstValue,
+            secondValue: secondValue,
+            clearFieldValues: clearFieldValues,
+            getLowerValue: getLowerValue,
+            getHigherValue: getHigherValue,
+            renderPlaceholder: renderPlaceholder,
+            showDropdown: showDropdown
+        };
     },
     view: function view(_ref2) {
         var state = _ref2.state,
@@ -8437,7 +6159,7 @@ var filterDropdownNumberRange = {
             state.showDropdown.toggle();
         };
 
-        if ('dropdown_inline_style' in args) {
+        if ('dropdown_inline_style' in attrs) {
             dropdownOptions.style = attrs.dropdown_inline_style;
         }
 
@@ -8634,7 +6356,7 @@ var filterText = {
 
         var buttonOptions = {};
 
-        if ('onclick' in args) buttonOptions.onclick = attrs.onclick;
+        if ('onclick' in attrs) buttonOptions.onclick = attrs.onclick;
 
         return (0, _mithril2.default)(attrs.wrapper_class, [(0, _mithril2.default)('.fontsize-smaller.u-text-center', attrs.label), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.text-field.positive.prefix.no-hover.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('a.w-inline-block[href=\'#\']', buttonOptions, (0, _mithril2.default)('img.header-lupa[src=\'/assets/catarse_bootstrap/lupa_grey.png\']'))), (0, _mithril2.default)('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', (0, _mithril2.default)('input.text-field.postfix.positive.w-input[maxlength=\'256\'][placeholder=\'' + attrs.placeholder + '\'][type=\'text\']', {
             onchange: _mithril2.default.withAttr('value', attrs.vm),
@@ -9631,15 +7353,13 @@ var paymentCreditCard = {
             return selectedCreditCard() === card;
         };
 
-        var loadPagarme = function loadPagarme(el, isInit) {
-            if (!isInit) {
-                var script = document.createElement('script');
-                script.src = '//assets.pagar.me/js/pagarme.min.js';
-                document.body.appendChild(script);
-                script.onload = function () {
-                    vm.pagarme(window.PagarMe);
-                };
-            }
+        var loadPagarme = function loadPagarme(vnode) {
+            var script = document.createElement('script');
+            script.src = '//assets.pagar.me/js/pagarme.min.js';
+            document.body.appendChild(script);
+            script.onload = function () {
+                vm.pagarme(window.PagarMe);
+            };
         };
 
         var selectCreditCard = function selectCreditCard(card) {
@@ -9719,7 +7439,7 @@ var paymentCreditCard = {
         var isInternational = state.vm.isInternational();
 
         return (0, _mithril2.default)('.w-form.u-marginbottom-40', {
-            config: state.loadPagarme
+            oncreate: state.loadPagarme
         }, [(0, _mithril2.default)('form[name="email-form"]', {
             onsubmit: state.onSubmit
         }, [!attrs.hideSave && !state.loadingSavedCreditCards() && state.savedCreditCards().length > 1 ? (0, _mithril2.default)('.my-credit-cards.w-form.back-payment-form-creditcard.records-choice.u-marginbottom-40', _underscore2.default.map(state.savedCreditCards(), function (card, idx) {
@@ -9787,9 +7507,10 @@ var paymentCreditCard = {
         })), state.selectedInstallment() > 1 ? (0, _mithril2.default)('.fontsize-small.lineheight-looser.fontweight-semibold.fontcolor-secondary', [window.I18n.t('credit_card.total', state.scope()), 'R$ ' + state.totalAmountOfInstallment(state.installments(), state.selectedInstallment())]) : '']), (0, _mithril2.default)('.w-col.w-col-6')]), attrs.hideSave ? '' : (0, _mithril2.default)('.card.card-terciary.u-radius.u-margintop-30', (0, _mithril2.default)('.fontsize-small.w-clearfix.w-checkbox', [(0, _mithril2.default)('input#payment_save_card.w-checkbox-input[type="checkbox"][name="payment_save_card"]', {
             onchange: _mithril2.default.withAttr('checked', state.creditCard.save),
             checked: state.creditCard.save()
-        }), (0, _mithril2.default)('label.w-form-label[for="payment_save_card"]', window.I18n.t('credit_card.save_card', state.scope()))]))]), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', [!_underscore2.default.isEmpty(state.vm.submissionError()) ? (0, _mithril2.default)('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', (0, _mithril2.default)('.u-marginbottom-10.fontweight-bold', _mithril2.default.trust(state.vm.submissionError()))) : '', state.vm.isLoading() ? _h2.default.loader() : (0, _mithril2.default)('input.btn.btn-large.u-marginbottom-20[type="submit"]', { value: state.isSubscriptionEdit() && !attrs.isReactivation() ? window.I18n.t('subscription_edit', state.scope()) : window.I18n.t('credit_card.finish_payment', state.scope())
+        }), (0, _mithril2.default)('label.w-form-label[for="payment_save_card"]', window.I18n.t('credit_card.save_card', state.scope()))]))]), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', [!_underscore2.default.isEmpty(state.vm.submissionError()) ? (0, _mithril2.default)('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', (0, _mithril2.default)('.u-marginbottom-10.fontweight-bold', _mithril2.default.trust(state.vm.submissionError()))) : '', state.vm.isLoading() ? _h2.default.loader() : (0, _mithril2.default)('input.btn.btn-large.u-marginbottom-20[type="submit"]', {
+            value: state.isSubscriptionEdit() && !attrs.isReactivation() ? window.I18n.t('subscription_edit', state.scope()) : window.I18n.t('credit_card.finish_payment', state.scope())
         }), (0, _mithril2.default)('.fontsize-smallest.u-text-center.u-marginbottom-30', _mithril2.default.trust(window.I18n.t('credit_card.terms_of_use_agreement', state.scope())))])]), state.showSubscriptionModal() ? (0, _mithril2.default)(_subscriptionEditModal2.default, {
-            args: args,
+            attrs: attrs,
             vm: state.vm,
             showModal: state.showSubscriptionModal,
             confirm: state.subscriptionEditConfirmed,
@@ -10057,7 +7778,7 @@ var paymentSlip = {
             value: buttonLabel,
             type: 'submit'
         }), state.showSubscriptionModal() ? (0, _mithril2.default)(_subscriptionEditModal2.default, {
-            args: args,
+            attrs: attrs,
             vm: state.vm,
             showModal: state.showSubscriptionModal,
             confirm: state.subscriptionEditConfirmed,
@@ -10317,11 +8038,13 @@ var _h2 = _interopRequireDefault(_h);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var postForRewardCheckbox = {
-    view: function view(ctrl, args) {
-        var r = args.reward,
-            reward_checkbox = args.reward_checkbox,
+    view: function view(_ref) {
+        var attrs = _ref.attrs;
+
+        var r = attrs.reward,
+            reward_checkbox = attrs.reward_checkbox,
             chk_label = 'R$' + _h2.default.formatNumber(parseInt(r.data.minimum_value)) + ' - ' + (r.data.title ? r.data.title : r.data.description.substring(0, 30) + '...'),
-            sublabel = args.contributions_count + ' ' + args.sublabel;
+            sublabel = attrs.contributions_count + ' ' + attrs.sublabel;
 
         return (0, _mithril2.default)('.u-marginbottom-10.w-checkbox', [(0, _mithril2.default)('input.w-checkbox-input[type=checkbox]', {
             onchange: function onchange() {
@@ -12460,7 +10183,7 @@ var projectDashboardMenu = {
             oncreate: _mithril2.default.route.link
         }, [(0, _mithril2.default)('span.fa.fa.fa-users.fa-lg.fa-fw'), window.I18n.t('subscriptions_tab', I18nScope())]) : (0, _mithril2.default)('a#dashboard_reports_link[class="dashboard-nav-link-left ' + (_h2.default.locationActionMatch('contributions_report') ? 'selected' : '') + '"][href="' + projectRoute + '/contributions_report"]', {
             oncreate: _mithril2.default.route.link
-        }, [(0, _mithril2.default)('span.fa.fa.fa-table.fa-lg.fa-fw'), window.I18n.t('reports_tab', I18nScope())]), (0, _mithril2.default)('a#dashboard_posts_link[class="dashboard-nav-link-left ' + (_h2.default.locationActionMatch('posts') ? 'selected' : '') + '"][href="' + projectRoute + '/posts"]', [(0, _mithril2.default)('span.fa.fa-bullhorn.fa-fw.fa-lg'), window.I18n.t('posts_tab', I18nScope()), project.posts_count > 0 ? (0, _mithril2.default)('span.badge', project.posts_count) : (0, _mithril2.default)('span.badge.badge-attention', 'Nenhuma')]), _projectVm2.default.isSubscription(project) ? '' : (0, _mithril2.default)('a#dashboard_surveys_link[class="dashboard-nav-link-left ' + (_h2.default.locationActionMatch('surveys') ? 'selected' : '') + '"][href="' + projectRoute + '/surveys"]', {
+        }, [(0, _mithril2.default)('span.fa.fa.fa-table.fa-lg.fa-fw'), window.I18n.t('reports_tab', I18nScope())]), (0, _mithril2.default)('a#dashboard_posts_link[class="dashboard-nav-link-left ' + (_h2.default.locationActionMatch('posts') ? 'selected' : '') + '"][href="' + projectRoute + '/posts"]', [(0, _mithril2.default)('span.fa.fa-bullhorn.fa-fw.fa-lg'), window.I18n.t('posts_tab', I18nScope()), project.posts_count > 0 ? (0, _mithril2.default)('span.badge', project.posts_count) : (0, _mithril2.default)('span.badge.badge-attention', '0')]), _projectVm2.default.isSubscription(project) ? '' : (0, _mithril2.default)('a#dashboard_surveys_link[class="dashboard-nav-link-left ' + (_h2.default.locationActionMatch('surveys') ? 'selected' : '') + '"][href="' + projectRoute + '/surveys"]', {
             oncreate: _mithril2.default.route.link
         }, [(0, _mithril2.default)('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), window.I18n.t('surveys_tab', I18nScope())]), (0, _mithril2.default)('a#dashboard_fiscal_link[class="dashboard-nav-link-left ' + (_h2.default.locationActionMatch('fiscal') ? 'selected' : '') + '"][href="' + projectRoute + '/fiscal"]', {
             oncreate: _mithril2.default.route.link
@@ -12526,17 +10249,15 @@ var projectDataChart = {
                 })
             }];
         },
-            renderChart = function renderChart(element, isInitialized) {
-            if (!isInitialized) {
-                var ctx = element.getContext('2d');
+            renderChart = function renderChart(vnodeCanvas) {
+            var ctx = vnodeCanvas.dom.getContext('2d');
 
-                new _chart2.default(ctx).Line({
-                    labels: vnode.attrs.xAxis ? _underscore2.default.map(source, function (item) {
-                        return vnode.attrs.xAxis(item);
-                    }) : [],
-                    datasets: mountDataset()
-                });
-            }
+            new _chart2.default(ctx).Line({
+                labels: vnode.attrs.xAxis ? _underscore2.default.map(source, function (item) {
+                    return vnode.attrs.xAxis(item);
+                }) : [],
+                datasets: mountDataset()
+            });
         };
 
         vnode.state = {
@@ -12549,7 +10270,7 @@ var projectDataChart = {
             attrs = _ref.attrs;
 
         return (0, _mithril2.default)('.card.u-radius.medium.u-marginbottom-30', [(0, _mithril2.default)('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', attrs.label), (0, _mithril2.default)('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', attrs.subLabel || ''), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-12.overflow-auto', [!_underscore2.default.isEmpty(state.source) ? (0, _mithril2.default)('canvas[id="chart"][width="860"][height="300"]', {
-            config: state.renderChart
+            oncreate: state.renderChart
         }) : (0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', (0, _mithril2.default)('p.fontsize-base', attrs.emptyState))])])]);
     }
 }; /**
@@ -12602,9 +10323,11 @@ var projectDataStats = {
             visitorsTotal = attrs.visitorsTotal(),
             statusTextObj = _h2.default.projectStateTextClass(project.state, project.has_cancelation_request),
             remainingTextObj = _h2.default.translatedTime(project.remaining_time),
-            elapsedTextObj = _h2.default.translatedTime(project.elapsed_time);
+            elapsedTextObj = _h2.default.translatedTime(project.elapsed_time),
+            contributorsByVisitors = project.total_contributors / visitorsTotal,
+            contributorsByVisitorsValue = isNaN(contributorsByVisitors) ? contributorsByVisitors : 0;
 
-        return (0, _mithril2.default)('', [(0, _mithril2.default)('.w-row.u-marginbottom-60.u-margintop-30.u-text-center', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-large', [(0, _mithril2.default)('span.fontcolor-secondary', 'Status: '), (0, _mithril2.default)('span', { class: statusTextObj.cssClass }, statusTextObj.text)])]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-large.fontweight-semibold', [(0, _mithril2.default)('span.fa.fa-clock-o'), _underscore2.default.isNull(project.expires_at) ? ' Iniciado h\xE1 ' + elapsedTextObj.total + ' ' + elapsedTextObj.unit : ' ' + remainingTextObj.total + ' ' + remainingTextObj.unit + ' ' + (remainingTextObj.total > 1 ? 'restantes' : 'restante')])]), (0, _mithril2.default)('.w-col.w-col-2')]), (0, _mithril2.default)('.card.medium.u-marginbottom-60.u-radius.u-text-center', { style: { 'white-space': 'nowrap' } }, [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.w-row.u-marginbottom-30.u-margintop-30', [(0, _mithril2.default)('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', '' + visitorsTotal), 'Visitantes']), (0, _mithril2.default)('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [(0, _mithril2.default)('.bg-triangle-funnel.fontcolor-secondary.fontsize-base', _h2.default.formatNumber(project.total_contributors / visitorsTotal * 100 || 0, 2) + '%')]), (0, _mithril2.default)('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', '' + project.total_contributors), 'Apoiadores'])])]), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.w-row.u-marginbottom-30.u-margintop-30', [(0, _mithril2.default)('.w-col.w-col-9.w-col-small-6.w-col-tiny-6', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', 'R$ ' + _h2.default.formatNumber(project.pledged, 2)), 'Arrecadados']), (0, _mithril2.default)('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', _h2.default.formatNumber(project.progress, 2) + '%'), 'da Meta'])])])]), (0, _mithril2.default)('.fontcolor-secondary.fontsize-smallest.u-margintop-20', ['Os dados podem levar até 24 horas para serem atualizados.', (0, _mithril2.default)('a.alt-link', { href: 'https://suporte.catarse.me/hc/pt-br/articles/115002214463-projeto-ONLINE#visitante', target: '_blank' }, ' Saiba mais'), '.'])])]);
+        return (0, _mithril2.default)('', [(0, _mithril2.default)('.w-row.u-marginbottom-60.u-margintop-30.u-text-center', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-large', [(0, _mithril2.default)('span.fontcolor-secondary', 'Status: '), (0, _mithril2.default)('span', { class: statusTextObj.cssClass }, statusTextObj.text)])]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-large.fontweight-semibold', [(0, _mithril2.default)('span.fa.fa-clock-o'), _underscore2.default.isNull(project.expires_at) ? ' Iniciado h\xE1 ' + elapsedTextObj.total + ' ' + elapsedTextObj.unit : ' ' + remainingTextObj.total + ' ' + remainingTextObj.unit + ' ' + (remainingTextObj.total > 1 ? 'restantes' : 'restante')])]), (0, _mithril2.default)('.w-col.w-col-2')]), (0, _mithril2.default)('.card.medium.u-marginbottom-60.u-radius.u-text-center', { style: { 'white-space': 'nowrap' } }, [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.w-row.u-marginbottom-30.u-margintop-30', [(0, _mithril2.default)('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', '' + visitorsTotal), 'Visitantes']), (0, _mithril2.default)('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [(0, _mithril2.default)('.bg-triangle-funnel.fontcolor-secondary.fontsize-base', _h2.default.formatNumber(contributorsByVisitorsValue, 2) + '%')]), (0, _mithril2.default)('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', '' + project.total_contributors), 'Apoiadores'])])]), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.w-row.u-marginbottom-30.u-margintop-30', [(0, _mithril2.default)('.w-col.w-col-9.w-col-small-6.w-col-tiny-6', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', 'R$ ' + _h2.default.formatNumber(project.pledged, 2)), 'Arrecadados']), (0, _mithril2.default)('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', _h2.default.formatNumber(project.progress, 2) + '%'), 'da Meta'])])])]), (0, _mithril2.default)('.fontcolor-secondary.fontsize-smallest.u-margintop-20', ['Os dados podem levar até 24 horas para serem atualizados.', (0, _mithril2.default)('a.alt-link', { href: 'https://suporte.catarse.me/hc/pt-br/articles/115002214463-projeto-ONLINE#visitante', target: '_blank' }, ' Saiba mais'), '.'])])]);
     }
 }; /**
     * window.c.ProjectDataStats component
@@ -13894,7 +11617,7 @@ var projectGoalsEdit = {
         }) : '', state.error() ? (0, _mithril2.default)(_popNotification2.default, {
             message: 'Erro ao salvar informações',
             error: true
-        }) : '', (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.w-form', [state.e.inlineError('goals'), (0, _mithril2.default)('div', (0, _mithril2.default)(".card.card-terciary.medium.u-marginbottom-30[id='arrecadacao']", [(0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)("label.fontsize-base.fontweight-semibold[for='name-8']", 'O que você vai alcançar com os pagamentos mensais de seus assinantes?'), (0, _mithril2.default)('.fontsize-smaller', ['As metas mensais são a melhor maneira de informar aos seus assinantes como os recursos arrecadados mensalmente serão usados e o que vocês estão conquistando juntos.', _mithril2.default.trust('&nbsp;'), 'Lembre-se: uma vez que a arrecadação for iniciada, você não poderá mais alterar a sua meta de arrecadação inicial.'])]), _underscore2.default.map(state.goals(), function (goal) {
+        }) : '', (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.w-form', [state.e.inlineError('goals'), (0, _mithril2.default)('div', (0, _mithril2.default)(".card.card-terciary.medium.u-marginbottom-30[id='arrecadacao']", [(0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)("label.fontsize-base.fontweight-semibold[for='name-8']", 'O que você vai alcançar com os pagamentos mensais de seus assinantes?'), (0, _mithril2.default)('.fontsize-smaller', ['As metas mensais são a melhor maneira de informar aos seus assinantes como os recursos arrecadados mensalmente serão usados e o que vocês estão conquistando juntos.', _mithril2.default.trust('&nbsp;'), 'Você pode alterar suas metas a qualquer momento durante sua campanha.'])]), _underscore2.default.map(state.goals(), function (goal) {
             if (goal().editing()) {
                 return (0, _mithril2.default)(_projectGoalEditCard2.default, {
                     goal: goal,
@@ -14283,6 +12006,7 @@ var projectInsightsSub = {
         var lastWeekTransitions = (0, _stream2.default)([]);
         var subscriptionsPerMonth = (0, _stream2.default)([]);
         var isSubscriptionsPerMonthLoaded = (0, _stream2.default)(false);
+        var balanceData = (0, _stream2.default)(null);
         var subVM = _api.commonAnalytics.filtersVM({
             project_id: 'eq'
         });
@@ -14292,26 +12016,32 @@ var projectInsightsSub = {
                 visitorsTotal(_underscore2.default.first(data).total);
             }
         };
+        var requestRedraw = _h2.default.createRequestAutoRedraw(weekSubscriptions, subscriptionsPerDay, lastWeekSubscriptions, weekTransitions, lastWeekTransitions, subscriptionsPerMonth, isSubscriptionsPerMonthLoaded, balanceData);
 
         subVM.project_id(vnode.attrs.project.common_id);
         var lVisitorsPerDay = visitorLoader(_models2.default.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
-        lVisitorsPerDay.load().then(processVisitors);
+        lVisitorsPerDay.load().then(processVisitors).then(requestRedraw);
 
         var lSubscriptionsPerDay = loader(_models2.default.projectSubscriptionsPerDay.getRowOptions(subVM.parameters()));
-        lSubscriptionsPerDay.load().then(subscriptionsPerDay);
+        lSubscriptionsPerDay.load().then(subscriptionsPerDay).then(requestRedraw);
 
-        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekSubscriptions);
-        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(2, 'weeks').format(), (0, _moment2.default)().utc().subtract(1, 'weeks').format()).then(lastWeekSubscriptions);
+        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekSubscriptions).then(requestRedraw);
 
-        _subscriptionVm2.default.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekTransitions);
-        _subscriptionVm2.default.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', (0, _moment2.default)().utc().subtract(2, 'weeks').format(), (0, _moment2.default)().utc().subtract(1, 'weeks').format()).then(lastWeekTransitions);
+        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(2, 'weeks').format(), (0, _moment2.default)().utc().subtract(1, 'weeks').format()).then(lastWeekSubscriptions).then(requestRedraw);
+
+        _subscriptionVm2.default.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekTransitions).then(requestRedraw);
+
+        _subscriptionVm2.default.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', (0, _moment2.default)().utc().subtract(2, 'weeks').format(), (0, _moment2.default)().utc().subtract(1, 'weeks').format()).then(lastWeekTransitions).then(requestRedraw);
+
         _subscriptionVm2.default.getSubscriptionsPerMonth(vnode.attrs.project.common_id).then(function (subscriptions) {
             subscriptionsPerMonth(subscriptions);
             isSubscriptionsPerMonthLoaded(true);
+            requestRedraw();
         });
 
         _projectGoalsVm2.default.fetchGoals(filtersVM.project_id());
         var balanceLoader = _userVm2.default.getUserBalance(vnode.attrs.project.user_id);
+        balanceLoader.then(balanceData).then(requestRedraw);
 
         vnode.state = {
             weekSubscriptions: weekSubscriptions,
@@ -14326,6 +12056,7 @@ var projectInsightsSub = {
             visitorsTotal: visitorsTotal,
             visitorsPerDay: visitorsPerDay,
             balanceLoader: balanceLoader,
+            balanceData: balanceData,
             isSubscriptionsPerMonthLoaded: isSubscriptionsPerMonthLoaded
         };
     },
@@ -14344,7 +12075,7 @@ var projectInsightsSub = {
         var canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         var project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
-            balanceData = state.balanceLoader() && !_underscore2.default.isNull(_underscore2.default.first(state.balanceLoader())) ? _underscore2.default.first(state.balanceLoader()) : null;
+            balanceData = state.balanceData() && !_underscore2.default.isNull(_underscore2.default.first(state.balanceData())) ? _underscore2.default.first(state.balanceData()) : null;
         var averageRevenue = subscribersDetails.total_subscriptions > 0 ? subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions : null;
 
         return (0, _mithril2.default)('.project-insights', !attrs.l() ? [(0, _mithril2.default)('.w-section.section-product.' + project.mode), project.is_owner_or_admin ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
@@ -14509,7 +12240,14 @@ var projectInsights = {
             contributionsPerDay = (0, _stream2.default)([]),
             visitorsTotal = (0, _stream2.default)(0),
             visitorsPerDay = (0, _stream2.default)([]),
-            loader = _api.catarse.loaderWithToken;
+            loader = _api.catarse.loaderWithToken,
+            countDownToRedraw = (0, _stream2.default)(4),
+            requestRedraw = function requestRedraw() {
+            countDownToRedraw(Math.max(0, countDownToRedraw() - 1));
+            if (countDownToRedraw() <= 0) {
+                _mithril2.default.redraw();
+            }
+        };
 
         if (_h2.default.paramByName('online_success') === 'true') {
             displayModal.toggle();
@@ -14523,10 +12261,10 @@ var projectInsights = {
         };
 
         var lVisitorsPerDay = _api.catarseMoments.loaderWithToken(_models2.default.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
-        lVisitorsPerDay.load().then(processVisitors);
+        lVisitorsPerDay.load().then(processVisitors).then(requestRedraw);
 
         var lContributionsPerDay = loader(_models2.default.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
-        lContributionsPerDay.load().then(contributionsPerDay);
+        lContributionsPerDay.load().then(contributionsPerDay).then(requestRedraw);
 
         var contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
         var buildPerLocationTable = function buildPerLocationTable(contributions) {
@@ -14542,7 +12280,7 @@ var projectInsights = {
         };
 
         var lContributionsPerLocation = loader(_models2.default.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
-        lContributionsPerLocation.load().then(buildPerLocationTable);
+        lContributionsPerLocation.load().then(buildPerLocationTable).then(requestRedraw);
 
         var contributionsPerRefTable = [[window.I18n.t('ref_table.header.origin', I18nScope()), window.I18n.t('ref_table.header.contributions', I18nScope()), window.I18n.t('ref_table.header.amount', I18nScope())]];
         var buildPerRefTable = function buildPerRefTable(contributions) {
@@ -14567,7 +12305,7 @@ var projectInsights = {
         };
 
         var lContributionsPerRef = loader(_models2.default.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
-        lContributionsPerRef.load().then(buildPerRefTable);
+        lContributionsPerRef.load().then(buildPerRefTable).then(requestRedraw);
 
         vnode.state = {
             lContributionsPerRef: lContributionsPerRef,
@@ -15909,7 +13647,7 @@ var projectRewardCard = {
                 }
             }, state.selectReward(reward)),
             config: state.isRewardOpened(reward) ? _h2.default.scrollTo() : Function.prototype
-        }, [(0, _mithril2.default)('.u-marginbottom-20', [(0, _mithril2.default)('.fontsize-base.fontweight-semibold', 'R$ ' + _h2.default.formatNumber(reward.minimum_value) + ' ou mais' + (isSub ? ' por mês' : ''))]), (0, _mithril2.default)('.fontsize-smaller.fontweight-semibold', reward.title), (0, _mithril2.default)('.fontsize-smaller.reward-description' + (_h2.default.rewardSouldOut(reward) ? '' : '.fontcolor-secondary'), {
+        }, [(0, _mithril2.default)('.u-marginbottom-20', [(0, _mithril2.default)('.fontsize-base.fontweight-semibold', 'Para R$ ' + _h2.default.formatNumber(reward.minimum_value) + ' ou mais' + (isSub ? ' por mês' : '')), (0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', reward.title), reward.uploaded_image ? (0, _mithril2.default)('img[src=\'' + reward.uploaded_image + '\']') : '']), (0, _mithril2.default)('.fontsize-smaller.reward-description' + (_h2.default.rewardSouldOut(reward) ? '' : '.fontcolor-secondary'), {
             class: state.isLongDescription() ? state.isRewardOpened() ? 'opened ' + (state.isRewardDescriptionExtended() ? 'extended' : '') : '' : 'opened extended'
         }, _mithril2.default.trust(_h2.default.simpleFormat(_h2.default.strip(reward.description)))), state.isLongDescription() && state.isRewardOpened() ? (0, _mithril2.default)('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
             onclick: function onclick() {
@@ -17916,7 +15654,7 @@ var rewardSelectCard = {
             value: state.contributionValue()
         }))]), (0, _mithril2.default)('.fontsize-smaller.text-error.u-marginbottom-20.w-hidden', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O valor do apoio está incorreto'])]), (0, _mithril2.default)('.submit-form.w-col.w-col-4', (0, _mithril2.default)('button.btn.btn-medium.u-margintop-30', {
             onclick: state.submitContribution
-        }, ['Continuar  ', (0, _mithril2.default)('span.fa.fa-chevron-right')]))]), state.error().length > 0 && state.isSelected(reward) ? (0, _mithril2.default)('.text-error', [(0, _mithril2.default)('br'), (0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' ' + state.error()]) : '', (0, _mithril2.default)('.fontsize-smaller.fontweight-semibold', reward.title), (0, _mithril2.default)('.back-reward-reward-description', [(0, _mithril2.default)('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description), (0, _mithril2.default)('.u-marginbottom-20.w-row', [!reward.deliver_at || attrs.isSubscription ? '' : (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), (0, _mithril2.default)('.fontsize-smallest', _h2.default.momentify(reward.deliver_at, 'MMM/YYYY'))]), attrs.isSubscription || !_rewardVm2.default.hasShippingOptions(reward) && reward.shipping_options !== 'presential' ? '' : (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary', 'Envio:'), (0, _mithril2.default)('.fontsize-smallest', window.I18n.t('shipping_options.' + reward.shipping_options, I18nScope()))])])])]));
+        }, ['Continuar  ', (0, _mithril2.default)('span.fa.fa-chevron-right')]))]), state.error().length > 0 && state.isSelected(reward) ? (0, _mithril2.default)('.text-error', [(0, _mithril2.default)('br'), (0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' ' + state.error()]) : '', (0, _mithril2.default)('.fontsize-smaller.fontweight-semibold', reward.title), (0, _mithril2.default)('.back-reward-reward-description', [reward.uploaded_image ? (0, _mithril2.default)("div.u-marginbottom-20.w-row", [(0, _mithril2.default)("div.w-col.w-col-8", (0, _mithril2.default)('img[src=\'' + reward.uploaded_image + '\'][alt=\'\']')), (0, _mithril2.default)("div.w-col.w-col-4")]) : '', (0, _mithril2.default)('.fontsize-smaller.u-marginbottom-10.fontcolor-secondary', reward.description), (0, _mithril2.default)('.u-marginbottom-20.w-row', [!reward.deliver_at || attrs.isSubscription ? '' : (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary', 'Entrega Prevista:'), (0, _mithril2.default)('.fontsize-smallest', _h2.default.momentify(reward.deliver_at, 'MMM/YYYY'))]), attrs.isSubscription || !_rewardVm2.default.hasShippingOptions(reward) && reward.shipping_options !== 'presential' ? '' : (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary', 'Envio:'), (0, _mithril2.default)('.fontsize-smallest', window.I18n.t('shipping_options.' + reward.shipping_options, I18nScope()))])])])]));
     }
 };
 
@@ -18315,7 +16053,7 @@ var subscriptionEditModal = {
             attrs = _ref.attrs;
 
         var vmIsLoading = attrs.vm.isLoading;
-        var newSubscription = attrs.args;
+        var newSubscription = attrs.attrs;
         var oldSubscription = attrs.attrs.oldSubscription;
 
         return newSubscription && oldSubscription ? (0, _mithril2.default)('.modal-backdrop', (0, _mithril2.default)('.modal-dialog-outer', (0, _mithril2.default)('.modal-dialog-inner.modal-dialog-small', [(0, _mithril2.default)('button.modal-close.fa.fa-close.fa-lg.w-inline-block', { onclick: function onclick() {
@@ -18795,7 +16533,9 @@ var teamMembers = {
     view: function view(_ref) {
         var state = _ref.state;
 
-        return (0, _mithril2.default)('#team-members-static.w-section.section', [(0, _mithril2.default)('.w-container', [_underscore2.default.map(state.vm.collection(), function (group) {
+        var teamMembersCollection = state.vm.collection;
+
+        return (0, _mithril2.default)('#team-members-static.w-section.section', [(0, _mithril2.default)('.w-container', [_underscore2.default.map(teamMembersCollection(), function (group) {
             return (0, _mithril2.default)('.w-row.u-text-center', [_underscore2.default.map(group, function (member) {
                 return (0, _mithril2.default)('.team-member.w-col.w-col-3.w-col-small-3.w-col-tiny-6.u-marginbottom-40', [(0, _mithril2.default)('a.alt-link[href="/users/' + member.id + '"]', [(0, _mithril2.default)('img.thumb.big.u-round.u-marginbottom-10[src="' + member.img + '"]'), (0, _mithril2.default)('.fontweight-semibold.fontsize-base', member.name)]), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary', 'Apoiou ' + member.total_contributed_projects + ' projetos')]);
             })]);
@@ -19847,8 +17587,11 @@ var userBalanceTrasactionRow = {
 
         item.source = _underscore2.default.compact(item.source);
 
-        return (0, _mithril2.default)('div[class=\'balance-card ' + (state.expanded() ? 'card-detailed-open' : '') + '\']', (0, _mithril2.default)('.w-clearfix.card.card-clickable', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2.w-col-tiny-2', [(0, _mithril2.default)('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), (0, _mithril2.default)('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), (0, _mithril2.default)('.w-col.w-col-10.w-col-tiny-10', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('debit', I18nScope())), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontsize-base.text-error', 'R$ ' + _h2.default.formatNumber(Math.abs(item.debit), 2, 3))])]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('credit', I18nScope())), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontsize-base.text-success', 'R$ ' + _h2.default.formatNumber(item.credit, 2, 3))])]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('totals', I18nScope())), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontsize-base', 'R$ ' + _h2.default.formatNumber(item.total_amount, 2, 3))])])])])]), (0, _mithril2.default)('a.w-inline-block.arrow-admin.' + (state.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]', { onclick: state.expanded.toggle })]), state.expanded() ? (0, _mithril2.default)('.card', _underscore2.default.map(item.source, function (transaction) {
-
+        return (0, _mithril2.default)('div[class=\'balance-card ' + (state.expanded() ? 'card-detailed-open' : '') + '\']', (0, _mithril2.default)('.w-clearfix.card.card-clickable', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2.w-col-tiny-2', [(0, _mithril2.default)('.fontsize-small.lineheight-tightest', createdAt.format('D MMM')), (0, _mithril2.default)('.fontsize-smallest.fontcolor-terciary', createdAt.format('YYYY'))]), (0, _mithril2.default)('.w-col.w-col-10.w-col-tiny-10', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('debit', I18nScope())), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontsize-base.text-error', 'R$ ' + _h2.default.formatNumber(Math.abs(item.debit), 2, 3))])]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('credit', I18nScope())), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontsize-base.text-success', 'R$ ' + _h2.default.formatNumber(item.credit, 2, 3))])]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smaller.fontcolor-secondary', window.I18n.t('totals', I18nScope())), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontsize-base', 'R$ ' + _h2.default.formatNumber(item.total_amount, 2, 3))])])])])]), (0, _mithril2.default)('a.w-inline-block.arrow-admin.' + (state.expanded() ? 'arrow-admin-opened' : '') + '.fa.fa-chevron-down.fontcolor-secondary[href="javascript:(void(0));"]', {
+            onclick: function onclick() {
+                return state.expanded.toggle();
+            }
+        })]), state.expanded() ? (0, _mithril2.default)('.card', _underscore2.default.map(item.source, function (transaction) {
             var pos = transaction.amount >= 0;
             var event_data = {
                 subscription_reward_label: transaction.origin_objects.subscription_reward_label || '',
@@ -20925,9 +18668,9 @@ var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
 var _h2 = _interopRequireDefault(_h);
 
-var _userVm = __webpack_require__(/*! ../vms/user-vm */ "./legacy/src/vms/user-vm.js");
+var _userCreatedProjectsVm = __webpack_require__(/*! ../vms/user-created-projects-vm */ "./legacy/src/vms/user-created-projects-vm.js");
 
-var _userVm2 = _interopRequireDefault(_userVm);
+var _userCreatedProjectsVm2 = _interopRequireDefault(_userCreatedProjectsVm);
 
 var _inlineError = __webpack_require__(/*! ./inline-error */ "./legacy/src/c/inline-error.js");
 
@@ -20946,35 +18689,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var userCreated = {
     oninit: function oninit(vnode) {
         var user_id = vnode.attrs.userId,
-            showDraft = vnode.attrs.showDraft || false,
-            error = (0, _stream2.default)(false),
-            pages = _api.catarse.paginationVM(_models2.default.project),
-            loader = _h2.default.autoRedrawProp(true),
-            contextVM = _api.catarse.filtersVM({
-            project_user_id: 'eq',
-            state: 'in'
-        });
+            showDraft = vnode.attrs.showDraft || false;
 
         var states = ['online', 'waiting_funds', 'successful', 'failed'];
         if (showDraft) {
             states.push('draft');
         }
-        contextVM.state(states).project_user_id(user_id).order({
-            updated_at: 'desc'
-        });
 
-        _models2.default.project.pageSize(9);
-        pages.firstPage(contextVM.parameters()).then(function (data) {
-            loader(false);
-        }).catch(function (err) {
-            error(true);
-            loader(false);
-        });
+        var projects = _userCreatedProjectsVm2.default.getCreatedProjects(user_id, states);
+        projects.firstPage();
 
         vnode.state = {
-            projects: pages,
-            loader: loader,
-            error: error
+            projects: projects
         };
     },
     view: function view(_ref) {
@@ -20982,8 +18708,10 @@ var userCreated = {
             attrs = _ref.attrs;
 
         var projects_collection = state.projects.collection();
+        var isLoadingProjects = state.projects.isLoading();
+        var hasError = state.projects.error();
 
-        return (0, _mithril2.default)('.content[id=\'created-tab\']', state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : !state.loader() ? [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
+        return (0, _mithril2.default)('.content[id=\'created-tab\']', hasError ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : !isLoadingProjects ? [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
             return (0, _mithril2.default)(_projectCard2.default, {
                 project: project,
                 ref: 'user_contributed',
@@ -21668,23 +19396,32 @@ var userNotifications = {
             mailMarketingLists = (0, _stream2.default)(),
             user_id = vnode.attrs.userId,
             showNotifications = _h2.default.toggleProp(false, true),
-            error = (0, _stream2.default)(false);
+            error = (0, _stream2.default)(false),
+            loadNewsCounter = (0, _stream2.default)(3);
 
-        _userVm2.default.getUserProjectReminders(user_id).then(projectReminders).catch(function (err) {
+        var countDownToDraw = function countDownToDraw() {
+            loadNewsCounter(Math.max(0, loadNewsCounter() - 1));
+
+            if (loadNewsCounter() == 0) {
+                _mithril2.default.redraw();
+            }
+        };
+
+        _userVm2.default.getUserProjectReminders(user_id).then(projectReminders).then(countDownToDraw).catch(function (err) {
             error(true);
-            _mithril2.default.redraw();
+            countDownToDraw();
         });
 
         _userVm2.default.getMailMarketingLists().then(function (data) {
-            mailMarketingLists(generateListHandler(data));
-        }).catch(function (err) {
+            return mailMarketingLists(generateListHandler(data));
+        }).then(countDownToDraw).catch(function (err) {
             error(true);
-            _mithril2.default.redraw();
+            countDownToDraw();
         });
 
-        _userVm2.default.getUserContributedProjects(user_id, null).then(contributedProjects).catch(function (err) {
+        _userVm2.default.getUserContributedProjects(user_id, null).then(contributedProjects).then(countDownToDraw).catch(function (err) {
             error(true);
-            _mithril2.default.redraw();
+            countDownToDraw();
         });
 
         var generateListHandler = function generateListHandler(list) {
@@ -21890,10 +19627,17 @@ var userPrivateContributed = {
             failedPages = _api.catarse.paginationVM(_models2.default.userContribution),
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
+            requestCountdown = (0, _stream2.default)(4),
+            requestRedraw = function requestRedraw() {
+            requestCountdown(Math.max(0, requestCountdown() - 1));
+            if (requestCountdown() == 0) {
+                _mithril2.default.redraw();
+            }
+        },
             handleError = function handleError() {
             error(true);
             loader(false);
-            _mithril2.default.redraw();
+            requestRedraw();
         },
             contextVM = _api.catarse.filtersVM({
             user_id: 'eq',
@@ -21913,25 +19657,25 @@ var userPrivateContributed = {
         });
 
         subscriptions.firstPage(contextSubVM.parameters()).then(function () {
-            loader(false);
-        }).catch(handleError);
+            return loader(false);
+        }).then(requestRedraw).catch(handleError);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 
         contextVM.project_state(['online', 'waiting_funds']);
         onlinePages.firstPage(contextVM.parameters()).then(function () {
-            loader(false);
-        }).catch(handleError);
+            return loader(false);
+        }).then(requestRedraw).catch(handleError);
 
         contextVM.project_state(['failed']);
         failedPages.firstPage(contextVM.parameters()).then(function () {
-            loader(false);
-        }).catch(handleError);
+            return loader(false);
+        }).then(requestRedraw).catch(handleError);
 
         contextVM.project_state(['successful']).state(['paid', 'refunded', 'pending_refund']);
         successfulPages.firstPage(contextVM.parameters()).then(function () {
-            loader(false);
-        }).catch(handleError);
+            return loader(false);
+        }).then(requestRedraw).catch(handleError);
 
         vnode.state = {
             subscriptions: subscriptions,
@@ -22296,7 +20040,7 @@ var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'users.edit.
 
 var userSettings = {
     oninit: function oninit(vnode) {
-        var parsedErrors = { hasError: function hasError() {}, inlineError: function inlineError() {} }; //userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
+        var parsedErrors = _userSettingsVm2.default.mapRailsErrors(_railsErrorsVm2.default.railsErrors());
         var deleteFormSubmit = void 0;
         var user = vnode.attrs.user,
             fields = (0, _stream2.default)({
@@ -22318,11 +20062,14 @@ var userSettings = {
             birthDayMask = _underscore2.default.partial(_h2.default.mask, '99/99/9999'),
             creditCards = (0, _stream2.default)(),
             toDeleteCard = (0, _stream2.default)(-1),
+            requestRedraw = function requestRedraw() {
+            _mithril2.default.redraw();
+        },
             deleteCard = function deleteCard(id) {
             return function () {
                 toDeleteCard(id);
                 // We must redraw here to update the action output of the hidden form on the DOM.
-                _mithril2.default.redraw(true);
+                requestRedraw();
                 deleteFormSubmit();
                 return false;
             };
@@ -22364,6 +20111,7 @@ var userSettings = {
                     showSuccess.toggle();
                 }
                 _railsErrorsVm2.default.validatePublish();
+                requestRedraw();
             }).catch(function (err) {
                 if (parsedErrors) {
                     parsedErrors.resetFieldErrors();
@@ -22377,11 +20125,12 @@ var userSettings = {
                 if (!showError()) {
                     showError.toggle();
                 }
+                requestRedraw();
             });
         },
             onSubmit = function onSubmit() {
             loading(true);
-            _mithril2.default.redraw();
+            requestRedraw();
             updateUserData();
             return false;
         },
@@ -22392,11 +20141,12 @@ var userSettings = {
             } else {
                 fields().owner_document(documentMask(value));
             }
+            requestRedraw();
         },
             handleError = function handleError() {
             error(true);
             loader(false);
-            _mithril2.default.redraw();
+            requestRedraw();
         };
 
         _userVm2.default.getUserCreditCards(vnode.attrs.userId).then(creditCards).catch(handleError);
@@ -22449,9 +20199,7 @@ var userSettings = {
             message: _mithril2.default.trust(state.error()),
             toggleOpt: state.showError,
             error: true
-        }) : '', (0, _mithril2.default)('form.w-form', {
-            onsubmit: state.onSubmit
-        }, [(0, _mithril2.default)('div', [(0, _mithril2.default)('.w-container', isProjectUserEdit ? (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(".w-col.w-col-8", [(0, _mithril2.default)(_userSettingsResponsible2.default, { parsedErrors: parsedErrors, fields: fields, user: user, disableFields: disableFields, applyDocumentMask: applyDocumentMask, applyBirthDateMask: applyBirthDateMask }), (0, _mithril2.default)(_userSettingsAddress2.default, { fields: fields, parsedErrors: parsedErrors })]), (0, _mithril2.default)(_userSettingsHelp2.default, {})]) : (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', [(0, _mithril2.default)(_userSettingsResponsible2.default, { parsedErrors: parsedErrors, fields: fields, user: user, disableFields: disableFields, applyDocumentMask: applyDocumentMask, applyBirthDateMask: applyBirthDateMask }), (0, _mithril2.default)(_userSettingsAddress2.default, { fields: fields, parsedErrors: parsedErrors }), shouldHideCreditCards ? '' : (0, _mithril2.default)(_userSettingsSavedCreditCards2.default, { user: user, creditCards: creditCards, setCardDeletionForm: setCardDeletionForm, deleteCard: deleteCard, toDeleteCard: toDeleteCard })])), (0, _mithril2.default)(_projectEditSaveBtn2.default, {
+        }) : '', (0, _mithril2.default)('form.w-form', { onsubmit: state.onSubmit }, [(0, _mithril2.default)('div', [(0, _mithril2.default)('.w-container', isProjectUserEdit ? (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(".w-col.w-col-8", [(0, _mithril2.default)(_userSettingsResponsible2.default, { parsedErrors: parsedErrors, fields: fields, user: user, disableFields: disableFields, applyDocumentMask: applyDocumentMask, applyBirthDateMask: applyBirthDateMask }), (0, _mithril2.default)(_userSettingsAddress2.default, { fields: fields, parsedErrors: parsedErrors })]), (0, _mithril2.default)(_userSettingsHelp2.default, {})]) : (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', [(0, _mithril2.default)(_userSettingsResponsible2.default, { parsedErrors: parsedErrors, fields: fields, user: user, disableFields: disableFields, applyDocumentMask: applyDocumentMask, applyBirthDateMask: applyBirthDateMask }), (0, _mithril2.default)(_userSettingsAddress2.default, { fields: fields, parsedErrors: parsedErrors }), shouldHideCreditCards ? '' : (0, _mithril2.default)(_userSettingsSavedCreditCards2.default, { user: user, creditCards: creditCards, setCardDeletionForm: setCardDeletionForm, deleteCard: deleteCard, toDeleteCard: toDeleteCard })])), (0, _mithril2.default)(_projectEditSaveBtn2.default, {
             loading: state.loading,
             onSubmit: state.onSubmit
         })])])]);
@@ -22730,7 +20478,7 @@ var userSubscriptionBox = {
         })]), (0, _mithril2.default)('.u-marginbottom-20.w-col.w-col-3', state.showLastSubscriptionVersionRewardTitleIfHasOne()), (0, _mithril2.default)('.u-marginbottom-10.u-text-center.w-col.w-col-3', subscription.status === 'started' ? subscription.last_payment_data.status === 'refused' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
             disabled: state.isGeneratingSecondSlip(),
             onclick: state.generateSecondSlip
-        }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Aguardando confirmação do pagamento'])] : '' : subscription.status === 'inactive' ? [subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Sua assinatura está inativa por falta de pagamento']), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status + ']', 'Assinar novamente')]] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [(0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status }, 'Reativar assinatura'), (0, _mithril2.default)('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), ' Você cancelou sua assinatura'])] : subscription.status === 'canceling' ? (0, _mithril2.default)('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', ' '), ' Sua assinatura ser\xE1 cancelada no dia ' + _h2.default.momentify(subscription.next_charge_at, 'DD/MM/YYYY') + '. At\xE9 l\xE1, ela ainda ser\xE1 considerada ativa.'])) : subscription.status === 'active' ? subscription.last_payment_data.status == 'refused' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : [state.showLastSubscriptionVersionEditionNextCharge(), subscription.payment_status !== 'pending' ? (0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?' + (subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : '') + '&subscription_id=' + subscription.id + '&subscription_status=' + subscription.status }, 'Editar assinatura') : '', subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
+        }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Aguardando confirmação do pagamento'])] : '' : subscription.status === 'inactive' ? [subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Sua assinatura está inativa por falta de pagamento']), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status + ']', 'Assinar novamente')]] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [(0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status }, 'Reativar assinatura'), (0, _mithril2.default)('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), ' Você cancelou sua assinatura'])] : subscription.status === 'canceling' ? (0, _mithril2.default)('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', ' '), ' Sua assinatura ser\xE1 cancelada no dia ' + _h2.default.momentify(subscription.next_charge_at, 'DD/MM/YYYY') + '. At\xE9 l\xE1, ela ainda ser\xE1 considerada ativa.'])) : subscription.status === 'active' ? subscription.last_payment_data.status == 'refused' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : [state.showLastSubscriptionVersionEditionNextCharge(), subscription.payment_status !== 'pending' ? (0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?' + (subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : '') + '&subscription_id=' + subscription.id + '&subscription_status=' + subscription.status }, 'Editar assinatura') : '', subscription.payment_status === 'pending' && !!subscription.boleto_url && !!subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
             disabled: state.isGeneratingSecondSlip(),
             onclick: state.generateSecondSlip
         }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : '', (0, _mithril2.default)('button.btn-link.fontsize-smallest.link-hidden-light', {
@@ -24044,30 +21792,36 @@ mask = function mask(maskDefinition, value) {
     };
 },
     setRedactor = function setRedactor(prop) {
-    return function (el, isInit) {
-        if (!isInit) {
-            var $editor = window.$(el);
-            var csrf_token = authenticityToken();
-            var csrf_param = authenticityParam();
-            var params = '';
-            if (csrf_param && csrf_token) {
-                params = csrf_param + '=' + encodeURIComponent(csrf_token);
+    var isInit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    return (//(el, isInit) => {
+        function (vnode) {
+            if (!isInit) {
+                var el = vnode.dom;
+                var $editor = window.$(el);
+                var csrf_token = authenticityToken();
+                var csrf_param = authenticityParam();
+                var params = '';
+                if (csrf_param && csrf_token) {
+                    params = csrf_param + '=' + encodeURIComponent(csrf_token);
+                }
+                $editor.redactor(redactorConfig(params));
+                $editor.redactor('code.set', prop());
+                // If we need to get redactor values and send it to js objects we'll have to add
+                // a hook on the change.callback.redactor event. e.g.:
+                // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
+                // TODO: workaround to get redactor data
+                window.$('.redactor-editor').on('blur', function () {
+                    return prop($editor.redactor('code.get'));
+                });
             }
-            $editor.redactor(redactorConfig(params));
-            $editor.redactor('code.set', prop());
-            // If we need to get redactor values and send it to js objects we'll have to add
-            // a hook on the change.callback.redactor event. e.g.:
-            // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
-            // TODO: workaround to get redactor data
-            window.$('.redactor-editor').on('blur', function () {
-                return prop($editor.redactor('code.get'));
-            });
         }
-    };
+    );
 },
     redactor = function redactor(name, prop) {
     return (0, _mithril2.default)('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
-        name: name, config: setRedactor(prop)
+        name: name,
+        //config: setRedactor(prop)
+        oncreate: setRedactor(prop)
     });
 },
     setCsrfToken = function setCsrfToken(xhr) {
@@ -24115,6 +21869,18 @@ mask = function mask(maskDefinition, value) {
     });
 
     return p;
+},
+    createRequestRedrawWithCountdown = function createRequestRedrawWithCountdown(countdown) {
+    countdown = countdown || 0;
+    return function () {
+        countdown = Math.max(0, countdown - 1);
+        if (countdown <= 0) {
+            _mithril2.default.redraw();
+        }
+    };
+},
+    createRequestAutoRedraw = function createRequestAutoRedraw() {
+    return createRequestRedrawWithCountdown(arguments.length);
 };
 
 setMomentifyLocale();
@@ -24123,6 +21889,8 @@ closeModal();
 checkReminder();
 
 exports.default = {
+    createRequestRedrawWithCountdown: createRequestRedrawWithCountdown,
+    createRequestAutoRedraw: createRequestAutoRedraw,
     autoRedrawProp: autoRedrawProp,
     sleep: sleep,
     stripScripts: stripScripts,
@@ -25013,8 +22781,11 @@ var adminBalanceTranfers = {
         },
             submit = function submit() {
             error(false);
-            listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+            listVM.firstPage(filterVM.parameters()).then(function (_) {
+                return _mithril2.default.redraw();
+            }, function (serverError) {
                 error(serverError.message);
+                _mithril2.default.redraw();
             });
 
             return false;
@@ -25409,8 +23180,11 @@ var adminContributions = {
         }],
             submit = function submit() {
             error(false);
-            listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+            listVM.firstPage(filterVM.parameters()).then(function (_) {
+                return _mithril2.default.redraw();
+            }, function (serverError) {
                 error(serverError.message);
+                _mithril2.default.redraw();
             });
             return false;
         },
@@ -25895,8 +23669,11 @@ var adminProjects = {
             });
         },
             submit = function submit() {
-            listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+            listVM.firstPage(filterVM.parameters()).then(function (_) {
+                return _mithril2.default.redraw();
+            }, function (serverError) {
                 error(serverError.message);
+                _mithril2.default.redraw();
             });
             return false;
         };
@@ -26055,8 +23832,11 @@ var adminSubscriptions = {
         }],
             submit = function submit() {
             error(false);
-            listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+            listVM.firstPage(filterVM.parameters()).then(function (_) {
+                return _mithril2.default.redraw();
+            }, function (serverError) {
                 error(serverError.message);
+                _mithril2.default.redraw();
             });
             return false;
         },
@@ -26281,8 +24061,11 @@ var adminUsers = {
             }
         }],
             submit = function submit() {
-            listVM.firstPage(filterVM.parameters()).then(null, function (serverError) {
+            listVM.firstPage(filterVM.parameters()).then(function (_) {
+                return _mithril2.default.redraw();
+            }, function (serverError) {
                 error(serverError.message);
+                _mithril2.default.redraw();
             });
             return false;
         };
@@ -26808,6 +24591,7 @@ var insights = {
                     subscribersDetails(subData);
                     load(true);
                     isProjectNotLoader(false);
+                    _mithril2.default.redraw();
                 });
             } else {
                 isProjectNotLoader(false);
@@ -26842,13 +24626,13 @@ var insights = {
         }
 
         return (0, _mithril2.default)('.project-insights', state.isProjectNotLoader() ? _h2.default.loader() : project.mode === 'sub' ? state.load() ? (0, _mithril2.default)(_projectInsightsSub2.default, {
-            args: args,
+            attrs: attrs,
             subscribersDetails: subscribersDetails,
             project: project,
             l: state.isProjectNotLoader,
             filtersVM: state.filtersVM
         }) : '' : (0, _mithril2.default)(_projectInsights2.default, {
-            args: args,
+            attrs: attrs,
             project: project,
             l: state.isProjectNotLoader,
             filtersVM: state.filtersVM
@@ -27271,6 +25055,7 @@ var posts = {
         listVM.load().then(function (posts) {
             projectPosts(posts);
             isProjectPostsLoaded(true);
+            _mithril2.default.redraw();
         });
 
         var filterOnlyPaidRewards = function filterOnlyPaidRewards(r) {
@@ -27292,6 +25077,7 @@ var posts = {
                 };
             });
 
+            _mithril2.default.redraw();
             fields.paid_rewards(checkboxesArray);
             return rewards;
         };
@@ -27977,6 +25763,7 @@ var projectEditReward = {
                 limited: _h2.default.toggleProp(false, true),
                 maximum_contributions: (0, _stream2.default)(null),
                 newReward: true,
+                uploaded_image: (0, _stream2.default)(null),
                 row_order: (0, _stream2.default)(999999999 + rewards().length * 20) // we need large and spaced apart numbers
             };
         };
@@ -28022,14 +25809,21 @@ var projectEditReward = {
                         row_order: (0, _stream2.default)(reward.row_order),
                         shipping_options: (0, _stream2.default)(reward.shipping_options),
                         title: (0, _stream2.default)(reward.title),
+                        uploaded_image: (0, _stream2.default)(reward.uploaded_image),
                         waiting_payment_count: (0, _stream2.default)(reward.waiting_payment_count)
                     });
-                    rewards().push(rewardProp);
+                    var rewardsArray = rewards();
+                    rewardsArray.push(rewardProp);
+                    rewards(rewardsArray);
                 });
 
                 if (_rewardVm2.default.rewards().length === 0) {
-                    rewards().push((0, _stream2.default)(newReward()));
+                    rewards([(0, _stream2.default)(newReward())]);
                 }
+
+                // const l = rewards();
+
+                _mithril2.default.redraw();
             });
         };
 
@@ -28098,7 +25892,10 @@ var projectEditReward = {
             attrs = _ref.attrs;
 
         var error = state.error,
-            project = attrs.project;
+            project = attrs.project,
+            showImageToUpload = state.showImageToUpload,
+            deleteImage = state.deleteImage,
+            uploadImage = state.uploadImage;
 
         return (0, _mithril2.default)("[id='dashboard-rewards-tab']", project() ? [(0, _mithril2.default)('.w-section.section', (0, _mithril2.default)('.w-container', [state.showSuccess() ? (0, _mithril2.default)(_popNotification2.default, {
             message: 'Recompensa salva com sucesso'
@@ -28116,19 +25913,28 @@ var projectEditReward = {
                 errors: state.errors,
                 user: state.user(),
                 showSuccess: state.showSuccess,
-                project: project
+                project: project,
+                showImageToUpload: showImageToUpload,
+                deleteImage: deleteImage,
+                uploadImage: uploadImage,
+                index: index
             }) : (0, _mithril2.default)(_editRewardCard2.default, {
                 project_id: attrs.project_id,
                 error: error,
                 showSuccess: state.showSuccess,
                 errors: state.errors,
-                reward: reward
+                reward: reward,
+                showImageToUpload: showImageToUpload,
+                deleteImage: deleteImage,
+                uploadImage: uploadImage,
+                index: index
             })])), (0, _mithril2.default)('input.ui-sortable-handle[type=\'hidden\']', {
                 value: reward().id()
             })]);
         })])]), _rewardVm2.default.canAdd(project().state, state.user()) ? [(0, _mithril2.default)('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
             onclick: function onclick() {
-                return state.rewards().push((0, _stream2.default)(state.newReward()));
+                console.log();
+                state.rewards().push((0, _stream2.default)(state.newReward()));
             }
         }, window.I18n.t('add_reward', I18nScope()))] : ''), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.card.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-20', [(0, _mithril2.default)('span.fa.fa-lightbulb-o.fa-lg'), _mithril2.default.trust(' ' + window.I18n.t('reward_know_more_cta_html', I18nScope()))]), (0, _mithril2.default)('.divider.u-marginbottom-20'), (0, _mithril2.default)('.fontsize-smallest.w-hidden-small.w-hidden-tiny', [window.I18n.t('reward_faq_intro', I18nScope()), (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), window.I18n.t('reward_faq_sub_intro', I18nScope()), (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), _underscore2.default.map(state.tips, function (tip, idx) {
             return project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4) ? null : [(0, _mithril2.default)('.fontweight-semibold', tip.title), _mithril2.default.trust(tip.description), (0, _mithril2.default)('br'), (0, _mithril2.default)('br')];
@@ -28749,9 +26555,7 @@ var projectEdit = {
 
         var project = state.project;
 
-        return (0, _mithril2.default)('.project-dashboard-edit', project() ? [(0, _mithril2.default)('.w-section.section-product.' + project().mode), state.displayTabContent(), project() ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
-            project: project
-        }) : ''] : '');
+        return (0, _mithril2.default)('.project-dashboard-edit', project() ? [(0, _mithril2.default)('.w-section.section-product.' + project().mode), state.displayTabContent(), project() ? (0, _mithril2.default)(_projectDashboardMenu2.default, { project: project }) : ''] : '');
     }
 };
 
@@ -28791,7 +26595,7 @@ var projectPreview = {
     view: function view(_ref) {
         var attrs = _ref.attrs;
 
-        return attrs.project() ? (0, _mithril2.default)('div', [(0, _mithril2.default)('.u-text-center', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large.u-margintop-40', 'É hora dos feedbacks!'), (0, _mithril2.default)('p.fontsize-base', 'Compartilhe o link abaixo com seus amigos e aproveite o momento para fazer ajustes finos que ajudem na sua campanha.'), (0, _mithril2.default)('.w-row.u-marginbottom-30', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('input.w-input.text-field[type=\'text\'][value=\'https://www.catarse.me/' + attrs.project().permalink + '\']')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-2')]))), (0, _mithril2.default)(_projectsShow2.default, args)]) : _h2.default.loader();
+        return attrs.project() ? (0, _mithril2.default)('div', [(0, _mithril2.default)('.u-text-center', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large.u-margintop-40', 'É hora dos feedbacks!'), (0, _mithril2.default)('p.fontsize-base', 'Compartilhe o link abaixo com seus amigos e aproveite o momento para fazer ajustes finos que ajudem na sua campanha.'), (0, _mithril2.default)('.w-row.u-marginbottom-30', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('input.w-input.text-field[type=\'text\'][value=\'https://www.catarse.me/' + attrs.project().permalink + '\']')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-2')]))), (0, _mithril2.default)(_projectsShow2.default, attrs)]) : _h2.default.loader();
     }
 };
 
@@ -28887,6 +26691,7 @@ var projectContributionReport = {
             rewards = (0, _stream2.default)([]),
             showDownloads = (0, _stream2.default)(false),
             contributionStateOptions = (0, _stream2.default)([]),
+            requestRedraw = _h2.default.createRequestAutoRedraw(project, rewards),
             reloadSelectOptions = function reloadSelectOptions(projectState) {
             var opts = [{
                 value: '',
@@ -28933,9 +26738,9 @@ var projectContributionReport = {
         },
             submit = function submit() {
             if (filterVM.reward_id() === 'null') {
-                listVM.firstPage(filterVM.withNullParameters()).then(null);
+                listVM.firstPage(filterVM.withNullParameters()).then(requestRedraw);
             } else {
-                listVM.firstPage(filterVM.parameters()).then(null);
+                listVM.firstPage(filterVM.parameters()).then(requestRedraw);
             }
 
             return false;
@@ -29041,10 +26846,11 @@ var projectContributionReport = {
             project_id: 'eq.' + filterVM.project_id()
         }));
 
-        lReward.load().then(rewards);
+        lReward.load().then(rewards).then(requestRedraw);
         lProject.load().then(function (data) {
             project(data);
             reloadSelectOptions(_underscore2.default.first(data).state);
+            requestRedraw();
         });
 
         var mapRewardsToOptions = function mapRewardsToOptions() {
@@ -29075,7 +26881,7 @@ var projectContributionReport = {
             if (_mithril2.default.route.param('rewardId')) {
                 filterVM.reward_id(_mithril2.default.route.param('rewardId'));
             }
-            listVM.firstPage(filterVM.parameters());
+            listVM.firstPage(filterVM.parameters()).then(requestRedraw);
         }
 
         vnode.state = {
@@ -29451,7 +27257,10 @@ var projectsExplore = {
             loadCategories = function loadCategories() {
             return _models2.default.category.getPageWithToken(filters({}).order({
                 name: 'asc'
-            }).parameters()).then(categoryCollection);
+            }).parameters()).then(function (c) {
+                categoryCollection(c);
+                _mithril2.default.redraw();
+            });
         },
             externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories,
             hasSpecialFooter = function hasSpecialFooter(categoryId) {
@@ -29509,7 +27318,9 @@ var projectsExplore = {
                 }).user_id(currentUser.id);
 
                 var parameters = _underscore2.default.extend({}, currentFilter().filter.parameters(), filter.filter.parameters(), rFilter.parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                pages.firstPage(parameters);
+                pages.firstPage(parameters).then(function (_) {
+                    return _mithril2.default.redraw();
+                });
                 return pages;
             },
                 searchProjects = function searchProjects() {
@@ -29526,7 +27337,11 @@ var projectsExplore = {
                         return false;
                     }
                 };
-                l.load().then(page.collection);
+                l.load().then(function (p) {
+                    page.collection(p);
+                    _mithril2.default.redraw();
+                    return p;
+                });
                 return page;
             },
 
@@ -29543,7 +27358,9 @@ var projectsExplore = {
                     score: 'desc',
                     pledged: 'desc'
                 }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                pages.firstPage(parameters);
+                pages.firstPage(parameters).then(function (_) {
+                    return _mithril2.default.redraw();
+                });
                 return pages;
             },
                 loadFinishedProjects = function loadFinishedProjects() {
@@ -29555,7 +27372,9 @@ var projectsExplore = {
                     state: 'desc',
                     pledged: 'desc'
                 }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                pages.firstPage(parameters);
+                pages.firstPage(parameters).then(function (_) {
+                    return _mithril2.default.redraw();
+                });
 
                 return pages;
             };
@@ -29766,7 +27585,9 @@ var projectsExplore = {
             });
         })), state.projects().isLoading() ? _h2.default.loader() : ''])])]), (0, _mithril2.default)('.w-section.u-marginbottom-80', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2.w-col-push-5', [state.projects().isLastPage() || state.projects().isLoading() || _underscore2.default.isEmpty(projectsCollection) ? '' : (0, _mithril2.default)('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
             onclick: function onclick() {
-                state.projects().nextPage();
+                state.projects().nextPage().then(function (_) {
+                    return _mithril2.default.redraw();
+                });
                 return false;
             }
         }, 'Carregar mais')])])])]), (0, _mithril2.default)('.w-section.section-large.before-footer.u-margintop-80.bg-gray.divider', [(0, _mithril2.default)('.w-container.u-text-center', [(0, _mithril2.default)('img.u-marginbottom-20.icon-hero', {
@@ -30076,7 +27897,7 @@ var projectsPayment = {
         var project = _projectVm2.default.currentProject,
             vm = (0, _paymentVm2.default)(),
             showPaymentForm = (0, _stream2.default)(false),
-            addVM = (0, _stream2.default)(),
+            addVM = (0, _stream2.default)(vnode.attrs.address || {}),
             contribution = _contributionVm2.default.getCurrentContribution(),
             reward = (0, _stream2.default)(contribution().reward),
             value = contribution().value,
@@ -30663,7 +28484,10 @@ var I18nIntScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects
 
 var projectsSubscriptionCheckout = {
     oninit: function oninit(vnode) {
+        _projectVm2.default.getCurrentProject();
+
         var project = _projectVm2.default.currentProject,
+            project_id = _mithril2.default.route.param('project_id'),
             vm = (0, _paymentVm2.default)(),
             showPaymentForm = (0, _stream2.default)(false),
             addVM = (0, _stream2.default)(),
@@ -30689,7 +28513,7 @@ var projectsSubscriptionCheckout = {
 
         if (_underscore2.default.isNull(currentUserID)) {
             _projectVm2.default.storeSubscribeAction(_mithril2.default.route.get());
-            _h2.default.navigateToDevise('?redirect_to=/projects/' + _mithril2.default.route.param('project_id'));
+            _h2.default.navigateToDevise('?redirect_to=/projects/' + project_id);
         }
 
         var reward = (0, _stream2.default)(_rewardVm2.default.selectedReward() || _rewardVm2.default.noReward);
@@ -30709,7 +28533,7 @@ var projectsSubscriptionCheckout = {
         }
 
         if (rewardIdParam) {
-            _rewardVm2.default.fetchRewards(_projectVm2.default.getCurrentProject().project_id).then(function () {
+            _rewardVm2.default.fetchRewards(project_id).then(function () {
                 reward(_underscore2.default.findWhere(_rewardVm2.default.rewards(), { id: Number(rewardIdParam) }));
                 _rewardVm2.default.selectedReward(reward());
                 _mithril2.default.redraw();
@@ -30772,9 +28596,8 @@ var projectsSubscriptionCheckout = {
             });
         });
 
-        _projectVm2.default.getCurrentProject();
-
         vnode.state = {
+            project_id: project_id,
             addressChange: addressChange,
             applyDocumentMask: applyDocumentMask,
             fieldHasError: fieldHasError,
@@ -30801,6 +28624,7 @@ var projectsSubscriptionCheckout = {
         var state = _ref.state;
 
         var user = state.user(),
+            project_id = state.project_id,
             addVM = state.addVM(),
             project = state.project(),
             formatedValue = _h2.default.formatNumber(state.value, 2, 3),
@@ -30817,7 +28641,7 @@ var projectsSubscriptionCheckout = {
             checked: state.vm.fields.anonymous()
         }), (0, _mithril2.default)('label.w-form-label.fontsize-smallest[for=\'anonymous\']', window.I18n.t('fields.anonymous', state.scope()))]), state.vm.fields.anonymous() ? (0, _mithril2.default)('.card.card-message.u-radius.zindex-10.fontsize-smallest', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-bold', [window.I18n.t('anonymous_confirmation_title', state.scope()), (0, _mithril2.default)('br')]), (0, _mithril2.default)('br'), window.I18n.t('anonymous_confirmation', state.scope())])) : '']);
 
-        return (0, _mithril2.default)('#project-payment', addVM && user && !_underscore2.default.isEmpty(project) ? [(0, _mithril2.default)('.w-section.section-product.' + _projectVm2.default.currentProject().mode), (0, _mithril2.default)('.w-section.w-clearfix.section', [(0, _mithril2.default)('.w-col', (0, _mithril2.default)('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())), (0, _mithril2.default)('.w-clearfix', [(0, _mithril2.default)('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), (0, _mithril2.default)('a.alt-link.fontsize-smaller.u-right[href="/projects/' + _projectVm2.default.currentProject().project_id + '/subscriptions/start?' + (state.reward().id ? 'reward_id=' + state.reward().id : '') + (state.isEdit() ? '&subscription_id=' + state.subscriptionId() : '') + (state.subscriptionStatus ? '&subscription_status=' + state.subscriptionStatus : '') + '"]', 'Editar')]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.back-payment-info-reward', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())), (0, _mithril2.default)('.fontsize-smallest.fontweight-semibold', state.reward().title), (0, _mithril2.default)('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+        return (0, _mithril2.default)('#project-payment', addVM && user && !_underscore2.default.isEmpty(project) ? [(0, _mithril2.default)('.w-section.section-product.' + _projectVm2.default.currentProject().mode), (0, _mithril2.default)('.w-section.w-clearfix.section', [(0, _mithril2.default)('.w-col', (0, _mithril2.default)('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())), (0, _mithril2.default)('.w-clearfix', [(0, _mithril2.default)('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), (0, _mithril2.default)('a.alt-link.fontsize-smaller.u-right[href="/projects/' + project_id + '/subscriptions/start?' + (state.reward().id ? 'reward_id=' + state.reward().id : '') + (state.isEdit() ? '&subscription_id=' + state.subscriptionId() : '') + (state.subscriptionStatus ? '&subscription_status=' + state.subscriptionStatus : '') + '"]', 'Editar')]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.back-payment-info-reward', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())), (0, _mithril2.default)('.fontsize-smallest.fontweight-semibold', state.reward().title), (0, _mithril2.default)('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
             class: state.isLongDescription(state.reward()) ? state.toggleDescription() ? 'extended' : '' : 'extended'
         }, state.reward().description ? state.reward().description : _mithril2.default.trust(window.I18n.t('selected_reward.review_without_reward_html', state.scope(_underscore2.default.extend({
             value: formatedValue
@@ -30856,7 +28680,7 @@ var projectsSubscriptionCheckout = {
         }, window.I18n.t('next_step', state.scope()))) : ''), state.showPaymentForm() ? (0, _mithril2.default)(_paymentForm2.default, {
             addressVM: addVM,
             vm: state.vm,
-            project_id: _projectVm2.default.currentProject().project_id,
+            project_id: project_id,
             isSubscriptionEdit: state.isEdit,
             isReactivation: state.isReactivation,
             subscriptionId: state.subscriptionId,
@@ -30869,7 +28693,7 @@ var projectsSubscriptionCheckout = {
             oldSubscription: state.oldSubscription,
             value: state.value,
             hideSave: true
-        }) : '']), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())), (0, _mithril2.default)('.w-clearfix', [(0, _mithril2.default)('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), (0, _mithril2.default)('a.alt-link.fontsize-smaller.u-right[href="/projects/' + _projectVm2.default.currentProject().project_id + '/subscriptions/start?' + (state.reward().id ? 'reward_id=' + state.reward().id : '') + (state.isEdit() ? '&subscription_id=' + state.subscriptionId() : '') + (state.subscriptionStatus ? '&subscription_status=' + state.subscriptionStatus : '') + '"]', { oncreate: _mithril2.default.route.link }, window.I18n.t('selected_reward.edit', state.scope()))]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.payment_plan', state.scope())), (0, _mithril2.default)('.fontsize-smaller', [(0, _mithril2.default)('span.fontweight-semibold', [(0, _mithril2.default)('span.fa.fa-money.text-success'), ' ' + window.I18n.t('selected_reward.charged_today', state.scope()) + ' ']), state.isEdit() && !state.isReactivation() ? ' ' + window.I18n.t('invoice_none', I18nScope()) : 'R$ ' + formatedValue]), (0, _mithril2.default)('.fontsize-smaller.u-marginbottom-10', [(0, _mithril2.default)('span.fontweight-semibold', [(0, _mithril2.default)('span.fa.fa-calendar-o.text-success'), ' ' + window.I18n.t('selected_reward.next_charge', state.scope()) + ' ']), state.isEdit() && !state.isReactivation() ? state.oldSubscription().next_charge_at ? _h2.default.momentify(state.oldSubscription().next_charge_at) : _h2.default.momentify(Date.now()) : _h2.default.lastDayOfNextMonth()]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.back-payment-info-reward', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())), (0, _mithril2.default)('.fontsize-smallest.fontweight-semibold', state.reward().title), (0, _mithril2.default)('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
+        }) : '']), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())), (0, _mithril2.default)('.w-clearfix', [(0, _mithril2.default)('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), (0, _mithril2.default)('a.alt-link.fontsize-smaller.u-right[href="/projects/' + project_id + '/subscriptions/start?' + (state.reward().id ? 'reward_id=' + state.reward().id : '') + (state.isEdit() ? '&subscription_id=' + state.subscriptionId() : '') + (state.subscriptionStatus ? '&subscription_status=' + state.subscriptionStatus : '') + '"]', { oncreate: _mithril2.default.route.link }, window.I18n.t('selected_reward.edit', state.scope()))]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.payment_plan', state.scope())), (0, _mithril2.default)('.fontsize-smaller', [(0, _mithril2.default)('span.fontweight-semibold', [(0, _mithril2.default)('span.fa.fa-money.text-success'), ' ' + window.I18n.t('selected_reward.charged_today', state.scope()) + ' ']), state.isEdit() && !state.isReactivation() ? ' ' + window.I18n.t('invoice_none', I18nScope()) : 'R$ ' + formatedValue]), (0, _mithril2.default)('.fontsize-smaller.u-marginbottom-10', [(0, _mithril2.default)('span.fontweight-semibold', [(0, _mithril2.default)('span.fa.fa-calendar-o.text-success'), ' ' + window.I18n.t('selected_reward.next_charge', state.scope()) + ' ']), state.isEdit() && !state.isReactivation() ? state.oldSubscription().next_charge_at ? _h2.default.momentify(state.oldSubscription().next_charge_at) : _h2.default.momentify(Date.now()) : _h2.default.lastDayOfNextMonth()]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.back-payment-info-reward', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())), (0, _mithril2.default)('.fontsize-smallest.fontweight-semibold', state.reward().title), (0, _mithril2.default)('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
             class: state.isLongDescription(state.reward()) ? state.toggleDescription() ? 'extended' : '' : 'extended'
         }, state.reward().description ? state.reward().description : _mithril2.default.trust(window.I18n.t('selected_reward.review_without_reward_html', state.scope(_underscore2.default.extend({
             value: Number(state.value).toFixed()
@@ -31201,6 +29025,7 @@ var projectSubscriptionReport = {
             isProjectDataLoaded = (0, _stream2.default)(false),
             isRewardsDataLoaded = (0, _stream2.default)(false),
             rewards = (0, _stream2.default)([]),
+            requestRedraw = _h2.default.createRequestAutoRedraw(isProjectDataLoaded, rewards),
             subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'last_payment_data_created_at.desc', {
             Prefer: 'count=exact'
         }),
@@ -31208,9 +29033,9 @@ var projectSubscriptionReport = {
             // Set order by last paid on filters too
             filterVM.order({ last_payment_data_created_at: 'desc' });
             if (filterVM.reward_external_id() === 'null') {
-                subscriptions.firstPage(filterVM.withNullParameters()).then(null);
+                subscriptions.firstPage(filterVM.withNullParameters()).then(requestRedraw);
             } else {
-                subscriptions.firstPage(filterVM.parameters()).then(null);
+                subscriptions.firstPage(filterVM.parameters()).then(requestRedraw);
             }
 
             return false;
@@ -31334,6 +29159,7 @@ var projectSubscriptionReport = {
             loader(false);
             isProjectDataLoaded(true);
             _mithril2.default.redraw();
+            requestRedraw();
         },
             project = (0, _stream2.default)([{}]);
 
@@ -31346,6 +29172,7 @@ var projectSubscriptionReport = {
         lReward.load().then(function (loadedRewards) {
             rewards(loadedRewards);
             isRewardsDataLoaded(true);
+            requestRedraw();
         });
         var mapRewardsToOptions = function mapRewardsToOptions() {
             var options = [];
@@ -31382,6 +29209,7 @@ var projectSubscriptionReport = {
             subscriptions.firstPage(filterVM.parameters()).then(function () {
                 loader(false);
                 isProjectDataLoaded(true);
+                requestRedraw();
             }).catch(handleError);
             project(data);
         });
@@ -31662,12 +29490,18 @@ var publish = {
             projectDetails = (0, _stream2.default)([]),
             loader = _api.catarse.loaderWithToken;
 
-        filtersVM.project_id(vnode.attrs.root.getAttribute('data-id'));
+        var project_id = vnode.attrs.project_id;
+        //filtersVM.project_id(vnode.attrs.root.getAttribute('data-id'));
+        filtersVM.project_id(project_id);
 
         var l = loader(_models2.default.projectDetail.getRowOptions(filtersVM.parameters())),
             accountL = loader(_models2.default.projectAccount.getRowOptions(filtersVM.parameters()));
-        l.load().then(projectDetails);
-        accountL.load().then(projectAccount);
+        l.load().then(projectDetails).then(function (_) {
+            return _mithril2.default.redraw();
+        });
+        accountL.load().then(projectAccount).then(function (_) {
+            return _mithril2.default.redraw();
+        });
 
         var expiresAt = function expiresAt() {
             var project = _underscore2.default.first(projectDetails());
@@ -31694,20 +29528,24 @@ var publish = {
             acceptedIndex = state.acceptedIndex,
             account = _underscore2.default.first(state.projectAccount());
 
-        var terms = project.mode === 'flex' ? _publishVm2.default.flexTerms(project) : project.mode === 'aon' ? _publishVm2.default.aonTerms(project, state.expiresAt()) : _publishVm2.default.subTerms(project);
+        if (project) {
+            var terms = project.mode === 'flex' ? _publishVm2.default.flexTerms(project) : project.mode === 'aon' ? _publishVm2.default.aonTerms(project, state.expiresAt()) : _publishVm2.default.subTerms(project);
 
-        return [project && account ? [project.is_owner_or_admin ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
-            project: (0, _stream2.default)(project),
-            hidePublish: true
-        }) : '', (0, _mithril2.default)('.w-section.section-product.' + project.mode), (0, _mithril2.default)('.w-section.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.u-text-center', [(0, _mithril2.default)('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), (0, _mithril2.default)('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), (0, _mithril2.default)('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), (0, _mithril2.default)('.w-col.w-col-3')])])]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.w-section.section-one-column.bg-gray.section.before-footer', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.card.medium.u-marginbottom-60.card-terciary', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6.w-clearfix', [(0, _mithril2.default)('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.u-marginbottom-30.fontsize-base', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Título: '), project.name]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Modalidade de financiamento: '), window.I18n.t(project.mode, I18nScope())]), project.mode !== 'sub' ? (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + _h2.default.formatNumber(project.goal, 2, 3)]) : '', project.online_days !== null ? (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Responsável: '), account.owner_name]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), (0, _mithril2.default)('.u-text-center', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-1'), (0, _mithril2.default)('.w-col.w-col-10', [(0, _mithril2.default)('.divider.u-marginbottom-10'), (0, _mithril2.default)('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), (0, _mithril2.default)('.w-col.w-col-1')])])]), (0, _mithril2.default)('.card.medium.u-radius.u-marginbottom-60', [(0, _mithril2.default)('.u-text-center.u-marginbottom-60', [(0, _mithril2.default)('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-8', [(0, _mithril2.default)('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', (0, _mithril2.default)('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), (0, _mithril2.default)('.w-col.w-col-2')])]), _underscore2.default.map(terms, function (term, index) {
-            return (0, _mithril2.default)('.u-marginbottom-30.fontsize-base' + (index <= acceptedIndex() ? '' : '.w-hidden.publish-rules'), [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-1.u-text-center', [(0, _mithril2.default)('div', [(0, _mithril2.default)(index + 1 > acceptedIndex() ? 'a.w-inline-block.checkbox-big' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg', {
-                onclick: function onclick() {
-                    if (index >= acceptedIndex()) {
-                        acceptedIndex(acceptedIndex() + 1);
+            return [project && account ? [project.is_owner_or_admin ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
+                project: (0, _stream2.default)(project),
+                hidePublish: true
+            }) : '', (0, _mithril2.default)('.w-section.section-product.' + project.mode), (0, _mithril2.default)('.w-section.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.u-text-center', [(0, _mithril2.default)('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'), (0, _mithril2.default)('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'), (0, _mithril2.default)('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')])]), (0, _mithril2.default)('.w-col.w-col-3')])])]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.w-section.section-one-column.bg-gray.section.before-footer', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.card.medium.u-marginbottom-60.card-terciary', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6.w-clearfix', [(0, _mithril2.default)('img.card-project-thumb.u-right[src=' + project.large_image + ']')]), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.u-marginbottom-30.fontsize-base', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Título: '), project.name]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Link: '), 'www.catarse.me/' + project.permalink]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Modalidade de financiamento: '), window.I18n.t(project.mode, I18nScope())]), project.mode !== 'sub' ? (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Meta de arrecadação: '), 'R$ ' + _h2.default.formatNumber(project.goal, 2, 3)]) : '', project.online_days !== null ? (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Prazo: ' + project.online_days + ' ' + (project.online_days > 1 ? 'dias' : 'dia'))]) : '', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Responsável: '), account.owner_name]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'CPF/CNPJ: '), account.owner_document])])])]), (0, _mithril2.default)('.u-text-center', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-1'), (0, _mithril2.default)('.w-col.w-col-10', [(0, _mithril2.default)('.divider.u-marginbottom-10'), (0, _mithril2.default)('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')]), (0, _mithril2.default)('.w-col.w-col-1')])])]), (0, _mithril2.default)('.card.medium.u-radius.u-marginbottom-60', [(0, _mithril2.default)('.u-text-center.u-marginbottom-60', [(0, _mithril2.default)('.fontsize-large.fontweight-semibold', 'Relembre nossas regras'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-8', [(0, _mithril2.default)('.fontsize-small', ['Antes de publicar, clique nos círculos abaixo e confirme que você está ciente de como funciona o Catarse. Qualquer dúvida, ', (0, _mithril2.default)('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/requests/new"][target="_blank"]', 'entre em contato'), '!'])]), (0, _mithril2.default)('.w-col.w-col-2')])]), _underscore2.default.map(terms, function (term, index) {
+                return (0, _mithril2.default)('.u-marginbottom-30.fontsize-base' + (index <= acceptedIndex() ? '' : '.w-hidden.publish-rules'), [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-1.u-text-center', [(0, _mithril2.default)('div', [(0, _mithril2.default)(index + 1 > acceptedIndex() ? 'a.w-inline-block.checkbox-big' : 'a.w-inline-block.checkbox-big.checkbox--selected.fa.fa-check.fa-lg', {
+                    onclick: function onclick() {
+                        if (index >= acceptedIndex()) {
+                            acceptedIndex(acceptedIndex() + 1);
+                        }
                     }
-                }
-            })])]), term])]);
-        })]), acceptedIndex() >= terms.length ? (0, _mithril2.default)('.w-row.publish-btn-section', [(0, _mithril2.default)('.w-col.w-col-4'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('a.btn.btn-large.u-marginbottom-20[href=/' + (project.mode === 'flex' ? 'flexible_projects' : 'projects') + '/' + project.project_id + '/push_to_online]', 'Publicar agora!'), (0, _mithril2.default)('.u-text-center.fontsize-smaller', ['Ao publicar o seu projeto, você está aceitando os ', (0, _mithril2.default)('a.alt-link[href=\'/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'), ' e ', (0, _mithril2.default)('a.alt-link[href=\'/privacy-policy\'][target=\'_blank\']', 'Politica de Privacidade')])]), (0, _mithril2.default)('.w-col.w-col-4')]) : ''])])] : _h2.default.loader()];
+                })])]), term])]);
+            })]), acceptedIndex() >= terms.length ? (0, _mithril2.default)('.w-row.publish-btn-section', [(0, _mithril2.default)('.w-col.w-col-4'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('a.btn.btn-large.u-marginbottom-20[href=/' + (project.mode === 'flex' ? 'flexible_projects' : 'projects') + '/' + project.project_id + '/push_to_online]', 'Publicar agora!'), (0, _mithril2.default)('.u-text-center.fontsize-smaller', ['Ao publicar o seu projeto, você está aceitando os ', (0, _mithril2.default)('a.alt-link[href=\'/terms-of-use\'][target=\'_blank\']', 'Termos de Uso'), ' e ', (0, _mithril2.default)('a.alt-link[href=\'/privacy-policy\'][target=\'_blank\']', 'Politica de Privacidade')])]), (0, _mithril2.default)('.w-col.w-col-4')]) : ''])])] : _h2.default.loader()];
+        } else {
+            return '';
+        }
     }
 };
 
@@ -32395,6 +30233,7 @@ var surveysShow = {
             multipleChoiceQuestions = (0, _stream2.default)([]),
             user = (0, _stream2.default)({}),
             reward = (0, _stream2.default)(),
+            requestRedraw = _h2.default.createRequestAutoRedraw(reward),
             sendMessage = function sendMessage() {
             displayModal(true);
         },
@@ -32403,7 +30242,6 @@ var surveysShow = {
         }),
             surveyLoader = function surveyLoader() {
             vm.contribution_id(contributionId);
-
             return _api.catarse.loaderWithToken(_models2.default.survey.getPageOptions(vm.parameters()));
         },
             preview = function preview() {
@@ -32455,43 +30293,45 @@ var surveysShow = {
             });
         };
 
-        var loadSurvey = function loadSurvey(el, isInitialized) {
-            if (!isInitialized) {
-                surveyLoader().load().then(function (data) {
-                    survey(_underscore2.default.first(data));
-                    finished(!_underscore2.default.isEmpty(survey().finished_at));
-                    answeredAt(survey().survey_answered_at);
-                    _projectVm2.default.fetchProject(survey().project_id);
-                    _rewardVm2.default.rewardLoader(survey().reward_id).load().then(reward);
-                    var surveyData = survey();
-                    countryName(surveyData.country_name);
-                    stateName(surveyData.state_name);
+        var loadSurvey = function loadSurvey(vnodeSurvey) {
+            surveyLoader().load().then(function (data) {
+                survey(_underscore2.default.first(data));
+                finished(!_underscore2.default.isEmpty(survey().finished_at));
+                answeredAt(survey().survey_answered_at);
+                _projectVm2.default.fetchProject(survey().project_id);
+                _rewardVm2.default.rewardLoader(survey().reward_id).load().then(function (r) {
+                    reward(r);
+                    requestRedraw();
+                    return r;
+                });
+                var surveyData = survey();
+                countryName(surveyData.country_name);
+                stateName(surveyData.state_name);
 
-                    idVM.id(_h2.default.getUserID());
+                idVM.id(_h2.default.getUserID());
 
-                    var lUser = _api.catarse.loaderWithToken(_models2.default.userDetail.getRowOptions(idVM.parameters()));
+                var lUser = _api.catarse.loaderWithToken(_models2.default.userDetail.getRowOptions(idVM.parameters()));
 
-                    lUser.load().then(function (userData) {
-                        user(_underscore2.default.first(userData));
-                        fields({
-                            address: (0, _stream2.default)(surveyData.address || _underscore2.default.omit(user().address, 'id') || {})
-                        });
-                    });
-
-                    _underscore2.default.map(surveyData.open_questions, function (question) {
-                        openQuestions().push({
-                            question: question,
-                            value: (0, _stream2.default)(question.answer)
-                        });
-                    });
-                    _underscore2.default.map(surveyData.multiple_choice_questions, function (question) {
-                        multipleChoiceQuestions().push({
-                            question: question,
-                            value: (0, _stream2.default)(question.survey_question_choice_id)
-                        });
+                lUser.load().then(function (userData) {
+                    user(_underscore2.default.first(userData));
+                    fields({
+                        address: (0, _stream2.default)(surveyData.address || _underscore2.default.omit(user().address, 'id') || {})
                     });
                 });
-            }
+
+                _underscore2.default.map(surveyData.open_questions, function (question) {
+                    openQuestions().push({
+                        question: question,
+                        value: (0, _stream2.default)(question.answer)
+                    });
+                });
+                _underscore2.default.map(surveyData.multiple_choice_questions, function (question) {
+                    multipleChoiceQuestions().push({
+                        question: question,
+                        value: (0, _stream2.default)(question.survey_question_choice_id)
+                    });
+                });
+            });
         };
 
         vnode.state = {
@@ -32529,9 +30369,7 @@ var surveysShow = {
             contactModalC = [_ownerMessageContent2.default, (0, _stream2.default)(project ? project.user : {})],
             profileImage = _userVm2.default.displayImage(user);
 
-        return (0, _mithril2.default)('.survey', {
-            config: state.loadSurvey
-        }, _underscore2.default.isEmpty(user) ? '' : [state.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
+        return (0, _mithril2.default)('.survey', { oncreate: state.loadSurvey }, _underscore2.default.isEmpty(user) || _underscore2.default.isEmpty(reward) ? _h2.default.loader() : [state.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayModal,
             content: contactModalC
         }) : '', state.showThanks() ? (0, _mithril2.default)('.survey-thanks', [(0, _mithril2.default)('.bg-white.page-header', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-8', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center', (0, _mithril2.default)('img.big.thumb.u-marginbottom-20.u-round[src=\'' + profileImage + '\']')), (0, _mithril2.default)('.u-text-center', (0, _mithril2.default)('.fontsize-larger.u-marginbottom-10', 'Valeu!')), (0, _mithril2.default)('.fontsize-base.u-text-center', ['As respostas abaixo foram enviadas para ' + project.user.name + '! Qualquer d\xFAvida sobre o andamento do projeto, visite a ', (0, _mithril2.default)('a.alt-link[href=\'/' + project.permalink + '#posts\'][target=\'_blank\']', 'aba de novidades da campanha'), ' ou ', (0, _mithril2.default)('a.alt-link[href=\'javascript:void(0);\']', {
@@ -32713,6 +30551,7 @@ var surveys = {
     view: function view(_ref) {
         var state = _ref.state;
 
+
         var project = _underscore2.default.first(state.projectDetails());
         var canBeCreated = function canBeCreated(reward) {
             return !reward.survey_sent_at && (reward.maximum_contributions && reward.paid_count >= reward.maximum_contributions || project.state !== 'online');
@@ -32750,11 +30589,7 @@ var surveys = {
             return (0, _mithril2.default)('.table-row.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', [(0, _mithril2.default)('.fontsize-base.fontweight-semibold', 'R$ ' + reward.minimum_value + ' ou mais'), (0, _mithril2.default)('.fontsize-smallest.fontweight-semibold', reward.title), (0, _mithril2.default)('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', reward.description.substring(0, 90) + '...'), (0, _mithril2.default)('.fontcolor-secondary.fontsize-smallest', [(0, _mithril2.default)('span.fontcolor-terciary', 'Entrega prevista:'), _mithril2.default.trust('&nbsp;'), _h2.default.momentify(reward.deliver_at, 'MMMM/YYYY')]), (0, _mithril2.default)('.fontcolor-secondary.fontsize-smallest', [(0, _mithril2.default)('span.fontcolor-terciary', 'Envio:'), _mithril2.default.trust('&nbsp;'), window.I18n.t('shipping_options.' + reward.shipping_options, I18nScope())])]), (0, _mithril2.default)('.table-col.w-col.w-col-9', (0, _mithril2.default)('.u-margintop-20.w-row', [(0, _mithril2.default)('.u-text-center-big-only.w-col.w-col-4.w-col-small-4.w-col-tiny-4', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6', !canBeCreated(reward) && !cannotBeCreated(reward) ? (0, _mithril2.default)('.fontsize-base', [(0, _mithril2.default)('span.fa.fa-paper-plane.fontcolor-terciary', ' '), ' ' + reward.sentCount]) : ''), (0, _mithril2.default)('.w-col.w-col-6', !canBeCreated(reward) && !cannotBeCreated(reward) ? (0, _mithril2.default)('.fontsize-base', [(0, _mithril2.default)('span.fa.fa-check-circle.fontcolor-terciary', ''), ' ' + reward.answeredCount, (0, _mithril2.default)('span.fontcolor-secondary', '(' + (reward.sentCount === 0 ? '0' : Math.floor(reward.answeredCount / reward.sentCount * 100)) + '%)')]) : '')])), (0, _mithril2.default)('.u-text-center-big-only.w-col.w-col-5.w-col-small-5.w-col-tiny-5', [
             // m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.u-marginright-10.w-button'),
             !canBeCreated(reward) && !cannotBeCreated(reward) ? (0, _mithril2.default)('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.w-button[target=\'_blank\']', {
-                onclick: function onclick() {
-                    return _mithril2.default.route('/projects/' + project.project_id + '/contributions_report', {
-                        rewardId: reward.id
-                    });
-                }
+                href: '/projects/' + project.project_id + '/contributions_report?rewardId=' + reward.id
             }) : '']), availableAction(reward)]))]);
         })])])]))) : _h2.default.loader();
     }
@@ -34057,6 +31892,10 @@ var _underscore = __webpack_require__(/*! underscore */ "./node_modules/undersco
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
+var _stream = __webpack_require__(/*! mithril/stream */ "./node_modules/mithril/stream.js");
+
+var _stream2 = _interopRequireDefault(_stream);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _window = window,
@@ -34183,7 +32022,7 @@ var setCardType = function setCardType(e, type) {
     return type(cardType);
 };
 
-var formatBackCardNumber = function formatBackCardNumber(e, prop) {
+var formatBackCardNumber = function formatBackCardNumber(e, cardNumberProp) {
     var $target = void 0,
         value = void 0;
     $target = e.currentTarget;
@@ -34197,12 +32036,12 @@ var formatBackCardNumber = function formatBackCardNumber(e, prop) {
     if (/\d\s$/.test(value)) {
         e.preventDefault();
         return setTimeout(function () {
-            return $target.value = prop(value.replace(/\d\s$/, ''));
+            return $target.value = cardNumberProp(value.replace(/\d\s$/, ''));
         });
     } else if (/\s\d?$/.test(value)) {
         e.preventDefault();
         return setTimeout(function () {
-            return $target.value = prop(value.replace(/\d$/, ''));
+            return $target.value = cardNumberProp(value.replace(/\d$/, ''));
         });
     }
 };
@@ -34234,7 +32073,7 @@ var replaceFullWidthChars = function replaceFullWidthChars(str) {
     return value;
 };
 
-var safeVal = function safeVal(value, $target, prop) {
+var safeVal = function safeVal(value, $target, cardNumberProp) {
     var currPair = void 0,
         cursor = void 0,
         digit = void 0,
@@ -34249,7 +32088,7 @@ var safeVal = function safeVal(value, $target, prop) {
         cursor = null;
     }
     last = $target.value;
-    $target.value = prop(value);
+    $target.value = cardNumberProp(value);
     if (cursor !== null && $target === document.activeElement) {
         if (cursor === last.length) {
             cursor = value.length;
@@ -34267,14 +32106,14 @@ var safeVal = function safeVal(value, $target, prop) {
     }
 };
 
-var reFormatCardNumber = function reFormatCardNumber(e, prop) {
+var reFormatCardNumber = function reFormatCardNumber(e, cardNumberProp) {
     var $target = e.currentTarget;
     return setTimeout(function () {
         var value = void 0;
         value = $target.value;
         value = replaceFullWidthChars(value);
         value = formatCardNumber(value);
-        return safeVal(value, $target, prop);
+        return safeVal(value, $target, cardNumberProp);
     });
 };
 
@@ -34304,7 +32143,7 @@ var formatCardNumber = function formatCardNumber(num) {
     return groups.join(' ');
 };
 
-var formatCardInputNumber = function formatCardInputNumber(e, prop) {
+var formatCardInputNumber = function formatCardInputNumber(e, cardNumberProp) {
     var $target = void 0,
         card = void 0,
         digit = void 0,
@@ -34338,12 +32177,12 @@ var formatCardInputNumber = function formatCardInputNumber(e, prop) {
     if (re.test(value)) {
         e.preventDefault();
         return setTimeout(function () {
-            return $target.value = prop(value + ' ' + digit);
+            return $target.value = cardNumberProp(value + ' ' + digit);
         });
     } else if (re.test(value + digit)) {
         e.preventDefault();
         return setTimeout(function () {
-            return $target.value = prop(value + digit + ' ');
+            return $target.value = cardNumberProp(value + digit + ' ');
         });
     }
 };
@@ -34422,28 +32261,28 @@ var restrictCardNumber = function restrictCardNumber(e) {
     }
     return value.length <= 16;
 };
-var setEvents = function setEvents(el, cardType, prop) {
+var setEvents = function setEvents(el, cardType, cardNumberProp) {
     el.onkeypress = function (event) {
         restrictNumeric(event);
         restrictCardNumber(event);
-        formatCardInputNumber(event, prop);
+        formatCardInputNumber(event, cardNumberProp);
     };
     el.oninput = function (event) {
-        reFormatCardNumber(event, prop);
+        reFormatCardNumber(event, cardNumberProp);
         setCardType(event, cardType);
     };
     el.onkeydown = function (event) {
-        return formatBackCardNumber(event, prop);
+        return formatBackCardNumber(event, cardNumberProp);
     };
     el.onkeyup = function (event) {
         setCardType(event, cardType);
     };
     el.onpaste = function (event) {
-        return reFormatCardNumber(event, prop);
+        return reFormatCardNumber(event, cardNumberProp);
     };
     el.onchange = function (event) {
         CatarseAnalytics.oneTimeEvent({ cat: 'contribution_finish', act: 'contribution_cc_edit' });
-        reFormatCardNumber(event, prop);
+        reFormatCardNumber(event, cardNumberProp);
     };
 };
 
@@ -36271,7 +34110,9 @@ var init = function init(project_id, project_user_id) {
 
     fetchParallelData(project_id, project_user_id);
 
-    return lProject.load().then(setProject(project_user_id));
+    return lProject.load().then(setProject(project_user_id)).then(function (_) {
+        return _mithril2.default.redraw();
+    });
 };
 
 var resetData = function resetData() {
@@ -36291,8 +34132,8 @@ var fetchParallelData = function fetchParallelData(projectId, projectUserId) {
 // FIXME: should work with data-parameters that don't have project struct
 // just ids: {project_id project_user_id user_id }
 var getCurrentProject = function getCurrentProject() {
-    var root = document.getElementById('application'),
-        data = root && root.getAttribute('data-parameters');
+    var root = document.getElementById('application');
+    var data = root && root.getAttribute('data-parameters');
 
     if (data) {
         var jsonData = JSON.parse(data);
@@ -36303,13 +34144,18 @@ var getCurrentProject = function getCurrentProject() {
         var project_id = jsonData.project_id,
             project_user_id = jsonData.project_user_id;
 
-        // fill currentProject when jsonData has id and mode (legacy code)
 
+        var project_data = {
+            project_id: project_id || projectId,
+            project_user_id: project_user_id || projectUserId
+        };
+
+        // fill currentProject when jsonData has id and mode (legacy code)
         if (jsonData.id && jsonData.mode) {
-            currentProject(jsonData);
+            currentProject(project_data);
         }
 
-        init(project_id || projectId, project_user_id || projectUserId);
+        init(project_data.project_id, project_data.project_user_id);
 
         _mithril2.default.redraw();
 
@@ -36347,7 +34193,14 @@ var fetchProject = function fetchProject(projectId) {
 
     var lproject = _api.catarse.loaderWithToken(_models2.default.projectDetail.getRowOptions(idVM.parameters()));
 
-    return !handlePromise ? lproject.load() : lproject.load().then(_underscore2.default.compose(customProp, _underscore2.default.first));
+    if (!handlePromise) {
+        return lproject.load();
+    } else {
+        lproject.load().then(_underscore2.default.compose(customProp, _underscore2.default.first)).then(function (_) {
+            return _mithril2.default.redraw();
+        });
+        return customProp;
+    }
 };
 
 var updateProject = function updateProject(projectId, projectData) {
@@ -37680,6 +35533,86 @@ exports.default = userBalanceTransfersVM;
 
 /***/ }),
 
+/***/ "./legacy/src/vms/user-created-projects-vm.js":
+/*!****************************************************!*\
+  !*** ./legacy/src/vms/user-created-projects-vm.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
+
+var _models2 = _interopRequireDefault(_models);
+
+var _stream = __webpack_require__(/*! mithril/stream */ "./node_modules/mithril/stream.js");
+
+var _stream2 = _interopRequireDefault(_stream);
+
+var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
+
+var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var createdProjects = _api.catarse.paginationVM(_models2.default.project);
+
+var getCreatedProjects = function getCreatedProjects(user_id, states) {
+
+    var error = (0, _stream2.default)(false);
+    var isLoading = (0, _stream2.default)(false);
+    var contextVM = _api.catarse.filtersVM({ project_user_id: 'eq', state: 'in' });
+    contextVM.state(states).project_user_id(user_id).order({ updated_at: 'desc' });
+    _models2.default.project.pageSize(9);
+
+    return {
+        error: error,
+        isLoading: isLoading,
+        firstPage: function firstPage() {
+            error(false);
+            isLoading(true);
+
+            return createdProjects.firstPage(contextVM.parameters()).then(function (_) {
+                isLoading(false);
+                _mithril2.default.redraw();
+            }).catch(function (err) {
+                error(true);
+                isLoading(false);
+                _mithril2.default.redraw();
+            });
+        },
+        nextPage: function nextPage() {
+            error(false);
+            isLoading(true);
+
+            return createdProjects.nextPage().then(function (_) {
+                isLoading(false);
+                _mithril2.default.redraw();
+            }).catch(function (err) {
+                error(true);
+                isLoading(false);
+                _mithril2.default.redraw();
+            });
+        },
+        isLastPage: createdProjects.isLastPage,
+        collection: createdProjects.collection
+    };
+};
+
+exports.default = {
+    getCreatedProjects: getCreatedProjects
+};
+
+/***/ }),
+
 /***/ "./legacy/src/vms/user-filter-vm.js":
 /*!******************************************!*\
   !*** ./legacy/src/vms/user-filter-vm.js ***!
@@ -38051,7 +35984,14 @@ var fetchUser = function fetchUser(user_id) {
 
     var lUser = _api.catarse.loaderWithToken(_models2.default.userDetail.getRowOptions(idVM.parameters()));
 
-    return !handlePromise ? lUser.load() : lUser.load().then(_underscore2.default.compose(customProp, _underscore2.default.first));
+    if (!handlePromise) {
+        return lUser.load();
+    } else {
+        lUser.load().then(_underscore2.default.compose(customProp, _underscore2.default.first)).then(function (_) {
+            return _mithril2.default.redraw();
+        });
+        return customProp;
+    }
 };
 
 var getCurrentUser = function getCurrentUser() {
@@ -52201,6 +50141,2962 @@ __webpack_require__(/*! ./modules/web.immediate */ "./node_modules/core-js/modul
 __webpack_require__(/*! ./modules/web.dom.iterable */ "./node_modules/core-js/modules/web.dom.iterable.js");
 module.exports = __webpack_require__(/*! ./modules/_core */ "./node_modules/core-js/modules/_core.js");
 
+
+/***/ }),
+
+/***/ "./node_modules/inherits/inherits_browser.js":
+/*!***************************************************!*\
+  !*** ./node_modules/inherits/inherits_browser.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/mithril-postgrest/mithril-postgrest.umd.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/mithril-postgrest/mithril-postgrest.umd.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (global, factory) {
+	 true ? module.exports = factory(__webpack_require__(/*! mithril */ "./node_modules/mithril-postgrest/node_modules/mithril/mithril.js"), __webpack_require__(/*! underscore */ "./node_modules/underscore/underscore.js")) :
+	undefined;
+}(this, (function (m,_) { 'use strict';
+
+m = m && m.hasOwnProperty('default') ? m['default'] : m;
+_ = _ && _.hasOwnProperty('default') ? _['default'] : _;
+
+var filtersVM = function filtersVM(attributes) {
+    var newVM = {},
+        filter = function filter() {
+        var prop = m.prop(''),
+            filterProp = function filterProp(value) {
+            if (arguments.length > 0) {
+                prop(value);
+                return newVM;
+            }
+            return prop();
+        };
+        // Just so we can have a default to_filter and avoid if _.isFunction calls
+        filterProp.toFilter = function () {
+            return _.isString(filterProp()) ? filterProp().trim() : filterProp();
+        };
+        return filterProp;
+    },
+        getters = _.reduce(attributes, function (memo, operator, attr) {
+        // The operator between is implemented with two properties, one for greater than value and another for lesser than value.
+        // Both properties are sent in the queurystring with the same name,
+        // that's why we need the special case here, so we can use a simple map as argument to filtersVM.
+        if (operator === 'between') {
+            memo[attr] = {
+                lte: filter(),
+                gte: filter()
+            };
+        } else {
+            memo[attr] = filter();
+        }
+        return memo;
+    }, {
+        order: filter()
+    }),
+        parametersWithoutOrder = function parametersWithoutOrder() {
+        return _.reduce(getters, function (memo, getter, attr) {
+            if (attr !== 'order') {
+                var operator = attributes[attr];
+
+                if (_.isFunction(getter.toFilter) && (getter.toFilter() === undefined || getter.toFilter() === '')) {
+                    return memo;
+                }
+
+                // Bellow we use different formatting rules for the value depending on the operator
+                // These rules are used regardless of the toFilter function,
+                // so the user can use a custom toFilter without having to worry with basic filter syntax
+                if (operator === 'ilike' || operator === 'like') {
+                    memo[attr] = operator + '.*' + getter.toFilter() + '*';
+                } else if (operator === '@@') {
+                    memo[attr] = operator + '.' + getter.toFilter().replace(/\s+/g, '&');
+                } else if (operator === 'between') {
+                    if (!getter.lte.toFilter() && !getter.gte.toFilter()) {
+                        return memo;
+                    }
+                    memo[attr] = [];
+                    if (getter.gte()) {
+                        memo[attr].push('gte.' + getter.gte.toFilter());
+                    }
+                    if (getter.lte()) {
+                        memo[attr].push('lte.' + getter.lte.toFilter());
+                    }
+                } else if (operator === 'is.null') {
+                    memo[attr] = getter.toFilter() === null ? 'is.null' : 'not.is.null';
+                } else {
+                    memo[attr] = operator + '.' + getter.toFilter();
+                }
+            }
+            return memo;
+        }, {});
+    },
+        parameters = function parameters() {
+        // The order parameters have a special syntax (just like an order by SQL clause)
+        // https://github.com/begriffs/postgrest/wiki/Routing#filtering-and-ordering
+        var order = function order() {
+            return getters.order() && _.reduce(getters.order(), function (memo, direction, attr) {
+                memo.push(attr + '.' + direction);
+                return memo;
+            }, []).join(',');
+        },
+            orderParameter = order() ? {
+            order: order()
+        } : {};
+
+        return _.extend({}, orderParameter, parametersWithoutOrder());
+    };
+
+    return _.extend(newVM, getters, {
+        parameters: parameters,
+        parametersWithoutOrder: parametersWithoutOrder
+    });
+};
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+var paginationVM = function paginationVM(model, order) {
+    var extraHeaders = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var authenticate = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+    var collection = m.prop([]),
+        defaultOrder = order || 'id.desc',
+        filters = m.prop({
+        order: defaultOrder
+    }),
+        isLoading = m.prop(false),
+        page = m.prop(1),
+        resultsCount = m.prop(),
+        pageRequest = authenticate ? model.getPageWithToken : model.getPage,
+        total = m.prop();
+
+    var fetch = function fetch() {
+        var d = m.deferred();
+        var getTotal = function getTotal(xhr) {
+            if (!xhr || xhr.status === 0) {
+                return JSON.stringify({
+                    hint: null,
+                    details: null,
+                    code: 0,
+                    message: 'Connection error'
+                });
+            }
+            var rangeHeader = xhr.getResponseHeader('Content-Range');
+            if (_.isString(rangeHeader)) {
+                var _rangeHeader$split = rangeHeader.split('/'),
+                    _rangeHeader$split2 = slicedToArray(_rangeHeader$split, 2),
+                    headerSize = _rangeHeader$split2[0],
+                    headerCount = _rangeHeader$split2[1],
+                    _headerSize$split = headerSize.split('-'),
+                    _headerSize$split2 = slicedToArray(_headerSize$split, 2),
+                    headerFrom = _headerSize$split2[0],
+                    headerTo = _headerSize$split2[1],
+                    to = parseInt(headerTo) + 1 || 0,
+                    from = parseInt(headerFrom) || 0;
+
+                total(parseInt(headerCount));
+                resultsCount(to - from);
+            }
+            try {
+                return xhr.responseText;
+            } catch (ex) {
+                return JSON.stringify({
+                    hint: null,
+                    details: null,
+                    code: 0,
+                    message: xhr.responseText
+                });
+            }
+        };
+        isLoading(true);
+        pageRequest(filters(), page(), {
+            background: true,
+            extract: getTotal
+        }, extraHeaders).then(function (data) {
+            collection(_.union(collection(), data));
+            isLoading(false);
+            d.resolve(collection());
+            m.redraw();
+        }, function (error) {
+            isLoading(false);
+            total(0);
+            d.reject(error);
+            m.redraw();
+        });
+        return d.promise;
+    },
+        firstPage = function firstPage(parameters) {
+        filters(_.extend({
+            order: defaultOrder
+        }, parameters));
+        collection([]);
+        page(1);
+        return fetch();
+    },
+        isLastPage = function isLastPage() {
+        return model.pageSize() > resultsCount();
+    },
+        nextPage = function nextPage() {
+        page(page() + 1);
+        return fetch();
+    };
+
+    return {
+        collection: collection,
+        firstPage: firstPage,
+        isLoading: isLoading,
+        nextPage: nextPage,
+        isLastPage: isLastPage,
+        total: total,
+        resultsCount: resultsCount
+    };
+};
+
+function Postgrest() {
+    var postgrest = {};
+
+    var token = m.prop(),
+        mergeConfig = function mergeConfig(config, options) {
+        return options && _.isFunction(options.config) ? _.compose(options.config, config) : config;
+    },
+        addHeaders = function addHeaders(headers) {
+        return function (xhr) {
+            _.each(headers, function (value, key) {
+                xhr.setRequestHeader(key, value);
+            });
+            return xhr;
+        };
+    },
+        addConfigHeaders = function addConfigHeaders(headers, options) {
+        return _.extend({}, options, {
+            config: mergeConfig(addHeaders(headers), options)
+        });
+    },
+        createLoader = function createLoader(requestFunction, options) {
+        var defaultState = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+        var loader = m.prop(defaultState),
+            d = m.deferred();
+        loader.load = function () {
+            loader(true);
+            m.redraw();
+            requestFunction(_.extend({}, options, {
+                background: true
+            })).then(function (data) {
+                loader(false);
+                d.resolve(data);
+                m.redraw();
+            }, function (error) {
+                loader(false);
+                d.reject(error);
+                m.redraw();
+            });
+            return d.promise;
+        };
+        return loader;
+    },
+        representationHeader = {
+        'Prefer': 'return=representation'
+    };
+
+    postgrest.token = token;
+
+    postgrest.init = function (apiPrefix, authenticationOptions) {
+        var globalHeader = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+        postgrest.request = function (options) {
+            var errorHandler = function errorHandler(xhr) {
+                try {
+                    return xhr.responseText;
+                } catch (ex) {
+                    return JSON.stringify({
+                        hint: null,
+                        details: null,
+                        code: 0,
+                        message: xhr.responseText
+                    });
+                }
+            };
+            return m.request(addConfigHeaders(globalHeader, _.extend({ extract: errorHandler }, options, {
+                url: apiPrefix + options.url
+            })));
+        };
+
+        var authenticationRequested = m.prop(false);
+        postgrest.authenticate = function (delegatedDeferred) {
+            var deferred = delegatedDeferred || m.deferred();
+            if (token()) {
+                deferred.resolve({
+                    token: token()
+                });
+            } else if (!authenticationRequested()) {
+                authenticationRequested(true);
+
+                m.request(_.extend({}, authenticationOptions)).then(function (data) {
+                    authenticationRequested(false);
+                    token(data.token);
+                    deferred.resolve({
+                        token: token()
+                    });
+                }).catch(function (data) {
+                    authenticationRequested(false);
+                    deferred.reject(data);
+                });
+            } else {
+                setTimeout(function () {
+                    return postgrest.authenticate(deferred);
+                }, 250);
+            }
+            return deferred.promise;
+        };
+
+        postgrest.requestWithToken = function (options) {
+            return postgrest.authenticate().then(function () {
+                return postgrest.request(addConfigHeaders({
+                    'Authorization': 'Bearer ' + token()
+                }, options));
+            }, function () {
+                return postgrest.request(options);
+            });
+        };
+
+        postgrest.loader = _.partial(createLoader, postgrest.request);
+
+        postgrest.loaderWithToken = _.partial(createLoader, postgrest.requestWithToken);
+
+        postgrest.model = function (name) {
+            var paginationHeaders = function paginationHeaders(page, pageSize) {
+                if (!pageSize) {
+                    return;
+                }
+
+                var toRange = function toRange() {
+                    var from = (page - 1) * pageSize,
+                        to = from + pageSize - 1;
+                    return from + '-' + to;
+                };
+
+                return {
+                    'Range-unit': 'items',
+                    'Range': toRange()
+                };
+            },
+                pageSize = m.prop(10),
+                nameOptions = {
+                url: '/' + name
+            },
+                getOptions = function getOptions(data, page, pageSize, options) {
+                var headers = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+                var extraHeaders = _.extend({}, {
+                    'Prefer': 'count=none'
+                }, headers, paginationHeaders(page, pageSize));
+                return addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
+                    method: 'GET',
+                    data: data
+                }));
+            },
+                querystring = function querystring(filters, options) {
+                options.url += '?' + m.route.buildQueryString(filters);
+                return options;
+            },
+                options = function options(_options) {
+                return postgrest.request(_.extend({}, _options, nameOptions, {
+                    method: 'OPTIONS'
+                }));
+            },
+                postOptions = function postOptions(attributes, options) {
+                var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+                var extraHeaders = _.extend({}, representationHeader, headers);
+                return addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
+                    method: 'POST',
+                    data: attributes
+                }));
+            },
+                deleteOptions = function deleteOptions(filters, options) {
+                var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+                var extraHeaders = _.extend({}, representationHeader, headers);
+                return querystring(filters, addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
+                    method: 'DELETE'
+                })));
+            },
+                patchOptions = function patchOptions(filters, attributes, options) {
+                var headers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+                var extraHeaders = _.extend({}, representationHeader, headers);
+                return querystring(filters, addConfigHeaders(extraHeaders, _.extend({}, options, nameOptions, {
+                    method: 'PATCH',
+                    data: attributes
+                })));
+            },
+                getPageOptions = function getPageOptions(data, page, options) {
+                var headers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+                return getOptions(data, page || 1, pageSize(), options, headers);
+            },
+                getRowOptions = function getRowOptions(data, options) {
+                var headers = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+                return getOptions(data, 1, 1, options, headers);
+            };
+
+            return {
+                pageSize: pageSize,
+                getPageOptions: getPageOptions,
+                getRowOptions: getRowOptions,
+                patchOptions: patchOptions,
+                postOptions: postOptions,
+                deleteOptions: deleteOptions,
+                getPage: _.compose(postgrest.request, getPageOptions),
+                getRow: _.compose(postgrest.request, getRowOptions),
+                patch: _.compose(postgrest.request, patchOptions),
+                post: _.compose(postgrest.request, postOptions),
+                deleteRequest: _.compose(postgrest.request, deleteOptions),
+                getPageWithToken: _.compose(postgrest.requestWithToken, getPageOptions),
+                getRowWithToken: _.compose(postgrest.requestWithToken, getRowOptions),
+                patchWithToken: _.compose(postgrest.requestWithToken, patchOptions),
+                postWithToken: _.compose(postgrest.requestWithToken, postOptions),
+                deleteWithToken: _.compose(postgrest.requestWithToken, deleteOptions),
+                options: options
+            };
+        };
+
+        return postgrest;
+    };
+
+    postgrest.filtersVM = filtersVM;
+    postgrest.paginationVM = paginationVM;
+
+    return postgrest;
+}
+
+return Postgrest;
+
+})));
+
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiIiwic291cmNlcyI6WyJzcmMvKiovKi5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIoZnVuY3Rpb24gKGdsb2JhbCwgZmFjdG9yeSkge1xuXHR0eXBlb2YgZXhwb3J0cyA9PT0gJ29iamVjdCcgJiYgdHlwZW9mIG1vZHVsZSAhPT0gJ3VuZGVmaW5lZCcgPyBtb2R1bGUuZXhwb3J0cyA9IGZhY3RvcnkocmVxdWlyZSgnbWl0aHJpbCcpLCByZXF1aXJlKCd1bmRlcnNjb3JlJykpIDpcblx0dHlwZW9mIGRlZmluZSA9PT0gJ2Z1bmN0aW9uJyAmJiBkZWZpbmUuYW1kID8gZGVmaW5lKFsnbWl0aHJpbCcsICd1bmRlcnNjb3JlJ10sIGZhY3RvcnkpIDpcblx0KGdsb2JhbC5Qb3N0Z3Jlc3QgPSBmYWN0b3J5KGdsb2JhbC5tLGdsb2JhbC5fKSk7XG59KHRoaXMsIChmdW5jdGlvbiAobSxfKSB7ICd1c2Ugc3RyaWN0JztcblxubSA9IG0gJiYgbS5oYXNPd25Qcm9wZXJ0eSgnZGVmYXVsdCcpID8gbVsnZGVmYXVsdCddIDogbTtcbl8gPSBfICYmIF8uaGFzT3duUHJvcGVydHkoJ2RlZmF1bHQnKSA/IF9bJ2RlZmF1bHQnXSA6IF87XG5cbnZhciBmaWx0ZXJzVk0gPSBmdW5jdGlvbiBmaWx0ZXJzVk0oYXR0cmlidXRlcykge1xuICAgIHZhciBuZXdWTSA9IHt9LFxuICAgICAgICBmaWx0ZXIgPSBmdW5jdGlvbiBmaWx0ZXIoKSB7XG4gICAgICAgIHZhciBwcm9wID0gbS5wcm9wKCcnKSxcbiAgICAgICAgICAgIGZpbHRlclByb3AgPSBmdW5jdGlvbiBmaWx0ZXJQcm9wKHZhbHVlKSB7XG4gICAgICAgICAgICBpZiAoYXJndW1lbnRzLmxlbmd0aCA+IDApIHtcbiAgICAgICAgICAgICAgICBwcm9wKHZhbHVlKTtcbiAgICAgICAgICAgICAgICByZXR1cm4gbmV3Vk07XG4gICAgICAgICAgICB9XG4gICAgICAgICAgICByZXR1cm4gcHJvcCgpO1xuICAgICAgICB9O1xuICAgICAgICAvLyBKdXN0IHNvIHdlIGNhbiBoYXZlIGEgZGVmYXVsdCB0b19maWx0ZXIgYW5kIGF2b2lkIGlmIF8uaXNGdW5jdGlvbiBjYWxsc1xuICAgICAgICBmaWx0ZXJQcm9wLnRvRmlsdGVyID0gZnVuY3Rpb24gKCkge1xuICAgICAgICAgICAgcmV0dXJuIF8uaXNTdHJpbmcoZmlsdGVyUHJvcCgpKSA/IGZpbHRlclByb3AoKS50cmltKCkgOiBmaWx0ZXJQcm9wKCk7XG4gICAgICAgIH07XG4gICAgICAgIHJldHVybiBmaWx0ZXJQcm9wO1xuICAgIH0sXG4gICAgICAgIGdldHRlcnMgPSBfLnJlZHVjZShhdHRyaWJ1dGVzLCBmdW5jdGlvbiAobWVtbywgb3BlcmF0b3IsIGF0dHIpIHtcbiAgICAgICAgLy8gVGhlIG9wZXJhdG9yIGJldHdlZW4gaXMgaW1wbGVtZW50ZWQgd2l0aCB0d28gcHJvcGVydGllcywgb25lIGZvciBncmVhdGVyIHRoYW4gdmFsdWUgYW5kIGFub3RoZXIgZm9yIGxlc3NlciB0aGFuIHZhbHVlLlxuICAgICAgICAvLyBCb3RoIHByb3BlcnRpZXMgYXJlIHNlbnQgaW4gdGhlIHF1ZXVyeXN0cmluZyB3aXRoIHRoZSBzYW1lIG5hbWUsXG4gICAgICAgIC8vIHRoYXQncyB3aHkgd2UgbmVlZCB0aGUgc3BlY2lhbCBjYXNlIGhlcmUsIHNvIHdlIGNhbiB1c2UgYSBzaW1wbGUgbWFwIGFzIGFyZ3VtZW50IHRvIGZpbHRlcnNWTS5cbiAgICAgICAgaWYgKG9wZXJhdG9yID09PSAnYmV0d2VlbicpIHtcbiAgICAgICAgICAgIG1lbW9bYXR0cl0gPSB7XG4gICAgICAgICAgICAgICAgbHRlOiBmaWx0ZXIoKSxcbiAgICAgICAgICAgICAgICBndGU6IGZpbHRlcigpXG4gICAgICAgICAgICB9O1xuICAgICAgICB9IGVsc2Uge1xuICAgICAgICAgICAgbWVtb1thdHRyXSA9IGZpbHRlcigpO1xuICAgICAgICB9XG4gICAgICAgIHJldHVybiBtZW1vO1xuICAgIH0sIHtcbiAgICAgICAgb3JkZXI6IGZpbHRlcigpXG4gICAgfSksXG4gICAgICAgIHBhcmFtZXRlcnNXaXRob3V0T3JkZXIgPSBmdW5jdGlvbiBwYXJhbWV0ZXJzV2l0aG91dE9yZGVyKCkge1xuICAgICAgICByZXR1cm4gXy5yZWR1Y2UoZ2V0dGVycywgZnVuY3Rpb24gKG1lbW8sIGdldHRlciwgYXR0cikge1xuICAgICAgICAgICAgaWYgKGF0dHIgIT09ICdvcmRlcicpIHtcbiAgICAgICAgICAgICAgICB2YXIgb3BlcmF0b3IgPSBhdHRyaWJ1dGVzW2F0dHJdO1xuXG4gICAgICAgICAgICAgICAgaWYgKF8uaXNGdW5jdGlvbihnZXR0ZXIudG9GaWx0ZXIpICYmIChnZXR0ZXIudG9GaWx0ZXIoKSA9PT0gdW5kZWZpbmVkIHx8IGdldHRlci50b0ZpbHRlcigpID09PSAnJykpIHtcbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIG1lbW87XG4gICAgICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAgICAgLy8gQmVsbG93IHdlIHVzZSBkaWZmZXJlbnQgZm9ybWF0dGluZyBydWxlcyBmb3IgdGhlIHZhbHVlIGRlcGVuZGluZyBvbiB0aGUgb3BlcmF0b3JcbiAgICAgICAgICAgICAgICAvLyBUaGVzZSBydWxlcyBhcmUgdXNlZCByZWdhcmRsZXNzIG9mIHRoZSB0b0ZpbHRlciBmdW5jdGlvbixcbiAgICAgICAgICAgICAgICAvLyBzbyB0aGUgdXNlciBjYW4gdXNlIGEgY3VzdG9tIHRvRmlsdGVyIHdpdGhvdXQgaGF2aW5nIHRvIHdvcnJ5IHdpdGggYmFzaWMgZmlsdGVyIHN5bnRheFxuICAgICAgICAgICAgICAgIGlmIChvcGVyYXRvciA9PT0gJ2lsaWtlJyB8fCBvcGVyYXRvciA9PT0gJ2xpa2UnKSB7XG4gICAgICAgICAgICAgICAgICAgIG1lbW9bYXR0cl0gPSBvcGVyYXRvciArICcuKicgKyBnZXR0ZXIudG9GaWx0ZXIoKSArICcqJztcbiAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKG9wZXJhdG9yID09PSAnQEAnKSB7XG4gICAgICAgICAgICAgICAgICAgIG1lbW9bYXR0cl0gPSBvcGVyYXRvciArICcuJyArIGdldHRlci50b0ZpbHRlcigpLnJlcGxhY2UoL1xccysvZywgJyYnKTtcbiAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKG9wZXJhdG9yID09PSAnYmV0d2VlbicpIHtcbiAgICAgICAgICAgICAgICAgICAgaWYgKCFnZXR0ZXIubHRlLnRvRmlsdGVyKCkgJiYgIWdldHRlci5ndGUudG9GaWx0ZXIoKSkge1xuICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIG1lbW87XG4gICAgICAgICAgICAgICAgICAgIH1cbiAgICAgICAgICAgICAgICAgICAgbWVtb1thdHRyXSA9IFtdO1xuICAgICAgICAgICAgICAgICAgICBpZiAoZ2V0dGVyLmd0ZSgpKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBtZW1vW2F0dHJdLnB1c2goJ2d0ZS4nICsgZ2V0dGVyLmd0ZS50b0ZpbHRlcigpKTtcbiAgICAgICAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgICAgICAgICBpZiAoZ2V0dGVyLmx0ZSgpKSB7XG4gICAgICAgICAgICAgICAgICAgICAgICBtZW1vW2F0dHJdLnB1c2goJ2x0ZS4nICsgZ2V0dGVyLmx0ZS50b0ZpbHRlcigpKTtcbiAgICAgICAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAob3BlcmF0b3IgPT09ICdpcy5udWxsJykge1xuICAgICAgICAgICAgICAgICAgICBtZW1vW2F0dHJdID0gZ2V0dGVyLnRvRmlsdGVyKCkgPT09IG51bGwgPyAnaXMubnVsbCcgOiAnbm90LmlzLm51bGwnO1xuICAgICAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgICAgIG1lbW9bYXR0cl0gPSBvcGVyYXRvciArICcuJyArIGdldHRlci50b0ZpbHRlcigpO1xuICAgICAgICAgICAgICAgIH1cbiAgICAgICAgICAgIH1cbiAgICAgICAgICAgIHJldHVybiBtZW1vO1xuICAgICAgICB9LCB7fSk7XG4gICAgfSxcbiAgICAgICAgcGFyYW1ldGVycyA9IGZ1bmN0aW9uIHBhcmFtZXRlcnMoKSB7XG4gICAgICAgIC8vIFRoZSBvcmRlciBwYXJhbWV0ZXJzIGhhdmUgYSBzcGVjaWFsIHN5bnRheCAoanVzdCBsaWtlIGFuIG9yZGVyIGJ5IFNRTCBjbGF1c2UpXG4gICAgICAgIC8vIGh0dHBzOi8vZ2l0aHViLmNvbS9iZWdyaWZmcy9wb3N0Z3Jlc3Qvd2lraS9Sb3V0aW5nI2ZpbHRlcmluZy1hbmQtb3JkZXJpbmdcbiAgICAgICAgdmFyIG9yZGVyID0gZnVuY3Rpb24gb3JkZXIoKSB7XG4gICAgICAgICAgICByZXR1cm4gZ2V0dGVycy5vcmRlcigpICYmIF8ucmVkdWNlKGdldHRlcnMub3JkZXIoKSwgZnVuY3Rpb24gKG1lbW8sIGRpcmVjdGlvbiwgYXR0cikge1xuICAgICAgICAgICAgICAgIG1lbW8ucHVzaChhdHRyICsgJy4nICsgZGlyZWN0aW9uKTtcbiAgICAgICAgICAgICAgICByZXR1cm4gbWVtbztcbiAgICAgICAgICAgIH0sIFtdKS5qb2luKCcsJyk7XG4gICAgICAgIH0sXG4gICAgICAgICAgICBvcmRlclBhcmFtZXRlciA9IG9yZGVyKCkgPyB7XG4gICAgICAgICAgICBvcmRlcjogb3JkZXIoKVxuICAgICAgICB9IDoge307XG5cbiAgICAgICAgcmV0dXJuIF8uZXh0ZW5kKHt9LCBvcmRlclBhcmFtZXRlciwgcGFyYW1ldGVyc1dpdGhvdXRPcmRlcigpKTtcbiAgICB9O1xuXG4gICAgcmV0dXJuIF8uZXh0ZW5kKG5ld1ZNLCBnZXR0ZXJzLCB7XG4gICAgICAgIHBhcmFtZXRlcnM6IHBhcmFtZXRlcnMsXG4gICAgICAgIHBhcmFtZXRlcnNXaXRob3V0T3JkZXI6IHBhcmFtZXRlcnNXaXRob3V0T3JkZXJcbiAgICB9KTtcbn07XG5cbnZhciBhc3luY0dlbmVyYXRvciA9IGZ1bmN0aW9uICgpIHtcbiAgZnVuY3Rpb24gQXdhaXRWYWx1ZSh2YWx1ZSkge1xuICAgIHRoaXMudmFsdWUgPSB2YWx1ZTtcbiAgfVxuXG4gIGZ1bmN0aW9uIEFzeW5jR2VuZXJhdG9yKGdlbikge1xuICAgIHZhciBmcm9udCwgYmFjaztcblxuICAgIGZ1bmN0aW9uIHNlbmQoa2V5LCBhcmcpIHtcbiAgICAgIHJldHVybiBuZXcgUHJvbWlzZShmdW5jdGlvbiAocmVzb2x2ZSwgcmVqZWN0KSB7XG4gICAgICAgIHZhciByZXF1ZXN0ID0ge1xuICAgICAgICAgIGtleToga2V5LFxuICAgICAgICAgIGFyZzogYXJnLFxuICAgICAgICAgIHJlc29sdmU6IHJlc29sdmUsXG4gICAgICAgICAgcmVqZWN0OiByZWplY3QsXG4gICAgICAgICAgbmV4dDogbnVsbFxuICAgICAgICB9O1xuXG4gICAgICAgIGlmIChiYWNrKSB7XG4gICAgICAgICAgYmFjayA9IGJhY2submV4dCA9IHJlcXVlc3Q7XG4gICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgZnJvbnQgPSBiYWNrID0gcmVxdWVzdDtcbiAgICAgICAgICByZXN1bWUoa2V5LCBhcmcpO1xuICAgICAgICB9XG4gICAgICB9KTtcbiAgICB9XG5cbiAgICBmdW5jdGlvbiByZXN1bWUoa2V5LCBhcmcpIHtcbiAgICAgIHRyeSB7XG4gICAgICAgIHZhciByZXN1bHQgPSBnZW5ba2V5XShhcmcpO1xuICAgICAgICB2YXIgdmFsdWUgPSByZXN1bHQudmFsdWU7XG5cbiAgICAgICAgaWYgKHZhbHVlIGluc3RhbmNlb2YgQXdhaXRWYWx1ZSkge1xuICAgICAgICAgIFByb21pc2UucmVzb2x2ZSh2YWx1ZS52YWx1ZSkudGhlbihmdW5jdGlvbiAoYXJnKSB7XG4gICAgICAgICAgICByZXN1bWUoXCJuZXh0XCIsIGFyZyk7XG4gICAgICAgICAgfSwgZnVuY3Rpb24gKGFyZykge1xuICAgICAgICAgICAgcmVzdW1lKFwidGhyb3dcIiwgYXJnKTtcbiAgICAgICAgICB9KTtcbiAgICAgICAgfSBlbHNlIHtcbiAgICAgICAgICBzZXR0bGUocmVzdWx0LmRvbmUgPyBcInJldHVyblwiIDogXCJub3JtYWxcIiwgcmVzdWx0LnZhbHVlKTtcbiAgICAgICAgfVxuICAgICAgfSBjYXRjaCAoZXJyKSB7XG4gICAgICAgIHNldHRsZShcInRocm93XCIsIGVycik7XG4gICAgICB9XG4gICAgfVxuXG4gICAgZnVuY3Rpb24gc2V0dGxlKHR5cGUsIHZhbHVlKSB7XG4gICAgICBzd2l0Y2ggKHR5cGUpIHtcbiAgICAgICAgY2FzZSBcInJldHVyblwiOlxuICAgICAgICAgIGZyb250LnJlc29sdmUoe1xuICAgICAgICAgICAgdmFsdWU6IHZhbHVlLFxuICAgICAgICAgICAgZG9uZTogdHJ1ZVxuICAgICAgICAgIH0pO1xuICAgICAgICAgIGJyZWFrO1xuXG4gICAgICAgIGNhc2UgXCJ0aHJvd1wiOlxuICAgICAgICAgIGZyb250LnJlamVjdCh2YWx1ZSk7XG4gICAgICAgICAgYnJlYWs7XG5cbiAgICAgICAgZGVmYXVsdDpcbiAgICAgICAgICBmcm9udC5yZXNvbHZlKHtcbiAgICAgICAgICAgIHZhbHVlOiB2YWx1ZSxcbiAgICAgICAgICAgIGRvbmU6IGZhbHNlXG4gICAgICAgICAgfSk7XG4gICAgICAgICAgYnJlYWs7XG4gICAgICB9XG5cbiAgICAgIGZyb250ID0gZnJvbnQubmV4dDtcblxuICAgICAgaWYgKGZyb250KSB7XG4gICAgICAgIHJlc3VtZShmcm9udC5rZXksIGZyb250LmFyZyk7XG4gICAgICB9IGVsc2Uge1xuICAgICAgICBiYWNrID0gbnVsbDtcbiAgICAgIH1cbiAgICB9XG5cbiAgICB0aGlzLl9pbnZva2UgPSBzZW5kO1xuXG4gICAgaWYgKHR5cGVvZiBnZW4ucmV0dXJuICE9PSBcImZ1bmN0aW9uXCIpIHtcbiAgICAgIHRoaXMucmV0dXJuID0gdW5kZWZpbmVkO1xuICAgIH1cbiAgfVxuXG4gIGlmICh0eXBlb2YgU3ltYm9sID09PSBcImZ1bmN0aW9uXCIgJiYgU3ltYm9sLmFzeW5jSXRlcmF0b3IpIHtcbiAgICBBc3luY0dlbmVyYXRvci5wcm90b3R5cGVbU3ltYm9sLmFzeW5jSXRlcmF0b3JdID0gZnVuY3Rpb24gKCkge1xuICAgICAgcmV0dXJuIHRoaXM7XG4gICAgfTtcbiAgfVxuXG4gIEFzeW5jR2VuZXJhdG9yLnByb3RvdHlwZS5uZXh0ID0gZnVuY3Rpb24gKGFyZykge1xuICAgIHJldHVybiB0aGlzLl9pbnZva2UoXCJuZXh0XCIsIGFyZyk7XG4gIH07XG5cbiAgQXN5bmNHZW5lcmF0b3IucHJvdG90eXBlLnRocm93ID0gZnVuY3Rpb24gKGFyZykge1xuICAgIHJldHVybiB0aGlzLl9pbnZva2UoXCJ0aHJvd1wiLCBhcmcpO1xuICB9O1xuXG4gIEFzeW5jR2VuZXJhdG9yLnByb3RvdHlwZS5yZXR1cm4gPSBmdW5jdGlvbiAoYXJnKSB7XG4gICAgcmV0dXJuIHRoaXMuX2ludm9rZShcInJldHVyblwiLCBhcmcpO1xuICB9O1xuXG4gIHJldHVybiB7XG4gICAgd3JhcDogZnVuY3Rpb24gKGZuKSB7XG4gICAgICByZXR1cm4gZnVuY3Rpb24gKCkge1xuICAgICAgICByZXR1cm4gbmV3IEFzeW5jR2VuZXJhdG9yKGZuLmFwcGx5KHRoaXMsIGFyZ3VtZW50cykpO1xuICAgICAgfTtcbiAgICB9LFxuICAgIGF3YWl0OiBmdW5jdGlvbiAodmFsdWUpIHtcbiAgICAgIHJldHVybiBuZXcgQXdhaXRWYWx1ZSh2YWx1ZSk7XG4gICAgfVxuICB9O1xufSgpO1xuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cblxuXG5cbnZhciBzbGljZWRUb0FycmF5ID0gZnVuY3Rpb24gKCkge1xuICBmdW5jdGlvbiBzbGljZUl0ZXJhdG9yKGFyciwgaSkge1xuICAgIHZhciBfYXJyID0gW107XG4gICAgdmFyIF9uID0gdHJ1ZTtcbiAgICB2YXIgX2QgPSBmYWxzZTtcbiAgICB2YXIgX2UgPSB1bmRlZmluZWQ7XG5cbiAgICB0cnkge1xuICAgICAgZm9yICh2YXIgX2kgPSBhcnJbU3ltYm9sLml0ZXJhdG9yXSgpLCBfczsgIShfbiA9IChfcyA9IF9pLm5leHQoKSkuZG9uZSk7IF9uID0gdHJ1ZSkge1xuICAgICAgICBfYXJyLnB1c2goX3MudmFsdWUpO1xuXG4gICAgICAgIGlmIChpICYmIF9hcnIubGVuZ3RoID09PSBpKSBicmVhaztcbiAgICAgIH1cbiAgICB9IGNhdGNoIChlcnIpIHtcbiAgICAgIF9kID0gdHJ1ZTtcbiAgICAgIF9lID0gZXJyO1xuICAgIH0gZmluYWxseSB7XG4gICAgICB0cnkge1xuICAgICAgICBpZiAoIV9uICYmIF9pW1wicmV0dXJuXCJdKSBfaVtcInJldHVyblwiXSgpO1xuICAgICAgfSBmaW5hbGx5IHtcbiAgICAgICAgaWYgKF9kKSB0aHJvdyBfZTtcbiAgICAgIH1cbiAgICB9XG5cbiAgICByZXR1cm4gX2FycjtcbiAgfVxuXG4gIHJldHVybiBmdW5jdGlvbiAoYXJyLCBpKSB7XG4gICAgaWYgKEFycmF5LmlzQXJyYXkoYXJyKSkge1xuICAgICAgcmV0dXJuIGFycjtcbiAgICB9IGVsc2UgaWYgKFN5bWJvbC5pdGVyYXRvciBpbiBPYmplY3QoYXJyKSkge1xuICAgICAgcmV0dXJuIHNsaWNlSXRlcmF0b3IoYXJyLCBpKTtcbiAgICB9IGVsc2Uge1xuICAgICAgdGhyb3cgbmV3IFR5cGVFcnJvcihcIkludmFsaWQgYXR0ZW1wdCB0byBkZXN0cnVjdHVyZSBub24taXRlcmFibGUgaW5zdGFuY2VcIik7XG4gICAgfVxuICB9O1xufSgpO1xuXG52YXIgcGFnaW5hdGlvblZNID0gZnVuY3Rpb24gcGFnaW5hdGlvblZNKG1vZGVsLCBvcmRlcikge1xuICAgIHZhciBleHRyYUhlYWRlcnMgPSBhcmd1bWVudHMubGVuZ3RoID4gMiAmJiBhcmd1bWVudHNbMl0gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1syXSA6IHt9O1xuICAgIHZhciBhdXRoZW50aWNhdGUgPSBhcmd1bWVudHMubGVuZ3RoID4gMyAmJiBhcmd1bWVudHNbM10gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1szXSA6IHRydWU7XG5cbiAgICB2YXIgY29sbGVjdGlvbiA9IG0ucHJvcChbXSksXG4gICAgICAgIGRlZmF1bHRPcmRlciA9IG9yZGVyIHx8ICdpZC5kZXNjJyxcbiAgICAgICAgZmlsdGVycyA9IG0ucHJvcCh7XG4gICAgICAgIG9yZGVyOiBkZWZhdWx0T3JkZXJcbiAgICB9KSxcbiAgICAgICAgaXNMb2FkaW5nID0gbS5wcm9wKGZhbHNlKSxcbiAgICAgICAgcGFnZSA9IG0ucHJvcCgxKSxcbiAgICAgICAgcmVzdWx0c0NvdW50ID0gbS5wcm9wKCksXG4gICAgICAgIHBhZ2VSZXF1ZXN0ID0gYXV0aGVudGljYXRlID8gbW9kZWwuZ2V0UGFnZVdpdGhUb2tlbiA6IG1vZGVsLmdldFBhZ2UsXG4gICAgICAgIHRvdGFsID0gbS5wcm9wKCk7XG5cbiAgICB2YXIgZmV0Y2ggPSBmdW5jdGlvbiBmZXRjaCgpIHtcbiAgICAgICAgdmFyIGQgPSBtLmRlZmVycmVkKCk7XG4gICAgICAgIHZhciBnZXRUb3RhbCA9IGZ1bmN0aW9uIGdldFRvdGFsKHhocikge1xuICAgICAgICAgICAgaWYgKCF4aHIgfHwgeGhyLnN0YXR1cyA9PT0gMCkge1xuICAgICAgICAgICAgICAgIHJldHVybiBKU09OLnN0cmluZ2lmeSh7XG4gICAgICAgICAgICAgICAgICAgIGhpbnQ6IG51bGwsXG4gICAgICAgICAgICAgICAgICAgIGRldGFpbHM6IG51bGwsXG4gICAgICAgICAgICAgICAgICAgIGNvZGU6IDAsXG4gICAgICAgICAgICAgICAgICAgIG1lc3NhZ2U6ICdDb25uZWN0aW9uIGVycm9yJ1xuICAgICAgICAgICAgICAgIH0pO1xuICAgICAgICAgICAgfVxuICAgICAgICAgICAgdmFyIHJhbmdlSGVhZGVyID0geGhyLmdldFJlc3BvbnNlSGVhZGVyKCdDb250ZW50LVJhbmdlJyk7XG4gICAgICAgICAgICBpZiAoXy5pc1N0cmluZyhyYW5nZUhlYWRlcikpIHtcbiAgICAgICAgICAgICAgICB2YXIgX3JhbmdlSGVhZGVyJHNwbGl0ID0gcmFuZ2VIZWFkZXIuc3BsaXQoJy8nKSxcbiAgICAgICAgICAgICAgICAgICAgX3JhbmdlSGVhZGVyJHNwbGl0MiA9IHNsaWNlZFRvQXJyYXkoX3JhbmdlSGVhZGVyJHNwbGl0LCAyKSxcbiAgICAgICAgICAgICAgICAgICAgaGVhZGVyU2l6ZSA9IF9yYW5nZUhlYWRlciRzcGxpdDJbMF0sXG4gICAgICAgICAgICAgICAgICAgIGhlYWRlckNvdW50ID0gX3JhbmdlSGVhZGVyJHNwbGl0MlsxXSxcbiAgICAgICAgICAgICAgICAgICAgX2hlYWRlclNpemUkc3BsaXQgPSBoZWFkZXJTaXplLnNwbGl0KCctJyksXG4gICAgICAgICAgICAgICAgICAgIF9oZWFkZXJTaXplJHNwbGl0MiA9IHNsaWNlZFRvQXJyYXkoX2hlYWRlclNpemUkc3BsaXQsIDIpLFxuICAgICAgICAgICAgICAgICAgICBoZWFkZXJGcm9tID0gX2hlYWRlclNpemUkc3BsaXQyWzBdLFxuICAgICAgICAgICAgICAgICAgICBoZWFkZXJUbyA9IF9oZWFkZXJTaXplJHNwbGl0MlsxXSxcbiAgICAgICAgICAgICAgICAgICAgdG8gPSBwYXJzZUludChoZWFkZXJUbykgKyAxIHx8IDAsXG4gICAgICAgICAgICAgICAgICAgIGZyb20gPSBwYXJzZUludChoZWFkZXJGcm9tKSB8fCAwO1xuXG4gICAgICAgICAgICAgICAgdG90YWwocGFyc2VJbnQoaGVhZGVyQ291bnQpKTtcbiAgICAgICAgICAgICAgICByZXN1bHRzQ291bnQodG8gLSBmcm9tKTtcbiAgICAgICAgICAgIH1cbiAgICAgICAgICAgIHRyeSB7XG4gICAgICAgICAgICAgICAgcmV0dXJuIHhoci5yZXNwb25zZVRleHQ7XG4gICAgICAgICAgICB9IGNhdGNoIChleCkge1xuICAgICAgICAgICAgICAgIHJldHVybiBKU09OLnN0cmluZ2lmeSh7XG4gICAgICAgICAgICAgICAgICAgIGhpbnQ6IG51bGwsXG4gICAgICAgICAgICAgICAgICAgIGRldGFpbHM6IG51bGwsXG4gICAgICAgICAgICAgICAgICAgIGNvZGU6IDAsXG4gICAgICAgICAgICAgICAgICAgIG1lc3NhZ2U6IHhoci5yZXNwb25zZVRleHRcbiAgICAgICAgICAgICAgICB9KTtcbiAgICAgICAgICAgIH1cbiAgICAgICAgfTtcbiAgICAgICAgaXNMb2FkaW5nKHRydWUpO1xuICAgICAgICBwYWdlUmVxdWVzdChmaWx0ZXJzKCksIHBhZ2UoKSwge1xuICAgICAgICAgICAgYmFja2dyb3VuZDogdHJ1ZSxcbiAgICAgICAgICAgIGV4dHJhY3Q6IGdldFRvdGFsXG4gICAgICAgIH0sIGV4dHJhSGVhZGVycykudGhlbihmdW5jdGlvbiAoZGF0YSkge1xuICAgICAgICAgICAgY29sbGVjdGlvbihfLnVuaW9uKGNvbGxlY3Rpb24oKSwgZGF0YSkpO1xuICAgICAgICAgICAgaXNMb2FkaW5nKGZhbHNlKTtcbiAgICAgICAgICAgIGQucmVzb2x2ZShjb2xsZWN0aW9uKCkpO1xuICAgICAgICAgICAgbS5yZWRyYXcoKTtcbiAgICAgICAgfSwgZnVuY3Rpb24gKGVycm9yKSB7XG4gICAgICAgICAgICBpc0xvYWRpbmcoZmFsc2UpO1xuICAgICAgICAgICAgdG90YWwoMCk7XG4gICAgICAgICAgICBkLnJlamVjdChlcnJvcik7XG4gICAgICAgICAgICBtLnJlZHJhdygpO1xuICAgICAgICB9KTtcbiAgICAgICAgcmV0dXJuIGQucHJvbWlzZTtcbiAgICB9LFxuICAgICAgICBmaXJzdFBhZ2UgPSBmdW5jdGlvbiBmaXJzdFBhZ2UocGFyYW1ldGVycykge1xuICAgICAgICBmaWx0ZXJzKF8uZXh0ZW5kKHtcbiAgICAgICAgICAgIG9yZGVyOiBkZWZhdWx0T3JkZXJcbiAgICAgICAgfSwgcGFyYW1ldGVycykpO1xuICAgICAgICBjb2xsZWN0aW9uKFtdKTtcbiAgICAgICAgcGFnZSgxKTtcbiAgICAgICAgcmV0dXJuIGZldGNoKCk7XG4gICAgfSxcbiAgICAgICAgaXNMYXN0UGFnZSA9IGZ1bmN0aW9uIGlzTGFzdFBhZ2UoKSB7XG4gICAgICAgIHJldHVybiBtb2RlbC5wYWdlU2l6ZSgpID4gcmVzdWx0c0NvdW50KCk7XG4gICAgfSxcbiAgICAgICAgbmV4dFBhZ2UgPSBmdW5jdGlvbiBuZXh0UGFnZSgpIHtcbiAgICAgICAgcGFnZShwYWdlKCkgKyAxKTtcbiAgICAgICAgcmV0dXJuIGZldGNoKCk7XG4gICAgfTtcblxuICAgIHJldHVybiB7XG4gICAgICAgIGNvbGxlY3Rpb246IGNvbGxlY3Rpb24sXG4gICAgICAgIGZpcnN0UGFnZTogZmlyc3RQYWdlLFxuICAgICAgICBpc0xvYWRpbmc6IGlzTG9hZGluZyxcbiAgICAgICAgbmV4dFBhZ2U6IG5leHRQYWdlLFxuICAgICAgICBpc0xhc3RQYWdlOiBpc0xhc3RQYWdlLFxuICAgICAgICB0b3RhbDogdG90YWwsXG4gICAgICAgIHJlc3VsdHNDb3VudDogcmVzdWx0c0NvdW50XG4gICAgfTtcbn07XG5cbmZ1bmN0aW9uIFBvc3RncmVzdCgpIHtcbiAgICB2YXIgcG9zdGdyZXN0ID0ge307XG5cbiAgICB2YXIgdG9rZW4gPSBtLnByb3AoKSxcbiAgICAgICAgbWVyZ2VDb25maWcgPSBmdW5jdGlvbiBtZXJnZUNvbmZpZyhjb25maWcsIG9wdGlvbnMpIHtcbiAgICAgICAgcmV0dXJuIG9wdGlvbnMgJiYgXy5pc0Z1bmN0aW9uKG9wdGlvbnMuY29uZmlnKSA/IF8uY29tcG9zZShvcHRpb25zLmNvbmZpZywgY29uZmlnKSA6IGNvbmZpZztcbiAgICB9LFxuICAgICAgICBhZGRIZWFkZXJzID0gZnVuY3Rpb24gYWRkSGVhZGVycyhoZWFkZXJzKSB7XG4gICAgICAgIHJldHVybiBmdW5jdGlvbiAoeGhyKSB7XG4gICAgICAgICAgICBfLmVhY2goaGVhZGVycywgZnVuY3Rpb24gKHZhbHVlLCBrZXkpIHtcbiAgICAgICAgICAgICAgICB4aHIuc2V0UmVxdWVzdEhlYWRlcihrZXksIHZhbHVlKTtcbiAgICAgICAgICAgIH0pO1xuICAgICAgICAgICAgcmV0dXJuIHhocjtcbiAgICAgICAgfTtcbiAgICB9LFxuICAgICAgICBhZGRDb25maWdIZWFkZXJzID0gZnVuY3Rpb24gYWRkQ29uZmlnSGVhZGVycyhoZWFkZXJzLCBvcHRpb25zKSB7XG4gICAgICAgIHJldHVybiBfLmV4dGVuZCh7fSwgb3B0aW9ucywge1xuICAgICAgICAgICAgY29uZmlnOiBtZXJnZUNvbmZpZyhhZGRIZWFkZXJzKGhlYWRlcnMpLCBvcHRpb25zKVxuICAgICAgICB9KTtcbiAgICB9LFxuICAgICAgICBjcmVhdGVMb2FkZXIgPSBmdW5jdGlvbiBjcmVhdGVMb2FkZXIocmVxdWVzdEZ1bmN0aW9uLCBvcHRpb25zKSB7XG4gICAgICAgIHZhciBkZWZhdWx0U3RhdGUgPSBhcmd1bWVudHMubGVuZ3RoID4gMiAmJiBhcmd1bWVudHNbMl0gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1syXSA6IGZhbHNlO1xuXG4gICAgICAgIHZhciBsb2FkZXIgPSBtLnByb3AoZGVmYXVsdFN0YXRlKSxcbiAgICAgICAgICAgIGQgPSBtLmRlZmVycmVkKCk7XG4gICAgICAgIGxvYWRlci5sb2FkID0gZnVuY3Rpb24gKCkge1xuICAgICAgICAgICAgbG9hZGVyKHRydWUpO1xuICAgICAgICAgICAgbS5yZWRyYXcoKTtcbiAgICAgICAgICAgIHJlcXVlc3RGdW5jdGlvbihfLmV4dGVuZCh7fSwgb3B0aW9ucywge1xuICAgICAgICAgICAgICAgIGJhY2tncm91bmQ6IHRydWVcbiAgICAgICAgICAgIH0pKS50aGVuKGZ1bmN0aW9uIChkYXRhKSB7XG4gICAgICAgICAgICAgICAgbG9hZGVyKGZhbHNlKTtcbiAgICAgICAgICAgICAgICBkLnJlc29sdmUoZGF0YSk7XG4gICAgICAgICAgICAgICAgbS5yZWRyYXcoKTtcbiAgICAgICAgICAgIH0sIGZ1bmN0aW9uIChlcnJvcikge1xuICAgICAgICAgICAgICAgIGxvYWRlcihmYWxzZSk7XG4gICAgICAgICAgICAgICAgZC5yZWplY3QoZXJyb3IpO1xuICAgICAgICAgICAgICAgIG0ucmVkcmF3KCk7XG4gICAgICAgICAgICB9KTtcbiAgICAgICAgICAgIHJldHVybiBkLnByb21pc2U7XG4gICAgICAgIH07XG4gICAgICAgIHJldHVybiBsb2FkZXI7XG4gICAgfSxcbiAgICAgICAgcmVwcmVzZW50YXRpb25IZWFkZXIgPSB7XG4gICAgICAgICdQcmVmZXInOiAncmV0dXJuPXJlcHJlc2VudGF0aW9uJ1xuICAgIH07XG5cbiAgICBwb3N0Z3Jlc3QudG9rZW4gPSB0b2tlbjtcblxuICAgIHBvc3RncmVzdC5pbml0ID0gZnVuY3Rpb24gKGFwaVByZWZpeCwgYXV0aGVudGljYXRpb25PcHRpb25zKSB7XG4gICAgICAgIHZhciBnbG9iYWxIZWFkZXIgPSBhcmd1bWVudHMubGVuZ3RoID4gMiAmJiBhcmd1bWVudHNbMl0gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1syXSA6IHt9O1xuXG4gICAgICAgIHBvc3RncmVzdC5yZXF1ZXN0ID0gZnVuY3Rpb24gKG9wdGlvbnMpIHtcbiAgICAgICAgICAgIHZhciBlcnJvckhhbmRsZXIgPSBmdW5jdGlvbiBlcnJvckhhbmRsZXIoeGhyKSB7XG4gICAgICAgICAgICAgICAgdHJ5IHtcbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHhoci5yZXNwb25zZVRleHQ7XG4gICAgICAgICAgICAgICAgfSBjYXRjaCAoZXgpIHtcbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIEpTT04uc3RyaW5naWZ5KHtcbiAgICAgICAgICAgICAgICAgICAgICAgIGhpbnQ6IG51bGwsXG4gICAgICAgICAgICAgICAgICAgICAgICBkZXRhaWxzOiBudWxsLFxuICAgICAgICAgICAgICAgICAgICAgICAgY29kZTogMCxcbiAgICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2U6IHhoci5yZXNwb25zZVRleHRcbiAgICAgICAgICAgICAgICAgICAgfSk7XG4gICAgICAgICAgICAgICAgfVxuICAgICAgICAgICAgfTtcbiAgICAgICAgICAgIHJldHVybiBtLnJlcXVlc3QoYWRkQ29uZmlnSGVhZGVycyhnbG9iYWxIZWFkZXIsIF8uZXh0ZW5kKHsgZXh0cmFjdDogZXJyb3JIYW5kbGVyIH0sIG9wdGlvbnMsIHtcbiAgICAgICAgICAgICAgICB1cmw6IGFwaVByZWZpeCArIG9wdGlvbnMudXJsXG4gICAgICAgICAgICB9KSkpO1xuICAgICAgICB9O1xuXG4gICAgICAgIHZhciBhdXRoZW50aWNhdGlvblJlcXVlc3RlZCA9IG0ucHJvcChmYWxzZSk7XG4gICAgICAgIHBvc3RncmVzdC5hdXRoZW50aWNhdGUgPSBmdW5jdGlvbiAoZGVsZWdhdGVkRGVmZXJyZWQpIHtcbiAgICAgICAgICAgIHZhciBkZWZlcnJlZCA9IGRlbGVnYXRlZERlZmVycmVkIHx8IG0uZGVmZXJyZWQoKTtcbiAgICAgICAgICAgIGlmICh0b2tlbigpKSB7XG4gICAgICAgICAgICAgICAgZGVmZXJyZWQucmVzb2x2ZSh7XG4gICAgICAgICAgICAgICAgICAgIHRva2VuOiB0b2tlbigpXG4gICAgICAgICAgICAgICAgfSk7XG4gICAgICAgICAgICB9IGVsc2UgaWYgKCFhdXRoZW50aWNhdGlvblJlcXVlc3RlZCgpKSB7XG4gICAgICAgICAgICAgICAgYXV0aGVudGljYXRpb25SZXF1ZXN0ZWQodHJ1ZSk7XG5cbiAgICAgICAgICAgICAgICBtLnJlcXVlc3QoXy5leHRlbmQoe30sIGF1dGhlbnRpY2F0aW9uT3B0aW9ucykpLnRoZW4oZnVuY3Rpb24gKGRhdGEpIHtcbiAgICAgICAgICAgICAgICAgICAgYXV0aGVudGljYXRpb25SZXF1ZXN0ZWQoZmFsc2UpO1xuICAgICAgICAgICAgICAgICAgICB0b2tlbihkYXRhLnRva2VuKTtcbiAgICAgICAgICAgICAgICAgICAgZGVmZXJyZWQucmVzb2x2ZSh7XG4gICAgICAgICAgICAgICAgICAgICAgICB0b2tlbjogdG9rZW4oKVxuICAgICAgICAgICAgICAgICAgICB9KTtcbiAgICAgICAgICAgICAgICB9KS5jYXRjaChmdW5jdGlvbiAoZGF0YSkge1xuICAgICAgICAgICAgICAgICAgICBhdXRoZW50aWNhdGlvblJlcXVlc3RlZChmYWxzZSk7XG4gICAgICAgICAgICAgICAgICAgIGRlZmVycmVkLnJlamVjdChkYXRhKTtcbiAgICAgICAgICAgICAgICB9KTtcbiAgICAgICAgICAgIH0gZWxzZSB7XG4gICAgICAgICAgICAgICAgc2V0VGltZW91dChmdW5jdGlvbiAoKSB7XG4gICAgICAgICAgICAgICAgICAgIHJldHVybiBwb3N0Z3Jlc3QuYXV0aGVudGljYXRlKGRlZmVycmVkKTtcbiAgICAgICAgICAgICAgICB9LCAyNTApO1xuICAgICAgICAgICAgfVxuICAgICAgICAgICAgcmV0dXJuIGRlZmVycmVkLnByb21pc2U7XG4gICAgICAgIH07XG5cbiAgICAgICAgcG9zdGdyZXN0LnJlcXVlc3RXaXRoVG9rZW4gPSBmdW5jdGlvbiAob3B0aW9ucykge1xuICAgICAgICAgICAgcmV0dXJuIHBvc3RncmVzdC5hdXRoZW50aWNhdGUoKS50aGVuKGZ1bmN0aW9uICgpIHtcbiAgICAgICAgICAgICAgICByZXR1cm4gcG9zdGdyZXN0LnJlcXVlc3QoYWRkQ29uZmlnSGVhZGVycyh7XG4gICAgICAgICAgICAgICAgICAgICdBdXRob3JpemF0aW9uJzogJ0JlYXJlciAnICsgdG9rZW4oKVxuICAgICAgICAgICAgICAgIH0sIG9wdGlvbnMpKTtcbiAgICAgICAgICAgIH0sIGZ1bmN0aW9uICgpIHtcbiAgICAgICAgICAgICAgICByZXR1cm4gcG9zdGdyZXN0LnJlcXVlc3Qob3B0aW9ucyk7XG4gICAgICAgICAgICB9KTtcbiAgICAgICAgfTtcblxuICAgICAgICBwb3N0Z3Jlc3QubG9hZGVyID0gXy5wYXJ0aWFsKGNyZWF0ZUxvYWRlciwgcG9zdGdyZXN0LnJlcXVlc3QpO1xuXG4gICAgICAgIHBvc3RncmVzdC5sb2FkZXJXaXRoVG9rZW4gPSBfLnBhcnRpYWwoY3JlYXRlTG9hZGVyLCBwb3N0Z3Jlc3QucmVxdWVzdFdpdGhUb2tlbik7XG5cbiAgICAgICAgcG9zdGdyZXN0Lm1vZGVsID0gZnVuY3Rpb24gKG5hbWUpIHtcbiAgICAgICAgICAgIHZhciBwYWdpbmF0aW9uSGVhZGVycyA9IGZ1bmN0aW9uIHBhZ2luYXRpb25IZWFkZXJzKHBhZ2UsIHBhZ2VTaXplKSB7XG4gICAgICAgICAgICAgICAgaWYgKCFwYWdlU2l6ZSkge1xuICAgICAgICAgICAgICAgICAgICByZXR1cm47XG4gICAgICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAgICAgdmFyIHRvUmFuZ2UgPSBmdW5jdGlvbiB0b1JhbmdlKCkge1xuICAgICAgICAgICAgICAgICAgICB2YXIgZnJvbSA9IChwYWdlIC0gMSkgKiBwYWdlU2l6ZSxcbiAgICAgICAgICAgICAgICAgICAgICAgIHRvID0gZnJvbSArIHBhZ2VTaXplIC0gMTtcbiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGZyb20gKyAnLScgKyB0bztcbiAgICAgICAgICAgICAgICB9O1xuXG4gICAgICAgICAgICAgICAgcmV0dXJuIHtcbiAgICAgICAgICAgICAgICAgICAgJ1JhbmdlLXVuaXQnOiAnaXRlbXMnLFxuICAgICAgICAgICAgICAgICAgICAnUmFuZ2UnOiB0b1JhbmdlKClcbiAgICAgICAgICAgICAgICB9O1xuICAgICAgICAgICAgfSxcbiAgICAgICAgICAgICAgICBwYWdlU2l6ZSA9IG0ucHJvcCgxMCksXG4gICAgICAgICAgICAgICAgbmFtZU9wdGlvbnMgPSB7XG4gICAgICAgICAgICAgICAgdXJsOiAnLycgKyBuYW1lXG4gICAgICAgICAgICB9LFxuICAgICAgICAgICAgICAgIGdldE9wdGlvbnMgPSBmdW5jdGlvbiBnZXRPcHRpb25zKGRhdGEsIHBhZ2UsIHBhZ2VTaXplLCBvcHRpb25zKSB7XG4gICAgICAgICAgICAgICAgdmFyIGhlYWRlcnMgPSBhcmd1bWVudHMubGVuZ3RoID4gNCAmJiBhcmd1bWVudHNbNF0gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1s0XSA6IHt9O1xuXG4gICAgICAgICAgICAgICAgdmFyIGV4dHJhSGVhZGVycyA9IF8uZXh0ZW5kKHt9LCB7XG4gICAgICAgICAgICAgICAgICAgICdQcmVmZXInOiAnY291bnQ9bm9uZSdcbiAgICAgICAgICAgICAgICB9LCBoZWFkZXJzLCBwYWdpbmF0aW9uSGVhZGVycyhwYWdlLCBwYWdlU2l6ZSkpO1xuICAgICAgICAgICAgICAgIHJldHVybiBhZGRDb25maWdIZWFkZXJzKGV4dHJhSGVhZGVycywgXy5leHRlbmQoe30sIG9wdGlvbnMsIG5hbWVPcHRpb25zLCB7XG4gICAgICAgICAgICAgICAgICAgIG1ldGhvZDogJ0dFVCcsXG4gICAgICAgICAgICAgICAgICAgIGRhdGE6IGRhdGFcbiAgICAgICAgICAgICAgICB9KSk7XG4gICAgICAgICAgICB9LFxuICAgICAgICAgICAgICAgIHF1ZXJ5c3RyaW5nID0gZnVuY3Rpb24gcXVlcnlzdHJpbmcoZmlsdGVycywgb3B0aW9ucykge1xuICAgICAgICAgICAgICAgIG9wdGlvbnMudXJsICs9ICc/JyArIG0ucm91dGUuYnVpbGRRdWVyeVN0cmluZyhmaWx0ZXJzKTtcbiAgICAgICAgICAgICAgICByZXR1cm4gb3B0aW9ucztcbiAgICAgICAgICAgIH0sXG4gICAgICAgICAgICAgICAgb3B0aW9ucyA9IGZ1bmN0aW9uIG9wdGlvbnMoX29wdGlvbnMpIHtcbiAgICAgICAgICAgICAgICByZXR1cm4gcG9zdGdyZXN0LnJlcXVlc3QoXy5leHRlbmQoe30sIF9vcHRpb25zLCBuYW1lT3B0aW9ucywge1xuICAgICAgICAgICAgICAgICAgICBtZXRob2Q6ICdPUFRJT05TJ1xuICAgICAgICAgICAgICAgIH0pKTtcbiAgICAgICAgICAgIH0sXG4gICAgICAgICAgICAgICAgcG9zdE9wdGlvbnMgPSBmdW5jdGlvbiBwb3N0T3B0aW9ucyhhdHRyaWJ1dGVzLCBvcHRpb25zKSB7XG4gICAgICAgICAgICAgICAgdmFyIGhlYWRlcnMgPSBhcmd1bWVudHMubGVuZ3RoID4gMiAmJiBhcmd1bWVudHNbMl0gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1syXSA6IHt9O1xuXG4gICAgICAgICAgICAgICAgdmFyIGV4dHJhSGVhZGVycyA9IF8uZXh0ZW5kKHt9LCByZXByZXNlbnRhdGlvbkhlYWRlciwgaGVhZGVycyk7XG4gICAgICAgICAgICAgICAgcmV0dXJuIGFkZENvbmZpZ0hlYWRlcnMoZXh0cmFIZWFkZXJzLCBfLmV4dGVuZCh7fSwgb3B0aW9ucywgbmFtZU9wdGlvbnMsIHtcbiAgICAgICAgICAgICAgICAgICAgbWV0aG9kOiAnUE9TVCcsXG4gICAgICAgICAgICAgICAgICAgIGRhdGE6IGF0dHJpYnV0ZXNcbiAgICAgICAgICAgICAgICB9KSk7XG4gICAgICAgICAgICB9LFxuICAgICAgICAgICAgICAgIGRlbGV0ZU9wdGlvbnMgPSBmdW5jdGlvbiBkZWxldGVPcHRpb25zKGZpbHRlcnMsIG9wdGlvbnMpIHtcbiAgICAgICAgICAgICAgICB2YXIgaGVhZGVycyA9IGFyZ3VtZW50cy5sZW5ndGggPiAyICYmIGFyZ3VtZW50c1syXSAhPT0gdW5kZWZpbmVkID8gYXJndW1lbnRzWzJdIDoge307XG5cbiAgICAgICAgICAgICAgICB2YXIgZXh0cmFIZWFkZXJzID0gXy5leHRlbmQoe30sIHJlcHJlc2VudGF0aW9uSGVhZGVyLCBoZWFkZXJzKTtcbiAgICAgICAgICAgICAgICByZXR1cm4gcXVlcnlzdHJpbmcoZmlsdGVycywgYWRkQ29uZmlnSGVhZGVycyhleHRyYUhlYWRlcnMsIF8uZXh0ZW5kKHt9LCBvcHRpb25zLCBuYW1lT3B0aW9ucywge1xuICAgICAgICAgICAgICAgICAgICBtZXRob2Q6ICdERUxFVEUnXG4gICAgICAgICAgICAgICAgfSkpKTtcbiAgICAgICAgICAgIH0sXG4gICAgICAgICAgICAgICAgcGF0Y2hPcHRpb25zID0gZnVuY3Rpb24gcGF0Y2hPcHRpb25zKGZpbHRlcnMsIGF0dHJpYnV0ZXMsIG9wdGlvbnMpIHtcbiAgICAgICAgICAgICAgICB2YXIgaGVhZGVycyA9IGFyZ3VtZW50cy5sZW5ndGggPiAzICYmIGFyZ3VtZW50c1szXSAhPT0gdW5kZWZpbmVkID8gYXJndW1lbnRzWzNdIDoge307XG5cbiAgICAgICAgICAgICAgICB2YXIgZXh0cmFIZWFkZXJzID0gXy5leHRlbmQoe30sIHJlcHJlc2VudGF0aW9uSGVhZGVyLCBoZWFkZXJzKTtcbiAgICAgICAgICAgICAgICByZXR1cm4gcXVlcnlzdHJpbmcoZmlsdGVycywgYWRkQ29uZmlnSGVhZGVycyhleHRyYUhlYWRlcnMsIF8uZXh0ZW5kKHt9LCBvcHRpb25zLCBuYW1lT3B0aW9ucywge1xuICAgICAgICAgICAgICAgICAgICBtZXRob2Q6ICdQQVRDSCcsXG4gICAgICAgICAgICAgICAgICAgIGRhdGE6IGF0dHJpYnV0ZXNcbiAgICAgICAgICAgICAgICB9KSkpO1xuICAgICAgICAgICAgfSxcbiAgICAgICAgICAgICAgICBnZXRQYWdlT3B0aW9ucyA9IGZ1bmN0aW9uIGdldFBhZ2VPcHRpb25zKGRhdGEsIHBhZ2UsIG9wdGlvbnMpIHtcbiAgICAgICAgICAgICAgICB2YXIgaGVhZGVycyA9IGFyZ3VtZW50cy5sZW5ndGggPiAzICYmIGFyZ3VtZW50c1szXSAhPT0gdW5kZWZpbmVkID8gYXJndW1lbnRzWzNdIDoge307XG5cbiAgICAgICAgICAgICAgICByZXR1cm4gZ2V0T3B0aW9ucyhkYXRhLCBwYWdlIHx8IDEsIHBhZ2VTaXplKCksIG9wdGlvbnMsIGhlYWRlcnMpO1xuICAgICAgICAgICAgfSxcbiAgICAgICAgICAgICAgICBnZXRSb3dPcHRpb25zID0gZnVuY3Rpb24gZ2V0Um93T3B0aW9ucyhkYXRhLCBvcHRpb25zKSB7XG4gICAgICAgICAgICAgICAgdmFyIGhlYWRlcnMgPSBhcmd1bWVudHMubGVuZ3RoID4gMiAmJiBhcmd1bWVudHNbMl0gIT09IHVuZGVmaW5lZCA/IGFyZ3VtZW50c1syXSA6IHt9O1xuXG4gICAgICAgICAgICAgICAgcmV0dXJuIGdldE9wdGlvbnMoZGF0YSwgMSwgMSwgb3B0aW9ucywgaGVhZGVycyk7XG4gICAgICAgICAgICB9O1xuXG4gICAgICAgICAgICByZXR1cm4ge1xuICAgICAgICAgICAgICAgIHBhZ2VTaXplOiBwYWdlU2l6ZSxcbiAgICAgICAgICAgICAgICBnZXRQYWdlT3B0aW9uczogZ2V0UGFnZU9wdGlvbnMsXG4gICAgICAgICAgICAgICAgZ2V0Um93T3B0aW9uczogZ2V0Um93T3B0aW9ucyxcbiAgICAgICAgICAgICAgICBwYXRjaE9wdGlvbnM6IHBhdGNoT3B0aW9ucyxcbiAgICAgICAgICAgICAgICBwb3N0T3B0aW9uczogcG9zdE9wdGlvbnMsXG4gICAgICAgICAgICAgICAgZGVsZXRlT3B0aW9uczogZGVsZXRlT3B0aW9ucyxcbiAgICAgICAgICAgICAgICBnZXRQYWdlOiBfLmNvbXBvc2UocG9zdGdyZXN0LnJlcXVlc3QsIGdldFBhZ2VPcHRpb25zKSxcbiAgICAgICAgICAgICAgICBnZXRSb3c6IF8uY29tcG9zZShwb3N0Z3Jlc3QucmVxdWVzdCwgZ2V0Um93T3B0aW9ucyksXG4gICAgICAgICAgICAgICAgcGF0Y2g6IF8uY29tcG9zZShwb3N0Z3Jlc3QucmVxdWVzdCwgcGF0Y2hPcHRpb25zKSxcbiAgICAgICAgICAgICAgICBwb3N0OiBfLmNvbXBvc2UocG9zdGdyZXN0LnJlcXVlc3QsIHBvc3RPcHRpb25zKSxcbiAgICAgICAgICAgICAgICBkZWxldGVSZXF1ZXN0OiBfLmNvbXBvc2UocG9zdGdyZXN0LnJlcXVlc3QsIGRlbGV0ZU9wdGlvbnMpLFxuICAgICAgICAgICAgICAgIGdldFBhZ2VXaXRoVG9rZW46IF8uY29tcG9zZShwb3N0Z3Jlc3QucmVxdWVzdFdpdGhUb2tlbiwgZ2V0UGFnZU9wdGlvbnMpLFxuICAgICAgICAgICAgICAgIGdldFJvd1dpdGhUb2tlbjogXy5jb21wb3NlKHBvc3RncmVzdC5yZXF1ZXN0V2l0aFRva2VuLCBnZXRSb3dPcHRpb25zKSxcbiAgICAgICAgICAgICAgICBwYXRjaFdpdGhUb2tlbjogXy5jb21wb3NlKHBvc3RncmVzdC5yZXF1ZXN0V2l0aFRva2VuLCBwYXRjaE9wdGlvbnMpLFxuICAgICAgICAgICAgICAgIHBvc3RXaXRoVG9rZW46IF8uY29tcG9zZShwb3N0Z3Jlc3QucmVxdWVzdFdpdGhUb2tlbiwgcG9zdE9wdGlvbnMpLFxuICAgICAgICAgICAgICAgIGRlbGV0ZVdpdGhUb2tlbjogXy5jb21wb3NlKHBvc3RncmVzdC5yZXF1ZXN0V2l0aFRva2VuLCBkZWxldGVPcHRpb25zKSxcbiAgICAgICAgICAgICAgICBvcHRpb25zOiBvcHRpb25zXG4gICAgICAgICAgICB9O1xuICAgICAgICB9O1xuXG4gICAgICAgIHJldHVybiBwb3N0Z3Jlc3Q7XG4gICAgfTtcblxuICAgIHBvc3RncmVzdC5maWx0ZXJzVk0gPSBmaWx0ZXJzVk07XG4gICAgcG9zdGdyZXN0LnBhZ2luYXRpb25WTSA9IHBhZ2luYXRpb25WTTtcblxuICAgIHJldHVybiBwb3N0Z3Jlc3Q7XG59XG5cbnJldHVybiBQb3N0Z3Jlc3Q7XG5cbn0pKSk7XG4iXSwiZmlsZSI6InNyYy8qKi8qLmpzIn0=
+
+
+/***/ }),
+
+/***/ "./node_modules/mithril-postgrest/node_modules/mithril/mithril.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/mithril-postgrest/node_modules/mithril/mithril.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_RESULT__;/* global Promise */
+
+;(function (global, factory) { // eslint-disable-line
+	"use strict"
+	/* eslint-disable no-undef */
+	var m = factory(global)
+	/*	Set dependencies when no window for isomorphic compatibility */
+	if(typeof window === "undefined") {
+		m.deps({
+			document: typeof document !== "undefined" ? document : {},
+			location: typeof location !== "undefined" ? location : {},
+			clearTimeout: clearTimeout,
+			setTimeout: setTimeout
+		})
+	}
+	if (typeof module === "object" && module != null && module.exports) {
+		module.exports = m
+	} else if (true) {
+		!(__WEBPACK_AMD_DEFINE_RESULT__ = (function () { return m }).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+	} else {}
+	/* eslint-enable no-undef */
+})(typeof window !== "undefined" ? window : this, function factory(global, undefined) { // eslint-disable-line
+	"use strict"
+
+	m.version = function () {
+		return "v0.2.8"
+	}
+
+	var hasOwn = {}.hasOwnProperty
+	var type = {}.toString
+
+	function isFunction(object) {
+		return typeof object === "function"
+	}
+
+	function isObject(object) {
+		return type.call(object) === "[object Object]"
+	}
+
+	function isString(object) {
+		return type.call(object) === "[object String]"
+	}
+
+	var isArray = Array.isArray || function (object) {
+		return type.call(object) === "[object Array]"
+	}
+
+	function noop() {}
+
+	var voidElements = {
+		AREA: 1,
+		BASE: 1,
+		BR: 1,
+		COL: 1,
+		COMMAND: 1,
+		EMBED: 1,
+		HR: 1,
+		IMG: 1,
+		INPUT: 1,
+		KEYGEN: 1,
+		LINK: 1,
+		META: 1,
+		PARAM: 1,
+		SOURCE: 1,
+		TRACK: 1,
+		WBR: 1
+	}
+
+	// caching commonly used variables
+	var $document, $location, $requestAnimationFrame, $cancelAnimationFrame
+
+	// self invoking function needed because of the way mocks work
+	function initialize(mock) {
+		$document = mock.document
+		$location = mock.location
+		$cancelAnimationFrame = mock.cancelAnimationFrame || mock.clearTimeout
+		$requestAnimationFrame = mock.requestAnimationFrame || mock.setTimeout
+	}
+
+	// testing API
+	m.deps = function (mock) {
+		initialize(global = mock || window)
+		return global
+	}
+
+	m.deps.factory = m.factory = factory
+
+	m.deps(global)
+
+	/**
+	 * @typedef {String} Tag
+	 * A string that looks like -> div.classname#id[param=one][param2=two]
+	 * Which describes a DOM node
+	 */
+
+	function parseTagAttrs(cell, tag) {
+		var classes = []
+		/* eslint-disable max-len */
+		var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[(.+?)(?:\s*=\s*("|'|)((?:\\["'\]]|.)*?)\5)?\])/g
+		/* eslint-enable max-len */
+		var match
+
+		while ((match = parser.exec(tag))) {
+			if (match[1] === "" && match[2]) {
+				cell.tag = match[2]
+			} else if (match[1] === "#") {
+				cell.attrs.id = match[2]
+			} else if (match[1] === ".") {
+				classes.push(match[2])
+			} else if (match[3].charAt(0) === "[") { // #1195
+				var attrValue = match[6]
+				if (attrValue) attrValue = attrValue.replace(/\\(["'])/g, "$1")
+				if (match[4] === "class") classes.push(attrValue)
+				else cell.attrs[match[4]] = attrValue || true
+			}
+		}
+
+		return classes
+	}
+
+	function getVirtualChildren(args, hasAttrs) {
+		var children = hasAttrs ? args.slice(1) : args
+
+		if (children.length === 1 && isArray(children[0])) {
+			return children[0]
+		} else {
+			return children
+		}
+	}
+
+	function assignAttrs(target, attrs, classes) {
+		var classAttr = "class" in attrs ? "class" : "className"
+
+		for (var attrName in attrs) {
+			if (hasOwn.call(attrs, attrName)) {
+				if (attrName === classAttr &&
+						attrs[attrName] != null &&
+						attrs[attrName] !== "") {
+					classes.push(attrs[attrName])
+					// create key in correct iteration order
+					target[attrName] = ""
+				} else {
+					target[attrName] = attrs[attrName]
+				}
+			}
+		}
+
+		if (classes.length) target[classAttr] = classes.join(" ")
+	}
+
+	/**
+	 *
+	 * @param {Tag} The DOM node tag
+	 * @param {Object=[]} optional key-value pairs to be mapped to DOM attrs
+	 * @param {...mNode=[]} Zero or more Mithril child nodes. Can be an array,
+	 *                      or splat (optional)
+	 */
+	function m(tag, pairs) {
+		var args = []
+
+		for (var i = 1, length = arguments.length; i < length; i++) {
+			args[i - 1] = arguments[i]
+		}
+
+		if (tag && isFunction(tag.view)) return parameterize(tag, args)
+
+		if (!isString(tag)) {
+			throw new Error("selector in m(selector, attrs, children) should " +
+				"be a string")
+		}
+
+		var hasAttrs = pairs != null && isObject(pairs) &&
+			!("tag" in pairs || "view" in pairs || "subtree" in pairs)
+
+		var attrs = hasAttrs ? pairs : {}
+		var cell = {
+			tag: "div",
+			attrs: {},
+			children: getVirtualChildren(args, hasAttrs)
+		}
+
+		assignAttrs(cell.attrs, attrs, parseTagAttrs(cell, tag))
+		return cell
+	}
+
+	function forEach(list, f) {
+		for (var i = 0; i < list.length && !f(list[i], i++);) {
+			// function called in condition
+		}
+	}
+
+	function forKeys(list, f) {
+		forEach(list, function (attrs, i) {
+			return (attrs = attrs && attrs.attrs) &&
+				attrs.key != null &&
+				f(attrs, i)
+		})
+	}
+	// This function was causing deopts in Chrome.
+	function dataToString(data) {
+		// data.toString() might throw or return null if data is the return
+		// value of Console.log in some versions of Firefox (behavior depends on
+		// version)
+		try {
+			if (typeof data !== "boolean" &&
+					data != null &&
+					data.toString() != null) return data
+		} catch (e) {
+			// silently ignore errors
+		}
+		return ""
+	}
+
+	// This function was causing deopts in Chrome.
+	function injectTextNode(parentElement, first, index, data) {
+		try {
+			insertNode(parentElement, first, index)
+			first.nodeValue = data
+		} catch (e) {
+			// IE erroneously throws error when appending an empty text node
+			// after a null
+		}
+	}
+
+	function flatten(list) {
+		// recursively flatten array
+		for (var i = 0; i < list.length; i++) {
+			if (isArray(list[i])) {
+				list = list.concat.apply([], list)
+				// check current index again and flatten until there are no more
+				// nested arrays at that index
+				i--
+			}
+		}
+		return list
+	}
+
+	function insertNode(parentElement, node, index) {
+		parentElement.insertBefore(node,
+			parentElement.childNodes[index] || null)
+	}
+
+	var DELETION = 1
+	var INSERTION = 2
+	var MOVE = 3
+
+	function handleKeysDiffer(data, existing, cached, parentElement) {
+		forKeys(data, function (key, i) {
+			existing[key = key.key] = existing[key] ? {
+				action: MOVE,
+				index: i,
+				from: existing[key].index,
+				element: cached.nodes[existing[key].index] ||
+					$document.createElement("div")
+			} : {action: INSERTION, index: i}
+		})
+
+		var actions = []
+		for (var prop in existing) {
+			if (hasOwn.call(existing, prop)) {
+				actions.push(existing[prop])
+			}
+		}
+
+		var changes = actions.sort(sortChanges)
+		var newCached = new Array(cached.length)
+
+		newCached.nodes = cached.nodes.slice()
+
+		forEach(changes, function (change) {
+			var index = change.index
+			if (change.action === DELETION) {
+				clear(cached[index].nodes, cached[index])
+				newCached.splice(index, 1)
+			}
+			if (change.action === INSERTION) {
+				var dummy = $document.createElement("div")
+				dummy.key = data[index].attrs.key
+				insertNode(parentElement, dummy, index)
+				newCached.splice(index, 0, {
+					attrs: {key: data[index].attrs.key},
+					nodes: [dummy]
+				})
+				newCached.nodes[index] = dummy
+			}
+
+			if (change.action === MOVE) {
+				var changeElement = change.element
+				var maybeChanged = parentElement.childNodes[index]
+				if (maybeChanged !== changeElement && changeElement !== null) {
+					parentElement.insertBefore(changeElement,
+						maybeChanged || null)
+				}
+				newCached[index] = cached[change.from]
+				newCached.nodes[index] = changeElement
+			}
+		})
+
+		return newCached
+	}
+
+	function diffKeys(data, cached, existing, parentElement) {
+		var keysDiffer = data.length !== cached.length
+
+		if (!keysDiffer) {
+			forKeys(data, function (attrs, i) {
+				var cachedCell = cached[i]
+				return keysDiffer = cachedCell &&
+					cachedCell.attrs &&
+					cachedCell.attrs.key !== attrs.key
+			})
+		}
+
+		if (keysDiffer) {
+			return handleKeysDiffer(data, existing, cached, parentElement)
+		} else {
+			return cached
+		}
+	}
+
+	function diffArray(data, cached, nodes) {
+		// diff the array itself
+
+		// update the list of DOM nodes by collecting the nodes from each item
+		forEach(data, function (_, i) {
+			if (cached[i] != null) nodes.push.apply(nodes, cached[i].nodes)
+		})
+		// remove items from the end of the array if the new array is shorter
+		// than the old one. if errors ever happen here, the issue is most
+		// likely a bug in the construction of the `cached` data structure
+		// somewhere earlier in the program
+		forEach(cached.nodes, function (node, i) {
+			if (node.parentNode != null && nodes.indexOf(node) < 0) {
+				clear([node], [cached[i]])
+			}
+		})
+
+		if (data.length < cached.length) cached.length = data.length
+		cached.nodes = nodes
+	}
+
+	function buildArrayKeys(data) {
+		var guid = 0
+		forKeys(data, function () {
+			forEach(data, function (attrs) {
+				if ((attrs = attrs && attrs.attrs) && attrs.key == null) {
+					attrs.key = "__mithril__" + guid++
+				}
+			})
+			return 1
+		})
+	}
+
+	function isDifferentEnough(data, cached, dataAttrKeys) {
+		if (data.tag !== cached.tag) return true
+
+		if (dataAttrKeys.sort().join() !==
+				Object.keys(cached.attrs).sort().join()) {
+			return true
+		}
+
+		if (data.attrs.id !== cached.attrs.id) {
+			return true
+		}
+
+		if (data.attrs.key !== cached.attrs.key) {
+			return true
+		}
+
+		if (m.redraw.strategy() === "all") {
+			return !cached.configContext || cached.configContext.retain !== true
+		}
+
+		if (m.redraw.strategy() === "diff") {
+			return cached.configContext && cached.configContext.retain === false
+		}
+
+		return false
+	}
+
+	function maybeRecreateObject(data, cached, dataAttrKeys) {
+		// if an element is different enough from the one in cache, recreate it
+		if (isDifferentEnough(data, cached, dataAttrKeys)) {
+			if (cached.nodes.length) clear(cached.nodes)
+
+			if (cached.configContext &&
+					isFunction(cached.configContext.onunload)) {
+				cached.configContext.onunload()
+			}
+
+			if (cached.controllers) {
+				forEach(cached.controllers, function (controller) {
+					if (controller.onunload) {
+						controller.onunload({preventDefault: noop})
+					}
+				})
+			}
+		}
+	}
+
+	function getObjectNamespace(data, namespace) {
+		if (data.attrs.xmlns) return data.attrs.xmlns
+		if (data.tag === "svg") return "http://www.w3.org/2000/svg"
+		if (data.tag === "math") return "http://www.w3.org/1998/Math/MathML"
+		return namespace
+	}
+
+	var pendingRequests = 0
+	m.startComputation = function () { pendingRequests++ }
+	m.endComputation = function () {
+		if (pendingRequests > 1) {
+			pendingRequests--
+		} else {
+			pendingRequests = 0
+			m.redraw()
+		}
+	}
+
+	function unloadCachedControllers(cached, views, controllers) {
+		if (controllers.length) {
+			cached.views = views
+			cached.controllers = controllers
+			forEach(controllers, function (controller) {
+				if (controller.onunload && controller.onunload.$old) {
+					controller.onunload = controller.onunload.$old
+				}
+
+				if (pendingRequests && controller.onunload) {
+					var onunload = controller.onunload
+					controller.onunload = function (){}
+					controller.onunload.$old = onunload
+				}
+			})
+		}
+	}
+
+	function scheduleConfigsToBeCalled(configs, data, node, isNew, cached) {
+		// schedule configs to be called. They are called after `build` finishes
+		// running
+		if (isFunction(data.attrs.config)) {
+			var context = cached.configContext = cached.configContext || {}
+
+			// bind
+			configs.push(function () {
+				return data.attrs.config.call(data, node, !isNew, context,
+					cached)
+			})
+		}
+	}
+
+	function buildUpdatedNode(
+		cached,
+		data,
+		editable,
+		hasKeys,
+		namespace,
+		views,
+		configs,
+		controllers
+	) {
+		var node = cached.nodes[0]
+
+		if (hasKeys) {
+			setAttributes(node, data.tag, data.attrs, cached.attrs, namespace)
+		}
+
+		cached.children = build(
+			node,
+			data.tag,
+			undefined,
+			undefined,
+			data.children,
+			cached.children,
+			false,
+			0,
+			data.attrs.contenteditable ? node : editable,
+			namespace,
+			configs
+		)
+
+		cached.nodes.intact = true
+
+		if (controllers.length) {
+			cached.views = views
+			cached.controllers = controllers
+		}
+
+		return node
+	}
+
+	function handleNonexistentNodes(data, parentElement, index) {
+		var nodes
+		if (data.$trusted) {
+			nodes = injectHTML(parentElement, index, data)
+		} else {
+			nodes = [$document.createTextNode(data)]
+			if (!(parentElement.nodeName in voidElements)) {
+				insertNode(parentElement, nodes[0], index)
+			}
+		}
+
+		var cached
+
+		if (typeof data === "string" ||
+				typeof data === "number" ||
+				typeof data === "boolean") {
+			cached = new data.constructor(data)
+		} else {
+			cached = data
+		}
+
+		cached.nodes = nodes
+		return cached
+	}
+
+	function reattachNodes(
+		data,
+		cached,
+		parentElement,
+		editable,
+		index,
+		parentTag
+	) {
+		var nodes = cached.nodes
+		if (!editable || editable !== $document.activeElement ||
+				data !== cached) {
+			if (data.$trusted) {
+				clear(nodes, cached)
+				nodes = injectHTML(parentElement, index, data)
+			} else if (parentTag === "textarea") {
+				// <textarea> uses `value` instead of `nodeValue`.
+				parentElement.value = data
+			} else if (editable) {
+				// contenteditable nodes use `innerHTML` instead of `nodeValue`.
+				editable.innerHTML = data
+				nodes = [].slice.call(editable.childNodes)
+			} else {
+				// was a trusted string
+				if (nodes[0].nodeType === 1 || nodes.length > 1 ||
+						(nodes[0].nodeValue.trim &&
+							!nodes[0].nodeValue.trim())) {
+					clear(cached.nodes, cached)
+					nodes = [$document.createTextNode(data)]
+				}
+
+				injectTextNode(parentElement, nodes[0], index, data)
+			}
+		}
+		cached = new data.constructor(data)
+		cached.nodes = nodes
+		cached.$trusted = data.$trusted
+		return cached
+	}
+
+	function handleTextNode(
+		cached,
+		data,
+		index,
+		parentElement,
+		shouldReattach,
+		editable,
+		parentTag
+	) {
+		if (!cached.nodes.length) {
+			return handleNonexistentNodes(data, parentElement, index)
+		} else if (cached.valueOf() !== data.valueOf() || shouldReattach) {
+			return reattachNodes(data, cached, parentElement, editable, index,
+				parentTag)
+		} else {
+			return (cached.nodes.intact = true, cached)
+		}
+	}
+
+	function getSubArrayCount(item) {
+		if (item.$trusted) {
+			// fix offset of next element if item was a trusted string w/ more
+			// than one html element
+			return item.nodes.length
+		} else if (isArray(item)) {
+			return item.length
+		}
+		return 1
+	}
+
+	function buildArray(
+		data,
+		cached,
+		parentElement,
+		index,
+		parentTag,
+		shouldReattach,
+		editable,
+		namespace,
+		configs
+	) {
+		data = flatten(data)
+		var nodes = []
+		var intact = cached.length === data.length
+		var subArrayCount = 0
+
+		// keys algorithm: sort elements without recreating them if keys are
+		// present
+		//
+		// 1) create a map of all existing keys, and mark all for deletion
+		// 2) add new keys to map and mark them for addition
+		// 3) if key exists in new list, change action from deletion to a move
+		// 4) for each key, handle its corresponding action as marked in
+		//    previous steps
+
+		var existing = {}
+		var shouldMaintainIdentities = false
+
+		forKeys(cached, function (attrs, i) {
+			shouldMaintainIdentities = true
+			existing[cached[i].attrs.key] = {action: DELETION, index: i}
+		})
+
+		buildArrayKeys(data)
+		if (shouldMaintainIdentities) {
+			cached = diffKeys(data, cached, existing, parentElement)
+		}
+		// end key algorithm
+
+		var cacheCount = 0
+		// faster explicitly written
+		for (var i = 0, len = data.length; i < len; i++) {
+			// diff each item in the array
+			var item = build(
+				parentElement,
+				parentTag,
+				cached,
+				index,
+				data[i],
+				cached[cacheCount],
+				shouldReattach,
+				index + subArrayCount || subArrayCount,
+				editable,
+				namespace,
+				configs)
+
+			if (item !== undefined) {
+				intact = intact && item.nodes.intact
+				subArrayCount += getSubArrayCount(item)
+				cached[cacheCount++] = item
+			}
+		}
+
+		if (!intact) diffArray(data, cached, nodes)
+		return cached
+	}
+
+	function makeCache(data, cached, index, parentIndex, parentCache) {
+		if (cached != null) {
+			if (type.call(cached) === type.call(data)) return cached
+
+			if (parentCache && parentCache.nodes) {
+				var offset = index - parentIndex
+				var end = offset + (isArray(data) ? data : cached.nodes).length
+				clear(
+					parentCache.nodes.slice(offset, end),
+					parentCache.slice(offset, end))
+			} else if (cached.nodes) {
+				clear(cached.nodes, cached)
+			}
+		}
+
+		cached = new data.constructor()
+		// if constructor creates a virtual dom element, use a blank object as
+		// the base cached node instead of copying the virtual el (#277)
+		if (cached.tag) cached = {}
+		cached.nodes = []
+		return cached
+	}
+
+	function constructNode(data, namespace) {
+		if (data.attrs.is) {
+			if (namespace == null) {
+				return $document.createElement(data.tag, data.attrs.is)
+			} else {
+				return $document.createElementNS(namespace, data.tag,
+					data.attrs.is)
+			}
+		} else if (namespace == null) {
+			return $document.createElement(data.tag)
+		} else {
+			return $document.createElementNS(namespace, data.tag)
+		}
+	}
+
+	function constructAttrs(data, node, namespace, hasKeys) {
+		if (hasKeys) {
+			return setAttributes(node, data.tag, data.attrs, {}, namespace)
+		} else {
+			return data.attrs
+		}
+	}
+
+	function constructChildren(
+		data,
+		node,
+		cached,
+		editable,
+		namespace,
+		configs
+	) {
+		if (data.children != null && data.children.length > 0) {
+			return build(
+				node,
+				data.tag,
+				undefined,
+				undefined,
+				data.children,
+				cached.children,
+				true,
+				0,
+				data.attrs.contenteditable ? node : editable,
+				namespace,
+				configs)
+		} else {
+			return data.children
+		}
+	}
+
+	function reconstructCached(
+		data,
+		attrs,
+		children,
+		node,
+		namespace,
+		views,
+		controllers
+	) {
+		var cached = {
+			tag: data.tag,
+			attrs: attrs,
+			children: children,
+			nodes: [node]
+		}
+
+		unloadCachedControllers(cached, views, controllers)
+
+		if (cached.children && !cached.children.nodes) {
+			cached.children.nodes = []
+		}
+
+		return cached
+	}
+
+	function getController(views, view, cachedControllers, controller) {
+		var controllerIndex
+
+		if (m.redraw.strategy() === "diff" && views) {
+			controllerIndex = views.indexOf(view)
+		} else {
+			controllerIndex = -1
+		}
+
+		if (controllerIndex > -1) {
+			return cachedControllers[controllerIndex]
+		} else if (isFunction(controller)) {
+			return new controller()
+		} else {
+			return {}
+		}
+	}
+
+	var unloaders = []
+
+	function updateLists(views, controllers, view, controller) {
+		if (controller.onunload != null &&
+				unloaders.map(function (u) { return u.handler })
+					.indexOf(controller.onunload) < 0) {
+			unloaders.push({
+				controller: controller,
+				handler: controller.onunload
+			})
+		}
+
+		views.push(view)
+		controllers.push(controller)
+	}
+
+	var forcing = false
+	function checkView(
+		data,
+		view,
+		cached,
+		cachedControllers,
+		controllers,
+		views
+	) {
+		var controller = getController(
+			cached.views,
+			view,
+			cachedControllers,
+			data.controller)
+
+		var key = data && data.attrs && data.attrs.key
+
+		if (pendingRequests === 0 ||
+				forcing ||
+				cachedControllers &&
+					cachedControllers.indexOf(controller) > -1) {
+			data = data.view(controller)
+		} else {
+			data = {tag: "placeholder"}
+		}
+
+		if (data.subtree === "retain") return data
+		data.attrs = data.attrs || {}
+		data.attrs.key = key
+		updateLists(views, controllers, view, controller)
+		return data
+	}
+
+	function markViews(data, cached, views, controllers) {
+		var cachedControllers = cached && cached.controllers
+
+		while (data.view != null) {
+			data = checkView(
+				data,
+				data.view.$original || data.view,
+				cached,
+				cachedControllers,
+				controllers,
+				views)
+		}
+
+		return data
+	}
+
+	function buildObject( // eslint-disable-line max-statements
+		data,
+		cached,
+		editable,
+		parentElement,
+		index,
+		shouldReattach,
+		namespace,
+		configs
+	) {
+		var views = []
+		var controllers = []
+
+		data = markViews(data, cached, views, controllers)
+
+		if (data.subtree === "retain") return cached
+
+		if (!data.tag && controllers.length) {
+			throw new Error("Component template must return a virtual " +
+				"element, not an array, string, etc.")
+		}
+
+		data.attrs = data.attrs || {}
+		cached.attrs = cached.attrs || {}
+
+		var dataAttrKeys = Object.keys(data.attrs)
+		var hasKeys = dataAttrKeys.length > ("key" in data.attrs ? 1 : 0)
+
+		maybeRecreateObject(data, cached, dataAttrKeys)
+
+		if (!isString(data.tag)) return
+
+		var isNew = cached.nodes.length === 0
+
+		namespace = getObjectNamespace(data, namespace)
+
+		var node
+		if (isNew) {
+			node = constructNode(data, namespace)
+			// set attributes first, then create children
+			var attrs = constructAttrs(data, node, namespace, hasKeys)
+
+			// add the node to its parent before attaching children to it
+			insertNode(parentElement, node, index)
+
+			var children = constructChildren(data, node, cached, editable,
+				namespace, configs)
+
+			cached = reconstructCached(
+				data,
+				attrs,
+				children,
+				node,
+				namespace,
+				views,
+				controllers)
+		} else {
+			node = buildUpdatedNode(
+				cached,
+				data,
+				editable,
+				hasKeys,
+				namespace,
+				views,
+				configs,
+				controllers)
+		}
+
+		// edge case: setting value on <select> doesn't work before children
+		// exist, so set it again after children have been created/updated
+		if (data.tag === "select" && "value" in data.attrs) {
+			setAttributes(node, data.tag, {value: data.attrs.value}, {},
+				namespace)
+		}
+
+		if (!isNew && shouldReattach === true && node != null) {
+			insertNode(parentElement, node, index)
+		}
+
+		// The configs are called after `build` finishes running
+		scheduleConfigsToBeCalled(configs, data, node, isNew, cached)
+
+		return cached
+	}
+
+	function build(
+		parentElement,
+		parentTag,
+		parentCache,
+		parentIndex,
+		data,
+		cached,
+		shouldReattach,
+		index,
+		editable,
+		namespace,
+		configs
+	) {
+		/*
+		 * `build` is a recursive function that manages creation/diffing/removal
+		 * of DOM elements based on comparison between `data` and `cached` the
+		 * diff algorithm can be summarized as this:
+		 *
+		 * 1 - compare `data` and `cached`
+		 * 2 - if they are different, copy `data` to `cached` and update the DOM
+		 *     based on what the difference is
+		 * 3 - recursively apply this algorithm for every array and for the
+		 *     children of every virtual element
+		 *
+		 * The `cached` data structure is essentially the same as the previous
+		 * redraw's `data` data structure, with a few additions:
+		 * - `cached` always has a property called `nodes`, which is a list of
+		 *    DOM elements that correspond to the data represented by the
+		 *    respective virtual element
+		 * - in order to support attaching `nodes` as a property of `cached`,
+		 *    `cached` is *always* a non-primitive object, i.e. if the data was
+		 *    a string, then cached is a String instance. If data was `null` or
+		 *    `undefined`, cached is `new String("")`
+		 * - `cached also has a `configContext` property, which is the state
+		 *    storage object exposed by config(element, isInitialized, context)
+		 * - when `cached` is an Object, it represents a virtual element; when
+		 *    it's an Array, it represents a list of elements; when it's a
+		 *    String, Number or Boolean, it represents a text node
+		 *
+		 * `parentElement` is a DOM element used for W3C DOM API calls
+		 * `parentTag` is only used for handling a corner case for textarea
+		 * values
+		 * `parentCache` is used to remove nodes in some multi-node cases
+		 * `parentIndex` and `index` are used to figure out the offset of nodes.
+		 * They're artifacts from before arrays started being flattened and are
+		 * likely refactorable
+		 * `data` and `cached` are, respectively, the new and old nodes being
+		 * diffed
+		 * `shouldReattach` is a flag indicating whether a parent node was
+		 * recreated (if so, and if this node is reused, then this node must
+		 * reattach itself to the new parent)
+		 * `editable` is a flag that indicates whether an ancestor is
+		 * contenteditable
+		 * `namespace` indicates the closest HTML namespace as it cascades down
+		 * from an ancestor
+		 * `configs` is a list of config functions to run after the topmost
+		 * `build` call finishes running
+		 *
+		 * there's logic that relies on the assumption that null and undefined
+		 * data are equivalent to empty strings
+		 * - this prevents lifecycle surprises from procedural helpers that mix
+		 *   implicit and explicit return statements (e.g.
+		 *   function foo() {if (cond) return m("div")}
+		 * - it simplifies diffing code
+		 */
+		data = dataToString(data)
+		if (data.subtree === "retain") return cached
+		cached = makeCache(data, cached, index, parentIndex, parentCache)
+
+		if (isArray(data)) {
+			return buildArray(
+				data,
+				cached,
+				parentElement,
+				index,
+				parentTag,
+				shouldReattach,
+				editable,
+				namespace,
+				configs)
+		} else if (data != null && isObject(data)) {
+			return buildObject(
+				data,
+				cached,
+				editable,
+				parentElement,
+				index,
+				shouldReattach,
+				namespace,
+				configs)
+		} else if (!isFunction(data)) {
+			return handleTextNode(
+				cached,
+				data,
+				index,
+				parentElement,
+				shouldReattach,
+				editable,
+				parentTag)
+		} else {
+			return cached
+		}
+	}
+
+	function sortChanges(a, b) {
+		return a.action - b.action || a.index - b.index
+	}
+
+	function copyStyleAttrs(node, dataAttr, cachedAttr) {
+		if (cachedAttr === dataAttr) {
+			node.style = ""
+			cachedAttr = {}
+		}
+		for (var rule in dataAttr) {
+			if (hasOwn.call(dataAttr, rule)) {
+				if (cachedAttr == null || cachedAttr[rule] !== dataAttr[rule]) {
+					node.style[rule] = dataAttr[rule]
+				}
+			}
+		}
+
+		for (rule in cachedAttr) {
+			if (hasOwn.call(cachedAttr, rule)) {
+				if (!hasOwn.call(dataAttr, rule)) node.style[rule] = ""
+			}
+		}
+	}
+
+	var shouldUseSetAttribute = {
+		list: 1,
+		style: 1,
+		form: 1,
+		type: 1,
+		width: 1,
+		height: 1
+	}
+
+	function setSingleAttr(
+		node,
+		attrName,
+		dataAttr,
+		cachedAttr,
+		tag,
+		namespace
+	) {
+		if (attrName === "config" || attrName === "key") {
+			// `config` isn't a real attribute, so ignore it
+			return true
+		} else if (isFunction(dataAttr) && attrName.slice(0, 2) === "on") {
+			// hook event handlers to the auto-redrawing system
+			node[attrName] = autoredraw(dataAttr, node)
+		} else if (attrName === "style" && dataAttr != null &&
+				isObject(dataAttr)) {
+			// handle `style: {...}`
+			copyStyleAttrs(node, dataAttr, cachedAttr)
+		} else if (namespace != null) {
+			// handle SVG
+			if (attrName === "href") {
+				node.setAttributeNS("http://www.w3.org/1999/xlink",
+					"href", dataAttr)
+			} else {
+				node.setAttribute(
+					attrName === "className" ? "class" : attrName,
+					dataAttr)
+			}
+		} else if (attrName in node && !shouldUseSetAttribute[attrName]) {
+			// handle cases that are properties (but ignore cases where we
+			// should use setAttribute instead)
+			//
+			// - list and form are typically used as strings, but are DOM
+			//   element references in js
+			//
+			// - when using CSS selectors (e.g. `m("[style='']")`), style is
+			//   used as a string, but it's an object in js
+			//
+			// #348 don't set the value if not needed - otherwise, cursor
+			// placement breaks in Chrome
+			// #1252 likewise when `contenteditable` is set on an element.
+			try {
+				if (
+					tag !== "input" && !node.isContentEditable ||
+					node[attrName] != dataAttr // eslint-disable-line eqeqeq
+				) {
+					node[attrName] = dataAttr
+				}
+			} catch (e) {
+				node.setAttribute(attrName, dataAttr)
+			}
+		} else {
+			try {
+				node.setAttribute(attrName, dataAttr)
+			} catch (e) {
+				// IE8 doesn't allow change input attributes and throws
+				// an exception. Unfortunately it cannot be handled, because
+				// error code is not informative.
+			}
+		}
+	}
+
+	function trySetAttr(
+		node,
+		attrName,
+		dataAttr,
+		cachedAttr,
+		cachedAttrs,
+		tag,
+		namespace
+	) {
+		if (!(attrName in cachedAttrs) ||
+				(cachedAttr !== dataAttr) ||
+				typeof dataAttr === "object" ||
+				($document.activeElement === node)) {
+			cachedAttrs[attrName] = dataAttr
+			try {
+				return setSingleAttr(
+					node,
+					attrName,
+					dataAttr,
+					cachedAttr,
+					tag,
+					namespace)
+			} catch (e) {
+				// swallow IE's invalid argument errors to mimic HTML's
+				// fallback-to-doing-nothing-on-invalid-attributes behavior
+				if (e.message.indexOf("Invalid argument") < 0) throw e
+			}
+		} else if (attrName === "value" && tag === "input" &&
+								/* eslint-disable eqeqeq */
+								node.value != dataAttr) {
+								// #348 dataAttr may not be a string,
+								// so use loose comparison
+								/* eslint-enable eqeqeq */
+			node.value = dataAttr
+		}
+	}
+
+	function setAttributes(node, tag, dataAttrs, cachedAttrs, namespace) {
+		for (var attrName in dataAttrs) {
+			if (hasOwn.call(dataAttrs, attrName)) {
+				if (trySetAttr(
+						node,
+						attrName,
+						dataAttrs[attrName],
+						cachedAttrs[attrName],
+						cachedAttrs,
+						tag,
+						namespace)) {
+					continue
+				}
+			}
+		}
+		return cachedAttrs
+	}
+
+	function clear(nodes, cached) {
+		for (var i = nodes.length - 1; i > -1; i--) {
+			if (nodes[i] && nodes[i].parentNode) {
+				try {
+					nodes[i].parentNode.removeChild(nodes[i])
+				} catch (e) {
+					/* eslint-disable max-len */
+					// ignore if this fails due to order of events (see
+					// http://stackoverflow.com/questions/21926083/failed-to-execute-removechild-on-node)
+					/* eslint-enable max-len */
+				}
+				cached = [].concat(cached)
+				if (cached[i]) unload(cached[i])
+			}
+		}
+		// release memory if nodes is an array. This check should fail if nodes
+		// is a NodeList (see loop above)
+		if (nodes.length) {
+			nodes.length = 0
+		}
+	}
+
+	function unload(cached) {
+		if (cached.configContext && isFunction(cached.configContext.onunload)) {
+			cached.configContext.onunload()
+			cached.configContext.onunload = null
+		}
+		if (cached.controllers) {
+			forEach(cached.controllers, function (controller) {
+				if (isFunction(controller.onunload)) {
+					controller.onunload({preventDefault: noop})
+				}
+			})
+		}
+		if (cached.children) {
+			if (isArray(cached.children)) forEach(cached.children, unload)
+			else if (cached.children.tag) unload(cached.children)
+		}
+	}
+
+	function appendTextFragment(parentElement, data) {
+		try {
+			parentElement.appendChild(
+				$document.createRange().createContextualFragment(data))
+		} catch (e) {
+			parentElement.insertAdjacentHTML("beforeend", data)
+			replaceScriptNodes(parentElement)
+		}
+	}
+
+	// Replace script tags inside given DOM element with executable ones.
+	// Will also check children recursively and replace any found script
+	// tags in same manner.
+	function replaceScriptNodes(node) {
+		if (node.tagName === "SCRIPT") {
+			node.parentNode.replaceChild(buildExecutableNode(node), node)
+		} else {
+			var children = node.childNodes
+			if (children && children.length) {
+				for (var i = 0; i < children.length; i++) {
+					replaceScriptNodes(children[i])
+				}
+			}
+		}
+
+		return node
+	}
+
+	// Replace script element with one whose contents are executable.
+	function buildExecutableNode(node){
+		var scriptEl = document.createElement("script")
+		var attrs = node.attributes
+
+		for (var i = 0; i < attrs.length; i++) {
+			scriptEl.setAttribute(attrs[i].name, attrs[i].value)
+		}
+
+		scriptEl.text = node.innerHTML
+		return scriptEl
+	}
+
+	function injectHTML(parentElement, index, data) {
+		var nextSibling = parentElement.childNodes[index]
+		if (nextSibling) {
+			var isElement = nextSibling.nodeType !== 1
+			var placeholder = $document.createElement("span")
+			if (isElement) {
+				parentElement.insertBefore(placeholder, nextSibling || null)
+				placeholder.insertAdjacentHTML("beforebegin", data)
+				parentElement.removeChild(placeholder)
+			} else {
+				nextSibling.insertAdjacentHTML("beforebegin", data)
+			}
+		} else {
+			appendTextFragment(parentElement, data)
+		}
+
+		var nodes = []
+
+		while (parentElement.childNodes[index] !== nextSibling) {
+			nodes.push(parentElement.childNodes[index])
+			index++
+		}
+
+		return nodes
+	}
+
+	function autoredraw(callback, object) {
+		return function (e) {
+			e = e || event
+			m.redraw.strategy("diff")
+			m.startComputation()
+			try {
+				return callback.call(object, e)
+			} finally {
+				endFirstComputation()
+			}
+		}
+	}
+
+	var html
+	var documentNode = {
+		appendChild: function (node) {
+			if (html === undefined) html = $document.createElement("html")
+			if ($document.documentElement &&
+					$document.documentElement !== node) {
+				$document.replaceChild(node, $document.documentElement)
+			} else {
+				$document.appendChild(node)
+			}
+
+			this.childNodes = $document.childNodes
+		},
+
+		insertBefore: function (node) {
+			this.appendChild(node)
+		},
+
+		childNodes: []
+	}
+
+	var nodeCache = []
+	var cellCache = {}
+
+	m.render = function (root, cell, forceRecreation) {
+		if (!root) {
+			throw new Error("Ensure the DOM element being passed to " +
+				"m.route/m.mount/m.render is not undefined.")
+		}
+		var configs = []
+		var id = getCellCacheKey(root)
+		var isDocumentRoot = root === $document
+		var node
+
+		if (isDocumentRoot || root === $document.documentElement) {
+			node = documentNode
+		} else {
+			node = root
+		}
+
+		if (isDocumentRoot && cell.tag !== "html") {
+			cell = {tag: "html", attrs: {}, children: cell}
+		}
+
+		if (cellCache[id] === undefined) clear(node.childNodes)
+		if (forceRecreation === true) reset(root)
+
+		cellCache[id] = build(
+			node,
+			null,
+			undefined,
+			undefined,
+			cell,
+			cellCache[id],
+			false,
+			0,
+			null,
+			undefined,
+			configs)
+
+		forEach(configs, function (config) { config() })
+	}
+
+	function getCellCacheKey(element) {
+		var index = nodeCache.indexOf(element)
+		return index < 0 ? nodeCache.push(element) - 1 : index
+	}
+
+	m.trust = function (value) {
+		value = new String(value) // eslint-disable-line no-new-wrappers
+		value.$trusted = true
+		return value
+	}
+
+	function gettersetter(store) {
+		function prop() {
+			if (arguments.length) store = arguments[0]
+			return store
+		}
+
+		prop.toJSON = function () {
+			if (store && isFunction(store.toJSON)) return store.toJSON()
+			return store
+		}
+
+		return prop
+	}
+
+	m.prop = function (store) {
+		if ((store != null && (isObject(store) || isFunction(store)) ||
+					((typeof Promise !== "undefined") &&
+						(store instanceof Promise))) &&
+				isFunction(store.then)) {
+			return propify(store)
+		}
+
+		return gettersetter(store)
+	}
+
+	var roots = []
+	var components = []
+	var controllers = []
+	var lastRedrawId = null
+	var lastRedrawCallTime = 0
+	var computePreRedrawHook = null
+	var computePostRedrawHook = null
+	var topComponent
+	var FRAME_BUDGET = 16 // 60 frames per second = 1 call per 16 ms
+
+	function parameterize(component, args) {
+		function controller() {
+			/* eslint-disable no-invalid-this */
+			return (component.controller || noop).apply(this, args) || this
+			/* eslint-enable no-invalid-this */
+		}
+
+		if (component.controller) {
+			controller.prototype = component.controller.prototype
+		}
+
+		function view(ctrl) {
+			var currentArgs = [ctrl].concat(args)
+			for (var i = 1; i < arguments.length; i++) {
+				currentArgs.push(arguments[i])
+			}
+
+			return component.view.apply(component, currentArgs)
+		}
+
+		view.$original = component.view
+		var output = {controller: controller, view: view}
+		if (args[0] && args[0].key != null) output.attrs = {key: args[0].key}
+		return output
+	}
+
+	m.component = function (component) {
+		var args = new Array(arguments.length - 1)
+
+		for (var i = 1; i < arguments.length; i++) {
+			args[i - 1] = arguments[i]
+		}
+
+		return parameterize(component, args)
+	}
+
+	var currentRoute, previousRoute
+
+	function checkPrevented(component, root, index, isPrevented) {
+		if (!isPrevented) {
+			m.redraw.strategy("all")
+			m.startComputation()
+			roots[index] = root
+			var currentComponent
+
+			if (component) {
+				currentComponent = topComponent = component
+			} else {
+				currentComponent = topComponent = component = {controller: noop}
+			}
+
+			var controller = new (component.controller || noop)()
+
+			// controllers may call m.mount recursively (via m.route redirects,
+			// for example)
+			// this conditional ensures only the last recursive m.mount call is
+			// applied
+			if (currentComponent === topComponent) {
+				controllers[index] = controller
+				components[index] = component
+			}
+			endFirstComputation()
+			if (component === null) {
+				removeRootElement(root, index)
+			}
+			return controllers[index]
+		} else {
+			if (component == null) {
+				removeRootElement(root, index)
+			}
+
+			if (previousRoute) {
+				currentRoute = previousRoute
+			}
+		}
+	}
+
+	m.mount = m.module = function (root, component) {
+		if (!root) {
+			throw new Error("Ensure the DOM element being passed to " +
+				"m.route/m.mount/m.render is not undefined.")
+		}
+
+		var index = roots.indexOf(root)
+		if (index < 0) index = roots.length
+
+		var isPrevented = false
+		var event = {
+			preventDefault: function () {
+				isPrevented = true
+				computePreRedrawHook = computePostRedrawHook = null
+			}
+		}
+
+		forEach(unloaders, function (unloader) {
+			unloader.handler.call(unloader.controller, event)
+			unloader.controller.onunload = null
+		})
+
+		if (isPrevented) {
+			forEach(unloaders, function (unloader) {
+				unloader.controller.onunload = unloader.handler
+			})
+		} else {
+			unloaders = []
+		}
+
+		if (controllers[index] && isFunction(controllers[index].onunload)) {
+			controllers[index].onunload(event)
+		}
+
+		return checkPrevented(component, root, index, isPrevented)
+	}
+
+	function removeRootElement(root, index) {
+		roots.splice(index, 1)
+		controllers.splice(index, 1)
+		components.splice(index, 1)
+		reset(root)
+		nodeCache.splice(getCellCacheKey(root), 1)
+		unloaders = []
+	}
+
+	var redrawing = false
+	m.redraw = function (force) {
+		if (redrawing) return
+		redrawing = true
+		if (force) forcing = true
+
+		try {
+			// lastRedrawId is a positive number if a second redraw is requested
+			// before the next animation frame
+			// lastRedrawId is null if it's the first redraw and not an event
+			// handler
+			if (lastRedrawId && !force) {
+				// when setTimeout: only reschedule redraw if time between now
+				// and previous redraw is bigger than a frame, otherwise keep
+				// currently scheduled timeout
+				// when rAF: always reschedule redraw
+				if ($requestAnimationFrame === global.requestAnimationFrame ||
+						new Date() - lastRedrawCallTime > FRAME_BUDGET) {
+					if (lastRedrawId > 0) $cancelAnimationFrame(lastRedrawId)
+					lastRedrawId = $requestAnimationFrame(redraw, FRAME_BUDGET)
+				}
+			} else {
+				redraw()
+				lastRedrawId = $requestAnimationFrame(function () {
+					lastRedrawId = null
+				}, FRAME_BUDGET)
+			}
+		} finally {
+			redrawing = forcing = false
+		}
+	}
+
+	m.redraw.strategy = m.prop()
+	function redraw() {
+		if (computePreRedrawHook) {
+			computePreRedrawHook()
+			computePreRedrawHook = null
+		}
+		forEach(roots, function (root, i) {
+			var component = components[i]
+			if (controllers[i]) {
+				var args = [controllers[i]]
+				m.render(root,
+					component.view ? component.view(controllers[i], args) : "")
+			}
+		})
+		// after rendering within a routed context, we need to scroll back to
+		// the top, and fetch the document title for history.pushState
+		if (computePostRedrawHook) {
+			computePostRedrawHook()
+			computePostRedrawHook = null
+		}
+		lastRedrawId = null
+		lastRedrawCallTime = new Date()
+		m.redraw.strategy("diff")
+	}
+
+	function endFirstComputation() {
+		if (m.redraw.strategy() === "none") {
+			pendingRequests--
+			m.redraw.strategy("diff")
+		} else {
+			m.endComputation()
+		}
+	}
+
+	m.withAttr = function (prop, withAttrCallback, callbackThis) {
+		return function (e) {
+			e = e || window.event
+			/* eslint-disable no-invalid-this */
+			var currentTarget = e.currentTarget || this
+			var _this = callbackThis || this
+			/* eslint-enable no-invalid-this */
+			var target = prop in currentTarget ?
+				currentTarget[prop] :
+				currentTarget.getAttribute(prop)
+			withAttrCallback.call(_this, target)
+		}
+	}
+
+	// routing
+	var modes = {pathname: "", hash: "#", search: "?"}
+	var redirect = noop
+	var isDefaultRoute = false
+	var routeParams
+
+	m.route = function (root, arg1, arg2, vdom) { // eslint-disable-line
+		// m.route()
+		if (arguments.length === 0) return currentRoute
+		// m.route(el, defaultRoute, routes)
+		if (arguments.length === 3 && isString(arg1)) {
+			redirect = function (source) {
+				var path = currentRoute = normalizeRoute(source)
+				if (!routeByValue(root, arg2, path)) {
+					if (isDefaultRoute) {
+						throw new Error("Ensure the default route matches " +
+							"one of the routes defined in m.route")
+					}
+
+					isDefaultRoute = true
+					m.route(arg1, true)
+					isDefaultRoute = false
+				}
+			}
+
+			var listener = m.route.mode === "hash" ?
+				"onhashchange" :
+				"onpopstate"
+
+			global[listener] = function () {
+				var path = $location[m.route.mode]
+				if (m.route.mode === "pathname") path += $location.search
+				if (currentRoute !== normalizeRoute(path)) redirect(path)
+			}
+
+			computePreRedrawHook = setScroll
+			global[listener]()
+
+			return
+		}
+
+		// config: m.route
+		if (root.addEventListener || root.attachEvent) {
+			var base = m.route.mode !== "pathname" ? $location.pathname : ""
+			root.href = base + modes[m.route.mode] + vdom.attrs.href
+			if (root.addEventListener) {
+				root.removeEventListener("click", routeUnobtrusive)
+				root.addEventListener("click", routeUnobtrusive)
+			} else {
+				root.detachEvent("onclick", routeUnobtrusive)
+				root.attachEvent("onclick", routeUnobtrusive)
+			}
+
+			return
+		}
+		// m.route(route, params, shouldReplaceHistoryEntry)
+		if (isString(root)) {
+			previousRoute = currentRoute
+			currentRoute = root
+
+			var args = arg1 || {}
+			var queryIndex = currentRoute.indexOf("?")
+			var params
+
+			if (queryIndex > -1) {
+				params = parseQueryString(currentRoute.slice(queryIndex + 1))
+			} else {
+				params = {}
+			}
+
+			for (var i in args) {
+				if (hasOwn.call(args, i)) {
+					params[i] = args[i]
+				}
+			}
+
+			var querystring = buildQueryString(params)
+			var currentPath
+
+			if (queryIndex > -1) {
+				currentPath = currentRoute.slice(0, queryIndex)
+			} else {
+				currentPath = currentRoute
+			}
+
+			if (querystring) {
+				currentRoute = currentPath +
+					(currentPath.indexOf("?") === -1 ? "?" : "&") +
+					querystring
+			}
+
+			var replaceHistory =
+				(arguments.length === 3 ? arg2 : arg1) === true ||
+				previousRoute === currentRoute
+
+			if (global.history.pushState) {
+				var method = replaceHistory ? "replaceState" : "pushState"
+				computePreRedrawHook = setScroll
+				computePostRedrawHook = function () {
+					try {
+						global.history[method](null, $document.title,
+							modes[m.route.mode] + currentRoute)
+					} catch (err) {
+						// In the event of a pushState or replaceState failure,
+						// fallback to a standard redirect. This is specifically
+						// to address a Safari security error when attempting to
+						// call pushState more than 100 times.
+						$location[m.route.mode] = currentRoute
+					}
+				}
+				redirect(modes[m.route.mode] + currentRoute)
+			} else {
+				$location[m.route.mode] = currentRoute
+				redirect(modes[m.route.mode] + currentRoute)
+			}
+
+			previousRoute = null
+		}
+	}
+
+	m.route.param = function (key) {
+		if (!routeParams) {
+			throw new Error("You must call m.route(element, defaultRoute, " +
+				"routes) before calling m.route.param()")
+		}
+
+		if (!key) {
+			return routeParams
+		}
+
+		return routeParams[key]
+	}
+
+	m.route.mode = "search"
+
+	function normalizeRoute(route) {
+		return route.slice(modes[m.route.mode].length)
+	}
+
+	function routeByValue(root, router, path) {
+		routeParams = {}
+
+		var queryStart = path.indexOf("?")
+		if (queryStart !== -1) {
+			routeParams = parseQueryString(
+				path.substr(queryStart + 1, path.length))
+			path = path.substr(0, queryStart)
+		}
+
+		// Get all routes and check if there's
+		// an exact match for the current path
+		var keys = Object.keys(router)
+		var index = keys.indexOf(path)
+
+		if (index !== -1){
+			m.mount(root, router[keys [index]])
+			return true
+		}
+
+		for (var route in router) {
+			if (hasOwn.call(router, route)) {
+				if (route === path) {
+					m.mount(root, router[route])
+					return true
+				}
+
+				var matcher = new RegExp("^" + route
+					.replace(/:[^\/]+?\.{3}/g, "(.*?)")
+					.replace(/:[^\/]+/g, "([^\\/]+)") + "\/?$")
+
+				if (matcher.test(path)) {
+					/* eslint-disable no-loop-func */
+					path.replace(matcher, function () {
+						var keys = route.match(/:[^\/]+/g) || []
+						var values = [].slice.call(arguments, 1, -2)
+						forEach(keys, function (key, i) {
+							routeParams[key.replace(/:|\./g, "")] =
+								decodeURIComponent(values[i])
+						})
+						m.mount(root, router[route])
+					})
+					/* eslint-enable no-loop-func */
+					return true
+				}
+			}
+		}
+	}
+
+	function routeUnobtrusive(e) {
+		e = e || event
+		if (e.ctrlKey || e.metaKey || e.shiftKey || e.which === 2) return
+
+		if (e.preventDefault) {
+			e.preventDefault()
+		} else {
+			e.returnValue = false
+		}
+
+		var currentTarget = e.currentTarget || e.srcElement
+		var args
+
+		if (m.route.mode === "pathname" && currentTarget.search) {
+			args = parseQueryString(currentTarget.search.slice(1))
+		} else {
+			args = {}
+		}
+
+		while (currentTarget && !/a/i.test(currentTarget.nodeName)) {
+			currentTarget = currentTarget.parentNode
+		}
+
+		// clear pendingRequests because we want an immediate route change
+		pendingRequests = 0
+		m.route(currentTarget[m.route.mode]
+			.slice(modes[m.route.mode].length), args)
+	}
+
+	function setScroll() {
+		if (m.route.mode !== "hash" && $location.hash) {
+			$location.hash = $location.hash
+		} else {
+			global.scrollTo(0, 0)
+		}
+	}
+
+	function buildQueryString(object, prefix) {
+		var duplicates = {}
+		var str = []
+
+		for (var prop in object) {
+			if (hasOwn.call(object, prop)) {
+				var key = prefix ? prefix + "[" + prop + "]" : prop
+				var value = object[prop]
+
+				if (value === null) {
+					str.push(encodeURIComponent(key))
+				} else if (isObject(value)) {
+					str.push(buildQueryString(value, key))
+				} else if (isArray(value)) {
+					var keys = []
+					duplicates[key] = duplicates[key] || {}
+					/* eslint-disable no-loop-func */
+					forEach(value, function (item) {
+						/* eslint-enable no-loop-func */
+						if (!duplicates[key][item]) {
+							duplicates[key][item] = true
+							keys.push(encodeURIComponent(key) + "=" +
+								encodeURIComponent(item))
+						}
+					})
+					str.push(keys.join("&"))
+				} else if (value !== undefined) {
+					str.push(encodeURIComponent(key) + "=" +
+						encodeURIComponent(value))
+				}
+			}
+		}
+
+		return str.join("&")
+	}
+
+	function parseQueryString(str) {
+		if (str === "" || str == null) return {}
+		if (str.charAt(0) === "?") str = str.slice(1)
+
+		var pairs = str.split("&")
+		var params = {}
+
+		forEach(pairs, function (string) {
+			var pair = string.split("=")
+			var key = decodeURIComponent(pair[0])
+			var value = pair.length === 2 ? decodeURIComponent(pair[1]) : null
+			if (params[key] != null) {
+				if (!isArray(params[key])) params[key] = [params[key]]
+				params[key].push(value)
+			} else params[key] = value
+		})
+
+		return params
+	}
+
+	m.route.buildQueryString = buildQueryString
+	m.route.parseQueryString = parseQueryString
+
+	function reset(root) {
+		var cacheKey = getCellCacheKey(root)
+		clear(root.childNodes, cellCache[cacheKey])
+		cellCache[cacheKey] = undefined
+	}
+
+	m.deferred = function () {
+		var deferred = new Deferred()
+		deferred.promise = propify(deferred.promise)
+		return deferred
+	}
+
+	function propify(promise, initialValue) {
+		var prop = m.prop(initialValue)
+		promise.then(prop)
+		prop.then = function (resolve, reject) {
+			return propify(promise.then(resolve, reject), initialValue)
+		}
+
+		prop["catch"] = prop.then.bind(null, null)
+		return prop
+	}
+	// Promiz.mithril.js | Zolmeister | MIT
+	// a modified version of Promiz.js, which does not conform to Promises/A+
+	// for two reasons:
+	//
+	// 1) `then` callbacks are called synchronously (because setTimeout is too
+	//    slow, and the setImmediate polyfill is too big
+	//
+	// 2) throwing subclasses of Error cause the error to be bubbled up instead
+	//    of triggering rejection (because the spec does not account for the
+	//    important use case of default browser error handling, i.e. message w/
+	//    line number)
+
+	var RESOLVING = 1
+	var REJECTING = 2
+	var RESOLVED = 3
+	var REJECTED = 4
+
+	function Deferred(onSuccess, onFailure) {
+		var self = this
+		var state = 0
+		var promiseValue = 0
+		var next = []
+
+		self.promise = {}
+
+		self.resolve = function (value) {
+			if (!state) {
+				promiseValue = value
+				state = RESOLVING
+
+				fire()
+			}
+
+			return self
+		}
+
+		self.reject = function (value) {
+			if (!state) {
+				promiseValue = value
+				state = REJECTING
+
+				fire()
+			}
+
+			return self
+		}
+
+		self.promise.then = function (onSuccess, onFailure) {
+			var deferred = new Deferred(onSuccess, onFailure)
+
+			if (state === RESOLVED) {
+				deferred.resolve(promiseValue)
+			} else if (state === REJECTED) {
+				deferred.reject(promiseValue)
+			} else {
+				next.push(deferred)
+			}
+
+			return deferred.promise
+		}
+
+		function finish(type) {
+			state = type || REJECTED
+			next.map(function (deferred) {
+				if (state === RESOLVED) {
+					deferred.resolve(promiseValue)
+				} else {
+					deferred.reject(promiseValue)
+				}
+			})
+		}
+
+		function thennable(then, success, failure, notThennable) {
+			if (((promiseValue != null && isObject(promiseValue)) ||
+					isFunction(promiseValue)) && isFunction(then)) {
+				try {
+					// count protects against abuse calls from spec checker
+					var count = 0
+					then.call(promiseValue, function (value) {
+						if (count++) return
+						promiseValue = value
+						success()
+					}, function (value) {
+						if (count++) return
+						promiseValue = value
+						failure()
+					})
+				} catch (e) {
+					m.deferred.onerror(e)
+					promiseValue = e
+					failure()
+				}
+			} else {
+				notThennable()
+			}
+		}
+
+		function fire() {
+			// check if it's a thenable
+			var then
+			try {
+				then = promiseValue && promiseValue.then
+			} catch (e) {
+				m.deferred.onerror(e)
+				promiseValue = e
+				state = REJECTING
+				return fire()
+			}
+
+			if (state === REJECTING) {
+				m.deferred.onerror(promiseValue)
+			}
+
+			thennable(then, function () {
+				state = RESOLVING
+				fire()
+			}, function () {
+				state = REJECTING
+				fire()
+			}, function () {
+				try {
+					if (state === RESOLVING && isFunction(onSuccess)) {
+						promiseValue = onSuccess(promiseValue)
+					} else if (state === REJECTING && isFunction(onFailure)) {
+						promiseValue = onFailure(promiseValue)
+						state = RESOLVING
+					}
+				} catch (e) {
+					m.deferred.onerror(e)
+					promiseValue = e
+					return finish()
+				}
+
+				if (promiseValue === self) {
+					promiseValue = TypeError()
+					finish()
+				} else {
+					thennable(then, function () {
+						finish(RESOLVED)
+					}, finish, function () {
+						finish(state === RESOLVING && RESOLVED)
+					})
+				}
+			})
+		}
+	}
+
+	m.deferred.onerror = function (e) {
+		if (type.call(e) === "[object Error]" &&
+				!/ Error/.test(e.constructor.toString())) {
+			pendingRequests = 0
+			throw e
+		}
+	}
+
+	m.sync = function (args) {
+		var deferred = m.deferred()
+		var outstanding = args.length
+		var results = []
+		var method = "resolve"
+
+		function synchronizer(pos, resolved) {
+			return function (value) {
+				results[pos] = value
+				if (!resolved) method = "reject"
+				if (--outstanding === 0) {
+					deferred.promise(results)
+					deferred[method](results)
+				}
+				return value
+			}
+		}
+
+		if (args.length > 0) {
+			forEach(args, function (arg, i) {
+				arg.then(synchronizer(i, true), synchronizer(i, false))
+			})
+		} else {
+			deferred.resolve([])
+		}
+
+		return deferred.promise
+	}
+
+	function identity(value) { return value }
+
+	function handleJsonp(options) {
+		var callbackKey = options.callbackName || "mithril_callback_" +
+			new Date().getTime() + "_" +
+			(Math.round(Math.random() * 1e16)).toString(36)
+
+		var script = $document.createElement("script")
+
+		global[callbackKey] = function (resp) {
+			script.parentNode.removeChild(script)
+			options.onload({
+				type: "load",
+				target: {
+					responseText: resp
+				}
+			})
+			global[callbackKey] = undefined
+		}
+
+		script.onerror = function () {
+			script.parentNode.removeChild(script)
+
+			options.onerror({
+				type: "error",
+				target: {
+					status: 500,
+					responseText: JSON.stringify({
+						error: "Error making jsonp request"
+					})
+				}
+			})
+			global[callbackKey] = undefined
+
+			return false
+		}
+
+		script.onload = function () {
+			return false
+		}
+
+		script.src = options.url +
+			(options.url.indexOf("?") > 0 ? "&" : "?") +
+			(options.callbackKey ? options.callbackKey : "callback") +
+			"=" + callbackKey +
+			"&" + buildQueryString(options.data || {})
+
+		$document.body.appendChild(script)
+	}
+
+	function createXhr(options) {
+		var xhr = new global.XMLHttpRequest()
+		xhr.open(options.method, options.url, true, options.user,
+			options.password)
+
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4) {
+				if (xhr.status >= 200 && xhr.status < 300) {
+					options.onload({type: "load", target: xhr})
+				} else {
+					options.onerror({type: "error", target: xhr})
+				}
+			}
+		}
+
+		if (options.serialize === JSON.stringify &&
+				options.data &&
+				options.method !== "GET") {
+			xhr.setRequestHeader("Content-Type",
+				"application/json; charset=utf-8")
+		}
+
+		if (options.deserialize === JSON.parse) {
+			xhr.setRequestHeader("Accept", "application/json, text/*")
+		}
+
+		if (isObject(options.headers)) {
+			for (var header in options.headers) {
+				if (hasOwn.call(options.headers, header)) {
+					xhr.setRequestHeader(header, options.headers[header])
+				}
+			}
+		}
+
+		if (isFunction(options.config)) {
+			var maybeXhr = options.config(xhr, options)
+			if (maybeXhr != null) xhr = maybeXhr
+		}
+
+		var data = options.method === "GET" || !options.data ? "" : options.data
+
+		if (data && !isString(data) && data.constructor !== global.FormData) {
+			throw new Error("Request data should be either be a string or " +
+				"FormData. Check the `serialize` option in `m.request`")
+		}
+
+		xhr.send(data)
+		return xhr
+	}
+
+	function ajax(options) {
+		if (options.dataType && options.dataType.toLowerCase() === "jsonp") {
+			return handleJsonp(options)
+		} else {
+			return createXhr(options)
+		}
+	}
+
+	function bindData(options, data, serialize) {
+		if (options.method === "GET" && options.dataType !== "jsonp") {
+			var prefix = options.url.indexOf("?") < 0 ? "?" : "&"
+			var querystring = buildQueryString(data)
+			options.url += (querystring ? prefix + querystring : "")
+		} else {
+			options.data = serialize(data)
+		}
+	}
+
+	function parameterizeUrl(url, data) {
+		if (data) {
+			url = url.replace(/:[a-z]\w+/gi, function (token){
+				var key = token.slice(1)
+				var value = data[key] || token
+				delete data[key]
+				return value
+			})
+		}
+		return url
+	}
+
+	m.request = function (options) {
+		if (options.background !== true) m.startComputation()
+		var deferred = new Deferred()
+		var isJSONP = options.dataType &&
+			options.dataType.toLowerCase() === "jsonp"
+
+		var serialize, deserialize, extract
+
+		if (isJSONP) {
+			serialize = options.serialize =
+			deserialize = options.deserialize = identity
+
+			extract = function (jsonp) { return jsonp.responseText }
+		} else {
+			serialize = options.serialize = options.serialize || JSON.stringify
+
+			deserialize = options.deserialize =
+				options.deserialize || JSON.parse
+			extract = options.extract || function (xhr) {
+				if (xhr.responseText.length || deserialize !== JSON.parse) {
+					return xhr.responseText
+				} else {
+					return null
+				}
+			}
+		}
+
+		options.method = (options.method || "GET").toUpperCase()
+		options.url = parameterizeUrl(options.url, options.data)
+		bindData(options, options.data, serialize)
+		options.onload = options.onerror = function (ev) {
+			try {
+				ev = ev || event
+				var response = deserialize(extract(ev.target, options))
+				if (ev.type === "load") {
+					if (options.unwrapSuccess) {
+						response = options.unwrapSuccess(response, ev.target)
+					}
+
+					if (isArray(response) && options.type) {
+						forEach(response, function (res, i) {
+							response[i] = new options.type(res)
+						})
+					} else if (options.type) {
+						response = new options.type(response)
+					}
+
+					deferred.resolve(response)
+				} else {
+					if (options.unwrapError) {
+						response = options.unwrapError(response, ev.target)
+					}
+
+					deferred.reject(response)
+				}
+			} catch (e) {
+				deferred.reject(e)
+				m.deferred.onerror(e)
+			} finally {
+				if (options.background !== true) m.endComputation()
+			}
+		}
+
+		ajax(options)
+		deferred.promise = propify(deferred.promise, options.initialValue)
+		return deferred.promise
+	}
+
+	return m
+}); // eslint-disable-line
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
 
 /***/ }),
 
@@ -72561,6 +73457,620 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 }());
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./node_modules/util/support/isBufferBrowser.js":
+/*!******************************************************!*\
+  !*** ./node_modules/util/support/isBufferBrowser.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+
+/***/ }),
+
+/***/ "./node_modules/util/util.js":
+/*!***********************************!*\
+  !*** ./node_modules/util/util.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = __webpack_require__(/*! ./support/isBuffer */ "./node_modules/util/support/isBufferBrowser.js");
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits_browser.js");
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
