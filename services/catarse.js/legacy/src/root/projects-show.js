@@ -38,14 +38,16 @@ const projectsShow = {
                     user_id: project_user_id
                 } : null
             });
-            h.analytics.event({
-                cat: 'project_view',
-                act: 'project_page_view',
-                project: project_id ? {
-                    id: project_id,
-                    user_id: project_user_id
-                } : null
-            }).call();
+            setTimeout(function(){
+                h.analytics.event({
+                    cat: 'project_view',
+                    act: 'project_page_view',
+                    project: project_id ? {
+                        id: project_id,
+                        user_id: project_user_id
+                    } : null
+                }).call();
+            },1000);
         } catch (e) {
             console.error(e);
         }
