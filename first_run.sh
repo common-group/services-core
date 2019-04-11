@@ -22,9 +22,11 @@ sleep 10
 
 # running dev demo settings
 docker-compose exec catarse bundle exec rake dev_seed:demo_settings
+sleep 5
 
 # running generate fdw
 docker-compose exec catarse bundle exec rake common:generate_fdw
+sleep 5
 
 # rerun migrations
 docker-compose up catarse_migrations
