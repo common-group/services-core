@@ -249,6 +249,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     // só roda se nao for firstRun
                     try {
                         CatarseAnalytics.pageView(false);
+                        CatarseAnalytics.origin(); //force update of origin's cookie
                     } catch (e) {
                         console.error(e);
                     }
@@ -26907,14 +26908,16 @@ var projectsShow = {
                     user_id: project_user_id
                 } : null
             });
-            _h2.default.analytics.event({
-                cat: 'project_view',
-                act: 'project_page_view',
-                project: project_id ? {
-                    id: project_id,
-                    user_id: project_user_id
-                } : null
-            }).call();
+            setTimeout(function () {
+                _h2.default.analytics.event({
+                    cat: 'project_view',
+                    act: 'project_page_view',
+                    project: project_id ? {
+                        id: project_id,
+                        user_id: project_user_id
+                    } : null
+                }).call();
+            }, 1000);
         } catch (e) {
             console.error(e);
         }
