@@ -52,7 +52,7 @@ const projectAbout = {
 
         return m('#project-about', [
             m('.project-about.w-col.w-col-8', {
-                config: h.UIHelper()
+                oncreate: h.UIHelper()
             }, [
                 m('p.fontsize-base', [
                     m('strong', 'O projeto'),
