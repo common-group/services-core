@@ -30,7 +30,12 @@ const addGoal = (projectId) => {
     }));
 };
 
-const fetchGoals = projectId => goalsLoader(projectId).load().then(goals);
+const fetchGoals = projectId => goalsLoader(projectId).load().then(goalsData => {
+    goals(goalsData);
+    setTimeout(_ => {
+        m.redraw();
+    }, 1000);
+});
 
 const fetchGoalsEdit = (projectId) => {
     if (_.isEmpty(goals())) {

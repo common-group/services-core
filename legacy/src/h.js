@@ -461,9 +461,9 @@ const
         return l;
     },
 
-    UIHelper = () => (el, isInitialized) => {
-        if (!isInitialized && window.$ && window.UIHelper) {
-            window.UIHelper.setupResponsiveIframes($(el));
+    UIHelper = () => (vnode) => {
+        if (window.$ && window.UIHelper) {
+            window.UIHelper.setupResponsiveIframes($(vnode.dom));
         }
     },
 
