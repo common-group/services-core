@@ -20544,15 +20544,22 @@ mask = function mask(maskDefinition, value) {
 },
     analyticsWindowScroll = function analyticsWindowScroll(eventObj) {
     if (eventObj) {
-        var fired = false;
-        window.addEventListener('scroll', function (e) {
-            // console.log('windowScroll');
-            if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                fired = true;
-                var fireEvent = analyticsEvent(eventObj);
-                fireEvent();
-            }
-        });
+        setTimeout(function () {
+            var u = window.location.href;
+            var fired = false;
+            window.addEventListener('scroll', function sc(e) {
+                //console.log('windowScroll');
+                var same = window.location.href === u;
+                if (same && !fired && window.$ && $(document).scrollTop() > $(window).height() / 2) {
+                    fired = true;
+                    var fireEvent = analyticsEvent(eventObj);
+                    fireEvent();
+                    window.removeEventListener('scroll', sc);
+                } else if (!same) {
+                    window.removeEventListener('scroll', sc);
+                }
+            });
+        }, 1000);
     }
 },
     analytics = {
