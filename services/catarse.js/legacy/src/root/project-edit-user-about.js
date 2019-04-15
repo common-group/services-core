@@ -4,16 +4,16 @@ import userVM from '../vms/user-vm';
 import userAboutEdit from '../c/user-about-edit';
 
 const projectEditUserAbout = {
-    controller: function(args) {
-        return {
-            user: userVM.fetchUser(args.user_id)
+    oninit: function(vnode) {
+        vnode.state = {
+            user: userVM.fetchUser(vnode.attrs.user_id)
         };
     },
 
-    view: function(ctrl, args) {
-        return (ctrl.user() ? m(userAboutEdit, {
-            user: ctrl.user(),
-            userId: args.user_id,
+    view: function({state, attrs}) {
+        return (state.user() ? m(userAboutEdit, {
+            user: state.user(),
+            userId: attrs.user_id,
             useFloatBtn: true,
             hideDisableAcc: true,
             hideCoverImg: true,

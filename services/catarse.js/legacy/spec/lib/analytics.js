@@ -306,7 +306,6 @@ window.CatarseAnalytics = window.CatarseAnalytics || (function(){
           }
           var eventKey = eventObj.cat && eventObj.act ? eventObj.cat+'_'+eventObj.act : (eventObj.cat || eventObj.act);
           if (!_analyticsOneTimeEventFired[eventKey]) {
-              //console.log('oneTimeEvent',eventKey);
               _analyticsOneTimeEventFired[eventKey] = true;
               _event(eventObj, fn);
           }

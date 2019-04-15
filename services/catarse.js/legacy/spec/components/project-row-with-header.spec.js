@@ -1,26 +1,24 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectRowWithHeader from '../../src/c/project-row-with-header'
 
 describe('ProjectRowWithHeader', () => {
-    var $output;
+    let $output;
 
     describe('view', () => {
         let collection = {
             title: 'test collection',
             hash: 'testhash',
-            collection: m.prop([]),
-            loader: m.prop(false)
+            collection: prop([]),
+            loader: prop(false)
         };
 
         describe('when collection is empty and loader true', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(true);
-                let component = m.component(projectRowWithHeader),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRowWithHeader, { collection });
             });
 
             it('should render loader', () => {
@@ -32,11 +30,7 @@ describe('ProjectRowWithHeader', () => {
             beforeAll(() => {
                 collection.collection([]);
                 collection.loader(false);
-                let component = m.component(projectRowWithHeader),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRowWithHeader, { collection });
             });
 
             it('should render nothing', () => {
@@ -48,11 +42,7 @@ describe('ProjectRowWithHeader', () => {
         describe('when collection has projects', () => {
             beforeAll(() => {
                 collection.collection(ProjectMockery());
-                let component = m.component(projectRowWithHeader),
-                    view = component.view(null, {
-                        collection: collection
-                    });
-                $output = mq(view);
+                $output = mq(projectRowWithHeader, { collection });
             });
 
             it('should render projects in row', () => {

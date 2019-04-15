@@ -1,10 +1,11 @@
 import { catarse } from '../api';
 import _ from 'underscore';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import h from '../h';
 
-const goals = m.prop([]),
+const goals = prop([]),
     vm = catarse.filtersVM({
         project_id: 'eq'
     });
@@ -19,29 +20,34 @@ const goalsLoader = (projectId) => {
 };
 
 const addGoal = (projectId) => {
-    goals().push(m.prop({
-        id: m.prop(null),
-        project_id: m.prop(projectId),
+    goals().push(prop({
+        id: prop(null),
+        project_id: prop(projectId),
         editing: h.toggleProp(true, false),
-        value: m.prop(''),
-        title: m.prop(''),
-        description: m.prop('')
+        value: prop(''),
+        title: prop(''),
+        description: prop('')
     }));
 };
 
-const fetchGoals = projectId => goalsLoader(projectId).load().then(goals);
+const fetchGoals = projectId => goalsLoader(projectId).load().then(goalsData => {
+    goals(goalsData);
+    setTimeout(_ => {
+        m.redraw();
+    }, 1000);
+});
 
 const fetchGoalsEdit = (projectId) => {
     if (_.isEmpty(goals())) {
         goalsLoader(projectId).load().then((data) => {
             _.map(data, (goal) => {
-                const goalProp = m.prop({
-                    id: m.prop(goal.id),
-                    project_id: m.prop(projectId),
+                const goalProp = prop({
+                    id: prop(goal.id),
+                    project_id: prop(projectId),
                     editing: h.toggleProp(false, true),
-                    value: m.prop(goal.value),
-                    title: m.prop(goal.title),
-                    description: m.prop(goal.description)
+                    value: prop(goal.value),
+                    title: prop(goal.title),
+                    description: prop(goal.description)
                 });
                 goals().push(goalProp);
             });

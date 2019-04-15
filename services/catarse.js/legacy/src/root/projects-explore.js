@@ -7,6 +7,7 @@
  * <div data-mithril="ProjectsExplore">
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import {
     catarse,
     commonRecommender
@@ -24,19 +25,19 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const filters = catarse.filtersVM,
             projectFiltersVM = projectFilters(),
             filtersMap = projectFiltersVM.filters,
             currentUser = h.getUser() || {},
-            chosenRecommender = m.prop(null),
-            currentMode = m.prop(filtersMap.all_modes),
-            selectedCategory = m.prop({
+            chosenRecommender = prop(null),
+            currentMode = prop(filtersMap.all_modes),
+            selectedCategory = prop({
                 name: 'Todas as categorias',
                 id: null
             }),
             defaultFilter = h.paramByName('filter') || 'all',
-            currentFilter = m.prop(filtersMap[defaultFilter]),
+            currentFilter = prop(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
             //availableRecommenders = ['recommended_1', 'recommended_2'],
             availableRecommenders = [],
@@ -90,21 +91,24 @@ const projectsExplore = {
                 loadRoute();
             },
             hasFBAuth = currentUser.has_fb_auth,
-            isSearch = m.prop(false),
-            categoryCollection = m.prop([]),
-            categoryId = m.prop(),
+            isSearch = prop(false),
+            categoryCollection = prop([]),
+            categoryId = prop(),
             findCategory = id => _.find(categoryCollection(), c => c.id === parseInt(id)),
             category = _.compose(findCategory, categoryId),
             loadCategories = () => models.category.getPageWithToken(filters({}).order({
                 name: 'asc'
-            }).parameters()).then(categoryCollection),
+            }).parameters()).then(c => {
+                categoryCollection(c);
+                m.redraw();
+            }),
             externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories,
             hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]),
             // just small fix when have two scored projects only
             checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
             // Fake projects object to be able to render page while loadding (in case of search)
-            projects = m.prop({
-                collection: m.prop([]),
+            projects = prop({
+                collection: prop([]),
                 isLoading: () => true,
                 isLastPage: () => true
             }),
@@ -151,7 +155,9 @@ const projectsExplore = {
                             filter.filter.parameters(),
                             rFilter.parameters(),
                             currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages.firstPage(parameters);
+                        pages
+                            .firstPage(parameters)
+                            .then(_ => m.redraw());
                         return pages;
                     },
 
@@ -160,12 +166,18 @@ const projectsExplore = {
                                 query: search
                             })),
                             page = { // We build an object with the same interface as paginationVM
-                                collection: m.prop([]),
+                                collection: prop([]),
                                 isLoading: l,
                                 isLastPage: () => true,
                                 nextPage: () => false
                             };
-                        l.load().then(page.collection);
+                        l
+                            .load()
+                            .then(p => {
+                                page.collection(p);
+                                m.redraw();
+                                return p;
+                            });
                         return page;
                     },
 
@@ -181,7 +193,9 @@ const projectsExplore = {
                             score: 'desc',
                             pledged: 'desc'
                         }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages.firstPage(parameters);
+                        pages
+                            .firstPage(parameters)
+                            .then(_ => m.redraw());
                         return pages;
                     },
 
@@ -194,7 +208,9 @@ const projectsExplore = {
                                 state: 'desc',
                                 pledged: 'desc'
                             }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages.firstPage(parameters);
+                        pages
+                            .firstPage(parameters)
+                            .then(_ => m.redraw());
 
                         return pages;
                     };
@@ -223,7 +239,7 @@ const projectsExplore = {
                 }
                 categoryId(cat && cat.id);
             },
-            title = m.prop();
+            title = prop();
 
         window.addEventListener('hashchange', () => {
             resetContextFilter();
@@ -241,8 +257,8 @@ const projectsExplore = {
         models.project.pageSize(9);
         loadCategories().then(loadRoute);
 
-        if (args.filter) {
-            currentFilter(filtersMap[args.filter]);
+        if (vnode.attrs.filter) {
+            currentFilter(filtersMap[vnode.attrs.filter]);
         }
 
         if (!currentFilter()) {
@@ -252,7 +268,7 @@ const projectsExplore = {
         let notWasTried = true;
 
         const tryLoadFromQueryPath = () => {
-            const innerDefaultFilter = h.paramByName('filter') || args.filter || 'all'
+            const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all'
             const projectModes = ['sub', 'not_sub'];
             const isSubscriptionOrAonFlex = projectModes.indexOf(innerDefaultFilter) >= 0;
             const filterIsForContributedByFriends = innerDefaultFilter === 'contributed_by_friends';
@@ -267,7 +283,7 @@ const projectsExplore = {
             }
         }
 
-        return {
+        vnode.state = {
             categories: categoryCollection,
             changeFilter,
             resetContextFilter,
@@ -295,27 +311,27 @@ const projectsExplore = {
             tryLoadFromQueryPath
         };
     },
-    view: function(ctrl, args) {
-        const categoryId = ctrl.categoryId,
-            projectsCollection = ctrl.projects().collection(),
+    view: function({state, attrs}) {
+        const categoryId = state.categoryId,
+            projectsCollection = state.projects().collection(),
             projectsCount = projectsCollection.length,
-            filterKeyName = ctrl.currentFilter().keyName,
+            filterKeyName = state.currentFilter().keyName,
             isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends'),
-            hasSpecialFooter = ctrl.hasSpecialFooter(categoryId());
+            hasSpecialFooter = state.hasSpecialFooter(categoryId());
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
             m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
                     onclick: () => {
-                        ctrl.categoryToggle.toggle();
-                        ctrl.selectedCategory(category);
+                        state.categoryToggle.toggle();
+                        state.selectedCategory(category);
                     },
-                    class: ctrl.selectedCategory() === category ? 'selected' : ''
+                    class: state.selectedCategory() === category ? 'selected' : ''
                 },
                 category.name
             )
         );
         let widowProjects = [];
 
-        ctrl.tryLoadFromQueryPath();
+        state.tryLoadFromQueryPath();
 
         return m('#explore', {
             config: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -330,44 +346,44 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.modeToggle.toggle
+                            onclick: state.modeToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'MODALIDADE'
                             ),
                             m('.inline-block',
-                                ctrl.currentMode().title
+                                state.currentMode().title
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
-                        ctrl.modeToggle() ? '' :
+                        state.modeToggle() ? '' :
                         m('.explore-filter-select', [
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.changeMode('all_modes');
+                                        state.changeMode('all_modes');
                                     },
-                                    class: ctrl.currentMode() === null ? 'selected' : ''
+                                    class: state.currentMode() === null ? 'selected' : ''
                                 },
                                 'Todos os projetos'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.changeMode('not_sub');
+                                        state.changeMode('not_sub');
                                     },
-                                    class: ctrl.currentMode() === 'not_sub' ? 'selected' : ''
+                                    class: state.currentMode() === 'not_sub' ? 'selected' : ''
                                 },
                                 'Projetos pontuais'
                             ),
                             m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                     onclick: () => {
-                                        ctrl.changeMode('sub');
+                                        state.changeMode('sub');
                                     },
-                                    class: ctrl.currentMode() === 'sub' ? 'selected' : ''
+                                    class: state.currentMode() === 'sub' ? 'selected' : ''
                                 },
                                 'Assinaturas'
                             ),
                             m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                onclick: ctrl.modeToggle.toggle
+                                onclick: state.modeToggle.toggle
                             })
                         ])
                     ]),
@@ -376,84 +392,84 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: ctrl.categoryToggle.toggle
+                            onclick: state.categoryToggle.toggle
                         }, [
                             m('.explore-mobile-label',
                                 'CATEGORIA'
                             ),
                             m('.inline-block',
-                                ctrl.selectedCategory().name
+                                state.selectedCategory().name
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
-                        ctrl.categoryToggle() ? '' :
+                        state.categoryToggle() ? '' :
                         m('.explore-filter-select.big',
                             m('.explore-filer-select-row', [
                                 m('.explore-filter-select-col', [
                                     m("a.explore-filter-link[href='#']", {
                                             onclick: () => {
-                                                ctrl.categoryToggle.toggle();
-                                                ctrl.selectedCategory({
+                                                state.categoryToggle.toggle();
+                                                state.selectedCategory({
                                                     name: 'Todas as categorias',
                                                     id: null
                                                 });
                                             },
-                                            class: ctrl.selectedCategory().id === null ? 'selected' : ''
+                                            class: state.selectedCategory().id === null ? 'selected' : ''
                                         },
                                         'Todas as categorias'
                                     ),
-                                    categoryColumn(ctrl.categories(), 0, Math.floor(_.size(ctrl.categories()) / 2))
+                                    categoryColumn(state.categories(), 0, Math.floor(_.size(state.categories()) / 2))
                                 ]),
                                 m('.explore-filter-select-col', [
-                                    categoryColumn(ctrl.categories(), Math.floor(_.size(ctrl.categories()) / 2), _.size(ctrl.categories()))
+                                    categoryColumn(state.categories(), Math.floor(_.size(state.categories()) / 2), _.size(state.categories()))
                                 ]),
                                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                    onclick: ctrl.categoryToggle.toggle
+                                    onclick: state.categoryToggle.toggle
                                 })
                             ])
                         )
                     ]),
-                    ctrl.showFilter() ? [
+                    state.showFilter() ? [
                         m('.explore-text-fixed',
                             'que são'
                         ),
                         m('.explore-filter-wrapper', [
                             m('.explore-span-filter', {
-                                onclick: ctrl.filterToggle.toggle
+                                onclick: state.filterToggle.toggle
                             }, [
                                 m('.explore-mobile-label',
                                     'FILTRO'
                                 ),
                                 m('.inline-block',
-                                    ctrl.currentFilter().nicename
+                                    state.currentFilter().nicename
                                 ),
                                 m('.inline-block.fa.fa-angle-down')
                             ]),
-                            ctrl.filterToggle() ? '' :
+                            state.filterToggle() ? '' :
                             m('.explore-filter-select', [
-                                _.map(ctrl.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
                                         onclick: () => {
-                                            ctrl.changeFilter(pageFilter.keyName);
-                                            ctrl.filterToggle.toggle();
+                                            state.changeFilter(pageFilter.keyName);
+                                            state.filterToggle.toggle();
                                         },
-                                        class: ctrl.currentFilter() === pageFilter ? 'selected' : ''
+                                        class: state.currentFilter() === pageFilter ? 'selected' : ''
                                     },
                                     pageFilter.nicename
                                 )),
                                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                    onclick: ctrl.filterToggle.toggle
+                                    onclick: state.filterToggle.toggle
                                 })
                             ])
                         ])
                     ] : ''
                 ])
-            ]), !ctrl.projects().isLoading() && _.isFunction(ctrl.projects().total) && !_.isUndefined(ctrl.projects().total()) ?
+            ]), !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
             m('div',
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-9.w-col-tiny-9.w-col-small-9',
                             m('.fontsize-large',
-                                `${ctrl.projects().total()} projetos encontrados`
+                                `${state.projects().total()} projetos encontrados`
                             )
                         ),
                         m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
@@ -461,7 +477,7 @@ const projectsExplore = {
                 )
             ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
-                (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect) : '') :
+                (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
                 ''),
             m('.w-section.section', [
                 m('.w-container', [
@@ -470,12 +486,12 @@ const projectsExplore = {
                             let cardType = 'small',
                                 ref = 'ctrse_explore';
 
-                            if (ctrl.isSearch()) {
+                            if (state.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
                             } else if (isContributedByFriendsFilter) {
                                 ref = 'ctrse_explore_friends';
-                            } else if (_.indexOf(ctrl.availableRecommenders, ctrl.currentFilter().keyName) !== -1) {
-                                ref = `ctrse_${ctrl.currentFilter().keyName}`;
+                            } else if (_.indexOf(state.availableRecommenders, state.currentFilter().keyName) !== -1) {
+                                ref = `ctrse_${state.currentFilter().keyName}`;
                             } else if (filterKeyName === 'all') {
                                 if (project.score >= 1) {
                                     if (idx === 0) {
@@ -483,7 +499,7 @@ const projectsExplore = {
                                         ref = 'ctrse_explore_featured_big';
                                         widowProjects = [projectsCount - 1, projectsCount - 2];
                                     } else if (idx === 1 || idx === 2) {
-                                        if (ctrl.checkForMinScoredProjects(projectsCollection)) {
+                                        if (state.checkForMinScoredProjects(projectsCollection)) {
                                             cardType = 'medium';
                                             ref = 'ctrse_explore_featured_medium';
                                             widowProjects = [];
@@ -498,14 +514,14 @@ const projectsExplore = {
                                 }
                             }
 
-                            return (_.indexOf(widowProjects, idx) > -1 && !ctrl.projects().isLastPage()) ? '' : m.component(projectCard, {
+                            return (_.indexOf(widowProjects, idx) > -1 && !state.projects().isLastPage()) ? '' : m(projectCard, {
                                 project,
                                 ref,
                                 type: cardType,
                                 showFriends: isContributedByFriendsFilter
                             });
                         })),
-                        ctrl.projects().isLoading() ? h.loader() : ''
+                        state.projects().isLoading() ? h.loader() : ''
                     ])
                 ])
             ]),
@@ -514,9 +530,12 @@ const projectsExplore = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-2.w-col-push-5', [
-                            (ctrl.projects().isLastPage() || ctrl.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
+                            (state.projects().isLastPage() || state.projects().isLoading() || _.isEmpty(projectsCollection)) ? '' : m('a.btn.btn-medium.btn-terciary[href=\'#loadMore\']', {
                                 onclick: () => {
-                                    ctrl.projects().nextPage();
+                                    state
+                                        .projects()
+                                        .nextPage()
+                                        .then(_ => m.redraw());
                                     return false;
                                 }
                             }, 'Carregar mais')
@@ -529,16 +548,16 @@ const projectsExplore = {
                 m('.w-container.u-text-center', [
                     m('img.u-marginbottom-20.icon-hero', {
                         src: hasSpecialFooter ?
-                            ctrl.externalLinkCategories[categoryId()].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
+                            state.externalLinkCategories[categoryId()].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
                     }),
                     m('h2.fontsize-larger.u-marginbottom-60',
-                        hasSpecialFooter ? ctrl.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
+                        hasSpecialFooter ? state.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             hasSpecialFooter ?
                             m('a.w-button.btn.btn-large', {
-                                href: `${ctrl.externalLinkCategories[categoryId()].link}?ref=ctrse_explore`
-                            }, ctrl.externalLinkCategories[categoryId()].cta) :
+                                href: `${state.externalLinkCategories[categoryId()].link}?ref=ctrse_explore`
+                            }, state.externalLinkCategories[categoryId()].cta) :
                             m('a.w-button.btn.btn-large', {
                                 href: '/start?ref=ctrse_explore'
                             }, 'Aprenda como')

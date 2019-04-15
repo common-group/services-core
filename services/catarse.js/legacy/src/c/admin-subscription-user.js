@@ -14,33 +14,34 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import adminUser from './admin-user';
 import userVM from '../vms/user-vm';
 
 const adminSubscriptionUser = {
-    controller: function(args) {
-        const user = m.prop({});
-        userVM.fetchUser(args.item.user_external_id, false).then((data) => {
+    oninit: function(vnode) {
+        const user = prop({});
+        userVM.fetchUser(vnode.attrs.item.user_external_id, false).then((data) => {
             user(_.first(data));
         });
-        return {
+        vnode.state = {
             user
         };
     },
-    view: function(ctrl, args) {
-        const item = args.item,
+    view: function({state, attrs}) {
+        const item = attrs.item,
             customer = item.checkout_data ? item.checkout_data.customer : {},
             user = {
-                profile_img_thumbnail: ctrl.user() ? ctrl.user().profile_img_thumbnail : '',
+                profile_img_thumbnail: state.user() ? state.user().profile_img_thumbnail : '',
                 id: item.user_external_id,
                 name: customer.name,
                 email: item.user_email
             };
 
         const additionalData = m('.fontsize-smallest.fontcolor-secondary', `Gateway: ${customer.email}`);
-        return ctrl.user() ? m.component(adminUser, {
+        return state.user() ? m(adminUser, {
             item: user,
             additional_data: additionalData
         }) : h.loader();

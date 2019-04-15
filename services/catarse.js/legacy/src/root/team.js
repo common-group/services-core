@@ -12,8 +12,8 @@ const team = {
                       'Conheça nosso time')
                 ])
             ]),
-            m.component(teamTotal),
-            m.component(teamMembers)
+            m(teamTotal),
+            m(teamMembers)
         ]);
     }
 };

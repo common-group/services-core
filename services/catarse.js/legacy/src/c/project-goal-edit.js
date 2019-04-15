@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -10,7 +11,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectGoalVM,
             mapErrors = [
                   ['mode', ['mode']],
@@ -22,11 +23,11 @@ const projectGoalEdit = {
             showModeDiff = h.toggleProp(false, true),
             showTaxesDiff = h.toggleProp(false, true),
             applyGoalMask = _.compose(vm.fields.goal, h.applyMonetaryMask),
-            loading = m.prop(false),
+            loading = prop(false),
             onSubmit = (event) => {
                 loading(true);
                 m.redraw();
-                vm.updateProject(args.projectId).then((data) => {
+                vm.updateProject(vnode.attrs.projectId).then((data) => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
@@ -46,9 +47,9 @@ const projectGoalEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
-        return {
+        vnode.state = {
             onSubmit,
             showSuccess,
             showError,
@@ -59,20 +60,20 @@ const projectGoalEdit = {
             loading
         };
     },
-    view: function(ctrl, args) {
-        const vm = ctrl.vm;
+    view: function({state, attrs}) {
+        const vm = state.vm;
         return m('#goal-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
@@ -95,12 +96,12 @@ const projectGoalEdit = {
                                         ])
                                     ]),
                                     m('.u-text-center.fontsize-smaller', [
-                                        m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: ctrl.showModeDiff.toggle }, [
+                                        m('a.mode-diff-toggle.link-hidden-light.fontweight-semibold[href="javascript:void(0);"]', { onclick: state.showModeDiff.toggle }, [
                                             'Veja a diferença entre os modelos ',
                                             m('span.fa.fa-chevron-down')
                                         ])
                                     ]),
-                                    (ctrl.showModeDiff() ? m('.mode-diff.u-margintop-30', [
+                                    (state.showModeDiff() ? m('.mode-diff.u-margintop-30', [
                                         m('.flex-row', [
                                             m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('aon_diff_html', I18nScope()))),
                                             m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('flex_diff_html', I18nScope())))
@@ -132,7 +133,7 @@ const projectGoalEdit = {
                                                                 class: vm.e.hasError('goal') ? 'error' : false,
                                                                 value: vm.fields.goal(),
                                                                 maxlength: 14,
-                                                                onkeyup: m.withAttr('value', ctrl.applyGoalMask)
+                                                                onkeyup: m.withAttr('value', state.applyGoalMask)
                                                             }),
                                                         ]),
                                                     ])
@@ -143,13 +144,13 @@ const projectGoalEdit = {
                                     ]),
                                     m('.u-text-center.fontsize-smaller.fontweight-semibold', [
                                         m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
-                                            onclick: ctrl.showTaxesDiff.toggle
+                                            onclick: state.showTaxesDiff.toggle
                                         }, [
                                             window.I18n.t('goal_taxes_link', I18nScope()),
                                             m('span.fa.fa-chevron-down')
                                         ])
                                     ]),
-                                    (ctrl.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
+                                    (state.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
                                         m('.u-marginbottom-30', [
                                             m('.fontsize-small.fontweight-semibold', window.I18n.t('goal_taxes_label', I18nScope())),
                                             m('.fontsize-smaller', window.I18n.t(`goal_${vm.fields.mode()}_taxes_hint`, I18nScope()))
@@ -230,7 +231,7 @@ const projectGoalEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
 
         ]);

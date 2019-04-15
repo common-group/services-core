@@ -1,16 +1,17 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
 const projectGoalsBox = {
-    controller: function(args) {
-        const subscriptionData = args.subscriptionData() || {
+    oninit: function(vnode) {
+        const subscriptionData = vnode.attrs.subscriptionData() || {
                 amount_paid_for_valid_period: 0
             },
-            initialGoalIndex = args.goalDetails().length > 0 ? _.findIndex(args.goalDetails(), goal => goal.value > subscriptionData.amount_paid_for_valid_period) : 0,
-            currentGoalIndex = m.prop(initialGoalIndex),
+            initialGoalIndex = vnode.attrs.goalDetails().length > 0 ? _.findIndex(vnode.attrs.goalDetails(), goal => goal.value > subscriptionData.amount_paid_for_valid_period) : 0,
+            currentGoalIndex = prop(initialGoalIndex),
             nextGoal = () => {
-                if (currentGoalIndex() < args.goalDetails().length - 1) {
+                if (currentGoalIndex() < vnode.attrs.goalDetails().length - 1) {
                     currentGoalIndex((currentGoalIndex() + 1));
                 }
             },
@@ -22,26 +23,26 @@ const projectGoalsBox = {
             };
         // amount is higher than max goal
         if (currentGoalIndex() === -1) {
-            currentGoalIndex(args.goalDetails().length - 1);
+            currentGoalIndex(vnode.attrs.goalDetails().length - 1);
         }
-        return { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
+        vnode.state = { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
     },
-    view: function(ctrl, args) {
-        const goals = args.goalDetails().length > 0 ? args.goalDetails() : [{
+    view: function({state, attrs}) {
+        const goals = attrs.goalDetails().length > 0 ? attrs.goalDetails() : [{
                 title: 'N/A',
                 value: '',
                 description: ''
             }],
-            subscriptionData = ctrl.subscriptionData,
-            currentGoalIndex = ctrl.currentGoalIndex,
+            subscriptionData = state.subscriptionData,
+            currentGoalIndex = state.currentGoalIndex,
             goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
 
         return m('div',
-          m(`.card.u-marginbottom-30.u-radius${args.style}`, [
+          m(`.card.u-marginbottom-30.u-radius${attrs.style}`, [
               m('.w-clearfix', [
                   m('.u-right', [
-                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-left.w-button', { onclick: ctrl.previousGoal, class: currentGoalIndex() === 0 ? 'btn-desactivated' : '' }),
-                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-right.w-button', { onclick: ctrl.nextGoal, class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : '' })
+                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-left.w-button', { onclick: state.previousGoal, class: currentGoalIndex() === 0 ? 'btn-desactivated' : '' }),
+                      m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-right.w-button', { onclick: state.nextGoal, class: currentGoalIndex() === goals.length - 1 ? 'btn-desactivated' : '' })
                   ]),
                   m('.fontsize-base.fontweight-semibold.u-marginbottom-20.w-hidden-small.w-hidden-tiny',
                     m('span',

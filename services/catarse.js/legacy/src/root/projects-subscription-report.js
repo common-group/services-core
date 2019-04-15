@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import {
     catarse,
@@ -26,22 +27,23 @@ const statusCustomFilter = {
 };
 
 const dropdownFilterCustomLabel = {
-    view: function(ctrl, args) 
+    view: function({attrs}) 
     {
-        return m('.fontsize-smaller.u-text-center', args.label);
+        return m('.fontsize-smaller.u-text-center', attrs.label);
     }
 };
 
 const projectSubscriptionReport = {
-    controller: function (args) {
+    oninit: function (vnode) {
         const filterVM = projectsSubscriptionReportVM,
             catarseVM = projectsContributionReportVM,
-            dropdownNumber = m.prop(0),
-            error = m.prop(false),
-            loader = m.prop(true),
-            isProjectDataLoaded = m.prop(false),
-            isRewardsDataLoaded = m.prop(false),
-            rewards = m.prop([]),
+            dropdownNumber = prop(0),
+            error = prop(false),
+            loader = prop(true),
+            isProjectDataLoaded = prop(false),
+            isRewardsDataLoaded = prop(false),
+            rewards = prop([]),
+            requestRedraw = h.createRequestAutoRedraw(isProjectDataLoaded, rewards),
             subscriptions = commonPayment.paginationVM(models.userSubscription, 'last_payment_data_created_at.desc', {
                 Prefer: 'count=exact'
             }),
@@ -49,9 +51,9 @@ const projectSubscriptionReport = {
                 // Set order by last paid on filters too
                 filterVM.order({ last_payment_data_created_at: 'desc' });
                 if (filterVM.reward_external_id() === 'null') {
-                    subscriptions.firstPage(filterVM.withNullParameters()).then(null);
+                    subscriptions.firstPage(filterVM.withNullParameters()).then(requestRedraw);
                 } else {
-                    subscriptions.firstPage(filterVM.parameters()).then(null);
+                    subscriptions.firstPage(filterVM.parameters()).then(requestRedraw);
                 }
 
                 return false;
@@ -200,10 +202,11 @@ const projectSubscriptionReport = {
                 loader(false);
                 isProjectDataLoaded(true);
                 m.redraw();
+                requestRedraw()
             },
-            project = m.prop([{}]);
+            project = prop([{}]);
 
-        catarseVM.project_id(args.project_id);
+        catarseVM.project_id(vnode.attrs.project_id);
 
         const lReward = catarse.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: `eq.${catarseVM.project_id()}`
@@ -212,6 +215,7 @@ const projectSubscriptionReport = {
         lReward.load().then((loadedRewards) => {
             rewards(loadedRewards);
             isRewardsDataLoaded(true);
+            requestRedraw();
         });
         const mapRewardsToOptions = () => {
             let options = [];
@@ -246,11 +250,12 @@ const projectSubscriptionReport = {
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
                 isProjectDataLoaded(true);
+                requestRedraw();
             }).catch(handleError);
             project(data);
         });
 
-        return {
+        vnode.state = {
             filterVM,
             mapRewardsToOptions,
             filterBuilder,
@@ -262,10 +267,9 @@ const projectSubscriptionReport = {
             isRewardsDataLoaded
         };
     },
-    view: function (ctrl, args) {
-
-        const subsCollection = ctrl.subscriptions.collection(),
-            filterBuilder = ctrl.filterBuilder,
+    view: function ({state, attrs}) {
+        const subsCollection = state.subscriptions.collection(),
+            filterBuilder = state.filterBuilder,
             statusFilter = _.findWhere(filterBuilder, {
                 label: 'status_filter'
             }),
@@ -284,11 +288,11 @@ const projectSubscriptionReport = {
             paidCountFilter = _.findWhere(filterBuilder, {
                 label: 'paid_count_filter'
             });
-        rewardFilter.data.options = ctrl.mapRewardsToOptions();
-        if (ctrl.isProjectDataLoaded() && ctrl.isRewardsDataLoaded()) {
+        rewardFilter.data.options = state.mapRewardsToOptions();
+        if (state.isProjectDataLoaded() && state.isRewardsDataLoaded()) {
             return m('div', [
-                m.component(projectDashboardMenu, {
-                    project: m.prop(_.first(ctrl.project()))
+                m(projectDashboardMenu, {
+                    project: prop(_.first(state.project()))
                 }),
                 m('.dashboard-header', [
                     m('.w-container',
@@ -305,17 +309,17 @@ const projectSubscriptionReport = {
                     m('.u-marginbottom-30.w-container',
                         m('.w-form', [
                             m('form', {
-                                onsubmit: ctrl.submit
+                                onsubmit: state.submit
                             },
                                 m('w-row', [
-                                    m.component(textFilter.component, textFilter.data),
+                                    m(textFilter.component, textFilter.data),
                                     m('.w-col.w-col-9',
                                         m('.w-row', [
-                                            m.component(statusFilter.component, statusFilter.data),
-                                            m.component(rewardFilter.component, rewardFilter.data),
-                                            m.component(paymentFilter.component, paymentFilter.data),
-                                            m.component(totalPaidFilter.component, totalPaidFilter.data),
-                                            m.component(paidCountFilter.component, paidCountFilter.data),
+                                            m(statusFilter.component, statusFilter.data),
+                                            m(rewardFilter.component, rewardFilter.data),
+                                            m(paymentFilter.component, paymentFilter.data),
+                                            m(totalPaidFilter.component, totalPaidFilter.data),
+                                            m(paidCountFilter.component, paidCountFilter.data),
                                         ])
                                     )
                                 ])
@@ -331,15 +335,15 @@ const projectSubscriptionReport = {
                                 m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6',
                                     m('.w-inline-block.fontsize-base.u-marginright-10', [
                                         m('span.fontweight-semibold',
-                                            ctrl.subscriptions.total()
+                                            state.subscriptions.total()
                                         ),
                                         ' pessoas',
                                         m.trust('&nbsp;')
                                     ])
                                 ),
                                 m('.w-col.w-col-6',
-                                    m(`a.alt-link.fontsize-small.u-right[href='/projects/${args.project_id}/subscriptions_report_download']`, {
-                                        config: m.route
+                                    m(`a.alt-link.fontsize-small.u-right[href='/projects/${attrs.project_id}/subscriptions_report_download']`, {
+                                        oncreate: m.route.link
                                     }, [
                                             m('span.fa.fa-download',
                                                 m.trust('&nbsp;')
@@ -396,7 +400,7 @@ const projectSubscriptionReport = {
                         m('.w-container',
                             m('.u-marginbottom-60.w-row', [
                                 m(loadMoreBtn, {
-                                    collection: ctrl.subscriptions,
+                                    collection: state.subscriptions,
                                     cssClass: '.w-col-push-4'
                                 })
                             ])

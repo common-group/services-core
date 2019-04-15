@@ -9,6 +9,7 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -18,10 +19,10 @@ const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
 
 const projectDashboardMenu = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
-            validating = m.prop(false),
+            validating = prop(false),
             showPublish = h.toggleProp(true, false),
             bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed'),
             validatePublish = () => {
@@ -29,11 +30,11 @@ const projectDashboardMenu = {
                 m.redraw();
                 m.request({
                     method: 'GET',
-                    url: `/projects/${args.project().project_id}/validate_publish`,
+                    url: `/projects/${vnode.attrs.project().project_id}/validate_publish`,
                     config: h.setCsrfToken
                 }).then(() => {
                     validating(false);
-                    window.location.href = (`/projects/${args.project().project_id}/publish`);
+                    window.location.href = (`/projects/${vnode.attrs.project().project_id}/publish`);
                     m.redraw();
                 }).catch((err) => {
                     validating(false);
@@ -51,15 +52,15 @@ const projectDashboardMenu = {
                 return project.large_image;
             };
 
-        if (args.project().is_published) {
+        if (vnode.attrs.project().is_published) {
             editLinksToggle.toggle(false);
         }
 
-        if (args.hidePublish) {
+        if (vnode.attrs.hidePublish) {
             showPublish.toggle(false);
         }
 
-        return {
+        vnode.state = {
             body,
             validating,
             validatePublish,
@@ -69,21 +70,21 @@ const projectDashboardMenu = {
             projectThumb
         };
     },
-    view: function(ctrl, args) {
-        const project = args.project(),
+    view: function({state, attrs}) {
+        const project = attrs.project(),
             projectRoute = `/projects/${project.project_id}`,
             editRoute = `${projectRoute}/edit`,
             editLinkClass = hash => `dashboard-nav-link-left ${project.is_published ? 'indent' : ''} ${h.hashMatch(hash) ? 'selected' : ''}`;
         const optionalOpt = m('span.fontsize-smallest.fontcolor-secondary', ' (opcional)');
 
-        ctrl.body.className = ctrl.bodyToggleForNav();
+        state.body.className = state.bodyToggleForNav();
         return m('#project-nav', [
             m('.project-nav-wrapper', [
                 m('nav.w-section.dashboard-nav.side', [
                     m(`a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="${project.is_published ? `/${project.permalink}` : `${editRoute}#preview`}"]`, {
-                        onclick: projectVM.routeToProject(project, args.ref)
+                        onclick: projectVM.routeToProject(project, attrs.ref)
                     }, [
-                        m(`img.thumb-project-dashboard[src="${project ? ctrl.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
+                        m(`img.thumb-project-dashboard[src="${project ? state.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
                         m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"]`, {
                             width: projectVM.isSubscription(project) ? 130 : 80
@@ -95,18 +96,18 @@ const projectDashboardMenu = {
                             m('span.fa.fa-info.fa-lg.fa-fw'), window.I18n.t('draft_start_tab', I18nScope())
                         ]) :
                         m(`a#dashboard_home_link[class="dashboard-nav-link-left ${h.locationActionMatch('insights') ? 'selected' : ''}"][href="${projectRoute}/insights"]`, {
-                            config: m.route
+                            oncreate: m.route.link
                         }, [
                             m('span.fa.fa-bar-chart.fa-lg.fa-fw'), window.I18n.t('start_tab', I18nScope())
                         ]), (project.is_published ? [
                             projectVM.isSubscription(project) ?
                             m(`a#dashboard_subscriptions_link[class="dashboard-nav-link-left ${h.locationActionMatch('subscriptions_report') ? 'selected' : ''}"][href="${projectRoute}/subscriptions_report"]`, {
-                                config: m.route
+                                oncreate: m.route.link
                             }, [
                                 m('span.fa.fa.fa-users.fa-lg.fa-fw'), window.I18n.t('subscriptions_tab', I18nScope())
                             ]) :
                             m(`a#dashboard_reports_link[class="dashboard-nav-link-left ${h.locationActionMatch('contributions_report') ? 'selected' : ''}"][href="${projectRoute}/contributions_report"]`, {
-                                config: m.route
+                                oncreate: m.route.link
                             }, [
                                 m('span.fa.fa.fa-table.fa-lg.fa-fw'), window.I18n.t('reports_tab', I18nScope())
                             ]),
@@ -120,13 +121,13 @@ const projectDashboardMenu = {
 
                             (projectVM.isSubscription(project) ? '' :
                                 m(`a#dashboard_surveys_link[class="dashboard-nav-link-left ${h.locationActionMatch('surveys') ? 'selected' : ''}"][href="${projectRoute}/surveys"]`, {
-                                    config: m.route
+                                    oncreate: m.route.link
                                 }, [
                                     m('span.fa.fa.fa-check-square-o.fa-lg.fa-fw'), window.I18n.t('surveys_tab', I18nScope())
                                 ])),
 
                             m(`a#dashboard_fiscal_link[class="dashboard-nav-link-left ${h.locationActionMatch('fiscal') ? 'selected' : ''}"][href="${projectRoute}/fiscal"]`, {
-                                config: m.route
+                                oncreate: m.route.link
                             }, [
                                 m('span.fa.fa.fa-book.fa-lg.fa-fw'), window.I18n.t('fiscal_tab', I18nScope())
                             ])
@@ -135,10 +136,10 @@ const projectDashboardMenu = {
                     ]),
                     m('.edit-project-div', [
                         (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
-                            onclick: ctrl.editLinksToggle.toggle
+                            onclick: state.editLinksToggle.toggle
                         }, [
                             m('span.fa.fa-pencil.fa-fw.fa-lg'), window.I18n.t('edit_project', I18nScope())
-                        ])), (ctrl.editLinksToggle() ? m('#edit-menu-items', [
+                        ])), (state.editLinksToggle() ? m('#edit-menu-items', [
                             m('#dashboard-links', [
                                 ((!project.is_published || project.is_admin_role) ? [
                                     m(`a#basics_link[class="${editLinkClass('#basics')}"][href="${editRoute}#basics"]`, railsErrorsVM.errorsFor('basics'), window.I18n.t('basics_tab', linksScope())),
@@ -169,18 +170,18 @@ const projectDashboardMenu = {
                                 ] : '')
                             ])
                         ]) : ''),
-                        ((!project.is_published && ctrl.showPublish()) ? [
-                            (ctrl.validating() ? h.loader() :
+                        ((!project.is_published && state.showPublish()) ? [
+                            (state.validating() ? h.loader() :
                                 m('.btn-send-draft-fixed',
                                     (project.mode === 'aon' ? [
                                         (project.state === 'draft' ? m('button.btn.btn-medium', {
-                                            onclick: ctrl.validatePublish
+                                            onclick: state.validatePublish
                                         }, [
                                             window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
                                     ] : [
                                         (project.state === 'draft' ? m('button.btn.btn-medium', {
-                                            onclick: ctrl.validatePublish
+                                            onclick: state.validatePublish
                                         }, [
                                             window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
@@ -196,7 +197,7 @@ const projectDashboardMenu = {
                 ]),
             ]),
             m('a.btn-dashboard href="javascript:void(0);"', {
-                onclick: ctrl.bodyToggleForNav.toggle
+                onclick: state.bodyToggleForNav.toggle
             }, [
                 m('span.fa.fa-bars.fa-lg')
             ])

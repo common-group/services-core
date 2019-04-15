@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 
@@ -8,7 +9,7 @@ const openQuestionType = 'open',
         type: openQuestionType,
         question: '',
         description: '',
-        survey_question_choices_attributes: m.prop([
+        survey_question_choices_attributes: prop([
             {
                 option: 'opção 1'
             },
@@ -19,9 +20,9 @@ const openQuestionType = 'open',
         toggleDropdown: h.toggleProp(false, true)
     });
 
-const dashboardQuestions = m.prop([newQuestion()]);
+const dashboardQuestions = prop([newQuestion()]);
 const confirmAddress = h.toggleProp(true, false);
-const questionWithEmptyFields = m.prop([]);
+const questionWithEmptyFields = prop([]);
 
 const submitQuestions = rewardId => m.request({
     method: 'POST',

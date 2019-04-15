@@ -5,7 +5,6 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'legacy/spec/lib/mithril-query/mithril-query.js',
             'legacy/spec/lib/jasmine-species/jasmine-grammar.js',
             'legacy/spec/lib/jasmine-matchers.js',
             'legacy/spec/lib/jasmine-ajax/mock-ajax.js',
@@ -15,7 +14,7 @@ module.exports = (config) => {
             'node_modules/mithril/mithril.js',
             'node_modules/underscore/underscore.js',
             'node_modules/liquidjs/dist/liquid.js',
-            'node_modules/mithril-postgrest/dist/mithril-postgrest.js',
+            'node_modules/mithril-postgrest/mithril-postgrest.umd.js',
             'node_modules/chart.js/Chart.js',
             'node_modules/moment/moment.js',
             'node_modules/select/dist/select.js',
@@ -25,6 +24,7 @@ module.exports = (config) => {
             'legacy/spec/index.spec.js',
         ],
         preprocessors: {
+            'legacy/spec/lib/mithril-query/mithril-query.js' : ['webpack'],
             'legacy/spec/**/*.spec.js': ['webpack'],
             'legacy/spec/index.spec.js': ['webpack']
         },

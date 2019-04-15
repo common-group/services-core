@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import categoryButton from '../../src/c/category-button';
 
@@ -7,7 +8,7 @@ describe('CategoryButton', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(m.component(categoryButton, {
+            $output = mq(m(categoryButton, {
                 category: {
                     id: 1,
                     name: 'cat',

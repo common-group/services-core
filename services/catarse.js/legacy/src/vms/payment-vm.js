@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment, { defaultFormat } from 'moment';
 import h from '../h';
@@ -8,10 +9,10 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 const paymentVM = () => {
-    const pagarme = m.prop({}),
+    const pagarme = prop({}),
         defaultCountryID = 36,
-        submissionError = m.prop(false),
-        isLoading = m.prop(false);
+        submissionError = prop(false),
+        isLoading = prop(false);
 
     const setCsrfToken = (xhr) => {
         if (h.authenticityToken()) {
@@ -20,22 +21,22 @@ const paymentVM = () => {
     };
 
     const fields = {
-        completeName: m.prop(''),
+        completeName: prop(''),
         anonymous: h.toggleProp(false, true),
-        address: m.prop({ country_id: defaultCountryID }),
-        ownerDocument: m.prop(''),
-        errors: m.prop([])
+        address: prop({ country_id: defaultCountryID }),
+        ownerDocument: prop(''),
+        errors: prop([])
     };
 
     const creditCardFields = {
-        name: m.prop(''),
-        number: m.prop(''),
-        expMonth: m.prop(''),
-        expYear: m.prop(''),
-        save: m.prop(false),
-        cvv: m.prop(''),
-        errors: m.prop([]),
-        cardOwnerDocument: m.prop('')
+        name: prop(''),
+        number: prop(''),
+        expMonth: prop(''),
+        expYear: prop(''),
+        save: prop(false),
+        cvv: prop(''),
+        errors: prop([]),
+        cardOwnerDocument: prop('')
     };
 
     const populateForm = (fetchedData) => {
@@ -139,7 +140,7 @@ const paymentVM = () => {
     };
 
     const getSlipPaymentDate = (contribution_id) => {
-        const paymentDate = m.prop();
+        const paymentDate = prop();
 
         m.request({
             method: 'GET',
@@ -192,7 +193,7 @@ const paymentVM = () => {
         }
     };
 
-    const savedCreditCards = m.prop([]);
+    const savedCreditCards = prop([]);
 
     const getSavedCreditCards = (user_id) => {
         const otherSample = {
@@ -276,39 +277,40 @@ const paymentVM = () => {
     };
 
     const payWithNewCard = (contribution_id, installment) => {
-        const deferred = m.deferred();
-        m.request({
-            method: 'GET',
-            url: `/payment/pagarme/${contribution_id}/get_encryption_key`,
-            config: setCsrfToken
-        }).then((data) => {
-            window.PagarMe.encryption_key = data.key;
-            const card = setNewCreditCard();
-            const errors = card.fieldErrors();
-            if (_.keys(errors).length > 0) {
-                deferred.reject({ message: window.I18n.t('submission.card_invalid', scope()) });
-            } else {
-                card.generateHash((cardHash) => {
-                    const data = {
-                        card_hash: cardHash,
-                        save_card: creditCardFields.save().toString(),
-                        payment_card_installments: installment
-                    };
+        const p = new Promise((resolve, reject) => {
+            m.request({
+                method: 'GET',
+                url: `/payment/pagarme/${contribution_id}/get_encryption_key`,
+                config: setCsrfToken
+            }).then((data) => {
+                window.PagarMe.encryption_key = data.key;
+                const card = setNewCreditCard();
+                const errors = card.fieldErrors();
+                if (_.keys(errors).length > 0) {
+                    reject({ message: window.I18n.t('submission.card_invalid', scope()) });
+                } else {
+                    card.generateHash((cardHash) => {
+                        const data = {
+                            card_hash: cardHash,
+                            save_card: creditCardFields.save().toString(),
+                            payment_card_installments: installment
+                        };
 
-                    requestPayment(data, contribution_id)
-                        .then(deferred.resolve)
-                        .catch(deferred.reject);
-                });
-            }
-        }).catch((error) => {
-            if (!_.isEmpty(error.message)) {
-                deferred.reject(error);
-            } else {
-                deferred.reject({ message: window.I18n.t('submission.encryption_error', scope()) });
-            }
+                        requestPayment(data, contribution_id)
+                            .then(resolve)
+                            .catch(reject);
+                    });
+                }
+            }).catch((error) => {
+                if (!_.isEmpty(error.message)) {
+                    reject(error);
+                } else {
+                    reject({ message: window.I18n.t('submission.encryption_error', scope()) });
+                }
+            });
         });
 
-        return deferred.promise;
+        return p;
     };
 
     const updateContributionData = (contribution_id, project_id) => {
@@ -361,22 +363,24 @@ const paymentVM = () => {
     };
 
     const sendPayment = (selectedCreditCard, selectedInstallment, contribution_id, project_id) => {
-        const deferred = m.deferred();
-        if (validate()) {
-            isLoading(true);
-            submissionError(false);
-            m.redraw();
-            updateContributionData(contribution_id, project_id)
-                .then(checkAndPayCreditCard(deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment))
-                .catch(() => {
-                    isLoading(false);
-                    deferred.reject();
-                });
-        } else {
-            isLoading(false);
-            deferred.reject();
-        }
-        return deferred.promise;
+        const p = new Promise((resolve, reject) => {
+            if (validate()) {
+                isLoading(true);
+                submissionError(false);
+                m.redraw();
+                updateContributionData(contribution_id, project_id)
+                    .then(checkAndPayCreditCard({resolve, reject}, selectedCreditCard, contribution_id, project_id, selectedInstallment))
+                    .catch(() => {
+                        isLoading(false);
+                        reject();
+                    });
+            } else {
+                isLoading(false);
+                reject();
+            }
+        });
+
+        return p;
     };
 
     const resetFieldError = fieldName => () => {
@@ -395,7 +399,7 @@ const paymentVM = () => {
         return newErrors(creditCardFields.errors(), errorField);
     };
 
-    const installments = m.prop([{ value: 10, number: 1 }]);
+    const installments = prop([{ value: 10, number: 1 }]);
 
     const getInstallments = contribution_id => m.request({
         method: 'GET',

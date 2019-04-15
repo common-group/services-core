@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import copyTextInput from './copy-text-input';
@@ -9,13 +10,13 @@ import inlineError from './inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const dashboardRewardCard = {
-    controller: function(args) {
-        const reward = args.reward(),
-            imageFileToUpload = m.prop(null),
-            isUploadingRewardImage = m.prop(false),
-            isDeletingRewardImage = m.prop(false),
+    controller: function(vnode) {
+        const reward = vnode.attrs.reward(),
+            imageFileToUpload = prop(null),
+            isUploadingRewardImage = prop(false),
+            isDeletingRewardImage = prop(false),
             availableCount = () => reward.maximum_contributions() - reward.paid_count() - reward.waiting_payment_count(),
-            limitError = m.prop(false),
+            limitError = prop(false),
             showLimited = h.toggleProp(false, true),
             toggleLimit = () => {
                 reward.limited.toggle();
@@ -26,24 +27,24 @@ const dashboardRewardCard = {
             },
             validate = () => {
                 limitError(false);
-                args.error(false);
-                args.errors('Erro ao salvar informações.');
+                vnode.attrs.error(false);
+                vnode.attrs.errors('Erro ao salvar informações.');
                 if (reward.maximum_contributions() && reward.paid_count() > reward.maximum_contributions()) {
                     limitError(true);
-                    args.error(true);
+                    vnode.attrs.error(true);
                 }
             },
             saveReward = () => {
                 validate();
-                if (args.error()) {
+                if (vnode.attrs.error()) {
                     return false;
                 }
                 const data = {
                     maximum_contributions: reward.maximum_contributions()
                 };
 
-                rewardVM.updateReward(args.project().project_id, reward.id(), data).then(() => {
-                    args.showSuccess(true);
+                rewardVM.updateReward(vnode.attrs.project().project_id, reward.id(), data).then(() => {
+                    vnode.attrs.showSuccess(true);
                     showLimited.toggle();
                     reward.limited(reward.maximum_contributions() !== null);
                     m.redraw();
@@ -51,22 +52,22 @@ const dashboardRewardCard = {
                 return false;
             },
             onSelectImageFile = () => {
-                const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${args.index}`);
+                const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${vnode.attrs.index}`);
                 if (rewardImageFile.files.length) {
 
                     imageFileToUpload(rewardImageFile.files[0]);
                     isUploadingRewardImage(true);
-                    args.uploadImage(reward, imageFileToUpload, args.project().id, reward.id())
+                    vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project().id, reward.id())
                         .then(r_with_image => {
                             if (r_with_image) {
                                 reward.uploaded_image(r_with_image.uploaded_image);
                                 imageFileToUpload(null);
-                                args.showSuccess(true);
+                                vnode.attrs.showSuccess(true);
                             }
                             isUploadingRewardImage(false);
                         })
                         .catch(error => {
-                            args.showSuccess(false);
+                            vnode.attrs.showSuccess(false);
                             isUploadingRewardImage(false);
                         })
                 }
@@ -78,7 +79,7 @@ const dashboardRewardCard = {
                     imageFileToUpload(null);
                 } else {
                     isDeletingRewardImage(true);
-                    args.deleteImage(reward, args.project().id, reward.id())
+                    vnode.attrs.deleteImage(reward, vnode.attrs.project().id, reward.id())
                         .then(r => {
                             if (r) {
                                 imageFileToUpload(null);
@@ -95,7 +96,7 @@ const dashboardRewardCard = {
                 }
             };
 
-        return {
+        vnode.state = {
             availableCount,
             toggleShowLimit,
             toggleLimit,
@@ -109,12 +110,15 @@ const dashboardRewardCard = {
             isDeletingRewardImage
         };
     },
-    view: function(ctrl, args) {
-        const reward = args.reward();
-        const project = args.project();
+    view: function({state, attrs}) {
+        const reward = attrs.reward();
+        const project = attrs.project();
         const isSubscription = projectVM.isSubscription(project);
-        const isUploadingRewardImage = ctrl.isUploadingRewardImage();
-        const isDeletingRewardImage = ctrl.isDeletingRewardImage();
+        const isUploadingRewardImage = state.isUploadingRewardImage;
+        const isDeletingRewardImage = state.isDeletingRewardImage;
+        const tryDeleteImage = state.tryDeleteImage;
+        const onSelectImageFile = state.onSelectImageFile;
+        const availableCount = state.availableCount;
 
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
@@ -129,7 +133,7 @@ const dashboardRewardCard = {
                                 }))
                         )
                     ),
-                    (rewardVM.canEdit(reward, project.state, args.user) ?
+                    (rewardVM.canEdit(reward, project.state, attrs.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
                                 onclick: () => {
@@ -157,7 +161,7 @@ const dashboardRewardCard = {
 
                 // REWARD IMAGE
                 (
-                    (isUploadingRewardImage || isDeletingRewardImage) ?
+                    (isUploadingRewardImage() || isDeletingRewardImage()) ?
                         (
                             h.loader()
                         )
@@ -173,7 +177,7 @@ const dashboardRewardCard = {
                                             ]),
                                             m("div.u-marginbottom-20", 
                                                 m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
-                                                    onclick: () => ctrl.tryDeleteImage()
+                                                    onclick: () => tryDeleteImage()
                                                 })
                                             ),
                                             m(`img[src='${reward.uploaded_image()}'][alt='']`)
@@ -191,8 +195,8 @@ const dashboardRewardCard = {
                                             ]),
                                             m("div.w-form", [
                                                 m("form", 
-                                                    m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_closed_card_${args.index}']`, {
-                                                        oninput: () => ctrl.onSelectImageFile()
+                                                    m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_closed_card_${attrs.index}']`, {
+                                                        oninput: () => onSelectImageFile()
                                                     })
                                                 ),
                                                 m("div.w-form-done", 
@@ -216,7 +220,7 @@ const dashboardRewardCard = {
                 m('.fontsize-small.fontcolor-secondary',
                     m.trust(h.simpleFormat(h.strip(reward.description()))),
                 ),
-                (reward.limited() ? (ctrl.availableCount() <= 0) ?
+                (reward.limited() ? (availableCount() <= 0) ?
                     m('.u-margintop-10',
                         m('span.badge.badge-gone.fontsize-smaller',
                             window.I18n.t('reward_gone', I18nScope())
@@ -228,7 +232,7 @@ const dashboardRewardCard = {
                                 window.I18n.t('reward_limited', I18nScope())
                             ),
                             window.I18n.t('reward_available', I18nScope({
-                                available: ctrl.availableCount(),
+                                available: availableCount(),
                                 maximum: reward.maximum_contributions()
                             }))
                         ])
@@ -242,16 +246,16 @@ const dashboardRewardCard = {
                     m('b', `${window.I18n.t('delivery', I18nScope())}: `),
                     window.I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
                 m('.u-margintop-40.w-row', [
-                    (ctrl.showLimited() ? '' :
+                    (state.showLimited() ? '' :
                         m('.w-col.w-col-4', [
                             m('button.btn.btn-small.btn-terciary.w-button', {
-                                onclick: ctrl.toggleShowLimit
+                                onclick: state.toggleShowLimit
                             }, 'Alterar limite'),
 
                         ])),
                     m('.w-col.w-col-8')
                 ]),
-                m(`div${ctrl.showLimited() ? '' : '.w-hidden'}`,
+                m(`div${state.showLimited() ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
                         style: {
                             display: 'block'
@@ -263,7 +267,7 @@ const dashboardRewardCard = {
                                     m('.w-col.w-col-6',
                                         m('.w-checkbox', [
                                             m("input.w-checkbox-input[type='checkbox']", {
-                                                onclick: ctrl.toggleLimit,
+                                                onclick: state.toggleLimit,
                                                 checked: reward.limited()
                                             }),
                                             m('label.fontsize-smaller.fontweight-semibold.w-form-label',
@@ -273,7 +277,7 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-col.w-col-6',
                                         m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade disponível\'][type=\'tel\']', {
-                                            class: ctrl.limitError() ? 'error' : false,
+                                            class: state.limitError() ? 'error' : false,
                                             value: reward.maximum_contributions(),
                                             onchange: m.withAttr('value', reward.maximum_contributions)
                                         })
@@ -282,12 +286,12 @@ const dashboardRewardCard = {
                                 m('.w-row', [
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.w-button', {
-                                            onclick: ctrl.saveReward
+                                            onclick: state.saveReward
                                         }, 'Salvar')
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: ctrl.toggleShowLimit
+                                            onclick: state.toggleShowLimit
                                         },
                                             'Cancelar'
                                         )
@@ -299,7 +303,7 @@ const dashboardRewardCard = {
                     )
 
                 ),
-                ctrl.limitError() ? m(inlineError, {
+                state.limitError() ? m(inlineError, {
                     message: 'Limite deve ser maior que quantidade de apoios.'
                 }) : '', ,
             ]),
@@ -312,7 +316,7 @@ const dashboardRewardCard = {
                 ),
                 m('.w-form',
                     m('.w-col.w-col-6',
-                        m.component(copyTextInput, {
+                        m(copyTextInput, {
                             value: `https://www.catarse.me/pt/projects/${project.project_id}/${isSubscription ? 'subscriptions/start' : 'contributions/new'}?reward_id=${reward.id()}`
                         }),
                     )

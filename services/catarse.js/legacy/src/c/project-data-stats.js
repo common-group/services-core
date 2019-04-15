@@ -11,13 +11,14 @@ import _ from 'underscore';
 import h from '../h';
 
 const projectDataStats = {
-    view: function(ctrl, args) {
-        const project = args.project(),
-            visitorsTotal = args.visitorsTotal(),
+    view: function({attrs}) {
+        const project = attrs.project(),
+            visitorsTotal = attrs.visitorsTotal(),
             statusTextObj = h.projectStateTextClass(project.state, project.has_cancelation_request),
             remainingTextObj = h.translatedTime(project.remaining_time),
-            elapsedTextObj = h.translatedTime(project.elapsed_time);
-
+            elapsedTextObj = h.translatedTime(project.elapsed_time),
+            contributorsByVisitors = project.total_contributors / visitorsTotal,
+            contributorsByVisitorsValue = isNaN(contributorsByVisitors) ? contributorsByVisitors : 0;
 
         return m('', [
             m('.w-row.u-marginbottom-60.u-margintop-30.u-text-center', [
@@ -49,7 +50,7 @@ const projectDataStats = {
                                 'Visitantes'
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
-                                m('.bg-triangle-funnel.fontcolor-secondary.fontsize-base', `${h.formatNumber((project.total_contributors / visitorsTotal * 100 || 0), 2)}%`)
+                                m('.bg-triangle-funnel.fontcolor-secondary.fontsize-base', `${h.formatNumber(contributorsByVisitorsValue, 2)}%`)
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
                                 m('.fontsize-larger.fontweight-semibold', `${project.total_contributors}`),

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -14,26 +15,26 @@ import postEntry from '../c/post-entry';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const posts = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let deleteFormSubmit;
-        const showPreview = m.prop(false),
-            willSelectRewards = m.prop(false),
-            isProjectLoaded = m.prop(false),
-            isProjectPostsLoaded = m.prop(false),
-            showSuccess = m.prop(false),
-            showError = m.prop(false),
-            selectedRewardsHasError = m.prop(false),
-            titleHasError = m.prop(false),
-            commentHasError = m.prop(false),
-            projectPosts = m.prop(),
+        const showPreview = prop(false),
+            willSelectRewards = prop(false),
+            isProjectLoaded = prop(false),
+            isProjectPostsLoaded = prop(false),
+            showSuccess = prop(false),
+            showError = prop(false),
+            selectedRewardsHasError = prop(false),
+            titleHasError = prop(false),
+            commentHasError = prop(false),
+            projectPosts = prop(),
             loader = catarse.loaderWithToken,
-            errors = m.prop(''),
+            errors = prop(''),
             fields = {
-                title: m.prop(''),
-                comment_html: m.prop(''),
-                recipients: m.prop('public'),
-                radio_checked: m.prop(false),
-                paid_rewards: m.prop([]),
+                title: prop(''),
+                comment_html: prop(''),
+                recipients: prop('public'),
+                radio_checked: prop(false),
+                paid_rewards: prop([]),
                 get_selected_rewards_text: () => {
                     if (fields.recipients === 'public') {
                         return window.I18n.t(`everyone_${project.mode}`, I18nScope())
@@ -101,8 +102,8 @@ const posts = {
                 }
                 return false;
             },
-            project_id = args.project_id,
-            projectDetails = m.prop([]),
+            project_id = vnode.attrs.project_id,
+            projectDetails = prop([]),
             rewardText = (rewardId, project) => {
                 // @TODO move non-sub rewards to common API
                 if (projectVM.isSubscription(project)) {
@@ -127,7 +128,7 @@ const posts = {
                     return '...';
                 }
             },
-            toDeletePost = m.prop(-1),
+            toDeletePost = prop(-1),
             deletePost = post => () => {
                 toDeletePost(post.id);
                 m.redraw(true);
@@ -149,6 +150,7 @@ const posts = {
         listVM.load().then((posts) => {
             projectPosts(posts);
             isProjectPostsLoaded(true);
+            m.redraw();
         });
 
         const filterOnlyPaidRewards = (r) => {
@@ -168,6 +170,7 @@ const posts = {
                 };
             });
 
+            m.redraw();
             fields.paid_rewards(checkboxesArray);
             return rewards;
         };
@@ -181,15 +184,21 @@ const posts = {
         l.load().then((data) => {
             projectDetails(data);
             if (projectVM.isSubscription(_.first(projectDetails()))) {
-                rewardVM.fetchCommonRewards(_.first(projectDetails()).common_id).then(remapMinimumValue).then(createCheckboxesControlForRewardSelected);
+                rewardVM
+                    .fetchCommonRewards(_.first(projectDetails()).common_id)
+                    .then(remapMinimumValue)
+                    .then(createCheckboxesControlForRewardSelected);
             } else {
-                rewardVM.fetchRewards(project_id).then(addDataFieldToNoCommonRewards).then(createCheckboxesControlForRewardSelected);
+                rewardVM
+                    .fetchRewards(project_id)
+                    .then(addDataFieldToNoCommonRewards)
+                    .then(createCheckboxesControlForRewardSelected);
             }
 
             isProjectLoaded(true);
         });
 
-        return {
+        vnode.state = {
             listVM,
             l,
             projectPosts,
@@ -214,36 +223,36 @@ const posts = {
             isProjectLoaded
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         
-        const project = _.first(ctrl.projectDetails()),
+        const project = _.first(state.projectDetails()),
             isSubscription = projectVM.isSubscription(project),
-            recipients = ctrl.fields.recipients;
+            recipients = state.fields.recipients;
 
-        return ( (ctrl.isProjectLoaded() && ctrl.isProjectPostsLoaded()) ? m('.project-posts',
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+        return (state.isProjectLoaded() && state.isProjectPostsLoaded()) ? m('.project-posts',
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
-            ctrl.showPreview() ? m.component(postsPreview, {
-                showError: ctrl.showError,
-                showSuccess: ctrl.showSuccess,
-                errors: ctrl.errors,
-                showPreview: ctrl.showPreview,
-                project_id: ctrl.project_id,
+            state.showPreview() ? m(postsPreview, {
+                showError: state.showError,
+                showSuccess: state.showSuccess,
+                errors: state.errors,
+                showPreview: state.showPreview,
+                project_id: state.project_id,
                 mode: project.mode,
-                comment_html: ctrl.fields.comment_html,
-                title: ctrl.fields.title,
-                recipients: ctrl.fields.recipients(),
-                rewards: ctrl.fields.get_selected_reward_ids(),
+                comment_html: state.fields.comment_html,
+                title: state.fields.title,
+                recipients: state.fields.recipients(),
+                rewards: state.fields.get_selected_reward_ids(),
                 confirmationLabel: isSubscription ? 'assinantes' : 'apoiadores',
-                rewardText: ctrl.fields.get_selected_rewards_text()
+                rewardText: state.fields.get_selected_rewards_text()
             }) : [
                 m(`.w-section.section-product.${project.mode}`),
-                (ctrl.showSuccess() ? m.component(popNotification, {
+                (state.showSuccess() ? m(popNotification, {
                     message: window.I18n.t('successful', I18nScope())
                 }) : ''),
-                (ctrl.showError() ? m.component(popNotification, {
-                    message: ctrl.errors(),
+                (state.showError() ? m(popNotification, {
+                    message: state.errors(),
                     error: true
                 }) : ''),
                 m('.dashboard-header.u-text-center',
@@ -309,7 +318,7 @@ const posts = {
 
                                         // TO SOME CONTRIBUTORS/SUBSCRIBERS
                                         (
-                                            ctrl.fields.paid_rewards().length === 0 ? '' :
+                                            state.fields.paid_rewards().length === 0 ? '' :
                                             m('.fontsize-small.w-radio', [
                                                 m(`input.w-radio-input[type=radio][value='rewards']`, {
                                                     checked: recipients() === 'rewards',
@@ -325,13 +334,13 @@ const posts = {
                                         (
                                             recipients() !== 'rewards' ? '' : 
                                             m('.card.u-radius', {
-                                                class: ctrl.selectedRewardsHasError() ? 'card-message-error' : '',
+                                                class: state.selectedRewardsHasError() ? 'card-message-error' : '',
                                                 onclick: () => { 
-                                                    ctrl.selectedRewardsHasError(false);
-                                                    ctrl.showError(false);
+                                                    state.selectedRewardsHasError(false);
+                                                    state.showError(false);
                                                 }
                                             },
-                                                _.map(ctrl.fields.paid_rewards(), 
+                                                _.map(state.fields.paid_rewards(), 
                                                     pr => m(postForRewardCheckbox, {
                                                         reward_checkbox: pr.checked,
                                                         reward: pr.reward,
@@ -350,29 +359,29 @@ const posts = {
                                     ),
                                     m('input.positive.text-field.w-input[id=\'post_title\'][maxlength=\'256\'][type=\'text\']', {
                                         name: 'posts[title]',
-                                        value: ctrl.fields.title(),
+                                        value: state.fields.title(),
                                         onfocus: () => {
-                                            ctrl.titleHasError(false);
-                                            ctrl.showError(false);
+                                            state.titleHasError(false);
+                                            state.showError(false);
                                         },
-                                        class: ctrl.titleHasError() ? 'error' : '',
-                                        onchange: m.withAttr('value', ctrl.fields.title)
+                                        class: state.titleHasError() ? 'error' : '',
+                                        onchange: m.withAttr('value', state.fields.title)
                                     }),
                                     m('label.field-label.fontweight-semibold',
                                         'Texto'
                                     ),
                                     m('.preview-container.u-marginbottom-40', {
-                                        class: ctrl.commentHasError() ? 'error' : '',
+                                        class: state.commentHasError() ? 'error' : '',
                                         onclick: () => {
-                                            ctrl.commentHasError(false);
-                                            ctrl.showError(false);
+                                            state.commentHasError(false);
+                                            state.showError(false);
                                         }
-                                    }, h.redactor('posts[comment_html]', ctrl.fields.comment_html)),
+                                    }, h.redactor('posts[comment_html]', state.fields.comment_html)),
                                     m('.u-marginbottom-20.w-row', [
                                         m('.w-col.w-col-3'),
                                         m('.w-sub-col.w-col.w-col-6',
                                             m('button.btn.btn-large', {
-                                                onclick: ctrl.togglePreview
+                                                onclick: state.togglePreview
                                             },
                                                 window.I18n.t('preview', I18nScope())
                                             )
@@ -403,20 +412,20 @@ const posts = {
                                     ),
                                     m('.table-col.w-col.w-col-1')
                                 ]),
-                                (ctrl.projectPosts() ? m('.fontsize-small.table-inner', [
-                                    _.map(ctrl.projectPosts(), 
+                                (state.projectPosts() ? m('.fontsize-small.table-inner', [
+                                    _.map(state.projectPosts(), 
                                         post => m(postEntry, {
                                             post,
                                             project,
-                                            destinatedTo: ctrl.showRecipientes(post, project),
-                                            showOpenPercentage: ctrl.openedPercentage(post),
-                                            deletePost: () => ctrl.deletePost(post)
+                                            destinatedTo: state.showRecipientes(post, project),
+                                            showOpenPercentage: state.openedPercentage(post),
+                                            deletePost: () => state.deletePost(post)
                                         })
                                     ),
                                     m('form.w-hidden', {
-                                        action: `/${window.I18n.locale}/projects/${project.project_id}/posts/${ctrl.toDeletePost()}`,
+                                        action: `/${window.I18n.locale}/projects/${project.project_id}/posts/${state.toDeletePost()}`,
                                         method: 'POST',
-                                        config: ctrl.setPostDeletionForm
+                                        config: state.setPostDeletionForm
                                     }, [
                                         m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                                         m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),
@@ -429,7 +438,7 @@ const posts = {
                         m('.w-col.w-col-1')
                     ])
                 ))
-            ]) : h.loader());
+            ]) : h.loader();
     }
 };
 

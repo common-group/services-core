@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
@@ -9,16 +10,16 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 import subscriptionVM from '../vms/subscription-vm';
 
 const projectsShow = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const {
             project_id,
             project_user_id,
             post_id
-        } = args;
+        } = vnode.attrs;
         const currentUser = h.getUser(),
-            loading = m.prop(true),
-            userProjectSubscriptions = m.prop([]);
-
+            loading = prop(true),
+            userProjectSubscriptions = prop([]);
+        
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
         } else {
@@ -64,51 +65,50 @@ const projectsShow = {
             }
         };
 
-        const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id// && sub.status !== 'canceled';
-            );
+        const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id);
 
-        return {
+        vnode.state = {
             loadUserSubscriptions,
             projectVM,
             hasSubscription,
             userProjectSubscriptions
         };
     },
-    view: function(ctrl, args) {
-        const project = ctrl.projectVM.currentProject,
-            projectVM = ctrl.projectVM;
-
+    view: function({state, attrs}) {
+        const project = state.projectVM.currentProject,
+            projectVM = state.projectVM;
+        
         return m('.project-show', {
             config: projectVM.setProjectPageTitle()
         }, project() ? [
-            ctrl.loadUserSubscriptions(),
-            m.component(projectHeader, {
+            state.loadUserSubscriptions(),
+            m(projectHeader, {
                 project,
-                hasSubscription: ctrl.hasSubscription,
-                userProjectSubscriptions: ctrl.userProjectSubscriptions,
+                hasSubscription: state.hasSubscription,
+                userProjectSubscriptions: state.userProjectSubscriptions,
                 subscriptionData: projectVM.subscriptionData,
                 rewardDetails: projectVM.rewardDetails,
                 userDetails: projectVM.userDetails,
                 projectContributions: projectVM.projectContributions,
                 goalDetails: projectVM.goalDetails
             }),
-            m.component(projectTabs, {
+            m(projectTabs, {
                 project,
-                hasSubscription: ctrl.hasSubscription,
+                hasSubscription: state.hasSubscription,
                 subscriptionData: projectVM.subscriptionData,
                 rewardDetails: projectVM.rewardDetails
             }),
-            m.component(projectMain, {
+            m(projectMain, {
                 project,
-                post_id: args.post_id,
-                hasSubscription: ctrl.hasSubscription,
+                post_id: attrs.post_id,
+                hasSubscription: state.hasSubscription,
                 rewardDetails: projectVM.rewardDetails,
                 subscriptionData: projectVM.subscriptionData,
                 goalDetails: projectVM.goalDetails,
                 userDetails: projectVM.userDetails,
                 projectContributions: projectVM.projectContributions
             }),
-            (project() && project().is_owner_or_admin ? m.component(projectDashboardMenu, {
+            (project() && project().is_owner_or_admin ? m(projectDashboardMenu, {
                 project
             }) : '')
         ] : h.loader());

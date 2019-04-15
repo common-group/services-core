@@ -6,22 +6,22 @@ import projectDescriptionEdit from '../c/project-description-edit';
 import projectDescriptionVideoEdit from '../c/project-description-video-edit';
 
 const projectEditDescription = {
-    controller: function(args) {
-        return {
-            user: userVM.fetchUser(args.user_id),
-            project: projectVM.fetchProject(args.project_id)
+    oninit: function(vnode) {
+        vnode.state = {
+            user: userVM.fetchUser(vnode.attrs.user_id),
+            project: projectVM.fetchProject(vnode.attrs.project_id)
         };
     },
 
-    view: function(ctrl, args) {
-        const editComponent = projectVM.isSubscription(ctrl.project)
+    view: function({state, attrs}) {
+        const editComponent = projectVM.isSubscription(state.project)
             ? projectDescriptionVideoEdit
             : projectDescriptionEdit;
-        return (ctrl.user() && ctrl.project() ? m(editComponent, {
-            user: ctrl.user(),
-            userId: args.user_id,
-            projectId: args.project_id,
-            project: ctrl.project()
+        return (state.user() && state.project() ? m(editComponent, {
+            user: state.user(),
+            userId: attrs.user_id,
+            projectId: attrs.project_id,
+            project: state.project()
         }) : m('div', h.loader()));
     }
 };

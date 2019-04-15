@@ -1,13 +1,64 @@
 import _ from 'underscore';
 import moment from 'moment';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
 
+function RedrawScheduler() {
+    
+    let redrawsRequestCounter = 0;
+    const requestAnimationFramePolyfill = (function() {
+        if (window.requestAnimationFrame !== undefined) {
+            return window.requestAnimationFrame;
+        } else {
+            return function requesterTimeout(functionToCall) {
+                setTimeout(functionToCall, 100);
+            }
+        }
+    })();
+
+
+    RedrawScheduler.schedule = () => {
+        redrawsRequestCounter++;
+    };
+
+    function start() {
+
+        if (redrawsRequestCounter > 0) {
+            if (redrawsRequestCounter == 1) {
+                m.redraw();
+            }
+
+            redrawsRequestCounter = Math.max(0, --redrawsRequestCounter);
+        }
+
+        requestAnimationFramePolyfill(start);
+    }
+
+    start();
+}
+
+RedrawScheduler();
 
 const { CatarseAnalytics, $ } = window;
 const
     _dataCache = {},
+    autoRedrawProp = (startData) => {
+        const p = prop(startData);
+        function dataUpdater (newData) {
+            if (newData !== undefined) {
+                p(newData);
+                //m.redraw();
+                RedrawScheduler.schedule();
+            }
+
+            return p();
+        }
+
+        dataUpdater.prototype = p;
+        return dataUpdater;
+    },
     hashMatch = str => window.location.hash === str,
     mobileScreen = () => window.screen && window.screen.width <= 767,
     paramByName = (name) => {
@@ -196,12 +247,12 @@ const
         return true;
     },
 
-    validationErrors = m.prop([]),
+    validationErrors = prop([]),
 
     resetValidations = () => validationErrors([]),
 
     validate = () => {
-        const errorFields = m.prop([]);
+        const errorFields = prop([]);
 
         return {
             submit(fields, fn) {
@@ -270,7 +321,7 @@ const
     formatNumber = generateFormatNumber('.', ','),
 
     toggleProp = (defaultState, alternateState) => {
-        const p = m.prop(defaultState);
+        const p = prop(defaultState);
         p.toggle = () => p(((p() === alternateState) ? defaultState : alternateState));
 
         return p;
@@ -410,9 +461,9 @@ const
         return l;
     },
 
-    UIHelper = () => (el, isInitialized) => {
-        if (!isInitialized && window.$ && window.UIHelper) {
-            window.UIHelper.setupResponsiveIframes($(el));
+    UIHelper = () => (vnode) => {
+        if (window.$ && window.UIHelper) {
+            window.UIHelper.setupResponsiveIframes($(vnode.dom));
         }
     },
 
@@ -739,12 +790,12 @@ const
 
     removeStoredObject = sessionKey => sessionStorage.removeItem(sessionKey),
 
-    currentProject = m.prop(),
+    currentProject = prop(),
     setProject = (project) => {
         currentProject(project);
     },
     getProject = () => currentProject,
-    currentReward = m.prop(),
+    currentReward = prop(),
     setReward = (reward) => {
         currentReward(reward);
     },
@@ -864,8 +915,10 @@ const
         path: '/assets/redactor-rails',
         css: 'style.css'
     }),
-    setRedactor = prop => (el, isInit) => {
+    setRedactor = (prop, isInit=false) => //(el, isInit) => {
+    (vnode) => {
         if (!isInit) {
+            const el = vnode.dom;
             const $editor = window.$(el);
             const csrf_token = authenticityToken();
             const csrf_param = authenticityParam();
@@ -884,7 +937,9 @@ const
     },
 
     redactor = (name, prop) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
-        name, config: setRedactor(prop)
+        name, 
+        //config: setRedactor(prop)
+        oncreate: setRedactor(prop)
     }),
 
     setCsrfToken = (xhr) => {
@@ -934,11 +989,23 @@ const
         return div.innerHTML;
     },
     sleep = (time) => {
-        const p = m.deferred();
+        const p = new Promise((resolve, reject) => {
+            setTimeout(resolve, time);
+        });
 
-        setTimeout(p.resolve, time);
-
-        return p.promise;
+        return p;
+    },
+    createRequestRedrawWithCountdown = (countdown) => {
+        countdown = countdown || 0;
+        return () => {
+            countdown = Math.max(0, countdown - 1);
+            if (countdown <= 0) {
+                m.redraw();
+            }
+        }
+    },
+    createRequestAutoRedraw = function() {
+        return createRequestRedrawWithCountdown(arguments.length)
     };
 
 setMomentifyLocale();
@@ -947,6 +1014,9 @@ closeModal();
 checkReminder();
 
 export default {
+    createRequestRedrawWithCountdown,
+    createRequestAutoRedraw,
+    autoRedrawProp,
     sleep,
     stripScripts,
     authenticityParam,

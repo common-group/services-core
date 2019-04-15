@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import teamTotal from '../../src/c/team-total';
 
 describe('TeamTotal', () => {

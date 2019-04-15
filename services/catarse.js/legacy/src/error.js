@@ -1,12 +1,13 @@
 import _ from 'underscore';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import inlineError from './c/inline-error';
 // TODO: Define error pattern that comes from server-side and allow the lib
 // to define what fields are coming with errors from the back-end
 const generateErrorInstance = () => {
-    const fields = m.prop([]);
-    const submissionError = m.prop(false);
-    const submissionErrorMsg = m.prop('');
+    const fields = prop([]);
+    const submissionError = prop(false);
+    const submissionErrorMsg = prop('');
     const fieldIdxValue = (fieldName, idx, initialValue) => _.reduce(fields(), (memo, field) => field[0] === fieldName ? field[idx] : memo, initialValue);
 
     const setError = (fieldName, flag) => {

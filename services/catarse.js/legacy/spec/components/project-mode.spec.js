@@ -1,4 +1,6 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectMode from '../../src/c/project-mode';
 
 describe('ProjectMode', () => {
@@ -6,11 +8,11 @@ describe('ProjectMode', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            project = m.prop(ProjectMockery()[0]);
+            project = prop(ProjectMockery()[0]);
         });
 
         it('should render the project mode', () => {
-            component = m.component(projectMode, {
+            component = m(projectMode, {
                 project: project
             });
             $output = mq(component);
@@ -18,8 +20,8 @@ describe('ProjectMode', () => {
         });
 
         it('should render the project mode when goal is null', () => {
-            component = m.component(projectMode, {
-                project: m.prop(_.extend({}, project, {goal: null}))
+            component = m(projectMode, {
+                project: prop(_.extend({}, project, {goal: null}))
             });
             $output = mq(component);
             expect($output.find('.w-row').length).toEqual(1);

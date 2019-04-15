@@ -9,20 +9,21 @@
  *  }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import models from '../models';
 import h from '../h';
 import popNotification from './pop-notification';
 
 const projectReminder = {
-    controller: function(args) {
-        let l = m.prop(false);
-        const project = args.project,
+    oninit: function(vnode) {
+        let l = prop(false);
+        const project = vnode.attrs.project,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             storeReminderName = 'reminder',
-            popNotification = m.prop(false),
+            popNotification = prop(false),
             submitReminder = () => {
                 if (!h.getUser()) {
                     h.storeAction(storeReminderName, project().project_id);
@@ -54,18 +55,18 @@ const projectReminder = {
 
         filterVM.project_id(project().project_id);
 
-        return {
+        vnode.state = {
             l,
             submitReminder,
             popNotification
         };
     },
-    view: function(ctrl, args) {
-        const mainClass = (args.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
-            buttonClass = (args.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-large',
-            hideTextOnMobile = args.hideTextOnMobile || false,
-            project = args.project,
-            onclickFunc = h.analytics.event({ cat: 'project_view', act: 'project_floatingreminder_click', project: project() }, ctrl.submitReminder);
+    view: function({state, attrs}) {
+        const mainClass = (attrs.type === 'button') ? '' : '.u-text-center.u-marginbottom-30',
+            buttonClass = (attrs.type === 'button') ? 'w-button btn btn-terciary btn-no-border' : 'btn-link link-hidden fontsize-large',
+            hideTextOnMobile = attrs.hideTextOnMobile || false,
+            project = attrs.project,
+            onclickFunc = h.analytics.event({ cat: 'project_view', act: 'project_floatingreminder_click', project: project() }, state.submitReminder);
 
         return m(`#project-reminder${mainClass}`, [
             m('a.btn.btn-small.btn-terciary.w-hidden-main.w-hidden-medium[data-ix=\'popshare\'][href=\'#\']', {
@@ -84,8 +85,8 @@ const projectReminder = {
             m(`button[class="w-hidden-small w-hidden-tiny ${buttonClass} ${(project().in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
                 onclick: onclickFunc
             }, [
-                (ctrl.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o')))
-            ]), (ctrl.popNotification() ? m.component(popNotification, {
+                (state.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o')))
+            ]), (state.popNotification() ? m(popNotification, {
                 message: 'Ok, Vamos te mandar um lembrete por e-mail antes do fim da campanha!'
             }) : '')
         ]);

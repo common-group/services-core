@@ -4,6 +4,7 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -15,27 +16,27 @@ import projectReportInfringesIntellectualProperty from './project-report-infring
 import projectReportNoRewardReceived from './project-report-no-reward-received';
 
 const projectReport = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const displayForm = h.toggleProp(false, true),
-            displayFormWithName = m.prop(''),
-            sendSuccess = m.prop(false),
-            submitDisabled = m.prop(false),
-            user = args && args.user ? args.user : (h.getUser() || {}),
-            email = m.prop(user.email),
-            details = m.prop(''),
-            reason = m.prop(''),
+            displayFormWithName = prop(''),
+            sendSuccess = prop(false),
+            submitDisabled = prop(false),
+            user = vnode.attrs && vnode.attrs.user ? vnode.attrs.user : (h.getUser() || {}),
+            email = prop(user.email),
+            details = prop(''),
+            reason = prop(''),
             storeReport = 'report',
-            project = args && args.project ? args.project : projectVM.currentProject(),
+            project = vnode.attrs && vnode.attrs.project ? vnode.attrs.project : projectVM.currentProject(),
             hasPendingAction = project && (h.callStoredAction(storeReport) == project.project_id),
-            CPF = m.prop(''),
-            telephone = m.prop(''),
-            businessName = m.prop(''),
-            CNPJ = m.prop(''),
-            businessRole = m.prop(''),
-            relationWithViolatedProperty = m.prop(''),
-            fullName = m.prop(''),
-            fullAddress = m.prop(''),
-            projectInfringes = m.prop(''),
+            CPF = prop(''),
+            telephone = prop(''),
+            businessName = prop(''),
+            CNPJ = prop(''),
+            businessRole = prop(''),
+            relationWithViolatedProperty = prop(''),
+            fullName = prop(''),
+            fullAddress = prop(''),
+            projectInfringes = prop(''),
             termsAgreed = h.toggleProp(false, true),
             checkLogin = (event) => {
                 if (!_.isEmpty(user)) {
@@ -87,7 +88,7 @@ const projectReport = {
             displayForm(true);
         }
 
-        return {
+        vnode.state = {
             displayFormWithName,
             checkScroll,
             checkLogin,
@@ -98,7 +99,7 @@ const projectReport = {
             user,
             details,
             reason,
-            project: m.prop(project),
+            project: prop(project),
             user,
             CPF,
             telephone,
@@ -113,50 +114,50 @@ const projectReport = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.card.card-terciary.u-radius', [
-            ctrl.sendSuccess() ?
+            state.sendSuccess() ?
                     m('.w-form', m('p', 'Obrigado! A sua denúncia foi recebida.'))
                 :
             [
                 m('button.btn.btn-terciary.btn-inline.btn-medium.w-button',
                     {
-                        onclick: ctrl.checkLogin
+                        onclick: state.checkLogin
                     },
                           'Denunciar este projeto ao Catarse'
                         ),
-                ctrl.displayForm() ?
+                state.displayForm() ?
                             m('div', [
                                 m(projectReportDisrespectRules, {
-                                    displayFormWithName: ctrl.displayFormWithName,
-                                    submitDisabled: ctrl.submitDisabled,
-                                    checkScroll: ctrl.checkScroll,
-                                    sendReport: ctrl.sendReport,
-                                    reason: ctrl.reason,
-                                    details: ctrl.details,
+                                    displayFormWithName: state.displayFormWithName,
+                                    submitDisabled: state.submitDisabled,
+                                    checkScroll: state.checkScroll,
+                                    sendReport: state.sendReport,
+                                    reason: state.reason,
+                                    details: state.details,
                                 }),
                                 m(projectReportInfringesIntellectualProperty, {
-                                    CPF: ctrl.CPF,
-                                    telephone: ctrl.telephone,
-                                    businessName: ctrl.businessName,
-                                    CNPJ: ctrl.CNPJ,
-                                    businessRole: ctrl.businessRole,
-                                    relationWithViolatedProperty: ctrl.relationWithViolatedProperty,
-                                    fullName: ctrl.fullName,
-                                    fullAddress: ctrl.fullAddress,
-                                    projectInfringes: ctrl.projectInfringes,
-                                    termsAgreed: ctrl.termsAgreed,
-                                    reason: ctrl.reason,
-                                    details: ctrl.details,
-                                    displayFormWithName: ctrl.displayFormWithName,
-                                    sendReport: ctrl.sendReport,
-                                    checkScroll: ctrl.checkScroll,
-                                    submitDisabled: ctrl.submitDisabled
+                                    CPF: state.CPF,
+                                    telephone: state.telephone,
+                                    businessName: state.businessName,
+                                    CNPJ: state.CNPJ,
+                                    businessRole: state.businessRole,
+                                    relationWithViolatedProperty: state.relationWithViolatedProperty,
+                                    fullName: state.fullName,
+                                    fullAddress: state.fullAddress,
+                                    projectInfringes: state.projectInfringes,
+                                    termsAgreed: state.termsAgreed,
+                                    reason: state.reason,
+                                    details: state.details,
+                                    displayFormWithName: state.displayFormWithName,
+                                    sendReport: state.sendReport,
+                                    checkScroll: state.checkScroll,
+                                    submitDisabled: state.submitDisabled
                                 }),
                                 m(projectReportNoRewardReceived, {
-                                    displayFormWithName: ctrl.displayFormWithName,
-                                    project: ctrl.project,
-                                    user: ctrl.user
+                                    displayFormWithName: state.displayFormWithName,
+                                    project: state.project,
+                                    user: state.user
                                 })
                             ])
                         :

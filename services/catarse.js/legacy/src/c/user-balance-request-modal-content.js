@@ -8,6 +8,7 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -20,29 +21,29 @@ import userSettingsVM from '../vms/user-settings-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceRequestModelContent = {
-    controller: function(args) {
-        let parsedErrors = userSettingsVM.mapRailsErrors(args.rails_errors);
+    oninit: function(vnode) {
+        let parsedErrors = userSettingsVM.mapRailsErrors(vnode.attrs.rails_errors);
 
         const fields = {
-            agency: m.prop(''),
-            bank_id: m.prop(''),
-            agency_digit: m.prop(''),
-            account: m.prop(''),
-            account_digit: m.prop(''),
-            bank_account_id: m.prop(''),
-            bank_account_type: m.prop('')
+            agency: prop(''),
+            bank_id: prop(''),
+            agency_digit: prop(''),
+            account: prop(''),
+            account_digit: prop(''),
+            bank_account_id: prop(''),
+            bank_account_type: prop('')
         };
 
-        const bankAccounts = m.prop([]);
+        const bankAccounts = prop([]);
 
-        const bankInput = m.prop(''),
-            bankCode = m.prop('-1'),
+        const bankInput = prop(''),
+            bankCode = prop('-1'),
             vm = catarse.filtersVM({ user_id: 'eq' }),
-            balance = args.balance,
+            balance = vnode.attrs.balance,
             loaderOpts = models.balanceTransfer.postOptions({
                 user_id: balance.user_id }),
             requestLoader = catarse.loaderWithToken(loaderOpts),
-            loading = m.prop(false),
+            loading = prop(false),
             displayDone = h.toggleProp(false, true),
             displayConfirmation = h.toggleProp(false, true),
             updateUserData = (user_id) => {
@@ -88,22 +89,22 @@ const userBalanceRequestModelContent = {
             },
             requestFund = () => {
                 requestLoader.load().then((data) => {
-                    args.balanceManager.load();
-                    args.balanceTransactionManager.load();
+                    vnode.attrs.balanceManager.load();
+                    vnode.attrs.balanceTransactionManager.load();
                     displayConfirmation(false);
                     displayDone.toggle();
                     m.redraw();
                 });
             };
 
-        return {
+        vnode.state = {
             loading,
             requestLoader,
             requestFund,
             bankAccounts,
             displayDone,
             displayConfirmation,
-            loadBankA: args.bankAccountManager.loader,
+            loadBankA: vnode.attrs.bankAccountManager.loader,
             updateUserData,
             requestFund,
             parsedErrors,
@@ -112,17 +113,17 @@ const userBalanceRequestModelContent = {
             bankCode
         };
     },
-    view: function(ctrl, args) {
-        const balance = args.balance,
-            fields = ctrl.fields,
-            user = args.user;
+    view: function({state, attrs}) {
+        const balance = attrs.balance,
+            fields = state.fields,
+            user = attrs.user;
 
         return m('div', [
             m('.modal-dialog-header', [
                 m('.fontsize-large.u-text-center', window.I18n.t('withdraw', I18nScope()))
             ]),
-            (ctrl.displayConfirmation() ? m('.modal-dialog-content.u-text-center', (
-                ctrl.loadBankA() ? h.loader() : _.map(ctrl.bankAccounts(), item => [
+            (state.displayConfirmation() ? m('.modal-dialog-content.u-text-center', (
+                state.loadBankA() ? h.loader() : _.map(state.bankAccounts(), item => [
                     m('.fontsize-base.u-marginbottom-20', [
                         m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
                         m.trust('&nbsp;'),
@@ -167,7 +168,7 @@ const userBalanceRequestModelContent = {
                     ])
                 ])
             )) : (
-                ctrl.displayDone() ? m('.modal-dialog-content.u-text-center', [
+                state.displayDone() ? m('.modal-dialog-content.u-text-center', [
                     m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
                     m('p.fontsize-large', window.I18n.t('success_message', I18nScope()))
                 ]) : m('.modal-dialog-content', [
@@ -178,42 +179,42 @@ const userBalanceRequestModelContent = {
                        window.I18n.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) })
                       )
                     ]),
-                    m(UserOwnerBox, { user: args.user, hideAvatar: true }),
-                    m(userBankForm, { user: args.user, parsedErrors: ctrl.parsedErrors, fields: ctrl.fields, bankCode: ctrl.bankCode, bankInput: ctrl.bankInput })
+                    m(UserOwnerBox, { user: attrs.user, hideAvatar: true }),
+                    m(userBankForm, { user: attrs.user, parsedErrors: state.parsedErrors, fields: state.fields, bankCode: state.bankCode, bankInput: state.bankInput })
                 ]))),
-            (ctrl.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [
+            (state.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [
                 m('.w-row', [
                     m('.w-col.w-col-1'),
                     m('.w-col.w-col-5',
-                        (ctrl.requestLoader() || ctrl.loading() ?
+                        (state.requestLoader() || state.loading() ?
                          h.loader()
                          : [
                              m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]',
-                               { onclick: () => ctrl.requestFund() },
+                               { onclick: () => state.requestFund() },
                                window.I18n.t('shared.confirm_text')),
                          ])
                     ),
                     m('.w-col.w-col-5',
-                      (ctrl.requestLoader() || ctrl.loading() ?
+                      (state.requestLoader() || state.loading() ?
                        ''
                        : [
                            m('a.btn.btn-medium.btn-terciary.w-button', {
-                               onclick: ctrl.displayConfirmation.toggle
+                               onclick: state.displayConfirmation.toggle
                            }, window.I18n.t('shared.back_text'))
                        ])
                      ),
                     m('.w-col.w-col-1')
                 ])
             ]) : ''),
-            (!ctrl.displayConfirmation() && !ctrl.displayDone() ?
+            (!state.displayConfirmation() && !state.displayDone() ?
              m('.modal-dialog-nav-bottom', { style: 'position: relative;' }, [
                  m('.w-row', [
                      m('.w-col.w-col-3'),
                      m('.w-col.w-col-6', [
-                         (ctrl.requestLoader() || ctrl.loading() ?
+                         (state.requestLoader() || state.loading() ?
                           h.loader()
                           : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]',
-                              { onclick: () => ctrl.updateUserData(args.user.id) },
+                              { onclick: () => state.updateUserData(attrs.user.id) },
                               window.I18n.t('request_fund', I18nScope())))
                      ]),
                      m('.w-col.w-col-3')

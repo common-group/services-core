@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import search from '../../src/c/search';
 
 describe('Search', () => {
@@ -7,7 +8,7 @@ describe('Search', () => {
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(search.view({}, {action: action, method: method}));
+            $output = mq(search.view({attrs: {action: action, method: method}}));
         });
 
         it('should render the search form', () => {

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import projectVM from '../vms/project-vm';
 import addressVM from '../vms/address-vm';
@@ -6,7 +7,7 @@ import models from '../models';
 import h from '../h';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
-const paymentInfoId = m.prop();
+const paymentInfoId = prop();
 const { commonPayment, commonSubscriptionUpgrade, commonPaymentInfo, commonCreditCard, commonCreditCards, rechargeSubscription } = models;
 const sendPaymentRequest = data => commonPayment.postWithToken(
     { data: _.extend({}, data, { payment_id: paymentInfoId() }) },
@@ -77,7 +78,7 @@ const isReactivation = () => {
     const subscriptionStatus = m.route.param('subscription_status');
     return subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled';
 };
-const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}${payment_id ? `&payment_id=${payment_id}` : ''}${isEdit && !isReactivation() ? '&is_edit=1' : ''}`);
+const resolvePayment = (gateway_payment_method, payment_confirmed, payment_id, isEdit) => m.route.set(`/projects/${projectVM.currentProject().project_id}/subscriptions/thank_you?project_id=${projectVM.currentProject().project_id}&payment_method=${gateway_payment_method}&payment_confirmed=${payment_confirmed}${payment_id ? `&payment_id=${payment_id}` : ''}${isEdit && !isReactivation() ? '&is_edit=1' : ''}`);
 const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
     if (retries <= 0) {
         return promise.resolve(resolvePayment(defaultPaymentMethod, false, paymentId, isEdit));
@@ -101,18 +102,18 @@ const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
 };
 
 const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({ id, catalog_payment_id }) => {
-    const p = m.deferred();
+    const p = new Promise((resolve, reject) => {
+        const paymentId = isEdit ? catalog_payment_id : id;
 
-    const paymentId = isEdit ? catalog_payment_id : id;
+        if (paymentId) {
+            paymentInfoId(paymentId);
+            requestInfo({resolve, reject}, paymentId, paymentMethod, isEdit);
+        } else {
+            resolvePayment(paymentMethod, false, null, isEdit);
+        }
+    });
 
-    if (paymentId) {
-        paymentInfoId(paymentId);
-        requestInfo(p, paymentId, paymentMethod, isEdit);
-    } else {
-        resolvePayment(paymentMethod, false, null, isEdit);
-    }
-
-    return p.promise;
+    return p;
 };
 
 
@@ -143,13 +144,13 @@ const waitForSavedCreditCard = promise => (creditCardId) => {
 };
 
 const processCreditCard = (cardHash, fields) => {
-    const p = m.deferred();
+    const p = new Promise((resolve, reject) => {
+        saveCreditCard(cardHash)
+            .then(waitForSavedCreditCard({resolve, reject}))
+            .catch(reject);
+    });
 
-    saveCreditCard(cardHash)
-        .then(waitForSavedCreditCard(p))
-        .catch(p.reject);
-
-    return p.promise;
+    return p;
 };
 
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) => {
@@ -212,22 +213,22 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
         }
 
         const pay = ({ creditCardId }) => {
-            const p = m.deferred();
+            const p = new Promise((resolve, reject) => {
+                if (creditCardId) {
+                    _.extend(payload, {
+                        card_id: creditCardId.id,
+                        credit_card_id: creditCardId.id
+                    });
+                }
 
-            if (creditCardId) {
-                _.extend(payload, {
-                    card_id: creditCardId.id,
-                    credit_card_id: creditCardId.id
-                });
-            }
+                if (commonData.subscription_id) {
+                    sendSubscriptionUpgrade(payload).then(resolve).catch(reject);
+                } else {
+                    sendPaymentRequest(payload).then(resolve).catch(reject);
+                }
+            });
 
-            if (commonData.subscription_id) {
-                sendSubscriptionUpgrade(payload).then(p.resolve).catch(p.reject);
-            } else {
-                sendPaymentRequest(payload).then(p.resolve).catch(p.reject);
-            }
-
-            return p.promise;
+            return p;
         };
 
         updateUser(userPayload(customer, address))
@@ -286,15 +287,15 @@ const sendSlipPayment = (fields, commonData) => {
     }
 
     const sendPayment = () => {
-        const p = m.deferred();
+        const p = new Promise((resolve, reject) => {
+            if (commonData.subscription_id) {
+                sendSubscriptionUpgrade(payload).then(resolve).catch(reject);
+            } else {
+                sendPaymentRequest(payload).then(resolve).catch(reject);
+            }
+        });
 
-        if (commonData.subscription_id) {
-            sendSubscriptionUpgrade(payload).then(p.resolve).catch(p.reject);
-        } else {
-            sendPaymentRequest(payload).then(p.resolve).catch(p.reject);
-        }
-
-        return p.promise;
+        return p;
     };
 
     updateUser(userPayload(customer, address))
@@ -332,13 +333,13 @@ const trialsToGetPaymentInfo = (p, catalog_payment_id, retries) => {
 // Try recharge a payment if it's slip is expired, pinging /rpc/payment_info endpoint
 // looking up for new payment_info
 const tryRechargeSubscription = (subscription_id) => {
-    const p = m.deferred();
+    const p = new Promise((resolve, reject) => {
+        rechargeSubscription
+            .postWithToken({ subscription_id })
+            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5)).catch(reject);
+    });
 
-    rechargeSubscription
-        .postWithToken({ subscription_id })
-        .then(payment_data => trialsToGetPaymentInfo(p, payment_data.catalog_payment_id, 5)).catch(p.reject);
-
-    return p.promise;
+    return p;
 };
 
 const commonPaymentVM = {

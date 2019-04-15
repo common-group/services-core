@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
@@ -11,32 +12,34 @@ import popNotification from '../c/pop-notification';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const projectEditReward = {
-    controller: function(args) {
-        const rewards = m.prop([]),
-            loading = m.prop(false),
-            error = m.prop(false),
-            errors = m.prop([]),
-            showSuccess = m.prop(false),
-            newReward = () => ({
-                id: m.prop(null),
-                minimum_value: m.prop(null),
-                title: m.prop(''),
-                shipping_options: m.prop('free'),
-                edit: h.toggleProp(true, false),
-                deliver_at: m.prop(moment().date(1).format()),
-                description: m.prop(''),
-                paid_count: m.prop(0),
-                waiting_payment_count: m.prop(0),
-                limited: h.toggleProp(false, true),
-                maximum_contributions: m.prop(null),
-                newReward: true,
-                uploaded_image: m.prop(null),
-                row_order: m.prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
-            });
+    oninit: function(vnode) {
+        const rewards = prop([]),
+            loading = prop(false),
+            error = prop(false),
+            errors = prop([]),
+            showSuccess = prop(false),
+            newReward = () => {
+                return {
+                    id: prop(null),
+                    minimum_value: prop(null),
+                    title: prop(''),
+                    shipping_options: prop('free'),
+                    edit: h.toggleProp(true, false),
+                    deliver_at: prop(moment().date(1).format()),
+                    description: prop(''),
+                    paid_count: prop(0),
+                    waiting_payment_count: prop(0),
+                    limited: h.toggleProp(false, true),
+                    maximum_contributions: prop(null),
+                    newReward: true,
+                    uploaded_image: prop(null),
+                    row_order: prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
+                }
+            };
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
             method: 'POST',
-            url: `/${window.I18n.locale}/projects/${args.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
+            url: `/${window.I18n.locale}/projects/${vnode.attrs.project_id}/rewards/${rewardId}/sort?reward[row_order_position]=${position}`,
             config: (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
@@ -56,31 +59,37 @@ const projectEditReward = {
             }
         };
 
-        const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
+        const loadRewards = () => rewardVM.fetchRewards(vnode.attrs.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
                 const limited = reward.maximum_contributions !== null;
-                const rewardProp = m.prop({
-                    id: m.prop(reward.id),
-                    deliver_at: m.prop(reward.deliver_at),
-                    description: m.prop(reward.description),
-                    maximum_contributions: m.prop(reward.maximum_contributions),
-                    minimum_value: m.prop(reward.minimum_value),
+                const rewardProp = prop({
+                    id: prop(reward.id),
+                    deliver_at: prop(reward.deliver_at),
+                    description: prop(reward.description),
+                    maximum_contributions: prop(reward.maximum_contributions),
+                    minimum_value: prop(reward.minimum_value),
                     edit: h.toggleProp(false, true),
                     limited: h.toggleProp(limited, !limited),
-                    paid_count: m.prop(reward.paid_count),
-                    row_order: m.prop(reward.row_order),
-                    shipping_options: m.prop(reward.shipping_options),
-                    title: m.prop(reward.title),
-                    uploaded_image: m.prop(reward.uploaded_image),
-                    waiting_payment_count: m.prop(reward.waiting_payment_count)
+                    paid_count: prop(reward.paid_count),
+                    row_order: prop(reward.row_order),
+                    shipping_options: prop(reward.shipping_options),
+                    title: prop(reward.title),
+                    uploaded_image: prop(reward.uploaded_image),
+                    waiting_payment_count: prop(reward.waiting_payment_count)
                 });
-                rewards().push(rewardProp);
+                const rewardsArray = rewards();
+                rewardsArray.push(rewardProp);
+                rewards(rewardsArray);
             });
 
             if (rewardVM.rewards().length === 0) {
-                rewards().push(m.prop(newReward()));
+                rewards([ prop(newReward())]);
             }
+
+            // const l = rewards();
+
+            m.redraw();
         });
 
         const uploadImage = (reward, imageFileToUpload, projectId, rewardId) => {
@@ -131,13 +140,13 @@ const projectEditReward = {
 
         loadRewards();
 
-        return {
+        vnode.state = {
             loading,
             error,
             errors,
             showSuccess,
             rewards,
-            user: userVM.fetchUser(args.user_id),
+            user: userVM.fetchUser(vnode.attrs.user_id),
             newReward,
             setSorting,
             tips,
@@ -148,22 +157,22 @@ const projectEditReward = {
         };
     },
 
-    view: function(ctrl, args) {
-        const error = ctrl.error,
-            project = args.project,
-            showImageToUpload = ctrl.showImageToUpload,
-            deleteImage = ctrl.deleteImage,
-            uploadImage = ctrl.uploadImage;
+    view: function({state, attrs}) {
+        const error = state.error,
+            project = attrs.project,
+            showImageToUpload = state.showImageToUpload,
+            deleteImage = state.deleteImage,
+            uploadImage = state.uploadImage;
 
         return m("[id='dashboard-rewards-tab']",
             (project() ? [
                 m('.w-section.section',
                     m('.w-container', [
-                        (ctrl.showSuccess() ? m.component(popNotification, {
+                        (state.showSuccess() ? m(popNotification, {
                             message: 'Recompensa salva com sucesso'
                         }) : ''),
-                        (ctrl.error() ? m.component(popNotification, {
-                            message: ctrl.errors(),
+                        (state.error() ? m(popNotification, {
+                            message: state.errors(),
                             error: true
                         }) : ''),
                         m('.w-row',
@@ -179,18 +188,18 @@ const projectEditReward = {
                         m('.w-row', [
                             m('.w-col.w-col-8',
                                 m('.w-form', [
-                                    ctrl.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
-                                        config: ctrl.setSorting
+                                    state.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
+                                        config: state.setSorting
                                     }, [
-                                        _.map(_.sortBy(ctrl.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
+                                        _.map(_.sortBy(state.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
                                                 m('.reward-card', [
                                                     (!reward().edit() ?
                                                         m(dashboardRewardCard, {
                                                             reward,
                                                             error,
-                                                            errors: ctrl.errors,
-                                                            user: ctrl.user(),
-                                                            showSuccess: ctrl.showSuccess,
+                                                            errors: state.errors,
+                                                            user: state.user(),
+                                                            showSuccess: state.showSuccess,
                                                             project,
                                                             showImageToUpload,
                                                             deleteImage,
@@ -198,10 +207,10 @@ const projectEditReward = {
                                                             index
                                                         }) :
                                                         m(editRewardCard, {
-                                                            project_id: args.project_id,
+                                                            project_id: attrs.project_id,
                                                             error,
-                                                            showSuccess: ctrl.showSuccess,
-                                                            errors: ctrl.errors,
+                                                            showSuccess: state.showSuccess,
+                                                            errors: state.errors,
                                                             reward,
                                                             showImageToUpload,
                                                             deleteImage,
@@ -217,9 +226,12 @@ const projectEditReward = {
                                     ])
 
                                 ]),
-                                rewardVM.canAdd(project().state, ctrl.user()) ? [
+                                rewardVM.canAdd(project().state, state.user()) ? [
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                        onclick: () => ctrl.rewards().push(m.prop(ctrl.newReward()))
+                                        onclick: () => {
+                                            console.log()
+                                            state.rewards().push(prop(state.newReward()))
+                                        }
                                     },
                                         window.I18n.t('add_reward', I18nScope())
                                     )
@@ -240,7 +252,7 @@ const projectEditReward = {
                                         window.I18n.t('reward_faq_sub_intro', I18nScope()),
                                         m('br'),
                                         m('br'),
-                                        _.map(ctrl.tips,
+                                        _.map(state.tips,
                                             (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4)
                                                 ? null : [
                                                     m('.fontweight-semibold', tip.title),

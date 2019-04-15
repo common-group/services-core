@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectReminder from './project-reminder';
@@ -6,11 +7,11 @@ import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectTabs = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const fixedNavClass = 'project-nav-fixed',
-            isFixed = m.prop(false),
-            originalPosition = m.prop(-1),
-            project = args.project;
+            isFixed = prop(false),
+            originalPosition = prop(-1),
+            project = vnode.attrs.project;
 
         const fixOnScroll = el => () => {
             const viewportOffset = el.getBoundingClientRect();
@@ -42,7 +43,7 @@ const projectTabs = {
             event.preventDefault();
 
             if (projectVM.isSubscription(project)) {
-                m.route(`/projects/${project().project_id}/subscriptions/start`);
+                m.route.set(`/projects/${project().project_id}/subscriptions/start`);
                 return false;
             }
 
@@ -51,19 +52,19 @@ const projectTabs = {
             return false;
         };
 
-        return {
+        vnode.state = {
             navDisplay,
             isFixed,
             navigate
         };
     },
-    view: function(ctrl, args) {
-        const project = args.project,
-            rewards = args.rewardDetails;
+    view: function({state, attrs}) {
+        const project = attrs.project,
+            rewards = attrs.rewardDetails;
 
         return m('nav-wrapper', project() ? [
             m('.w-section.project-nav', {
-                config: ctrl.navDisplay
+                config: state.navDisplay
             }, [
                 m('.w-container', [
                     m('.w-row', [
@@ -96,7 +97,7 @@ const projectTabs = {
                                     cat: 'project_view', act: 'project_contributions_view', project: project() })
                             }, projectVM.isSubscription(project) ? [
                                 'Assinantes ',
-                                m('span.badge.w-hidden-small.w-hidden-tiny', args.subscriptionData() ? args.subscriptionData().total_subscriptions : '-')
+                                m('span.badge.w-hidden-small.w-hidden-tiny', attrs.subscriptionData() ? attrs.subscriptionData().total_subscriptions : '-')
                             ] : [
                                 'Apoiadores ',
                                 m('span.badge.w-hidden-small.w-hidden-tiny', project() ? project().total_contributors : '-')
@@ -111,11 +112,11 @@ const projectTabs = {
                                 project() ? m(`fb:comments-count[href="http://www.catarse.me/${project().permalink}"][class="badge project-fb-comment w-hidden-small w-hidden-tiny"][style="display: inline"]`, m.trust('&nbsp;')) : '-'
                             ]),
                         ]),
-                        project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions && !args.hasSubscription() ? [
+                        project() ? m('.w-col.w-col-4.w-hidden-small.w-hidden-tiny', project().open_for_contributions && !attrs.hasSubscription() ? [
                             m('.w-row.project-nav-back-button', [
                                 projectVM.isSubscription(project) ? m('.w-col.w-col-12', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/subscriptions/start"]`, {
-                                        onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, ctrl.navigate)
+                                        onclick: h.analytics.event({ cat: 'contribution_create', act: 'contribution_floatingbtn_click', project: project() }, state.navigate)
                                     }, window.I18n.t(`submit_${project().mode}`, I18nScope()))
                                 ]) : m('.w-col.w-col-6.w-col-medium-8', [
                                     m(`a.w-button.btn[href="/projects/${project().project_id}/contributions/new"]`, {
@@ -125,14 +126,14 @@ const projectTabs = {
                                 m('.w-col.w-col-6.w-col-medium-4', {
                                     onclick: h.analytics.event({ cat: 'project_view', act: 'project_floatingreminder_click', project: project() })
                                 }, [
-                                    projectVM.isSubscription(project) ? null : m.component(projectReminder, { project, type: 'button', hideTextOnMobile: true })
+                                    projectVM.isSubscription(project) ? null : m(projectReminder, { project, type: 'button', hideTextOnMobile: true })
                                 ])
                             ])
                         ] : '') : ''
                     ])
                 ])
             ]),
-            (ctrl.isFixed() && !project().is_owner_or_admin) ? m('.w-section.project-nav') : ''
+            (state.isFixed() && !project().is_owner_or_admin) ? m('.w-section.project-nav') : ''
         ] : '');
     }
 };

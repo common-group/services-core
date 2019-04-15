@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import userListVM from '../vms/user-list-vm';
 import userFilterVM from '../vms/user-filter-vm';
@@ -11,10 +12,10 @@ import filterMain from '../c/filter-main';
 import filterDropdown from '../c/filter-dropdown';
 
 const adminUsers = {
-    controller: function() {
+    oninit: function(vnode) {
         const listVM = userListVM,
             filterVM = userFilterVM,
-            error = m.prop(''),
+            error = prop(''),
             itemBuilder = [{
                 component: adminUser,
                 wrapperClass: '.w-col.w-col-4'
@@ -45,13 +46,16 @@ const adminUsers = {
                 }
             }],
             submit = () => {
-                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
-                    error(serverError.message);
-                });
+                listVM
+                    .firstPage(filterVM.parameters())
+                    .then(_ => m.redraw(), (serverError) => {
+                        error(serverError.message);
+                        m.redraw();
+                    });
                 return false;
             };
 
-        return {
+        vnode.state = {
             filterVM,
             filterBuilder,
             listVM: {
@@ -61,18 +65,18 @@ const adminUsers = {
             submit
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         const label = 'Usuários';
 
         return m('', [
-            m.component(adminFilter, {
-                form: ctrl.filterVM.formDescriber,
-                filterBuilder: ctrl.filterBuilder,
+            m(adminFilter, {
+                form: state.filterVM.formDescriber,
+                filterBuilder: state.filterBuilder,
                 label,
-                submit: ctrl.submit
+                submit: state.submit
             }),
-            m.component(adminList, {
-                vm: ctrl.listVM,
+            m(adminList, {
+                vm: state.listVM,
                 label,
                 listItem: adminUserItem,
                 listDetail: adminUserDetail
