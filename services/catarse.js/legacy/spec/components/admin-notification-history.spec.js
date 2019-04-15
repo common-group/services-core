@@ -14,7 +14,9 @@ describe('AdminNotificationHistory', () => {
 
     describe('view', () => {
         it('should render fetched notifications', () => {
-            expect($output.find('.date-event').length).toEqual(1);
+            setTimeout(() => {
+                expect($output.find('.date-event').length).toEqual(1);
+            }, 200);
         });
     });
 });

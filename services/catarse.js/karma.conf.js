@@ -24,6 +24,7 @@ module.exports = (config) => {
             'legacy/spec/index.spec.js',
         ],
         preprocessors: {
+            'legacy/spec/lib/mithril-query/mithril-query.js' : ['webpack'],
             'legacy/spec/**/*.spec.js': ['webpack'],
             'legacy/spec/index.spec.js': ['webpack']
         },

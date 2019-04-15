@@ -47,7 +47,9 @@ describe('adminList', () => {
             });
 
             it('should render fetched items', () => {
-                expect($output.find('.card').length).toEqual(results.length);
+                setTimeout(() => {
+                    expect($output.find('.card').length).toEqual(results.length);
+                }, 200);                
             });
 
             it('should not show a loading icon', () => {
