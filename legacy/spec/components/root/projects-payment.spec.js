@@ -47,11 +47,15 @@ describe('ProjectsPayment', () => {
             expect($output.has('input#document')).toBeTrue();
         });
         it('should show phone number', () => {
-            expect($output.has('input#phone')).toBeTrue();
+            setTimeout(() => {
+                expect($output.has('input#phone')).toBeTrue();
+            }, 200);
         });
         it('should have address state as select input', () => {
-            expect($output.has('input#address-state')).toBeFalse();
-            expect($output.has('select#address-state')).toBeTrue();
+            setTimeout(() => {
+                expect($output.has('input#address-state')).toBeFalse();
+                expect($output.has('select#address-state')).toBeTrue();
+            }, 200);
         });
     });
 });

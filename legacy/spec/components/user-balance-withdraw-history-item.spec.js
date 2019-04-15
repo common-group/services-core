@@ -35,7 +35,9 @@ describe('UserBalanceWithdrawHistoryItem', function() {
         });
 
         it('Should show pending card', function() {
-            expect($cardPending.contains(h.momentify(transfers[0].funding_estimated_date, 'DD/MM/YYYY'))).toBeTrue();
+            setTimeout(() => {
+                expect($cardPending.contains(h.momentify(transfers[0].funding_estimated_date, 'DD/MM/YYYY'))).toBeTrue();
+            }, 200);
         });
 
         it('Should show rejected card', function() {
