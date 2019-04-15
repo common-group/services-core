@@ -20,7 +20,7 @@ const statusCustomFilter = {
     view: () => m('.fontsize-smaller.u-text-center', [
         'Status ',
         m('a.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary', {
-            href: 'https://suporte.catarse.me/hc/pt-br/articles/115005632746-Catarse-Assinaturas-FAQ-Realizadores#status',
+            href: 'https://suporte.catarse.me/hc/pt-br/articles/360024090391-O-que-significa-cada-status-das-assinaturas-e-pagamentos-',
             target: '_blank'
         })
     ])

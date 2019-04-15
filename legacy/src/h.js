@@ -803,17 +803,26 @@ const
     buildLink = (link, refStr) => `/${link}${refStr ? `?ref=${refStr}` : ''}`,
     analyticsWindowScroll = (eventObj) => {
         if (eventObj) {
-            let fired = false;
-            window.addEventListener('scroll', (e) => {
-                    // console.log('windowScroll');
-                if (!fired && window.$ && $(document).scrollTop() > $(window).height() * (3 / 4)) {
-                    fired = true;
-                    const fireEvent = analyticsEvent(eventObj);
-                    fireEvent();
-                }
-            });
+            setTimeout(()=>{
+                const u=window.location.href;
+                let fired=false;
+                window.addEventListener('scroll', function sc(e) {
+                    //console.log('windowScroll');
+                    const same=window.location.href===u;
+                    if (same && !fired && window.$
+                            && $(document).scrollTop() > $(window).height()/2) {
+                        fired=true;
+                        const fireEvent = analyticsEvent(eventObj);
+                        fireEvent();
+                        window.removeEventListener('scroll', sc);
+                    } else if(!same) {
+                        window.removeEventListener('scroll', sc);
+                    }
+                });
+            },1000);
         }
     },
+
 
     analytics = {
         event: analyticsEvent,
