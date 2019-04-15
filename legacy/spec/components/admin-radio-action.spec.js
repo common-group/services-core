@@ -70,9 +70,11 @@ describe('AdminRadioAction', () => {
                 $output.click('#r-0');
                 $output.trigger('form', 'onsubmit');
 
-                const lastRequest = jasmine.Ajax.requests.mostRecent();
-                // Should make a patch request to update item
-                expect(lastRequest.method).toEqual('PATCH');
+                setTimeout(() => {
+                    const lastRequest = jasmine.Ajax.requests.mostRecent();
+                    // Should make a patch request to update item
+                    expect(lastRequest.method).toEqual('PATCH');
+                }, 200);
             });
 
             describe('when new value is not valid', () => {
@@ -88,7 +90,10 @@ describe('AdminRadioAction', () => {
 
                 it('should present an error message when new value is invalid', () => {
                     $output.trigger('form', 'onsubmit');
-                    $output.should.contain(errorStr);
+
+                    setTimeout(() => {
+                        $output.should.contain(errorStr);
+                    }, 200);
                 });
             });
         });
