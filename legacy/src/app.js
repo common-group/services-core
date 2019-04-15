@@ -60,6 +60,7 @@ import { isNumber } from 'util';
                 } else { // só roda se nao for firstRun
                     try {
                         CatarseAnalytics.pageView(false);
+                        CatarseAnalytics.origin();//force update of origin's cookie
                     } catch (e) { console.error(e); }
                 }
                 const parameters = app.getAttribute('data-parameters') ? JSON.parse(app.getAttribute('data-parameters')) : {};
