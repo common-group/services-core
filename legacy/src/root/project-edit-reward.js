@@ -229,8 +229,8 @@ const projectEditReward = {
                                 rewardVM.canAdd(project().state, state.user()) ? [
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
                                         onclick: () => {
-                                            console.log()
-                                            state.rewards().push(prop(state.newReward()))
+                                            state.rewards().push(prop(state.newReward()));
+                                            m.redraw();
                                         }
                                     },
                                         window.I18n.t('add_reward', I18nScope())

@@ -5,7 +5,7 @@
  * Example:
  * m.component(c.ProjectSuccessfulOnboardConfirmAccountAccept, {
  *    projectAccount: projectAccount,
- *    changeToAction: state.changeToAction //provided by ProjectSuccessfulOnboardConfirmAccount controller
+ *    changeToAction: state.changeToAction //provided by ProjectSuccessfulOnboardConfirmAccount oninit
  * })
  * */
 import m from 'mithril';
