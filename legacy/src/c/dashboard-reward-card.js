@@ -10,7 +10,7 @@ import inlineError from './inline-error';
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
 const dashboardRewardCard = {
-    controller: function(vnode) {
+    oninit: function(vnode) {
         const reward = vnode.attrs.reward(),
             imageFileToUpload = prop(null),
             isUploadingRewardImage = prop(false),
@@ -69,11 +69,11 @@ const dashboardRewardCard = {
                         .catch(error => {
                             vnode.attrs.showSuccess(false);
                             isUploadingRewardImage(false);
-                        })
+                        });
                 }
             },
             tryDeleteImage = () => {
-                
+
                 if (reward.newReward || imageFileToUpload()) {
                     reward.uploaded_image(null);
                     imageFileToUpload(null);
@@ -91,7 +91,6 @@ const dashboardRewardCard = {
                             // TODO: Show error on deleting the image
                             isDeletingRewardImage(false);
                             m.redraw();
-                            console.log('herer')
                         });
                 }
             };
@@ -119,6 +118,9 @@ const dashboardRewardCard = {
         const tryDeleteImage = state.tryDeleteImage;
         const onSelectImageFile = state.onSelectImageFile;
         const availableCount = state.availableCount;
+        const shouldShowLoaderToUploadImage = isUploadingRewardImage() || isDeletingRewardImage();
+        const showLimited = (state.showLimited && state.showLimited());
+        const limitError = (state.limitError && state.limitError());
 
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
@@ -161,7 +163,7 @@ const dashboardRewardCard = {
 
                 // REWARD IMAGE
                 (
-                    (isUploadingRewardImage() || isDeletingRewardImage()) ?
+                    (shouldShowLoaderToUploadImage) ?
                         (
                             h.loader()
                         )
@@ -246,7 +248,7 @@ const dashboardRewardCard = {
                     m('b', `${window.I18n.t('delivery', I18nScope())}: `),
                     window.I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
                 m('.u-margintop-40.w-row', [
-                    (state.showLimited() ? '' :
+                    (showLimited ? '' :
                         m('.w-col.w-col-4', [
                             m('button.btn.btn-small.btn-terciary.w-button', {
                                 onclick: state.toggleShowLimit
@@ -255,7 +257,7 @@ const dashboardRewardCard = {
                         ])),
                     m('.w-col.w-col-8')
                 ]),
-                m(`div${state.showLimited() ? '' : '.w-hidden'}`,
+                m(`div${showLimited ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
                         style: {
                             display: 'block'
@@ -277,7 +279,7 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-col.w-col-6',
                                         m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade disponível\'][type=\'tel\']', {
-                                            class: state.limitError() ? 'error' : false,
+                                            class: limitError ? 'error' : false,
                                             value: reward.maximum_contributions(),
                                             onchange: m.withAttr('value', reward.maximum_contributions)
                                         })
@@ -303,7 +305,7 @@ const dashboardRewardCard = {
                     )
 
                 ),
-                state.limitError() ? m(inlineError, {
+                limitError ? m(inlineError, {
                     message: 'Limite deve ser maior que quantidade de apoios.'
                 }) : '', ,
             ]),
