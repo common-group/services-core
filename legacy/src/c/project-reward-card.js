@@ -54,7 +54,7 @@ const projectRewardCard = {
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
                     vm.contributionValue(valueFloat);
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, { contribution_value: valueFloat, reward_id: vm.selectedReward().id });
+                    h.navigateTo(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}&reward_id=${vm.selectedReward().id}`);
 
                     return false;
                 }
@@ -157,7 +157,7 @@ const projectRewardCard = {
                      )
                 ] : '')
             ]),
-            reward.maximum_contributions > 0 ? [
+            (reward.maximum_contributions > 0 || reward.run_out) ? [
                 (h.rewardSouldOut(reward) ? m('.u-margintop-10', [
                     m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')
                 ]) : m('.u-margintop-10', [
@@ -167,11 +167,13 @@ const projectRewardCard = {
                     ])
                 ]))
             ] : '',
-            m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
-              h.pluralize.apply(
-                  null,
-                  isSub ? [reward.paid_count, ' assinante', ' assinantes'] : [reward.paid_count, ' apoio', ' apoios'])
-             ),
+            (reward.run_out ? '' :
+             m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
+               h.pluralize.apply(
+                   null,
+                   isSub ? [reward.paid_count, ' assinante', ' assinantes'] : [reward.paid_count, ' apoio', ' apoios'])
+              )
+            ),
             reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [
                 m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))
             ]) : '',

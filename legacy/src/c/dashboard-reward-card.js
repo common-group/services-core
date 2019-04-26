@@ -19,6 +19,7 @@ const dashboardRewardCard = {
             limitError = prop(false),
             showLimited = h.toggleProp(false, true),
             toggleLimit = () => {
+                reward.run_out(false);
                 reward.limited.toggle();
                 reward.maximum_contributions('');
             },
@@ -39,9 +40,7 @@ const dashboardRewardCard = {
                 if (vnode.attrs.error()) {
                     return false;
                 }
-                const data = {
-                    maximum_contributions: reward.maximum_contributions()
-                };
+                const data = getRewardDataToSave();
 
                 rewardVM.updateReward(vnode.attrs.project().project_id, reward.id(), data).then(() => {
                     vnode.attrs.showSuccess(true);
@@ -51,6 +50,19 @@ const dashboardRewardCard = {
                 });
                 return false;
             },
+              getRewardDataToSave = () => {
+                  if (reward.run_out()) {
+                      reward.maximum_contributions(null);
+                      return {
+                          run_out: true
+                      };
+                  } else {
+                      return {
+                          maximum_contributions: reward.maximum_contributions(),
+                          run_out: false
+                      };
+                  }
+              },
             onSelectImageFile = () => {
                 const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${vnode.attrs.index}`);
                 if (rewardImageFile.files.length) {
@@ -93,7 +105,11 @@ const dashboardRewardCard = {
                             m.redraw();
                         });
                 }
-            };
+            },
+              runOutRewardAvailability = () => {
+                  reward.limited(false);
+                  reward.run_out.toggle();
+              };
 
         vnode.state = {
             availableCount,
@@ -102,14 +118,17 @@ const dashboardRewardCard = {
             saveReward,
             showLimited,
             limitError,
-
+            runOutRewardAvailability,
             onSelectImageFile,
             tryDeleteImage,
             isUploadingRewardImage,
             isDeletingRewardImage
         };
     },
-    view: function({state, attrs}) {
+    view: function({
+        state,
+        attrs
+    }) {
         const reward = attrs.reward();
         const project = attrs.project();
         const isSubscription = projectVM.isSubscription(project);
@@ -121,7 +140,7 @@ const dashboardRewardCard = {
         const shouldShowLoaderToUploadImage = isUploadingRewardImage() || isDeletingRewardImage();
         const showLimited = (state.showLimited && state.showLimited());
         const limitError = (state.limitError && state.limitError());
-
+        console.log('reward run out', reward.run_out());
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
                 m('.w-row', [
@@ -138,10 +157,10 @@ const dashboardRewardCard = {
                     (rewardVM.canEdit(reward, project.state, attrs.user) ?
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1',
                             m("a.show_reward_form[href='javascript:void(0);']", {
-                                onclick: () => {
-                                    reward.edit.toggle();
-                                }
-                            },
+                                    onclick: () => {
+                                        reward.edit.toggle();
+                                    }
+                                },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-edit.btn-no-border')
                             )
                         ) : '')
@@ -164,55 +183,53 @@ const dashboardRewardCard = {
                 // REWARD IMAGE
                 (
                     (shouldShowLoaderToUploadImage) ?
+                    (
+                        h.loader()
+                    ) :
+                    (
+                        (reward.uploaded_image && reward.uploaded_image()) ?
                         (
-                            h.loader()
-                        )
-                    :
+                            m("div.u-marginbottom-30.w-row", [
+                                m("div.w-col.w-col-7", [
+                                    m("div.fontsize-smaller.fontweight-semibold", [
+                                        "Imagem",
+                                        m("span.fontcolor-secondary", " (opcional)")
+                                    ]),
+                                    m("div.u-marginbottom-20",
+                                        m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+                                            onclick: () => tryDeleteImage()
+                                        })
+                                    ),
+                                    m(`img[src='${reward.uploaded_image()}'][alt='']`)
+                                ]),
+                                m("div.w-col.w-col-5")
+                            ])
+                        ) :
                         (
-                            (reward.uploaded_image && reward.uploaded_image()) ? 
-                                (
-                                    m("div.u-marginbottom-30.w-row", [
-                                        m("div.w-col.w-col-7", [
-                                            m("div.fontsize-smaller.fontweight-semibold", [
-                                                "Imagem",
-                                                m("span.fontcolor-secondary",  " (opcional)")
-                                            ]),
-                                            m("div.u-marginbottom-20", 
-                                                m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
-                                                    onclick: () => tryDeleteImage()
-                                                })
-                                            ),
-                                            m(`img[src='${reward.uploaded_image()}'][alt='']`)
-                                        ]),
-                                        m("div.w-col.w-col-5")
+                            m("div.u-marginbottom-30.w-row", [
+                                m("div.w-col.w-col-7", [
+                                    m("div.fontsize-smaller.fontweight-semibold", [
+                                        "Imagem",
+                                        m("span.fontcolor-secondary", " (opcional)")
+                                    ]),
+                                    m("div.w-form", [
+                                        m("form",
+                                            m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_closed_card_${attrs.index}']`, {
+                                                oninput: () => onSelectImageFile()
+                                            })
+                                        ),
+                                        m("div.w-form-done",
+                                            m("div", "Thank you! Your submission has been received!")
+                                        ),
+                                        m("div.w-form-fail",
+                                            m("div", "Oops! Something went wrong while submitting the form.")
+                                        )
                                     ])
-                                ) 
-                            :
-                                (
-                                    m("div.u-marginbottom-30.w-row", [
-                                        m("div.w-col.w-col-7", [
-                                            m("div.fontsize-smaller.fontweight-semibold", [
-                                                "Imagem",
-                                                m("span.fontcolor-secondary", " (opcional)")
-                                            ]),
-                                            m("div.w-form", [
-                                                m("form", 
-                                                    m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_closed_card_${attrs.index}']`, {
-                                                        oninput: () => onSelectImageFile()
-                                                    })
-                                                ),
-                                                m("div.w-form-done", 
-                                                    m("div", "Thank you! Your submission has been received!")
-                                                ),
-                                                m("div.w-form-fail", 
-                                                    m("div", "Oops! Something went wrong while submitting the form.")
-                                                )
-                                            ])
-                                        ]),
-                                        m("div.w-col.w-col-5")
-                                    ])                             
-                                )
+                                ]),
+                                m("div.w-col.w-col-5")
+                            ])
                         )
+                    )
                 ),
                 // END REWARD IMAGE
 
@@ -222,7 +239,7 @@ const dashboardRewardCard = {
                 m('.fontsize-small.fontcolor-secondary',
                     m.trust(h.simpleFormat(h.strip(reward.description()))),
                 ),
-                (reward.limited() ? (availableCount() <= 0) ?
+                ((reward.limited() || reward.run_out())? (availableCount() <= 0 || reward.run_out()) ?
                     m('.u-margintop-10',
                         m('span.badge.badge-gone.fontsize-smaller',
                             window.I18n.t('reward_gone', I18nScope())
@@ -252,23 +269,37 @@ const dashboardRewardCard = {
                         m('.w-col.w-col-4', [
                             m('button.btn.btn-small.btn-terciary.w-button', {
                                 onclick: state.toggleShowLimit
-                            }, 'Alterar limite'),
+                            }, 'Editar disponibilidade'),
 
                         ])),
                     m('.w-col.w-col-8')
                 ]),
                 m(`div${showLimited ? '' : '.w-hidden'}`,
                     m('.card.card-terciary.div-display-none.u-radius', {
-                        style: {
-                            display: 'block'
-                        }
-                    },
+                            style: {
+                                display: 'block'
+                            }
+                        },
                         m('.w-form', [
                             [
+                                m('div.w-row', [
+                                    m('div.w-col.w-col-6',
+                                        m('div.w-checkbox', [
+                                            m(`input.w-checkbox-input[type='checkbox']`, {
+                                                onclick: state.runOutRewardAvailability,
+                                                checked: reward.run_out()
+                                            }),
+                                            m('label.fontsize-smaller.fontweight-semibold.w-form-label',
+                                                window.I18n.t('run_out_reward', I18nScope())
+                                            )
+                                        ])
+                                    ),
+                                    m('div.w-col.w-col-6')
+                                ]),
                                 m('.w-row', [
                                     m('.w-col.w-col-6',
                                         m('.w-checkbox', [
-                                            m("input.w-checkbox-input[type='checkbox']", {
+                                            m(`input.w-checkbox-input[type='checkbox']`, {
                                                 onclick: state.toggleLimit,
                                                 checked: reward.limited()
                                             }),
@@ -293,8 +324,8 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: state.toggleShowLimit
-                                        },
+                                                onclick: state.toggleShowLimit
+                                            },
                                             'Cancelar'
                                         )
                                     ),
