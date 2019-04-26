@@ -63,13 +63,12 @@ const projectEditReward = {
         const loadRewards = () => rewardVM.fetchRewards(vnode.attrs.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
-                console.log('reward search', reward);
-                const limited = reward.maximum_contributions !== null;
+                const limited = reward.maximum_contributions !== null && !reward.run_out;
                 const rewardProp = prop({
                     id: prop(reward.id),
                     deliver_at: prop(reward.deliver_at),
                     description: prop(reward.description),
-                    run_out: h.toggleProp(reward.run_out || false, true),
+                    run_out: h.toggleProp(reward.run_out, !reward.run_out),
                     maximum_contributions: prop(reward.maximum_contributions),
                     minimum_value: prop(reward.minimum_value),
                     edit: h.toggleProp(false, true),

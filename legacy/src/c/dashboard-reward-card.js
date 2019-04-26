@@ -140,7 +140,6 @@ const dashboardRewardCard = {
         const shouldShowLoaderToUploadImage = isUploadingRewardImage() || isDeletingRewardImage();
         const showLimited = (state.showLimited && state.showLimited());
         const limitError = (state.limitError && state.limitError());
-        console.log('reward run out', reward.run_out());
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
             m('.card', [
                 m('.w-row', [
