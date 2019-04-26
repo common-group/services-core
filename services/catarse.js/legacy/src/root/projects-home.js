@@ -50,8 +50,8 @@ const projectsHome = {
         });
 
         return m('#projects-home-component', {
-                config: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
-            }, 
+                oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
+            },
             [
                 m(slider, {
                     slides: slides(),
