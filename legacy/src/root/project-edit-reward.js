@@ -31,10 +31,11 @@ const projectEditReward = {
                     waiting_payment_count: prop(0),
                     limited: h.toggleProp(false, true),
                     maximum_contributions: prop(null),
+                    run_out: h.toggleProp(false, true),
                     newReward: true,
                     uploaded_image: prop(null),
                     row_order: prop(999999999 + (rewards().length * 20)) // we need large and spaced apart numbers
-                }
+                };
             };
 
         const updateRewardSortPosition = (rewardId, position) => m.request({
@@ -62,11 +63,13 @@ const projectEditReward = {
         const loadRewards = () => rewardVM.fetchRewards(vnode.attrs.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
+                console.log('reward search', reward);
                 const limited = reward.maximum_contributions !== null;
                 const rewardProp = prop({
                     id: prop(reward.id),
                     deliver_at: prop(reward.deliver_at),
                     description: prop(reward.description),
+                    run_out: h.toggleProp(reward.run_out || false, true),
                     maximum_contributions: prop(reward.maximum_contributions),
                     minimum_value: prop(reward.minimum_value),
                     edit: h.toggleProp(false, true),
@@ -84,7 +87,7 @@ const projectEditReward = {
             });
 
             if (rewardVM.rewards().length === 0) {
-                rewards([ prop(newReward())]);
+                rewards([prop(newReward())]);
             }
 
             // const l = rewards();
@@ -105,7 +108,7 @@ const projectEditReward = {
                     .catch(err => {
                         error(true);
                         errors('Erro ao fazer upload da imagem da recompensa. Favor tentar novamente.');
-                    })
+                    });
             } else {
                 return Promise.resolve();
             }
@@ -122,12 +125,12 @@ const projectEditReward = {
                 .catch(err => {
                     error(true);
                     errors('Erro ao deletar a imagem da recompensa. Favor tentar novamente.');
-                })
+                });
         };
-        
+
         const showImageToUpload = (reward, imageFileToUpload, imageInputElementFile) => {
             const reader = new FileReader();
-            reader.onload = function(){
+            reader.onload = function() {
                 imageFileToUpload(imageInputElementFile);
                 var dataURL = reader.result;
                 reward.uploaded_image(dataURL);
@@ -157,7 +160,10 @@ const projectEditReward = {
         };
     },
 
-    view: function({state, attrs}) {
+    view: function({
+        state,
+        attrs
+    }) {
         const error = state.error,
             project = attrs.project,
             showImageToUpload = state.showImageToUpload,
@@ -228,11 +234,11 @@ const projectEditReward = {
                                 ]),
                                 rewardVM.canAdd(project().state, state.user()) ? [
                                     m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                                        onclick: () => {
-                                            state.rewards().push(prop(state.newReward()));
-                                            m.redraw();
-                                        }
-                                    },
+                                            onclick: () => {
+                                                state.rewards().push(prop(state.newReward()));
+                                                m.redraw();
+                                            }
+                                        },
                                         window.I18n.t('add_reward', I18nScope())
                                     )
 
@@ -253,13 +259,13 @@ const projectEditReward = {
                                         m('br'),
                                         m('br'),
                                         _.map(state.tips,
-                                            (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4)
-                                                ? null : [
-                                                    m('.fontweight-semibold', tip.title),
-                                                    m.trust(tip.description),
-                                                    m('br'),
-                                                    m('br')
-                                                ]
+                                            (tip, idx) => project().mode === 'sub' && (Number(idx) === 3 || Number(idx) === 4) ?
+                                            null : [
+                                                m('.fontweight-semibold', tip.title),
+                                                m.trust(tip.description),
+                                                m('br'),
+                                                m('br')
+                                            ]
                                         )
                                     ])
                                 ])
