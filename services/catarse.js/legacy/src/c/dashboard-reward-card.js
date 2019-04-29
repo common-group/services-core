@@ -6,6 +6,7 @@ import copyTextInput from './copy-text-input';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
 import inlineError from './inline-error';
+import rewardCardEditDescription from './reward-card-edit-description';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
@@ -17,12 +18,16 @@ const dashboardRewardCard = {
             isDeletingRewardImage = prop(false),
             availableCount = () => reward.maximum_contributions() - reward.paid_count() - reward.waiting_payment_count(),
             limitError = prop(false),
+            editDescription = h.toggleProp(false, true),
             showLimited = h.toggleProp(false, true),
+            descriptionError = prop(false),
+            isSaving = prop(false),
             toggleLimit = () => {
                 reward.run_out(false);
                 reward.limited.toggle();
                 reward.maximum_contributions('');
             },
+            editables = h.toggleProp(false, true),
             toggleShowLimit = () => {
                 showLimited.toggle();
             },
@@ -34,35 +39,50 @@ const dashboardRewardCard = {
                     limitError(true);
                     vnode.attrs.error(true);
                 }
+
+                descriptionError(reward.description() === null || reward.description().length === 0);
+                if (descriptionError()) {
+                    vnode.attrs.error(true);
+                }
             },
             saveReward = () => {
                 validate();
                 if (vnode.attrs.error()) {
                     return false;
                 }
+                isSaving(true);
                 const data = getRewardDataToSave();
+                const isSubscription = projectVM.isSubscription(vnode.attrs.project());
+                if (isSubscription) {
+                    data.description = reward.description();
+                }
 
                 rewardVM.updateReward(vnode.attrs.project().project_id, reward.id(), data).then(() => {
-                    vnode.attrs.showSuccess(true);
-                    showLimited.toggle();
-                    reward.limited(reward.maximum_contributions() !== null);
-                    m.redraw();
-                });
+                        vnode.attrs.showSuccess(true);
+                        editables.toggle();
+                        reward.limited(reward.maximum_contributions() !== null);
+                        isSaving(false);
+                        m.redraw();
+                    })
+                    .catch(err => {
+                        isSaving(false);
+                    });
                 return false;
             },
-              getRewardDataToSave = () => {
-                  if (reward.run_out()) {
-                      reward.maximum_contributions(null);
-                      return {
-                          run_out: true
-                      };
-                  } else {
-                      return {
-                          maximum_contributions: reward.maximum_contributions(),
-                          run_out: false
-                      };
-                  }
-              },
+            getRewardDataToSave = () => {
+
+                if (reward.run_out()) {
+                    reward.maximum_contributions(null);
+                    return {
+                        run_out: true
+                    };
+                } else {
+                    return {
+                        maximum_contributions: reward.maximum_contributions(),
+                        run_out: false
+                    };
+                }
+            },
             onSelectImageFile = () => {
                 const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${vnode.attrs.index}`);
                 if (rewardImageFile.files.length) {
@@ -106,13 +126,15 @@ const dashboardRewardCard = {
                         });
                 }
             },
-              runOutRewardAvailability = () => {
-                  reward.limited(false);
-                  reward.run_out.toggle();
-              };
+            runOutRewardAvailability = () => {
+                reward.limited(false);
+                reward.run_out.toggle();
+            };
 
         vnode.state = {
+            editDescription,
             availableCount,
+            descriptionError,
             toggleShowLimit,
             toggleLimit,
             saveReward,
@@ -122,7 +144,9 @@ const dashboardRewardCard = {
             onSelectImageFile,
             tryDeleteImage,
             isUploadingRewardImage,
-            isDeletingRewardImage
+            isDeletingRewardImage,
+            editables,
+            isSaving
         };
     },
     view: function({
@@ -131,17 +155,29 @@ const dashboardRewardCard = {
     }) {
         const reward = attrs.reward();
         const project = attrs.project();
+
+        const editables = state.editables;
         const isSubscription = projectVM.isSubscription(project);
         const isUploadingRewardImage = state.isUploadingRewardImage;
         const isDeletingRewardImage = state.isDeletingRewardImage;
         const tryDeleteImage = state.tryDeleteImage;
         const onSelectImageFile = state.onSelectImageFile;
         const availableCount = state.availableCount;
+        const inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle', m('span', message));
         const shouldShowLoaderToUploadImage = isUploadingRewardImage() || isDeletingRewardImage();
-        const showLimited = (state.showLimited && state.showLimited());
+        const showLimited = editables();
         const limitError = (state.limitError && state.limitError());
+        const descriptionError = state.descriptionError;
+        const isEditingDescription = editables();
+        const isSaving = state.isSaving();
+
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
-            m('.card', [
+            (
+                isSaving ?
+                    m('.card', [ h.loader() ])
+                :
+                    m('.card', [
+
                 m('.w-row', [
                     m('.w-col.w-col-11.w-col-small-11.w-col-tiny-11',
                         m('.fontsize-base.fontweight-semibold',
@@ -178,6 +214,26 @@ const dashboardRewardCard = {
                         count: reward.waiting_payment_count()
                     })))
                 ]),
+
+                // REWARD DESCRIPTION
+                (
+                    (isSubscription && isEditingDescription) ? m(rewardCardEditDescription, {
+                        reward,
+                        descriptionError,
+                        inlineError
+                    }) : null
+                ),
+                (
+                    (isSubscription && !isEditingDescription) ?
+                    m('.w-row.u-marginbottom-20', [
+                        m('.w-col.w-col-4', [
+                            m('button.btn.btn-small.btn-terciary.w-button', {
+                                onclick: editables.toggle
+                            }, 'Editar descrição'),
+                        ])
+                    ]) : null
+                ),
+                // END REWARD DESCRIPTION
 
                 // REWARD IMAGE
                 (
@@ -238,7 +294,7 @@ const dashboardRewardCard = {
                 m('.fontsize-small.fontcolor-secondary',
                     m.trust(h.simpleFormat(h.strip(reward.description()))),
                 ),
-                ((reward.limited() || reward.run_out())? (availableCount() <= 0 || reward.run_out()) ?
+                ((reward.limited() || reward.run_out()) ? (availableCount() <= 0 || reward.run_out()) ?
                     m('.u-margintop-10',
                         m('span.badge.badge-gone.fontsize-smaller',
                             window.I18n.t('reward_gone', I18nScope())
@@ -267,7 +323,7 @@ const dashboardRewardCard = {
                     (showLimited ? '' :
                         m('.w-col.w-col-4', [
                             m('button.btn.btn-small.btn-terciary.w-button', {
-                                onclick: state.toggleShowLimit
+                                onclick: editables.toggle
                             }, 'Editar disponibilidade'),
 
                         ])),
@@ -323,10 +379,8 @@ const dashboardRewardCard = {
                                     ),
                                     m('.w-sub-col.w-col.w-col-4',
                                         m('button.btn.btn-small.btn-terciary.w-button', {
-                                                onclick: state.toggleShowLimit
-                                            },
-                                            'Cancelar'
-                                        )
+                                            onclick: editables.toggle
+                                        }, 'Cancelar')
                                     ),
                                     m('.w-clearfix.w-col.w-col-4')
                                 ])
@@ -338,7 +392,8 @@ const dashboardRewardCard = {
                 limitError ? m(inlineError, {
                     message: 'Limite deve ser maior que quantidade de apoios.'
                 }) : '', ,
-            ]),
+            ])
+            ),
             m('.u-margintop-20', [
                 m('.fontcolor-secondary.fontsize-smallest.fontweight-semibold',
                     window.I18n.t('reward_link_label', I18nScope())

@@ -6,6 +6,7 @@ import h from '../h';
 import shippingFeeInput from '../c/shipping-fee-input';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
+import rewardCardEditDescription from './reward-card-edit-description';
 
 const editRewardCard = {
     oninit: function(vnode) {
@@ -264,7 +265,8 @@ const editRewardCard = {
             isUploadingImage = state.isUploadingImage(),
             isDeletingImage = state.isDeletingImage(),
             shouldAppearLoaderOnImageUploading = isUploadingImage || isDeletingImage,
-            isSavingReward = state.isSavingReward();
+              isSavingReward = state.isSavingReward(),
+              descriptionError = state.descriptionError;
 
         return state.destroyed() ? m('div', '') : (isSavingReward ? h.loader() : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.card',
@@ -353,22 +355,10 @@ const editRewardCard = {
                             state.deliverAtError() ? inlineError('Data de entrega não pode ser no passado.') : '',
                         )
                     ]),
-                    m('.w-row',
-                        m('label.fontsize-smaller',
-                            'Descrição:'
-                        )
-                    ),
-                    m('.w-row', [
-                        m('textarea.text.required.w-input.text-field.positive.height-medium[aria-required=\'true\'][placeholder=\'Descreva sua recompensa\'][required=\'required\']', {
-                            value: state.reward.description(),
-                            class: state.descriptionError() ? 'error' : false,
-                            oninput: m.withAttr('value', state.reward.description)
-                        }),
-                        m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
-                            'Descrição não pode ficar em branco'
-                        )
-                    ]),
-                    state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+
+                    m(rewardCardEditDescription, {
+                        reward, descriptionError, inlineError
+                    }),
 
                     // REWARD IMAGE
                     (
