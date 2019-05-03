@@ -9,14 +9,19 @@ const subscriptionNextChargeDateCompact = {
     }) {
 
         const {
-            subscription
+            subscription,
         } = attrs;
 
-        if (subscription.status === 'active' || subscription.status === 'started') {
+        const {
+            status,
+            next_charge_at
+        } = subscription;
+
+        if ((status === 'active' || status === 'started') && !!next_charge_at) {
             return m('div.fontsize-smallest.fontweight-semibold.fontcolor-secondary.u-marginbottom-10', [
                 'Próx. cobrança:',
                 m.trust('&nbsp;'),
-                moment(subscription).format('DD/MM/YYYY')
+                moment(next_charge_at).format('DD/MM/YYYY')
             ]);
         } else {
             return m('span[style="display:none"]');
