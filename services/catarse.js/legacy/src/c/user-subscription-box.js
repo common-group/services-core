@@ -18,7 +18,7 @@ import modalBox from '../c/modal-box';
 import checkboxUpdateIndividual from '../c/checkbox-update-individual';
 import userVM from '../vms/user-vm';
 import userSubscriptionPaymentHistoryModal from './user-subscription-payment-history-modal';
-
+import subscriptionNextChargeDateCompact from './subscription-next-charge-date-compact.js';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
@@ -290,6 +290,7 @@ const userSubscriptionBox = {
                         ]),
                         m('.u-marginbottom-20.w-col.w-col-3', [
                             m('.fontsize-base.fontweight-semibold.lineheight-tighter', state.showLastSubscriptionVersionValueIfHasOne()),
+                            m(subscriptionNextChargeDateCompact, { subscription }),
                             m('.fontcolor-secondary.fontsize-smaller.fontweight-semibold',
                                 `Iniciou há ${moment(subscription.created_at).locale('pt').fromNow(true)}`
                             ),
