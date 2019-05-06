@@ -43,7 +43,7 @@ const projectTabs = {
             event.preventDefault();
 
             if (projectVM.isSubscription(project)) {
-                m.route.set(`/projects/${project().project_id}/subscriptions/start`);
+                h.navigateTo(`/projects/${project().project_id}/subscriptions/start`);
                 return false;
             }
 

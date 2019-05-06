@@ -8,6 +8,7 @@ import projectGoalsBox from './project-goals-box';
 const projectRewards = {
     view: function({attrs}) {
         return m('.w-col.w-col-12', [projectVM.isSubscription(attrs.project) ? attrs.subscriptionData() ? m(
+
             projectGoalsBox,
             { goalDetails: attrs.goalDetails, subscriptionData: attrs.subscriptionData }
         ) : h.loader() : '', m(projectRewardList, _.extend({}, {
