@@ -53,7 +53,7 @@ const projectSidebar = {
 
         const navigate = () => {
             if (projectVM.isSubscription(vnode.attrs.project)) {
-                m.route.set(`/projects/${project().project_id}/subscriptions/start`);
+                h.navigateTo(`/projects/${project().project_id}/subscriptions/start`);
                 return false;
             }
             h.navigateTo(`/projects/${project().project_id}/contributions/new`);

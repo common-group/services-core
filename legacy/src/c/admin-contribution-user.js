@@ -4,7 +4,7 @@
  * to be included in AdminUser.
  *
  * Example:
- * controller: function() {
+ * oninit: function() {
  *     return {
  *         itemBuilder: [{
  *             component: 'AdminContributionUser',
