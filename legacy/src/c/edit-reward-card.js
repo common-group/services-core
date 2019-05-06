@@ -6,9 +6,10 @@ import h from '../h';
 import shippingFeeInput from '../c/shipping-fee-input';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
+import rewardCardEditDescription from './reward-card-edit-description';
 
 const editRewardCard = {
-    controller: function (vnode) {
+    oninit: function(vnode) {
         const project = projectVM.getCurrentProject(),
             reward = vnode.attrs.reward(),
             imageFileToUpload = prop(null),
@@ -16,6 +17,7 @@ const editRewardCard = {
             destroyed = prop(false),
             isDeletingImage = prop(false),
             isUploadingImage = prop(false),
+            isSavingReward = prop(false),
             acceptNumeric = (e) => {
                 reward.minimum_value(e.target.value.replace(/[^0-9]/g, ''));
                 return true;
@@ -81,12 +83,13 @@ const editRewardCard = {
                 }
             },
             tryDeleteImage = (reward) => {
-            
+
                 if (reward.newReward || imageFileToUpload()) {
                     reward.uploaded_image(null);
                     imageFileToUpload(null);
                 } else {
                     isDeletingImage(true);
+                    m.redraw();
                     vnode.attrs.deleteImage(reward, vnode.attrs.project_id, reward.id())
                         .then(r => {
                             if (r) {
@@ -95,13 +98,16 @@ const editRewardCard = {
                             }
 
                             isDeletingImage(false);
+                            m.redraw();
                         })
                         .catch(err => {
                             isDeletingImage(false);
+                            m.redraw();
                         });
                 }
             },
             saveReward = () => {
+                isSavingReward(true);
                 validate();
                 if (vnode.attrs.error()) {
                     return false;
@@ -126,43 +132,53 @@ const editRewardCard = {
                     });
                 }
                 if (reward.newReward) {
+                    isUploadingImage(true);
+                    isSavingReward(false);
+                    m.redraw();
+
                     rewardVM.createReward(vnode.attrs.project_id, data).then((r) => {
-                        vnode.attrs.showSuccess(true);
-                        reward.newReward = false;
-                        // save id so we can update without reloading the page
-                        reward.id(r.reward_id);
-                        reward.edit.toggle();
-                        
-                        isUploadingImage(true);
-                        vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, r.reward_id)
-                            .then(r_with_image => {
-                                vnode.attrs.showSuccess(true);
-                                isUploadingImage(false);
-                            })
-                            .catch(error => {
-                                vnode.attrs.showSuccess(false);
-                                isUploadingImage(false);
-                            })
-                    })
-                    .catch(err => {
-                        vnode.attrs.error(true);
-                        vnode.attrs.errors('Erro ao salvar recompensa.');
-                    });
+                            vnode.attrs.showSuccess(true);
+                            reward.newReward = false;
+                            // save id so we can update without reloading the page
+                            reward.id(r.reward_id);
+                            reward.edit.toggle();
+
+                            vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, r.reward_id)
+                                .then(r_with_image => {
+                                    vnode.attrs.showSuccess(true);
+                                    isUploadingImage(false);
+                                    m.redraw();
+                                })
+                                .catch(error => {
+                                    vnode.attrs.showSuccess(false);
+                                    isUploadingImage(false);
+                                    m.redraw();
+                                });
+                        })
+                        .catch(err => {
+                            vnode.attrs.error(true);
+                            vnode.attrs.errors('Erro ao salvar recompensa.');
+                        });
                 } else {
+                    isUploadingImage(true);
+                    isSavingReward(false);
+                    m.redraw();
+
                     rewardVM.updateReward(vnode.attrs.project_id, reward.id(), data).then(() => {
                         vnode.attrs.showSuccess(true);
                         reward.edit.toggle();
-                        
-                        isUploadingImage(true);
+
                         vnode.attrs.uploadImage(reward, imageFileToUpload, vnode.attrs.project_id, reward.id())
                             .then(r_with_image => {
                                 vnode.attrs.showSuccess(true);
                                 isUploadingImage(false);
+                                m.redraw();
                             })
                             .catch(error => {
                                 vnode.attrs.showSuccess(false);
                                 isUploadingImage(false);
-                            })
+                                m.redraw();
+                            });
                     });
                 }
                 return false;
@@ -228,10 +244,15 @@ const editRewardCard = {
             tryDeleteImage,
             onSelectImageFile,
             isUploadingImage,
-            isDeletingImage
+            isDeletingImage,
+            isSavingReward
         };
     },
-    view: function({state, attrs}) {
+    onbeforeupdate: _ => {},
+    view: function({
+        state,
+        attrs
+    }) {
         const newFee = {
                 id: prop(null),
                 value: prop(null),
@@ -239,16 +260,15 @@ const editRewardCard = {
             },
             fees = state.fees(),
             reward = attrs.reward(),
-            inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle',
-                m('span',
-                    message
-                )
-            ),
+            inlineError = message => m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle', m('span', message)),
             index = attrs.index,
             isUploadingImage = state.isUploadingImage(),
-            isDeletingImage = state.isDeletingImage();
+            isDeletingImage = state.isDeletingImage(),
+            shouldAppearLoaderOnImageUploading = isUploadingImage || isDeletingImage,
+              isSavingReward = state.isSavingReward(),
+              descriptionError = state.descriptionError;
 
-        return state.destroyed() ? m('div', '') : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
+        return state.destroyed() ? m('div', '') : (isSavingReward ? h.loader() : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
             m('.card',
                 m('.w-form', [
                     m('.w-row', [
@@ -311,9 +331,9 @@ const editRewardCard = {
                                             }
                                         }, [
                                             _.map(moment.monthsShort(), (month, monthIndex) => m('option', {
-                                                value: monthIndex + 1,
-                                                selected: moment(state.reward.deliver_at()).format('M') == monthIndex + 1
-                                            },
+                                                    value: monthIndex + 1,
+                                                    selected: moment(state.reward.deliver_at()).format('M') == monthIndex + 1
+                                                },
                                                 h.capitalize(month)
                                             ))
                                         ]),
@@ -335,71 +355,57 @@ const editRewardCard = {
                             state.deliverAtError() ? inlineError('Data de entrega não pode ser no passado.') : '',
                         )
                     ]),
-                    m('.w-row',
-                        m('label.fontsize-smaller',
-                            'Descrição:'
-                        )
-                    ),
-                    m('.w-row', [
-                        m('textarea.text.required.w-input.text-field.positive.height-medium[aria-required=\'true\'][placeholder=\'Descreva sua recompensa\'][required=\'required\']', {
-                            value: state.reward.description(),
-                            class: state.descriptionError() ? 'error' : false,
-                            oninput: m.withAttr('value', state.reward.description)
-                        }),
-                        m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_description']",
-                            'Descrição não pode ficar em branco'
-                        )
-                    ]),
-                    state.descriptionError() ? inlineError('Descrição não pode ficar em branco.') : '',
+
+                    m(rewardCardEditDescription, {
+                        reward, descriptionError, inlineError
+                    }),
 
                     // REWARD IMAGE
                     (
-                        (isUploadingImage || isDeletingImage) ?
+                        (shouldAppearLoaderOnImageUploading) ?
+                        (
+                            h.loader()
+                        ) :
+                        (
+                            (reward.uploaded_image && reward.uploaded_image()) ?
                             (
-                                h.loader()
-                            )
-                        :
-                            (
-                                (reward.uploaded_image && reward.uploaded_image()) ? 
-                                    (
-                                        m("div.u-marginbottom-30.u-margintop-30", 
-                                            m("div.w-row", [
-                                                m("div.w-col.w-col-5", 
-                                                    m("label.fontsize-smaller[for='field-8']", [
-                                                        "Imagem",
-                                                        m("span.fontcolor-secondary", "(opcional)")
-                                                    ])
-                                                ),
-                                                m("div.w-col.w-col-7", 
-                                                    m("div.u-marginbottom-20", [
-                                                        m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
-                                                            onclick: () => state.tryDeleteImage(reward)
-                                                        }),
-                                                        m(`img[src='${reward.uploaded_image()}'][alt='']`)
-                                                    ])
-                                                )
+                                m("div.u-marginbottom-30.u-margintop-30",
+                                    m("div.w-row", [
+                                        m("div.w-col.w-col-5",
+                                            m("label.fontsize-smaller[for='field-8']", [
+                                                "Imagem",
+                                                m("span.fontcolor-secondary", "(opcional)")
+                                            ])
+                                        ),
+                                        m("div.w-col.w-col-7",
+                                            m("div.u-marginbottom-20", [
+                                                m("div.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border.btn-inline.u-right[href='#']", {
+                                                    onclick: () => state.tryDeleteImage(reward)
+                                                }),
+                                                m(`img[src='${reward.uploaded_image()}'][alt='']`)
                                             ])
                                         )
-                                    ) 
-                                :
-                                    (
-                                        m("div.u-marginbottom-30.u-margintop-30",
-                                            m("div.w-row", [
-                                                m("div.w-col.w-col-5",
-                                                    m("label.fontsize-smaller", [
-                                                        "Imagem ",
-                                                        m("span.fontcolor-secondary", "(opcional)")
-                                                    ])
-                                                ),
-                                                m("div.w-col.w-col-7",
-                                                    m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_open_card_${index}']`, {
-                                                        oninput: () => state.onSelectImageFile()
-                                                    })
-                                                )
+                                    ])
+                                )
+                            ) :
+                            (
+                                m("div.u-marginbottom-30.u-margintop-30",
+                                    m("div.w-row", [
+                                        m("div.w-col.w-col-5",
+                                            m("label.fontsize-smaller", [
+                                                "Imagem ",
+                                                m("span.fontcolor-secondary", "(opcional)")
                                             ])
-                                        )                                
-                                    )
-                            )    
+                                        ),
+                                        m("div.w-col.w-col-7",
+                                            m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_open_card_${index}']`, {
+                                                oninput: () => state.onSelectImageFile()
+                                            })
+                                        )
+                                    ])
+                                )
+                            )
+                        )
                     ),
                     // END REWARD IMAGE
 
@@ -417,39 +423,39 @@ const editRewardCard = {
                                     state.updateOptions();
                                 }
                             }, [
-                                    m('option[value=\'international\']',
-                                        'Frete Nacional e Internacional'
-                                    ),
-                                    m('option[value=\'national\']',
-                                        'Frete Nacional'
-                                    ),
-                                    m('option[value=\'free\']',
-                                        'Sem frete envolvido'
-                                    ),
-                                    m('option[value=\'presential\']',
-                                        'Retirada presencial'
-                                    )
-                                ]),
+                                m('option[value=\'international\']',
+                                    'Frete Nacional e Internacional'
+                                ),
+                                m('option[value=\'national\']',
+                                    'Frete Nacional'
+                                ),
+                                m('option[value=\'free\']',
+                                    'Sem frete envolvido'
+                                ),
+                                m('option[value=\'presential\']',
+                                    'Retirada presencial'
+                                )
+                            ]),
 
                             ((state.reward.shipping_options() === 'national' || state.reward.shipping_options() === 'international') ?
                                 m('.card.card-terciary', [
 
                                     // state fees
                                     (_.map(fees, (fee, feeIndex) => [m(shippingFeeInput, {
-                                        fee,
-                                        fees: state.fees,
-                                        feeIndex,
-                                        states: state.states
-                                    }),
+                                            fee,
+                                            fees: state.fees,
+                                            feeIndex,
+                                            states: state.states
+                                        }),
 
                                     ])),
                                     m('.u-margintop-20',
                                         m("a.alt-link[href='#']", {
-                                            onclick: () => {
-                                                state.fees().push(newFee);
-                                                return false;
-                                            }
-                                        },
+                                                onclick: () => {
+                                                    state.fees().push(newFee);
+                                                    return false;
+                                                }
+                                            },
                                             'Adicionar destino'
                                         )
                                     )
@@ -475,15 +481,15 @@ const editRewardCard = {
                         m('.w-col.w-col-1.w-col-small-1.w-col-tiny-1', [
                             m('input[type=\'hidden\'][value=\'false\']'),
                             m('a.remove_fields.existing', {
-                                onclick: state.confirmDelete
-                            },
+                                    onclick: state.confirmDelete
+                                },
                                 m('.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border')
                             )
                         ])
                     ])
                 ])
             )
-        ]);
+        ]));
     }
 };
 

@@ -54,7 +54,7 @@ const projectRewardCard = {
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
                     vm.contributionValue(valueFloat);
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, { contribution_value: valueFloat, reward_id: vm.selectedReward().id });
+                    h.navigateTo(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}&reward_id=${vm.selectedReward().id}`);
 
                     return false;
                 }
@@ -115,7 +115,7 @@ const projectRewardCard = {
                     reward_value: reward.minimum_value
                 }
             }, state.selectReward(reward)),
-            config: state.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
+            oncreate: state.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
         }, [
             m('.u-marginbottom-20', [
                 m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`),
@@ -157,7 +157,7 @@ const projectRewardCard = {
                      )
                 ] : '')
             ]),
-            reward.maximum_contributions > 0 ? [
+            (reward.maximum_contributions > 0 || reward.run_out) ? [
                 (h.rewardSouldOut(reward) ? m('.u-margintop-10', [
                     m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')
                 ]) : m('.u-margintop-10', [

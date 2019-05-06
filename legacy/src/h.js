@@ -2,11 +2,13 @@ import _ from 'underscore';
 import moment from 'moment';
 import m from 'mithril';
 import prop from 'mithril/stream';
-import { catarse } from './api';
+import {
+    catarse
+} from './api';
 import contributionVM from './vms/contribution-vm';
 
 function RedrawScheduler() {
-    
+
     let redrawsRequestCounter = 0;
     const requestAnimationFramePolyfill = (function() {
         if (window.requestAnimationFrame !== undefined) {
@@ -41,12 +43,16 @@ function RedrawScheduler() {
 
 RedrawScheduler();
 
-const { CatarseAnalytics, $ } = window;
+const {
+    CatarseAnalytics,
+    $
+} = window;
 const
     _dataCache = {},
     autoRedrawProp = (startData) => {
         const p = prop(startData);
-        function dataUpdater (newData) {
+
+        function dataUpdater(newData) {
             if (newData !== undefined) {
                 p(newData);
                 //m.redraw();
@@ -67,7 +73,7 @@ const
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-  	selfOrEmpty = (obj, emptyState = '') => obj || emptyState,
+    selfOrEmpty = (obj, emptyState = '') => obj || emptyState,
     setMomentifyLocale = () => {
         moment.locale('pt', {
             months: 'Janeiro_Fevereiro_Março_Abril_Maio_Junho_Julho_Agosto_Setembro_Outubro_Novembro_Dezembro'.split('_'),
@@ -131,7 +137,7 @@ const
     discuss = (page, identifier) => {
         const d = document,
             s = d.createElement('script');
-        window.disqus_config = function () {
+        window.disqus_config = function() {
             this.page.url = page;
             this.page.identifier = identifier;
         };
@@ -189,7 +195,9 @@ const
             }
         }
         resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (String(resultado) != digitos.charAt(0)) { return false; }
+        if (String(resultado) != digitos.charAt(0)) {
+            return false;
+        }
 
         tamanho += 1;
         numeros = cnpj.substring(0, tamanho);
@@ -262,13 +270,19 @@ const
                     _.map(fields, (field) => {
                         if (field.rule === 'email') {
                             if (!validateEmail(field.prop())) {
-                                validationErrors().push({ field: field.prop, message: 'E-mail inválido.' });
+                                validationErrors().push({
+                                    field: field.prop,
+                                    message: 'E-mail inválido.'
+                                });
                             }
                         }
 
                         if (field.rule === 'text') {
                             if (field.prop().trim() === '') {
-                                validationErrors().push({ field: field.prop, message: 'O campo não pode ser vazio.' });
+                                validationErrors().push({
+                                    field: field.prop,
+                                    message: 'O campo não pode ser vazio.'
+                                });
                             }
                         }
                     });
@@ -339,7 +353,9 @@ const
     },
 
     getCurrentProject = () => {
-        if (_dataCache.currentProject) { return _dataCache.currentProject; }
+        if (_dataCache.currentProject) {
+            return _dataCache.currentProject;
+        }
 
         const root = document.getElementById('application'),
             data = root && root.getAttribute('data-parameters');
@@ -350,28 +366,36 @@ const
     },
 
     getRdToken = () => {
-        if (_dataCache.rdToken) { return _dataCache.rdToken; }
+        if (_dataCache.rdToken) {
+            return _dataCache.rdToken;
+        }
 
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
         return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : null;
     },
 
     getSimilityCustomer = () => {
-        if (_dataCache.similityCustomer) { return _dataCache.similityCustomer; }
+        if (_dataCache.similityCustomer) {
+            return _dataCache.similityCustomer;
+        }
 
         const meta = _.first(document.querySelectorAll('[name=simility-customer]'));
         return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : null;
     },
 
     getNewsletterUrl = () => {
-        if (_dataCache.newsletterUrl) { return _dataCache.newsletterUrl; }
+        if (_dataCache.newsletterUrl) {
+            return _dataCache.newsletterUrl;
+        }
 
         const meta = _.first(document.querySelectorAll('[name=newsletter-url]'));
         return meta ? (_dataCache.newsletterUrl = meta.getAttribute('content')) : null;
     },
 
     getUser = () => {
-        if (_dataCache.user) { return _dataCache.user; }
+        if (_dataCache.user) {
+            return _dataCache.user;
+        }
 
         const body = document.getElementsByTagName('body'),
             data = _.first(body).getAttribute('data-user');
@@ -389,7 +413,9 @@ const
     userSignedIn = () => !_.isNull(getUserID()),
 
     getBlogPosts = () => {
-        if (_dataCache.blogPosts) { return _dataCache.blogPosts; }
+        if (_dataCache.blogPosts) {
+            return _dataCache.blogPosts;
+        }
 
         const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
 
@@ -400,7 +426,9 @@ const
     },
 
     getApiHost = () => {
-        if (_dataCache.apiHost) { return _dataCache.apiHost; }
+        if (_dataCache.apiHost) {
+            return _dataCache.apiHost;
+        }
 
         const el = document.getElementById('api-host');
         return _dataCache.apiHost = el && el.getAttribute('content');
@@ -450,8 +478,11 @@ const
         return str;
     },
 
-    rewardSouldOut = reward => (reward.maximum_contributions > 0 ?
-            (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false),
+    rewardSouldOut = reward => {
+        const noRemainingRewards = (reward.maximum_contributions > 0 ?
+            (reward.paid_count + reward.waiting_payment_count >= reward.maximum_contributions) : false);
+        return noRemainingRewards || reward.run_out;
+    },
 
     rewardRemaning = reward => reward.maximum_contributions - (reward.paid_count + reward.waiting_payment_count),
 
@@ -556,15 +587,17 @@ const
 
     i18nScope = (scope, obj) => {
         obj = obj || {};
-        return _.extend({}, obj, { scope });
+        return _.extend({}, obj, {
+            scope
+        });
     },
 
     redrawHashChange = (before) => {
         const callback = _.isFunction(before) ?
-                  () => {
-                      before();
-                      m.redraw();
-                  } : m.redraw;
+            () => {
+                before();
+                m.redraw();
+            } : m.redraw;
 
         window.addEventListener('hashchange', callback, false);
     },
@@ -689,8 +722,12 @@ const
 
         return (data) => {
             try {
-                if (!eventObj.project) { eventObj.project = getCurrentProject(); }
-                if (!eventObj.user) { eventObj.user = getUser(); }
+                if (!eventObj.project) {
+                    eventObj.project = getCurrentProject();
+                }
+                if (!eventObj.user) {
+                    eventObj.user = getUser();
+                }
                 CatarseAnalytics.event(eventObj);
             } catch (e) {
                 // console.error('[h.analyticsEvent] error:', e);
@@ -803,23 +840,23 @@ const
     buildLink = (link, refStr) => `/${link}${refStr ? `?ref=${refStr}` : ''}`,
     analyticsWindowScroll = (eventObj) => {
         if (eventObj) {
-            setTimeout(()=>{
-                const u=window.location.href;
-                let fired=false;
+            setTimeout(() => {
+                const u = window.location.href;
+                let fired = false;
                 window.addEventListener('scroll', function sc(e) {
                     //console.log('windowScroll');
-                    const same=window.location.href===u;
-                    if (same && !fired && window.$
-                            && $(document).scrollTop() > $(window).height()/2) {
-                        fired=true;
+                    const same = window.location.href === u;
+                    if (same && !fired && window.$ &&
+                        $(document).scrollTop() > $(window).height() / 2) {
+                        fired = true;
                         const fireEvent = analyticsEvent(eventObj);
                         fireEvent();
                         window.removeEventListener('scroll', sc);
-                    } else if(!same) {
+                    } else if (!same) {
                         window.removeEventListener('scroll', sc);
                     }
                 });
-            },1000);
+            }, 1000);
         }
     },
 
@@ -846,7 +883,7 @@ const
         return path == '/en' || path == '/';
     },
     isProjectPage = () => {
-        const path = window.location.pathname,
+        const path = window.location.pathname || '',
             isOnInsights = path.indexOf('/insights') > -1,
             isOnFiscal = path.indexOf('/fiscal') > -1,
             isOnEdit = path.indexOf('/edit') > -1,
@@ -870,7 +907,9 @@ const
         }
     },
     rootUrl = () => {
-        if (_dataCache.rootUrl) { return _dataCache.rootUrl; }
+        if (_dataCache.rootUrl) {
+            return _dataCache.rootUrl;
+        }
 
         const meta = _.first(document.querySelectorAll('[name=root-url]'));
 
@@ -879,8 +918,7 @@ const
     redactorConfig = params => ({
         source: false,
         formatting: ['p'],
-        formattingAdd: [
-            {
+        formattingAdd: [{
                 tag: 'blockquote',
                 title: 'Citar',
                 class: 'fontsize-base quote',
@@ -898,24 +936,25 @@ const
                 title: 'Cabeçalho 2',
                 class: 'fontsize-large',
                 clear: true
-            }],
+            }
+        ],
         lang: 'pt_br',
         maxHeight: 800,
         minHeight: 300,
         convertVideoLinks: true,
         convertUrlLinks: true,
         convertImageLinks: false,
-          // You can specify, which ones plugins you need.
-          // If you want to use plugins, you have add plugins to your
-          // application.js and application.css files and uncomment the line below:
-          // "plugins": ['fontsize', 'fontcolor', 'fontfamily', 'fullscreen', 'textdirection', 'clips'],
+        // You can specify, which ones plugins you need.
+        // If you want to use plugins, you have add plugins to your
+        // application.js and application.css files and uncomment the line below:
+        // "plugins": ['fontsize', 'fontcolor', 'fontfamily', 'fullscreen', 'textdirection', 'clips'],
         plugins: ['video'],
         imageUpload: `/redactor_rails/pictures?${params}`,
         imageGetJson: '/redactor_rails/pictures',
         path: '/assets/redactor-rails',
         css: 'style.css'
     }),
-    setRedactor = (prop, isInit=false) => //(el, isInit) => {
+    setRedactor = (prop, isInit = false) => //(el, isInit) => {
     (vnode) => {
         if (!isInit) {
             const el = vnode.dom;
@@ -937,7 +976,7 @@ const
     },
 
     redactor = (name, prop) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
-        name, 
+        name,
         //config: setRedactor(prop)
         oncreate: setRedactor(prop)
     }),
