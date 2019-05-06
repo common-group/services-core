@@ -334,7 +334,7 @@ const projectsExplore = {
         state.tryLoadFromQueryPath();
 
         return m('#explore', {
-            config: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
+            oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
         }, [
             m('.hero-search.explore', [
                 m(".u-marginbottom-10.w-container",
