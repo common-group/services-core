@@ -854,7 +854,7 @@ const
 
         return !isOnEdit && !isOnInsights && !isOnContribution && !isOnFiscal;
     },
-    setPageTitle = title => (el, isInitialized) => {
+    setPageTitle = title => (vnode) => {
         const titleEl = document.getElementsByTagName('title')[0],
             currentTitle = titleEl.innerText;
 
