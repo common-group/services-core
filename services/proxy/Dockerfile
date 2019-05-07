@@ -3,7 +3,7 @@ FROM openresty/openresty:alpine-fat
 #FROM comum/openresty
 
 RUN apk update
-RUN apk add openssl libpq postgresql-dev
+RUN apk add openssl libpq postgresql-dev git
 
 WORKDIR /app
 
