@@ -1,7 +1,7 @@
 import m from 'mithril';
 import prop from 'mithril/stream';
 import _ from 'underscore';
-import { catarse } from '../api';
+import { catarse, commonPayment } from '../api';
 import h from '../h';
 import models from '../models';
 import projectFilters from './project-filters-vm';
@@ -74,6 +74,21 @@ const getUserProjectReminders = (user_id) => {
     return lUserReminders.load();
 };
 
+const getUserUnsubscribesProjects = user_id => {
+    const contextVM = catarse.filtersVM({
+        user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    models.unsubscribes;
+
+    const lUserReminders = catarse.loaderWithToken(
+        models.unsubscribes.getPageOptions(contextVM.parameters()));
+
+    return lUserReminders.load();
+};
+
 const getMailMarketingLists = () => {
     const l = catarse.loaderWithToken(
         models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
@@ -124,6 +139,24 @@ const getUserContributedProjects = (user_id, pageSize = 3) => {
         models.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
+};
+
+const getUserSubscribedProjects = (user_external_id, pageSize = 3) => {
+    const contextVM = commonPayment.filtersVM({
+        user_external_id: 'eq',
+        status: 'in'
+    });
+
+    contextVM.user_external_id(user_external_id).order({
+        created_at: 'desc'
+    }).status(['started', 'active', 'canceling']);
+
+    models.userSubscription.pageSize(pageSize);
+
+    const loaderUserSubscribed = commonPayment.loaderWithToken(
+        models.userSubscription.getPageOptions(contextVM.parameters()));
+
+    return loaderUserSubscribed.load();
 };
 
 const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
@@ -243,6 +276,7 @@ const userVM = {
     getUserProjectReminders,
     getUserRecommendedProjects,
     getUserContributedProjects,
+    getUserSubscribedProjects,
     getUserBalance,
     getUserBankAccount,
     getPublicUserContributedProjects,
@@ -252,7 +286,8 @@ const userVM = {
     fetchUser,
     getCurrentUser,
     currentUser,
-    getMailMarketingLists
+    getMailMarketingLists,
+    getUserUnsubscribesProjects
 };
 
 export default userVM;
