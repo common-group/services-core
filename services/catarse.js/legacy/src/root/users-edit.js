@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -11,10 +12,10 @@ import userNotifications from '../c/user-notifications';
 import userBalanceMain from '../c/user-balance-main';
 
 const usersEdit = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            userId = args.user_id.split('-')[0],
-            hash = m.prop(window.location.hash),
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            userId = vnode.attrs.user_id.split('-')[0],
+            hash = prop(window.location.hash),
             displayTabContent = (user) => {
                 const tabs = {
                     '#projects': m(userCreated, {
@@ -57,15 +58,15 @@ const usersEdit = {
 
         h.redrawHashChange();
         userVM.fetchUser(userId, true, userDetails);
-        return {
+        vnode.state = {
             displayTabContent,
             hash,
             userDetails
         };
     },
-
-    view: function(ctrl, args) {
-        const user = ctrl.userDetails();
+    onbeforeupdate: function(vnode) { },
+    view: function({state, attrs}) {
+        const user = state.userDetails();
 
         return m('div', [
             m(userHeader, {
@@ -79,24 +80,24 @@ const usersEdit = {
                 }
             },
                         m('.w-container', [
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#contributions' ? '.selected' : '')}[data-target='#dashboard_contributions'][href='#contributions'][id='dashboard_contributions_link']`, 'Apoiados'),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#projects' ? '.selected' : '')}[data-target='#dashboard_projects'][href='#projects'][id='dashboard_projects_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#contributions' ? '.selected' : '')}[data-target='#dashboard_contributions'][href='#contributions'][id='dashboard_contributions_link']`, 'Apoiados'),
+                            m(`a.dashboard-nav-link${(state.hash() === '#projects' ? '.selected' : '')}[data-target='#dashboard_projects'][href='#projects'][id='dashboard_projects_link']`,
                                 'Criados'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#about_me' ? '.selected' : '')}[data-target='#dashboard_about_me'][href='#about_me'][id='dashboard_about_me_link']`,
-                              'Perfil Público'
+                            m(`a.dashboard-nav-link${(state.hash() === '#about_me' ? '.selected' : '')}[data-target='#dashboard_about_me'][href='#about_me'][id='dashboard_about_me_link']`,
+                                'Perfil Público'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#settings' ? '.selected' : '')}[data-target='#dashboard_settings'][href='#settings'][id='dashboard_settings_link']`,
-                              'Dados cadastrais'
+                            m(`a.dashboard-nav-link${(state.hash() === '#settings' ? '.selected' : '')}[data-target='#dashboard_settings'][href='#settings'][id='dashboard_settings_link']`,
+                                'Dados cadastrais'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
+                            m(`a.dashboard-nav-link${(state.hash() === '#notifications' ? '.selected' : '')}[data-target='#dashboard_notifications'][href='#notifications'][id='dashboard_notifications_link']`,
                                 'Notificações'
                             ),
-                            m(`a.dashboard-nav-link${(ctrl.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
-                              'Saldo'
-                             ),
+                            m(`a.dashboard-nav-link${(state.hash() === '#balance' ? '.selected' : '')}[data-target='#dashboard_balance'][href='#balance'][id='dashboard_balance_link']`,
+                                'Saldo'
+                            ),
                             m(`a.dashboard-nav-link.u-right-big-only[href='/${window.I18n.locale}/users/${user.id}']`, {
-                                config: m.route,
+                                oncreate: m.route.link,
                                 onclick: () => {
                                     m.route(`/users/${user.id}`, {
                                         user_id: user.id
@@ -109,10 +110,10 @@ const usersEdit = {
                     ),
 
                 m('section.section',
-                  m((ctrl.hash() == '#projects' ? '.w-container' : '.w-section'),
-                            m('.w-row', user.id ? ctrl.displayTabContent(user) : h.loader())
-                        )
+                    m((state.hash() == '#projects' ? '.w-container' : '.w-section'),
+                        m('.w-row', user.id ? state.displayTabContent(user) : h.loader())
                     )
+                )
 
             ] :
                 '')

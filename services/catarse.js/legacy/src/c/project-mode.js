@@ -16,8 +16,8 @@ import h from '../h';
 import tooltip from './tooltip';
 
 const projectMode = {
-    view: function(ctrl, args) {
-        const project = args.project(),
+    view: function({attrs}) {
+        const project = attrs.project(),
             mode = project.mode,
             modeImgSrc = (mode === 'aon')
                 ? '/assets/aon-badge.png'
@@ -26,7 +26,7 @@ const projectMode = {
                     : '/assets/flex-badge.png',
             modeTitle = (mode === 'aon') ? 'Campanha Tudo-ou-nada ' : 'Campanha Flexível ',
             goal = _.isNull(project.goal) ? 'não definida' : h.formatNumber(project.goal),
-            buildTooltip = el => m.component(tooltip, {
+            buildTooltip = el => m(tooltip, {
                 el,
                 text: (mode === 'aon') ? `Somente receberá os recursos se atingir ou ultrapassar a meta até o dia ${h.momentify(project.zone_expires_at, 'DD/MM/YYYY')}.` : 'O realizador receberá todos os recursos quando encerrar a campanha, mesmo que não tenha atingido esta meta.',
                 width: 280

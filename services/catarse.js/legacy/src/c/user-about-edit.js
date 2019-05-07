@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -9,38 +10,38 @@ import inlineError from './inline-error';
 import projectEditSaveBtn from './project-edit-save-btn';
 
 const userAboutEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let parsedErrors = userAboutVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteUser;
-        const user = args.user || {},
+        const user = vnode.attrs.user || {},
             fields = {
-                password: m.prop(''),
-                current_password: m.prop(''),
-                uploaded_image: m.prop(userVM.displayImage(user)),
-                cover_image: m.prop(user.profile_cover_image || ''),
-                email: m.prop(''),
-                permalink: m.prop(user.permalink || ''),
-                public_name: m.prop(user.public_name || ''),
-                facebook_link: m.prop(user.facebook_link || ''),
-                twitter: m.prop(user.twitter_username || ''),
-                links: m.prop(user.links || []),
-                about_html: m.prop(user.about_html || ''),
-                email_confirmation: m.prop('')
+                password: prop(''),
+                current_password: prop(''),
+                uploaded_image: prop(userVM.displayImage(user)),
+                cover_image: prop(user.profile_cover_image || ''),
+                email: prop(''),
+                permalink: prop(user.permalink || ''),
+                public_name: prop(user.public_name || ''),
+                facebook_link: prop(user.facebook_link || ''),
+                twitter: prop(user.twitter_username || ''),
+                links: prop(user.links || []),
+                about_html: prop(user.about_html || ''),
+                email_confirmation: prop('')
             },
-            passwordHasError = m.prop(false),
-            emailHasError = m.prop(false),
+            passwordHasError = prop(false),
+            emailHasError = prop(false),
             showEmailForm = h.toggleProp(false, true),
-            showSuccess = m.prop(false),
-            showError = m.prop(false),
-            errors = m.prop(),
-            loading = m.prop(false),
-            uploading = m.prop(false),
-            errorsArray = m.prop([]),
+            showSuccess = prop(false),
+            showError = prop(false),
+            errors = prop(),
+            loading = prop(false),
+            uploading = prop(false),
+            errorsArray = prop([]),
             pushErrosMessage = () => {
                 errors(errorsArray().join('<br/>'));
             },
             updateFieldsFromUser = () => {
-                userVM.fetchUser(args.userId, false).then((dataResponse) => {
+                userVM.fetchUser(vnode.attrs.userId, false).then((dataResponse) => {
                     const data = _.first(dataResponse);
                     fields.uploaded_image(userVM.displayImage(data));
                     fields.cover_image(data.profile_cover_image);
@@ -57,9 +58,9 @@ const userAboutEdit = {
                     userCoverImageEl = window.document.getElementById('user_cover_image'),
                     formData = new FormData();
 
-                if (userUploadedImageEl.files[0] || (!args.hideCoverImg && userCoverImageEl.files[0])) {
+                if (userUploadedImageEl.files[0] || (!vnode.attrs.hideCoverImg && userCoverImageEl.files[0])) {
                     formData.append('uploaded_image', userUploadedImageEl.files[0]);
-                    if (!args.hideCoverImg) {
+                    if (!vnode.attrs.hideCoverImg) {
                         formData.append('cover_image', userCoverImageEl.files[0]);
                     }
 
@@ -106,7 +107,7 @@ const userAboutEdit = {
                     links_attributes: linkAttributes()
                 };
 
-                if (args.publishingUserAbout) {
+                if (vnode.attrs.publishingUserAbout) {
                     userData.publishing_user_about = true;
                 }
 
@@ -198,7 +199,7 @@ const userAboutEdit = {
         // Temporary fix for the menu selection bug. Should be fixed/removed as soon as we route all tabs from mithril.
         setTimeout(m.redraw, 0);
 
-        return {
+        vnode.state = {
             removeLinks,
             removeLink,
             addLink,
@@ -219,20 +220,20 @@ const userAboutEdit = {
             parsedErrors
         };
     },
-    view: function(ctrl, args) {
-        const user = args.user || {},
-            fields = ctrl.fields;
+    view: function({state, attrs}) {
+        const user = attrs.user || {},
+            fields = state.fields;
 
         return m('#about-tab.content', [
-            (ctrl.showSuccess() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
+            (state.showSuccess() && !state.loading() && !state.uploading() ? m(popNotification, {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
-            (ctrl.showError() && !ctrl.loading() && !ctrl.uploading() ? m.component(popNotification, {
-                message: m.trust(ctrl.errors()),
+            (state.showError() && !state.loading() && !state.uploading() ? m(popNotification, {
+                message: m.trust(state.errors()),
                 error: true
             }) : ''),
             m('form.simple_form.w-form', {
-                onsubmit: ctrl.onSubmit
+                onsubmit: state.onSubmit
             }, [
                 m('input[name="utf8"][type="hidden"][value="✓"]'),
                 m('input[name="_method"][type="hidden"][value="patch"]'),
@@ -277,21 +278,21 @@ const userAboutEdit = {
                                         ),
                                         m('a.alt-link.fontsize-small.u-marginleft-10[href=\'javascript:void(0);\'][id=\'update_email\']', {
                                             onclick: () => {
-                                                ctrl.showEmailForm.toggle();
+                                                state.showEmailForm.toggle();
                                             }
                                         },
                                             'Alterar email'
                                         )
                                     ]),
-                                    m(`${ctrl.showEmailForm() ? '' : '.w-hidden'}.u-marginbottom-20.w-row[id=\'email_update_form\']`, [
+                                    m(`${state.showEmailForm() ? '' : '.w-hidden'}.u-marginbottom-20.w-row[id=\'email_update_form\']`, [
                                         m('.w-col.w-col-6.w-sub-col', [
                                             m('label.field-label.fontweight-semibold',
                                                 'Novo email'
                                             ),
                                             m('input.w-input.text-field.positive[id=\'new_email\'][name=\'new_email\'][type=\'email\']', {
-                                                class: ctrl.emailHasError() ? 'error' : '',
+                                                class: state.emailHasError() ? 'error' : '',
                                                 value: fields.email(),
-                                                onfocus: () => ctrl.emailHasError(false),
+                                                onfocus: () => state.emailHasError(false),
                                                 onchange: m.withAttr('value', fields.email)
                                             })
                                         ]),
@@ -300,14 +301,14 @@ const userAboutEdit = {
                                                 'Confirmar novo email'
                                             ),
                                             m('input.string.required.w-input.text-field.w-input.text-field.positive[id=\'new_email_confirmation\'][name=\'user[email]\'][type=\'text\']', {
-                                                class: ctrl.emailHasError() ? 'error' : '',
+                                                class: state.emailHasError() ? 'error' : '',
                                                 value: fields.email_confirmation(),
-                                                onfocus: () => ctrl.emailHasError(false),
-                                                onblur: ctrl.validateEmailConfirmation,
+                                                onfocus: () => state.emailHasError(false),
+                                                onblur: state.validateEmailConfirmation,
                                                 onchange: m.withAttr('value', fields.email_confirmation)
                                             })
                                         ]),
-                                        ctrl.emailHasError() ? ctrl.parsedErrors.inlineError('email') : ''
+                                        state.emailHasError() ? state.parsedErrors.inlineError('email') : ''
                                     ])
                                 ]),
                                 m('.w-row.u-marginbottom-30.card.card-terciary', [
@@ -322,11 +323,11 @@ const userAboutEdit = {
                                     m('.w-col.w-col-7',
                                         m('input.string.optional.w-input.text-field.positive[id="user_public_name"][type="text"]', {
                                             name: 'user[public_name]',
-                                            class: ctrl.parsedErrors.hasError('public_name') ? 'error' : false,
+                                            class: state.parsedErrors.hasError('public_name') ? 'error' : false,
                                             value: fields.public_name(),
                                             onchange: m.withAttr('value', fields.public_name)
                                         }),
-                                        ctrl.parsedErrors.inlineError('public_name')
+                                        state.parsedErrors.inlineError('public_name')
                                     )
                                 ]),
                                 m('.w-form', [
@@ -347,13 +348,13 @@ const userAboutEdit = {
                                                 ),
                                                 m('input.file.optional.w-input.text-field[id="user_uploaded_image"][type="file"]', {
                                                     name: 'user[uploaded_image]',
-                                                    class: ctrl.parsedErrors.hasError('uploaded_image') ? 'error' : false
+                                                    class: state.parsedErrors.hasError('uploaded_image') ? 'error' : false
                                                 }),
-                                                ctrl.parsedErrors.inlineError('uploaded_image')
+                                                state.parsedErrors.inlineError('uploaded_image')
                                             ])
                                         )
                                     ]),
-                                    (args.hideCoverImg ? '' : m('.w-row.u-marginbottom-30.card.card-terciary', [
+                                    (attrs.hideCoverImg ? '' : m('.w-row.u-marginbottom-30.card.card-terciary', [
                                         m('.w-col.w-col-5.w-sub-col', [
                                             m('label.field-label.fontweight-semibold',
                                                 '  Imagem de capa do perfil'
@@ -388,9 +389,9 @@ const userAboutEdit = {
                                             ),
                                             m('.w-form',
                                                 m('.preview-container.u-marginbottom-40', {
-                                                    class: ctrl.parsedErrors.hasError('about_html') ? 'error' : false
+                                                    class: state.parsedErrors.hasError('about_html') ? 'error' : false
                                                 }, h.redactor('user[about_html]', fields.about_html)),
-                                                ctrl.parsedErrors.inlineError('about_html')
+                                                state.parsedErrors.inlineError('about_html')
                                             )
                                         ])
                                     )
@@ -457,7 +458,7 @@ const userAboutEdit = {
                                                         ),
                                                         m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', [
                                                             m('a.btn.btn-small.btn-terciary.fa.fa-lg.fa-trash.btn-no-border', {
-                                                                onclick: ctrl.removeLink(link.id, idx)
+                                                                onclick: state.removeLink(link.id, idx)
                                                             })
                                                         ])
                                                     ]);
@@ -466,7 +467,7 @@ const userAboutEdit = {
                                             m('.w-row', [
                                                 m('.w-col.w-col-6.w-col-push-6',
                                                     m('a.btn.btn-small.btn-terciary', {
-                                                        onclick: ctrl.addLink
+                                                        onclick: state.addLink
                                                     },
                                                         m('span.translation_missing', 'Add Link')
                                                     )
@@ -475,7 +476,7 @@ const userAboutEdit = {
                                         ])
                                     ])
                                 ),
-                                (args.hidePasswordChange ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
+                                (attrs.hidePasswordChange ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                     m('.w-row.u-marginbottom-10', [
                                         m('.fontsize-base.fontweight-semibold',
                                             'Alterar minha senha'
@@ -498,12 +499,12 @@ const userAboutEdit = {
                                                     ' Nova senha'
                                                 ),
                                                 m('input.password.optional.w-input.text-field.w-input.text-field.positive[id=\'user_password\'][name=\'user[password]\'][type=\'password\']', {
-                                                    class: ctrl.passwordHasError() ? 'error' : '',
+                                                    class: state.passwordHasError() ? 'error' : '',
                                                     value: fields.password(),
-                                                    onfocus: () => ctrl.passwordHasError(false),
-                                                    onblur: ctrl.validatePassword,
+                                                    onfocus: () => state.passwordHasError(false),
+                                                    onblur: state.validatePassword,
                                                     onchange: m.withAttr('value', fields.password)
-                                                }), !ctrl.passwordHasError() ? '' : m(inlineError, {
+                                                }), !state.passwordHasError() ? '' : m(inlineError, {
                                                     message: 'A sua nova senha deve ter no mínimo 6 caracteres.'
                                                 })
                                             ])
@@ -511,7 +512,7 @@ const userAboutEdit = {
 
                                     ])
                                 )),
-                                (!user.is_admin && (args.hideDisableAcc || user.total_published_projects > 0) ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
+                                (!user.is_admin && (attrs.hideDisableAcc || user.total_published_projects > 0) ? '' : m('.w-form.card.card-terciary.u-marginbottom-30',
                                     m('.w-row.u-marginbottom-10', [
                                         m('.fontweight-semibold.fontsize-smaller',
                                             'Desativar minha conta'
@@ -520,14 +521,14 @@ const userAboutEdit = {
                                             'Todos os seus apoios serão convertidos em apoios anônimos, seus dados não serão mais visíveis, você sairá automaticamente do sistema e sua conta será desativada permanentemente.'
                                         ),
                                         m(`a.alt-link.fontsize-smaller[href='/${window.I18n.locale}/users/${user.id}'][rel='nofollow']`, {
-                                            onclick: ctrl.deleteAccount
+                                            onclick: state.deleteAccount
                                         },
                                             'Desativar minha conta no Catarse'
                                         ),
                                         m('form.w-hidden', {
                                             action: `/${window.I18n.locale}/users/${user.id}`,
                                             method: 'post',
-                                            config: ctrl.setDeleteForm
+                                            config: state.setDeleteForm
                                         }, [
                                             m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
                                             m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')
@@ -540,8 +541,8 @@ const userAboutEdit = {
                         )
                     ),
                     m(projectEditSaveBtn, {
-                        loading: ctrl.loading,
-                        onSubmit: ctrl.onSubmit
+                        loading: state.loading,
+                        onSubmit: state.onSubmit
                     })
                 )
 

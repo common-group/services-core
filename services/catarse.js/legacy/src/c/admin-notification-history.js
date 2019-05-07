@@ -8,14 +8,15 @@
  * })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 import { catarse } from '../api';
 
 const adminNotificationHistory = {
-    controller: function(args) {
-        const notifications = m.prop([]),
+    oninit: function(vnode) {
+        const notifications = prop([]),
             getNotifications = (user) => {
                 const notification = models.notification;
                 notification.getPageWithToken(catarse.filtersVM({
@@ -31,16 +32,16 @@ const adminNotificationHistory = {
                 .then(notifications);
             };
 
-        getNotifications(args.user);
+        getNotifications(vnode.attrs.user);
 
-        return {
+        vnode.state = {
             notifications
         };
     },
-    view: function(ctrl) {
+    view: function({state}) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico de notificações'),
-            ctrl.notifications().map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
+            state.notifications().map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
                 m('.w-col.w-col-24', [
                     m('.fontcolor-secondary', h.momentify(cEvent.sent_at, 'DD/MM/YYYY, HH:mm'),
                           ' - ', m(`a[target="blank"][href="/notifications/${cEvent.relation}/${cEvent.id}"]`, cEvent.template_name), cEvent.origin ? ` - ${cEvent.origin}` : '')

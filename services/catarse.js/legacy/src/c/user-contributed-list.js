@@ -8,20 +8,21 @@ import loadMoreBtn from './load-more-btn';
 const I18nScope = _.partial(h.i18nScope, 'users.show.contributions');
 
 const userContributedList = {
-    controller: function(args) {
-        const title = args.title,
-            hideSurveys = args.hideSurveys;
-        return {
+    oninit: function(vnode) {
+        const title = vnode.attrs.title,
+            hideSurveys = vnode.attrs.hideSurveys;
+        vnode.state = {
             hideSurveys,
             title
         };
     },
-    view: function(ctrl, args) {
-        const collection = args.collection,
-            isSubscription = args.isSubscription,
-            pagination = args.pagination,
-            hideSurveys = ctrl.hideSurveys,
-            title = ctrl.title;
+    onbeforeupdate: function(vnode) { },
+    view: function({state, attrs}) {
+        const collection = attrs.collection,
+            isSubscription = attrs.isSubscription,
+            pagination = attrs.pagination,
+            hideSurveys = state.hideSurveys,
+            title = state.title;
 
         return (!_.isEmpty(collection) ? m('div', [m('.section-one-column.u-marginbottom-30',
                 m('.w-container', [

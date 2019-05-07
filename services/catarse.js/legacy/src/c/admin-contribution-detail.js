@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -11,13 +12,13 @@ import adminTransactionHistory from './admin-transaction-history';
 import adminReward from './admin-reward';
 
 const adminContributionDetail = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let l;
         const loadReward = () => {
             const model = models.rewardDetail,
-                reward_id = args.item.reward_id,
+                reward_id = vnode.attrs.item.reward_id,
                 opts = model.getRowOptions(h.idVM.id(reward_id).parameters()),
-                reward = m.prop({});
+                reward = prop({});
 
             l = catarse.loaderWithToken(opts);
 
@@ -28,7 +29,7 @@ const adminContributionDetail = {
             return reward;
         };
 
-        return {
+        vnode.state = {
             reward: loadReward(),
             actions: {
                 transfer: {
@@ -55,7 +56,7 @@ const adminContributionDetail = {
                     addEmpty: { id: -1, minimum_value: 10, description: 'Sem recompensa' },
                     validate(rewards, newRewardID) {
                         const reward = _.findWhere(rewards, { id: newRewardID });
-                        return (args.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
+                        return (vnode.attrs.item.value >= reward.minimum_value) ? undefined : 'Valor mínimo da recompensa é maior do que o valor da contribuição.';
                     }
                 },
                 refund: {
@@ -80,10 +81,10 @@ const adminContributionDetail = {
             l
         };
     },
-    view: function(ctrl, args) {
-        const actions = ctrl.actions,
-            item = args.item,
-            reward = ctrl.reward,
+    view: function({state, attrs}) {
+        const actions = state.actions,
+            item = attrs.item,
+            reward = state.reward,
             addOptions = (builder, id) => _.extend({}, builder, {
                 requestOptions: {
                     url: (`/admin/contributions/${id}/gateway_refund`),
@@ -94,35 +95,35 @@ const adminContributionDetail = {
         return m('#admin-contribution-detail-box', [
             m('.divider.u-margintop-20.u-marginbottom-20'),
             m('.w-row.u-marginbottom-30', [
-                m.component(adminInputAction, {
+                m(adminInputAction, {
                     data: actions.transfer,
                     item
                 }),
-                (ctrl.l()) ? h.loader :
-                m.component(adminRadioAction, {
+                (state.l()) ? h.loader :
+                m(adminRadioAction, {
                     data: actions.reward,
                     item: reward,
                     getKeyValue: item.project_id,
                     updateKeyValue: item.contribution_id
                 }),
-                m.component(adminExternalAction, {
+                m(adminExternalAction, {
                     data: addOptions(actions.refund, item.id),
                     item
                 }),
-                m.component(adminInputAction, {
+                m(adminInputAction, {
                     data: actions.remove,
                     item
                 })
             ]),
             m('.w-row.card.card-terciary.u-radius', [
-                m.component(adminTransaction, {
+                m(adminTransaction, {
                     contribution: item
                 }),
-                m.component(adminTransactionHistory, {
+                m(adminTransactionHistory, {
                     contribution: item
                 }),
-                (ctrl.l()) ? h.loader :
-                m.component(adminReward, {
+                (state.l()) ? h.loader :
+                m(adminReward, {
                     reward,
                     contribution: item,
                     key: item.key

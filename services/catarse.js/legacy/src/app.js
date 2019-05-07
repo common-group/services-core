@@ -3,6 +3,7 @@ import h from './h';
 import _ from 'underscore';
 import c from './c';
 import Chart from 'chart.js';
+import { isNumber } from 'util';
 
 (function () {
     Chart.defaults.global.responsive = true;
@@ -18,23 +19,24 @@ import Chart from 'chart.js';
     if (adminRoot) {
         const adminWrap = function (component, customAttr) {
             return {
-                controller: function() {
+                oninit: function(vnode) {
                     const attr = customAttr;
 
-                    return {
+                    vnode.state = {
                         attr
                     };
                 },
-                view: function(ctrl) {
+                view: function({state}) {
+                    const {attr} = state;
                     return m('#app', [
-                        m.component(c.root.Menu, ctrl.attr),
-                        m.component(component, ctrl.attr),
-                        (ctrl.attr.hideFooter ? '' : m.component(c.root.Footer, ctrl.attr))
+                        m(c.root.Menu, attr),
+                        m(component, attr),
+                        (attr.hideFooter ? '' : m(c.root.Footer, attr))
                     ]);
                 }
             };
         };
-        m.route.mode = 'hash';
+        m.route.prefix("#");
 
         m.route(adminRoot, '/', {
             '/': adminWrap(c.root.AdminContributions, { root: adminRoot, menuTransparency: false, hideFooter: true }),
@@ -52,12 +54,13 @@ import Chart from 'chart.js';
     let firstRun = true;// Indica se é a primeira vez q executa um controller.
     const wrap = function (component, customAttr) {
         return {
-            controller: function() {
+            oninit: function(vnode) {
                 if (firstRun) {
                     firstRun = false;
                 } else { // só roda se nao for firstRun
                     try {
                         CatarseAnalytics.pageView(false);
+                        CatarseAnalytics.origin();//force update of origin's cookie
                     } catch (e) { console.error(e); }
                 }
                 const parameters = app.getAttribute('data-parameters') ? JSON.parse(app.getAttribute('data-parameters')) : {};
@@ -117,17 +120,14 @@ import Chart from 'chart.js';
 
                 body.className = 'body-project closed';
 
-
-                return {
-                    attr
-                };
+                vnode.state.attr = attr;
             },
-            view: function(ctrl) {
+            view: function({state}) {
                 return m('#app', [
-                    m.component(c.root.Menu, ctrl.attr),
-                    (h.getUserID() ? m.component(c.root.CheckEmail, ctrl.attr) : ''),
-                    m.component(component, ctrl.attr),
-                    (ctrl.attr.hideFooter ? '' : m.component(c.root.Footer, ctrl.attr))
+                    m(c.root.Menu, state.attr),
+                    (h.getUserID() ? m(c.root.CheckEmail, state.attr) : ''),
+                    m(component, state.attr),
+                    (state.attr.hideFooter ? '' : m(c.root.Footer, state.attr))
                 ]);
             }
         };
@@ -141,7 +141,7 @@ import Chart from 'chart.js';
         const rootEl = app,
             isUserProfile = body.getAttribute('data-controller-name') == 'users' && body.getAttribute('data-action') == 'show' && app.getAttribute('data-hassubdomain') == 'true';
 
-        m.route.mode = 'pathname';
+        m.route.prefix("");
 
         m.route(rootEl, '/', {
             '/': wrap((isUserProfile ? c.root.UsersShow : c.root.ProjectsHome), { menuTransparency: true, footerBig: true, absoluteHome: isUserProfile }),
@@ -201,13 +201,10 @@ import Chart from 'chart.js';
             [urlWithLocale('/jobs')]: wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
             '/jobs': wrap(c.root.Jobs, { menuTransparency: true, footerBig: true }),
             '/press': wrap(c.root.Press, { menuTransparency: true, footerBig: true }),
-            [urlWithLocale('/press')]: wrap(c.root.Press, { menuTransparency: true, footerBig: true })
+            [urlWithLocale('/press')]: wrap(c.root.Press, { menuTransparency: true, footerBig: true }),
+
+            [urlWithLocale('/projects/:project_id/publish')]: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true  }),
+            ['/projects/:project_id/publish']: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true  })
         });
     }
-    _.each(document.querySelectorAll('div[data-mithril]'), (el) => {
-        const component = c.root[el.attributes['data-mithril'].value],
-            paramAttr = el.attributes['data-parameters'],
-            params = paramAttr && JSON.parse(paramAttr.value);
-        m.mount(el, m.component(component, _.extend({ root: el }, params)));
-    });
 }());

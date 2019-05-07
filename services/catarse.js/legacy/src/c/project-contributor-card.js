@@ -1,26 +1,27 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import UserFollowBtn from './user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const projectContributorCard = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            user_id = args.contribution.user_external_id;
-        if (args.isSubscription) {
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            user_id = vnode.attrs.contribution.user_external_id;
+        if (vnode.attrs.isSubscription) {
             userVM.fetchUser(user_id, true, userDetails).then(() => {
-                args.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
-                args.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
-                args.contribution.data.total_published_projects += userDetails().total_published_projects;
+                vnode.attrs.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
+                vnode.attrs.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
+                vnode.attrs.contribution.data.total_published_projects += userDetails().total_published_projects;
             });
         }
-        return {
+        vnode.state = {
             userDetails
         };
     },
-    view: function(ctrl, args) {
-        const contribution = args.contribution;
+    view: function({state, attrs}) {
+        const contribution = attrs.contribution;
 
         return m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center', [
             m(`a[href="/users/${contribution.user_id}"][style="display: block;"]`, {
@@ -28,7 +29,7 @@ const projectContributorCard = {
                     cat: 'project_view',
                     act: 'project_backer_link',
                     lbl: contribution.user_id,
-                    project: args.project()
+                    project: attrs.project()
                 })
             }, [
                 m(`img.thumb.u-marginbottom-10.u-round[src="${!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg'}"]`)
@@ -38,7 +39,7 @@ const projectContributorCard = {
                     cat: 'project_view',
                     act: 'project_backer_link',
                     lbl: contribution.user_id,
-                    project: args.project()
+                    project: attrs.project()
                 })
             }, userVM.displayName(contribution.data)),
             m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', `${h.selfOrEmpty(contribution.data.city)}, ${h.selfOrEmpty(contribution.data.state)}`),

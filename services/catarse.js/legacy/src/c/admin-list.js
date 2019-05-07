@@ -3,20 +3,35 @@ import h from '../h';
 import adminItem from './admin-item';
 
 const adminList = {
-    controller: function(args) {
-        const list = args.vm.list;
+    oninit: function(vnode) {
+        const list = vnode.attrs.vm.list;
 
         if (!list.collection().length && list.firstPage) {
-            list.firstPage(args.filterVM ? args.filterVM.parameters() : null).then(null, (serverError) => {
-                args.vm.error(serverError.message);
-            });
+            list
+                .firstPage(vnode.attrs.filterVM ? vnode.attrs.filterVM.parameters() : null)
+                .then(_ => m.redraw(), (serverError) => {
+                    vnode.attrs.vm.error(serverError.message);
+                    m.redraw();
+                })
+                .catch(_ => m.redraw());
         }
+
+        const loadNextPage = () => {
+            list
+                .nextPage()
+                .then(_ => m.redraw())
+                .catch(_ => m.redraw());
+        };
+
+        vnode.state = {
+            loadNextPage
+        };
     },
-    view: function(ctrl, args) {
-        const list = args.vm.list,
-            error = args.vm.error,
-            label = args.label || '',
-            itemComponent = args.itemComponent || adminItem;
+    view: function({state, attrs}) {
+        const list = attrs.vm.list,
+            error = attrs.vm.error,
+            label = attrs.label || '',
+            itemComponent = attrs.itemComponent || adminItem;
 
         return m('.w-section.section', [
             m('.w-container',
@@ -32,17 +47,17 @@ const adminList = {
                                           m('.fontweight-semibold', list.total()),
                                           ` ${label.toLowerCase()} encontrados`
                                       ]),
-                                      (args.vm && args.vm.hasInputAction ? m('.w-col-10.w-col', args.vm.inputActions()) : '')
+                                      (attrs.vm && attrs.vm.hasInputAction ? m('.w-col-10.w-col', attrs.vm.inputActions()) : '')
                                   ])
                               ]
                             )
                         ])
                     ]),
                     m('#admin-contributions-list.w-container', [
-                        list.collection().map(item => m.component(itemComponent, {
-                            listItem: args.listItem,
-                            listDetail: args.listDetail,
-                            listWrapper: args.vm,
+                        list.collection().map(item => m(itemComponent, {
+                            listItem: attrs.listItem,
+                            listDetail: attrs.listDetail,
+                            listWrapper: attrs.vm,
                             item,
                             key: item.id
                         })),
@@ -53,7 +68,7 @@ const adminList = {
                                         list.isLoading() ?
                                         h.loader() :
                                         m('button#load-more.btn.btn-medium.btn-terciary', {
-                                            onclick: list.nextPage
+                                            onclick: state.loadNextPage
                                         }, 'Carregar mais'),
                                     ])
                                 ])

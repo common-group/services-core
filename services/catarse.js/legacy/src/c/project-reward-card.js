@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
@@ -7,13 +8,13 @@ import projectVM from '../vms/project-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectRewardCard = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const storeKey = 'selectedReward',
             MINIMUM_VALUE = 10,
-            reward = args.reward,
+            reward = vnode.attrs.reward,
             vm = rewardVM,
-            descriptionExtended = m.prop(0),
-            selectedDestination = m.prop(''),
+            descriptionExtended = prop(0),
+            selectedDestination = prop(''),
             toggleDescriptionExtended = (rewardId) => {
                 if (descriptionExtended() === rewardId) {
                     descriptionExtended(0);
@@ -53,7 +54,7 @@ const projectRewardCard = {
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
                     vm.contributionValue(valueFloat);
-                    m.route(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout`, { contribution_value: valueFloat, reward_id: vm.selectedReward().id });
+                    h.navigateTo(`/projects/${projectVM.currentProject().project_id}/subscriptions/checkout?contribution_value=${valueFloat}&reward_id=${vm.selectedReward().id}`);
 
                     return false;
                 }
@@ -80,7 +81,7 @@ const projectRewardCard = {
 
         vm.getStates();
 
-        return {
+        vnode.state = {
             setInput,
             reward,
             submitContribution,
@@ -97,13 +98,13 @@ const projectRewardCard = {
             contributionValue: vm.contributionValue
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         // FIXME: MISSING ADJUSTS
         // - add draft admin modifications
-        const reward = ctrl.reward,
-            project = args.project,
+        const reward = state.reward,
+            project = attrs.project,
             isSub = projectVM.isSubscription(project);
-        return m(`div[class="${h.rewardSouldOut(reward) || args.hasSubscription() ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
+        return m(`div[class="${h.rewardSouldOut(reward) || attrs.hasSubscription() ? 'card-gone' : `card-reward ${project.open_for_contributions ? 'clickable' : ''}`} card card-secondary u-marginbottom-10"]`, {
             onclick: h.analytics.event({
                 cat: 'contribution_create',
                 act: 'contribution_reward_click',
@@ -113,8 +114,8 @@ const projectRewardCard = {
                     reward_id: reward.id,
                     reward_value: reward.minimum_value
                 }
-            }, ctrl.selectReward(reward)),
-            config: ctrl.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
+            }, state.selectReward(reward)),
+            oncreate: state.isRewardOpened(reward) ? h.scrollTo() : Function.prototype
         }, [
             m('.u-marginbottom-20', [
                 m('.fontsize-base.fontweight-semibold', `Para R$ ${h.formatNumber(reward.minimum_value)} ou mais${isSub ? ' por mês' : ''}`),
@@ -122,18 +123,18 @@ const projectRewardCard = {
                 (reward.uploaded_image ? m(`img[src='${reward.uploaded_image}']`) : '')
             ]),
             m(`.fontsize-smaller.reward-description${h.rewardSouldOut(reward) ? '' : '.fontcolor-secondary'}`, {
-                class: ctrl.isLongDescription()
-                    ? ctrl.isRewardOpened()
-                    ? `opened ${ctrl.isRewardDescriptionExtended() ? 'extended' : ''}`
+                class: state.isLongDescription()
+                    ? state.isRewardOpened()
+                    ? `opened ${state.isRewardDescriptionExtended() ? 'extended' : ''}`
                     : ''
                 : 'opened extended'
             }, m.trust(h.simpleFormat(h.strip(reward.description)))),
-            ctrl.isLongDescription() && ctrl.isRewardOpened() ? m('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
-                onclick: () => ctrl.toggleDescriptionExtended(reward.id)
+            state.isLongDescription() && state.isRewardOpened() ? m('a[href="javascript:void(0);"].alt-link.fontsize-smallest.gray.link-more.u-marginbottom-20', {
+                onclick: () => state.toggleDescriptionExtended(reward.id)
             }, [
-                ctrl.isRewardDescriptionExtended() ? 'menos ' : 'mais ',
+                state.isRewardDescriptionExtended() ? 'menos ' : 'mais ',
                 m('span.fa.fa-angle-down', {
-                    class: ctrl.isRewardDescriptionExtended() ? 'reversed' : ''
+                    class: state.isRewardDescriptionExtended() ? 'reversed' : ''
                 })
             ]) : '',
             isSub ? null : m('.u-marginbottom-20.w-row', [
@@ -156,7 +157,7 @@ const projectRewardCard = {
                      )
                 ] : '')
             ]),
-            reward.maximum_contributions > 0 ? [
+            (reward.maximum_contributions > 0 || reward.run_out) ? [
                 (h.rewardSouldOut(reward) ? m('.u-margintop-10', [
                     m('span.badge.badge-gone.fontsize-smaller', 'Esgotada')
                 ]) : m('.u-margintop-10', [
@@ -174,10 +175,10 @@ const projectRewardCard = {
             reward.waiting_payment_count > 0 ? m('.maximum_contributions.in_time_to_confirm.clearfix', [
                 m('.pending.fontsize-smallest.fontcolor-secondary', h.pluralize(reward.waiting_payment_count, ' apoio em prazo de confirmação', ' apoios em prazo de confirmação.'))
             ]) : '',
-            project.open_for_contributions && !h.rewardSouldOut(reward) && !args.hasSubscription() ? [
-                ctrl.isRewardOpened() ? m('.w-form', [
+            project.open_for_contributions && !h.rewardSouldOut(reward) && !attrs.hasSubscription() ? [
+                state.isRewardOpened() ? m('.w-form', [
                     m('form.u-margintop-30', {
-                        onsubmit: ctrl.submitContribution
+                        onsubmit: state.submitContribution
                     }, [
                         m('.divider.u-marginbottom-20'),
                         rewardVM.hasShippingOptions(reward) ? m('div', [
@@ -185,13 +186,13 @@ const projectRewardCard = {
                               'Local de entrega'
                              ),
                             m('select.positive.text-field.w-select', {
-                                onchange: m.withAttr('value', ctrl.selectDestination),
-                                value: ctrl.selectedDestination()
+                                onchange: m.withAttr('value', state.selectDestination),
+                                value: state.selectedDestination()
                             },
                               _.map(
-                                  ctrl.locationOptions(reward, ctrl.selectedDestination),
+                                  state.locationOptions(reward, state.selectedDestination),
                                   option => m('option',
-                                              { selected: option.value === ctrl.selectedDestination(), value: option.value },
+                                              { selected: option.value === state.selectedDestination(), value: option.value },
                                       [
                                           `${option.name} `,
                                           option.value != '' ? `+R$${h.formatNumber(option.fee, 2, 3)}` : null
@@ -209,17 +210,17 @@ const projectRewardCard = {
                              ),
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                               m('input.w-input.back-reward-input-reward[type="tel"]', {
-                                  config: ctrl.setInput,
-                                  onkeyup: m.withAttr('value', ctrl.applyMask),
-                                  value: ctrl.contributionValue()
+                                  config: state.setInput,
+                                  onkeyup: m.withAttr('value', state.applyMask),
+                                  value: state.contributionValue()
                               })
                              )
                         ]),
                         m('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'),
-                        ctrl.error().length > 0 ? m('.text-error', [
+                        state.error().length > 0 ? m('.text-error', [
                             m('br'),
                             m('span.fa.fa-exclamation-triangle'),
-                            ` ${ctrl.error()}`
+                            ` ${state.error()}`
                         ]) : ''
                     ])
                 ]) : ''

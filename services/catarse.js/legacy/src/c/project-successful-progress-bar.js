@@ -5,10 +5,8 @@ import _ from 'underscore';
 const I18nScope = _.partial(h.i18nScope, 'projects.insights.progress_bar');
 
 const projectSuccessfulProgressBar = {
-    controller: function(args) {
-
-        const
-            designStates = {
+    oninit: function(vnode) {
+        const designStates = {
                 waiting_funds: {
                     processing: {
                         lineClass: '.done',
@@ -28,7 +26,7 @@ const projectSuccessfulProgressBar = {
                 successful_waiting_transfer: {
                     processing: {
                         lineClass: '.done',
-                        text: `${I18n.t('successful_waiting_transfer_processing_text', I18nScope())} ${h.momentify(args.project().expires_at, 'DD/MM/YYYY')}`,
+                        text: `${I18n.t('successful_waiting_transfer_processing_text', I18nScope())} ${h.momentify(vnode.attrs.project().expires_at, 'DD/MM/YYYY')}`,
                         circleClass: '.done.fa.fa-check.fa-2x',
                         descriptionTextClass: '.fontcolor-terciary',
                         descriptionTextSizeClass: '',
@@ -43,14 +41,14 @@ const projectSuccessfulProgressBar = {
                 }
             };
 
-        return {
+        vnode.state = {
             designStates
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         const 
-            designComponent = ctrl.designStates[args.current_state()],
+            designComponent = state.designStates[attrs.current_state()],
             processingComponent = designComponent.processing,
             successComponent = designComponent.success;
 
@@ -63,7 +61,7 @@ const projectSuccessfulProgressBar = {
                             I18n.t('finished_initial', I18nScope())
                         ),
                         m('.fontsize-smallest',
-                            `${I18n.t('finished_initial_subtitle', I18nScope())} ${h.momentify(args.project().expires_at,'DD/MM/YYYY')}`
+                            `${I18n.t('finished_initial_subtitle', I18nScope())} ${h.momentify(attrs.project().expires_at,'DD/MM/YYYY')}`
                         )
                     ])
                 ])

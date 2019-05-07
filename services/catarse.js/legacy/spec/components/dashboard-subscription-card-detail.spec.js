@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import dashboardSubscriptionCardDetail from '../../src/c/dashboard-subscription-card-detail';
 
@@ -9,8 +10,8 @@ describe('UserAddressOnDashboardOfUserDetails', () => {
         $userWithoutAddress = UserDetailMockery()[1];
         $subscription = SubscriptionMockery()[0];
         $subscription = _.extend($subscription, {project_external_id: 1});
-        $output = mq(m.component(dashboardSubscriptionCardDetail, {user:$userDetail, subscription:$subscription}));
-        $output2 = mq(m.component(dashboardSubscriptionCardDetail, {user:$userWithoutAddress, subscription:$subscription}));
+        $output = mq(m(dashboardSubscriptionCardDetail, {user:$userDetail, subscription:$subscription}));
+        $output2 = mq(m(dashboardSubscriptionCardDetail, {user:$userWithoutAddress, subscription:$subscription}));
     });
 
     it('Should show user address street', () => {

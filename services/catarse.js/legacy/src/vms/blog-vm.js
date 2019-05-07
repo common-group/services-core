@@ -3,18 +3,19 @@ import m from 'mithril';
 
 const blogVM = {
     getBlogPosts() {
-        const deferred = m.deferred();
-        const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
+        const p = new Promise((resolve, reject) => {
+            const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
 
-        if (posts) {
-            deferred.resolve(JSON.parse(posts));
-        } else {
-            m.request({ method: 'GET', url: '/posts' })
-                .then(deferred.resolve)
-                .catch(deferred.reject);
-        }
+            if (posts) {
+               resolve(JSON.parse(posts));
+            } else {
+                m.request({ method: 'GET', url: '/posts' })
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
 
-        return deferred.promise;
+        return p;
     }
 };
 

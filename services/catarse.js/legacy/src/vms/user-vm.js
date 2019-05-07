@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -6,7 +7,7 @@ import models from '../models';
 import projectFilters from './project-filters-vm';
 
 const idVM = h.idVM,
-    currentUser = m.prop({}),
+    currentUser = prop({}),
     createdVM = catarse.filtersVM({ project_user_id: 'eq' });
 
 const getUserCreatedProjects = (user_id, pageSize = 3) => {
@@ -130,7 +131,16 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
 
     const lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
-    return !handlePromise ? lUser.load() : lUser.load().then(_.compose(customProp, _.first));
+    if (!handlePromise) {
+        return lUser
+            .load();
+    } else {
+        lUser
+            .load()
+            .then(_.compose(customProp, _.first))
+            .then(_ => m.redraw());
+        return customProp;
+    }
 };
 
 const getCurrentUser = () => {
@@ -163,8 +173,8 @@ const displayCover = (user) => {
 
 const getUserRecommendedProjects = (contribution) => {
     const sample3 = _.partial(_.sample, _, 3),
-        loaders = m.prop([]),
-        collection = m.prop([]),
+        loaders = prop([]),
+        collection = prop([]),
         { user_id } = h.getUser();
 
     const loader = () => _.reduce(loaders(), (memo, curr) => {

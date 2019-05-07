@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import UserSettingsHelp from '../../src/c/user-settings-help';
 
@@ -7,7 +8,7 @@ describe('UserSettingsHelp', () => {
     describe('view', () => {
 
         beforeAll(() => {
-            $output = mq(m.component(UserSettingsHelp, {}));
+            $output = mq(m(UserSettingsHelp, {}));
         });
 
         it('should contains the link to presentation of help', () => {

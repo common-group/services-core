@@ -7,20 +7,21 @@
  */
 
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import UserFollowBtn from '../c/user-follow-btn';
 import userVM from '../vms/user-vm';
 
 const UserFollowCard = {
-    controller: function(args) {
-        const friend = m.prop(args.friend);
-        return {
+    oninit: function(vnode) {
+        const friend = prop(vnode.attrs.friend);
+        vnode.state = {
             friend
         };
     },
-    view: function(ctrl, args) {
-        const friend = ctrl.friend(),
+    view: function({state, attrs}) {
+        const friend = state.friend(),
             profile_img = _.isEmpty(friend.avatar) ? '/assets/catarse_bootstrap/user.jpg' : friend.avatar;
         return m('.w-col.w-col-4',
           m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center',
@@ -48,7 +49,10 @@ const UserFollowCard = {
                       [
                           m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3'),
                           m('.w-col.w-col-6.w-col-small-4.w-col-tiny-6',
-                    m.component(UserFollowBtn, { following: friend.following, follow_id: friend.friend_id })
+                    m(
+                        UserFollowBtn,
+                        { following: friend.following, follow_id: friend.friend_id }
+                    )
                   ),
                           m('.w-col.w-col-3.w-col-small-4.w-col-tiny-3')
                       ]

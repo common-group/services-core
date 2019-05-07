@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse, commonAnalytics } from '../api';
 import h from '../h';
@@ -7,10 +8,10 @@ import rewardVM from './reward-vm';
 import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
 
-const currentProject = m.prop(),
-    userDetails = m.prop(),
-    subscriptionData = m.prop(),
-    projectContributions = m.prop([]),
+const currentProject = prop(),
+    userDetails = prop(),
+    subscriptionData = prop(),
+    projectContributions = prop([]),
     vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
 
@@ -56,7 +57,10 @@ const init = (project_id, project_user_id) => {
 
     fetchParallelData(project_id, project_user_id);
 
-    return lProject.load().then(setProject(project_user_id));
+    return lProject
+        .load()
+        .then(setProject(project_user_id))
+        .then(_ => m.redraw());
 };
 
 const resetData = () => {
@@ -76,21 +80,26 @@ const fetchParallelData = (projectId, projectUserId) => {
 // FIXME: should work with data-parameters that don't have project struct
 // just ids: {project_id project_user_id user_id }
 const getCurrentProject = () => {
-    const root = document.getElementById('application'),
-        data = root && root.getAttribute('data-parameters');
+    const root = document.getElementById('application');
+    const data = root && root.getAttribute('data-parameters');
 
     if (data) {
         const jsonData = JSON.parse(data);
-
+            
         const { projectId, projectUserId } = jsonData; // legacy
         const { project_id, project_user_id } = jsonData;
 
+        const project_data = {
+            project_id : (project_id || projectId),
+            project_user_id : (project_user_id || projectUserId)
+        };
+
         // fill currentProject when jsonData has id and mode (legacy code)
         if (jsonData.id && jsonData.mode) {
-            currentProject(jsonData);
+            currentProject(project_data);
         }
 
-        init((project_id || projectId), (project_user_id || projectUserId));
+        init(project_data.project_id, project_data.project_user_id);
 
         m.redraw();
 
@@ -123,7 +132,15 @@ const fetchProject = (projectId, handlePromise = true, customProp = currentProje
 
     const lproject = catarse.loaderWithToken(models.projectDetail.getRowOptions(idVM.parameters()));
 
-    return !handlePromise ? lproject.load() : lproject.load().then(_.compose(customProp, _.first));
+    if (!handlePromise) {
+        return lproject.load();
+    } else {
+        lproject
+            .load()
+            .then(_.compose(customProp, _.first))
+            .then(_ => m.redraw());
+        return customProp;
+    }
 };
 
 
@@ -142,7 +159,7 @@ const storeSubscribeAction = (route) => {
 const checkSubscribeAction = () => {
     const actionRoute = h.callStoredAction(subscribeActionKey);
     if (actionRoute) {
-        m.route(actionRoute);
+        m.route.set(actionRoute);
     }
 };
 

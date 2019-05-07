@@ -4,12 +4,12 @@ import h from '../h';
 import projectCard from './project-card';
 
 const projectRow = {
-    view: function(ctrl, args) {
-        const collection = args.collection,
-            title = args.title || collection.title,
-            ref = args.ref,
-            showFriends = args.showFriends,
-            wrapper = args.wrapper || '.w-section.section.u-marginbottom-40';
+    view: function({attrs}) {
+        const collection = attrs.collection,
+            title = attrs.title || collection.title,
+            ref = attrs.ref,
+            showFriends = attrs.showFriends,
+            wrapper = attrs.wrapper || '.w-section.section.u-marginbottom-40';
 
         if (collection.loader() || collection.collection().length > 0) {
             return m(wrapper, [
@@ -25,12 +25,12 @@ const projectRow = {
                                 ]) : ''),
                                 m((showFriends ? '.w-col.w-col-6' : '.w-col.w-col-12'),
                                     m(`a.btn.btn-small.btn-terciary[href="/explore?ref=${ref}&filter=${collection.hash}"]`, {
-                                        config: m.route
+                                        oncreate: m.route.link
                                     }, 'Ver todos'))
                             ])
                         ])
                     ]) : '',
-                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m.component(projectCard, {
+                    collection.loader() ? h.loader() : m('.w-row', _.map(collection.collection(), project => m(projectCard, {
                         project,
                         ref,
                         showFriends

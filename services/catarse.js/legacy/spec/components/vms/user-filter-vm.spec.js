@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import userFilterVM from '../../../src/vms/user-filter-vm';
 
 describe('admin.userFilterVM', function() {

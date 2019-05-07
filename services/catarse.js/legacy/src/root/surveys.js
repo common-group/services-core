@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import moment from 'moment';
@@ -12,14 +13,14 @@ const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const surveyScope = _.partial(h.i18nScope, 'projects.dashboard_surveys');
 
 const surveys = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const loader = catarse.loaderWithToken,
             filterVM = catarse.filtersVM({
                 project_id: 'eq'
             }),
             {
                 project_id
-            } = args,
+            } = vnode.attrs,
             toggleOpen = (reward) => {
                 m.request({
                     method: 'GET',
@@ -33,7 +34,7 @@ const surveys = {
                     m.redraw();
                 });
             },
-            projectDetails = m.prop([]);
+            projectDetails = prop([]);
 
         filterVM.project_id(project_id);
         const l = loader(models.projectDetail.getRowOptions(filterVM.parameters()));
@@ -61,7 +62,7 @@ const surveys = {
         });
         l.load().then(projectDetails);
 
-        return {
+        vnode.state = {
             l,
             project_id,
             toggleOpen,
@@ -69,15 +70,16 @@ const surveys = {
             projectDetails,
         };
     },
-    view: function(ctrl) {
-        const project = _.first(ctrl.projectDetails());
+    view: function({state}) {
+
+        const project = _.first(state.projectDetails());
         const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
         const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));
         const availableAction = (reward) => {
             if (canBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-small-stack.w-col-tiny-tiny-stack',
                     m('a.btn.btn-small.w-button', {
-                        onclick: () => m.route(`/projects/${ctrl.project_id}/rewards/${reward.id}/surveys/new`)
+                        onclick: () => m.route.set(`/projects/${state.project_id}/rewards/${reward.id}/surveys/new`)
                     },
                         window.I18n.t('create_survey', surveyScope())
                     )
@@ -97,7 +99,7 @@ const surveys = {
                         m('.u-marginbottom-10.w-clearfix',
                             m('a.toggle.toggle-on.u-right.w-clearfix.w-inline-block', {
                                 onclick: () => {
-                                    ctrl.toggleOpen(reward);
+                                    state.toggleOpen(reward);
                                 }
                             }, [
                                 m('.toggle-btn'),
@@ -126,7 +128,7 @@ const surveys = {
                     m('.u-marginbottom-10.w-clearfix',
                         m('a.toggle.toggle-off.u-right.w-inline-block', {
                             onclick: () => {
-                                ctrl.toggleOpen(reward);
+                                state.toggleOpen(reward);
                             }
                         }, [
                             m('div',
@@ -147,9 +149,9 @@ const surveys = {
             );
         };
 
-        return (project && !projectVM.isSubscription(project) ? m('.project-surveys',
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+        return project && !projectVM.isSubscription(project) ? m('.project-surveys',
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
             m('.section',
                 m('.w-container',
@@ -229,7 +231,7 @@ const surveys = {
                             )
                         ]),
                         m('.fontsize-small.table-inner', [
-                            (_.map(ctrl.rewardVM.rewards(), reward => m('.table-row.w-row', [
+                            (_.map(state.rewardVM.rewards(), reward => m('.table-row.w-row', [
                                 m('.table-col.w-col.w-col-3', [
                                     m('.fontsize-base.fontweight-semibold',
                                         `R$ ${reward.minimum_value} ou mais`
@@ -286,9 +288,7 @@ const surveys = {
                                             // m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.u-marginright-10.w-button'),
                                             (!canBeCreated(reward) && !cannotBeCreated(reward)) ?
                                             m('a.btn.btn-inline.btn-small.btn-terciary.fa.fa-eye.fa-lg.w-button[target=\'_blank\']', {
-                                                onclick: () => m.route(`/projects/${project.project_id}/contributions_report`, {
-                                                    rewardId: reward.id
-                                                })
+                                                href : `/projects/${project.project_id}/contributions_report?rewardId=${reward.id}`
                                             }) : ''
                                         ]),
                                         availableAction(reward)
@@ -298,7 +298,7 @@ const surveys = {
                         ])
                     ])
                 ])
-            )) : h.loader());
+            )) : h.loader();
     }
 };
 

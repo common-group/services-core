@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import balanceTransferListVM from '../vms/balance-transfer-list-vm';
@@ -14,14 +15,14 @@ import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
 
 const adminBalanceTranfers = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const listVM = balanceTransferListVM,
             filterVM = balanceTransferFilterVM(),
             authorizedListVM = balanceTransferListVM,
             authorizedFilterVM = balanceTransferFilterVM(),
-            authorizedCollection = m.prop([]),
-            error = m.prop(''),
-            selectedAny = m.prop(false),
+            authorizedCollection = prop([]),
+            error = prop(''),
+            selectedAny = prop(false),
             filterBuilder = [
                 {
                     component: filterMain,
@@ -90,14 +91,14 @@ const adminBalanceTranfers = {
                     }
                 }
             ],
-            selectedItemsIDs = m.prop([]),
+            selectedItemsIDs = prop([]),
             displayApprovalModal = h.toggleProp(false, true),
             displayManualModal = h.toggleProp(false, true),
             displayRejectModal = h.toggleProp(false, true),
             displayProcessTransfer = h.toggleProp(false, true),
             processingTranfersLoader = h.toggleProp(false, true),
-            selectAllLoading = m.prop(false),
-            redrawProp = m.prop(false),
+            selectAllLoading = prop(false),
+            redrawProp = prop(false),
             actionMenuToggle = h.toggleProp(false, true),
             isSelected = item_id => _.find(selectedItemsIDs(), i => i.id == item_id),
             selectItem = (item) => {
@@ -122,19 +123,20 @@ const adminBalanceTranfers = {
             },
             submit = () => {
                 error(false);
-                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
+                listVM.firstPage(filterVM.parameters()).then(_ => m.redraw(), (serverError) => {
                     error(serverError.message);
+                    m.redraw();
                 });
 
                 return false;
             },
             generateWrapperModal = (customAttrs) => {
                 const wrapper = {
-                    view: function(ctrl, args) {
+                    view: function(ctrl, {attrs}) {
                         actionMenuToggle(false);
                         return m('', [
                             m('.modal-dialog-header', [
-                                m('.fontsize-large.u-text-center', args.modalTitle)
+                                m('.fontsize-large.u-text-center', attrs.modalTitle)
                             ]),
                             m('.modal-dialog-content', [
                                 m('.w-row.fontweight-semibold', [
@@ -165,12 +167,12 @@ const adminBalanceTranfers = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
-                                            onclick: args.onClickCallback
-                                        }, args.ctaText)
+                                            onclick: attrs.onClickCallback
+                                        }, attrs.ctaText)
                                        ),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.btn-terciary.w-button', {
-                                            onclick: args.displayModal.toggle
+                                            onclick: attrs.displayModal.toggle
                                         }, 'Voltar')
                                        ),
                                     m('.w-col.w-col-1')
@@ -302,7 +304,7 @@ const adminBalanceTranfers = {
 
         loadAuthorizedBalances();
 
-        return {
+        vnode.state = {
             displayApprovalModal,
             displayRejectModal,
             displayManualModal,
@@ -333,41 +335,41 @@ const adminBalanceTranfers = {
             submit
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('', [
             m(adminFilter, {
-                filterBuilder: ctrl.filterBuilder,
-                submit: ctrl.submit
+                filterBuilder: state.filterBuilder,
+                submit: state.submit
             }),
-            (ctrl.displayApprovalModal() ? m(modalBox, {
-                displayModal: ctrl.displayApprovalModal,
-                content: ctrl.generateWrapperModal({
+            (state.displayApprovalModal() ? m(modalBox, {
+                displayModal: state.displayApprovalModal,
+                content: state.generateWrapperModal({
                     modalTitle: 'Aprovar saques',
                     ctaText: 'Aprovar',
-                    displayModal: ctrl.displayApprovalModal,
-                    onClickCallback: ctrl.approveSelectedIDs
+                    displayModal: state.displayApprovalModal,
+                    onClickCallback: state.approveSelectedIDs
                 })
             }) : ''),
-            (ctrl.displayManualModal() ? m(modalBox, {
-                displayModal: ctrl.displayManualModal,
-                content: ctrl.generateWrapperModal({
+            (state.displayManualModal() ? m(modalBox, {
+                displayModal: state.displayManualModal,
+                content: state.generateWrapperModal({
                     modalTitle: 'Transferencia manual de saques',
                     ctaText: 'Aprovar',
-                    displayModal: ctrl.displayManualModal,
-                    onClickCallback: ctrl.manualTransferSelectedIDs
+                    displayModal: state.displayManualModal,
+                    onClickCallback: state.manualTransferSelectedIDs
                 })
             }) : ''),
-            (ctrl.displayRejectModal() ? m(modalBox, {
-                displayModal: ctrl.displayRejectModal,
-                content: ctrl.generateWrapperModal({
+            (state.displayRejectModal() ? m(modalBox, {
+                displayModal: state.displayRejectModal,
+                content: state.generateWrapperModal({
                     modalTitle: 'Rejeitar saques',
                     ctaText: 'Rejeitar',
-                    displayModal: ctrl.displayRejectModal,
-                    onClickCallback: ctrl.rejectSelectedIDs
+                    displayModal: state.displayRejectModal,
+                    onClickCallback: state.rejectSelectedIDs
                 })
             }) : ''),
             m(adminList, {
-                vm: ctrl.listVM,
+                vm: state.listVM,
                 listItem: adminBalanceTransferItem,
                 listDetail: adminBalanceTransferItemDetail
             })

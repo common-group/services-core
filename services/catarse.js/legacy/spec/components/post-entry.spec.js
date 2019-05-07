@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import _ from 'underscore';
 import postEntry from '../../src/c/post-entry';
@@ -11,7 +12,6 @@ describe('PostEntry', () => {
             $mocked = _.first(PostEntryMockery())
             $postEntry = mq(m(postEntry, $mocked))
         })
-
 
         it('Should get post title', () => {
             expect($postEntry.contains($mocked.post.title)).toBeTrue()

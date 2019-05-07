@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import userVM from '../vms/user-vm';
 import h from '../h';
@@ -15,33 +16,36 @@ import userSettingsHelp from './user-settings-help';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettings = {
-    controller: function(args) {
+    oninit: function(vnode) {
         let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
-        const user = args.user,
-            fields = m.prop({
-                owner_document: m.prop(user.owner_document || ''),
-                name: m.prop(user.name || ''),
-                state_inscription: m.prop(user.state_inscription || ''),
-                address: m.prop(user.address || {}),
-                birth_date: m.prop((user.birth_date ? h.momentify(user.birth_date) : '')),
-                account_type: m.prop(user.account_type || '')
+        const user = vnode.attrs.user,
+            fields = prop({
+                owner_document: prop(user.owner_document || ''),
+                name: prop(user.name || ''),
+                state_inscription: prop(user.state_inscription || ''),
+                address: prop(user.address || {}),
+                birth_date: prop((user.birth_date ? h.momentify(user.birth_date) : '')),
+                account_type: prop(user.account_type || '')
             }),
-            loading = m.prop(false),
-            user_id = args.userId,
-            error = m.prop(''),
-            loader = m.prop(true),
+            loading = prop(false),
+            user_id = vnode.attrs.userId,
+            error = prop(''),
+            loader = prop(true),
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
             birthDayMask = _.partial(h.mask, '99/99/9999'),
-            creditCards = m.prop(),
-            toDeleteCard = m.prop(-1),
+            creditCards = prop(),
+            toDeleteCard = prop(-1),
+            requestRedraw = () => {
+                m.redraw();
+            },
             deleteCard = id => () => {
                 toDeleteCard(id);
                 // We must redraw here to update the action output of the hidden form on the DOM.
-                m.redraw(true);
+                requestRedraw();
                 deleteFormSubmit();
                 return false;
             },
@@ -60,7 +64,7 @@ const userSettings = {
                     state_inscription: fields().state_inscription
                 };
 
-                if (args.publishingUserSettings) {
+                if (vnode.attrs.publishingUserSettings) {
                     userData.publishing_user_settings = true;
                 }
 
@@ -80,11 +84,12 @@ const userSettings = {
                         showSuccess.toggle();
                     }
                     railsErrorsVM.validatePublish();
+                    requestRedraw();
                 }).catch((err) => {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
                     }
-                    parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
+                    //parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
                     error('Erro ao atualizar informações.');
                     loading(false);
                     if (showSuccess()) {
@@ -93,11 +98,12 @@ const userSettings = {
                     if (!showError()) {
                         showError.toggle();
                     }
+                    requestRedraw();
                 });
             },
             onSubmit = () => {
                 loading(true);
-                m.redraw();
+                requestRedraw();
                 updateUserData();
                 return false;
             },
@@ -108,19 +114,20 @@ const userSettings = {
                 } else {
                     fields().owner_document(documentMask(value));
                 }
+                requestRedraw();
             },
             handleError = () => {
                 error(true);
                 loader(false);
-                m.redraw();
+                requestRedraw();
             };
 
-        userVM.getUserCreditCards(args.userId).then(creditCards).catch(handleError);
+        userVM.getUserCreditCards(vnode.attrs.userId).then(creditCards).catch(handleError);
         if (parsedErrors.hasError('country_id')) {
             parsedErrors.inlineError('country_id', false);
         }
 
-        return {
+        vnode.state = {
             handleError,
             applyDocumentMask,
             fields,
@@ -139,34 +146,43 @@ const userSettings = {
             parsedErrors
         };
     },
-    view: function(ctrl, args) {
-        const user = ctrl.user,
-            fields = ctrl.fields,
+    onbeforeupdate: function(vnode) { },
+    view: function({state, attrs}) {
+        const user = state.user,
+            fields = state.fields,
             hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),
             disableFields = (user.is_admin_role ? false : (hasContributedOrPublished && !_.isEmpty(user.name) && !_.isEmpty(user.owner_document))),
-            applyBirthDateMask = ctrl.applyBirthDateMask,
-            applyDocumentMask = ctrl.applyDocumentMask,
-            parsedErrors = ctrl.parsedErrors,
-            creditCards = ctrl.creditCards,
-            toDeleteCard = ctrl.toDeleteCard,
-            deleteCard = ctrl.deleteCard,
-            setCardDeletionForm = ctrl.setCardDeletionForm,
-            shouldHideCreditCards = args.hideCreditCards,
-            isProjectUserEdit = !!args.isProjectUserEdit;
+            applyBirthDateMask = state.applyBirthDateMask,
+            applyDocumentMask = state.applyDocumentMask,
+            parsedErrors = state.parsedErrors,
+            creditCards = state.creditCards,
+            toDeleteCard = state.toDeleteCard,
+            deleteCard = state.deleteCard,
+            setCardDeletionForm = state.setCardDeletionForm,
+            shouldHideCreditCards = attrs.hideCreditCards,
+            isProjectUserEdit = !!attrs.isProjectUserEdit;
 
         return m('[id=\'settings-tab\']', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
-                message: window.I18n.t('update_success_msg', I18nScope()),
-                toggleOpt: ctrl.showSuccess
-            }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
-                message: m.trust(ctrl.error()),
-                toggleOpt: ctrl.showError,
-                error: true
-            }) : ''),
-            m('form.w-form', {
-                onsubmit: ctrl.onSubmit
-            }, [
+            (
+                state.showSuccess() ? 
+                    m(popNotification, {
+                        message: window.I18n.t('update_success_msg', I18nScope()),
+                        toggleOpt: state.showSuccess
+                    }) 
+                : 
+                ''
+            ),
+            (
+                state.showError() ? 
+                    m(popNotification, {
+                        message: m.trust(state.error()),
+                        toggleOpt: state.showError,
+                        error: true
+                    }) 
+                : 
+                    ''
+            ),
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('div', [
                     m('.w-container',
                         (
@@ -187,8 +203,8 @@ const userSettings = {
                         )
                     ),
                     m(projectEditSaveBtn, {
-                        loading: ctrl.loading,
-                        onSubmit: ctrl.onSubmit
+                        loading: state.loading,
+                        onSubmit: state.onSubmit
                     })
                 ])
             ])

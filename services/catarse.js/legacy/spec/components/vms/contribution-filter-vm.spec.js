@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import contributionFilterVM from '../../../src/vms/contribution-filter-vm';
 import h from '../../../src/h';
 

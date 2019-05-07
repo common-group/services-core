@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -7,27 +8,27 @@ import generateErrorInstance from '../error';
 const e = generateErrorInstance();
 
 const fields = {
-    owner_document: m.prop(''),
-    country_id: m.prop(''),
-    street: m.prop(''),
-    number: m.prop(''),
-    city: m.prop(''),
-    zipcode: m.prop(''),
-    complement: m.prop(''),
-    neighbourhood: m.prop(''),
-    state: m.prop(''),
-    phonenumber: m.prop(''),
-    name: m.prop(''),
-    agency: m.prop(''),
-    bank_id: m.prop(''),
-    agency_digit: m.prop(''),
-    account: m.prop(''),
-    account_digit: m.prop(''),
-    bank_account_id: m.prop(''),
-    state_inscription: m.prop(''),
-    birth_date: m.prop(''),
-    account_type: m.prop(''),
-    bank_account_type: m.prop('')
+    owner_document: prop(''),
+    country_id: prop(''),
+    street: prop(''),
+    number: prop(''),
+    city: prop(''),
+    zipcode: prop(''),
+    complement: prop(''),
+    neighbourhood: prop(''),
+    state: prop(''),
+    phonenumber: prop(''),
+    name: prop(''),
+    agency: prop(''),
+    bank_id: prop(''),
+    agency_digit: prop(''),
+    account: prop(''),
+    account_digit: prop(''),
+    bank_account_id: prop(''),
+    state_inscription: prop(''),
+    birth_date: prop(''),
+    account_type: prop(''),
+    bank_account_type: prop('')
 };
 
 const mapRailsErrors = (rails_errors) => {

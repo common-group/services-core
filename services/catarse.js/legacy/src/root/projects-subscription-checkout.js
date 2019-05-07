@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import { catarse } from '../api';
@@ -23,24 +24,27 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international');
 
 const projectsSubscriptionCheckout = {
-    controller: function(args) {
+    oninit: function(vnode) {
+        projectVM.getCurrentProject();
+
         const project = projectVM.currentProject,
+            project_id = m.route.param('project_id'),
             vm = paymentVM(),
-            showPaymentForm = m.prop(false),
-            addVM = m.prop(),
+            showPaymentForm = prop(false),
+            addVM = prop(),
             documentMask = _.partial(h.mask, '999.999.999-99'),
             documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            isCnpj = m.prop(false),
+            isCnpj = prop(false),
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser(),
-            oldSubscription = m.prop({}),
+            oldSubscription = prop({}),
             countriesLoader = catarse.loader(models.country.getPageOptions()),
-            error = m.prop();
+            error = prop();
 
-        const subscriptionId = m.prop(m.route.param('subscription_id'));
-        const isEdit = m.prop(Boolean(subscriptionId()));
+        const subscriptionId = prop(m.route.param('subscription_id'));
+        const isEdit = prop(Boolean(subscriptionId()));
         const subscriptionStatus = m.route.param('subscription_status');
-        const isReactivation = m.prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
+        const isReactivation = prop(subscriptionStatus === 'inactive' || subscriptionStatus === 'canceled');
 
         if (isEdit) {
             subscriptionVM
@@ -50,11 +54,11 @@ const projectsSubscriptionCheckout = {
         }
 
         if (_.isNull(currentUserID)) {
-            projectVM.storeSubscribeAction(m.route());
-            h.navigateToDevise(`?redirect_to=/projects/${m.route.param('project_id')}`);
+            projectVM.storeSubscribeAction(m.route.get());
+            h.navigateToDevise(`?redirect_to=/projects/${project_id}`);
         }
 
-        const reward = m.prop(rewardVM.selectedReward() || rewardVM.noReward);
+        const reward = prop(rewardVM.selectedReward() || rewardVM.noReward);
         let value;
 
         if (_.isString(rewardVM.contributionValue())) {
@@ -66,12 +70,13 @@ const projectsSubscriptionCheckout = {
         const valueParam = m.route.param('contribution_value');
         const rewardIdParam = m.route.param('reward_id');
 
+
         if (valueParam) {
             value = rewardVM.contributionValue(Number(valueParam));
         }
 
         if (rewardIdParam) {
-            rewardVM.fetchRewards(projectVM.getCurrentProject().project_id).then(() => {
+            rewardVM.fetchRewards(project_id).then(() => {
                 reward(_.findWhere(rewardVM.rewards(), { id: Number(rewardIdParam) }));
                 rewardVM.selectedReward(reward());
                 m.redraw();
@@ -89,7 +94,7 @@ const projectsSubscriptionCheckout = {
                 field: fieldName
             });
 
-            return fieldWithError ? m.component(inlineError, {
+            return fieldWithError ? m(inlineError, {
                 message: fieldWithError.message
             }) : '';
         };
@@ -132,10 +137,8 @@ const projectsSubscriptionCheckout = {
                 });
         });
 
-
-        projectVM.getCurrentProject();
-
-        return {
+        vnode.state = {
+            project_id,
             addressChange,
             applyDocumentMask,
             fieldHasError,
@@ -158,11 +161,12 @@ const projectsSubscriptionCheckout = {
             subscriptionStatus
         };
     },
-    view: function(ctrl) {
-        const user = ctrl.user(),
-            addVM = ctrl.addVM(),
-            project = ctrl.project(),
-            formatedValue = h.formatNumber(ctrl.value, 2, 3),
+    view: function({state}) {
+        const user = state.user(),
+            project_id = state.project_id,
+            addVM = state.addVM(),
+            project = state.project(),
+            formatedValue = h.formatNumber(state.value, 2, 3),
             anonymousCheckbox = m('.w-row', [
                 m('.w-checkbox.w-clearfix', [
                     m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
@@ -171,22 +175,22 @@ const projectsSubscriptionCheckout = {
                             act: 'contribution_anonymous_change'
                         }),
                         onchange: () => {
-                            ctrl.vm.fields.anonymous.toggle();
+                            state.vm.fields.anonymous.toggle();
                         },
-                        checked: ctrl.vm.fields.anonymous()
+                        checked: state.vm.fields.anonymous()
                     }),
                     m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
-                        window.I18n.t('fields.anonymous', ctrl.scope())
+                        window.I18n.t('fields.anonymous', state.scope())
                     )
                 ]),
-                (ctrl.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
+                (state.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
                     m('div', [
                         m('span.fontweight-bold', [
-                            window.I18n.t('anonymous_confirmation_title', ctrl.scope()),
+                            window.I18n.t('anonymous_confirmation_title', state.scope()),
                             m('br')
                         ]),
                         m('br'),
-                        window.I18n.t('anonymous_confirmation', ctrl.scope())
+                        window.I18n.t('anonymous_confirmation', state.scope())
                     ])
                 ) : '')
             ]);
@@ -197,32 +201,32 @@ const projectsSubscriptionCheckout = {
                 m('.w-col',
                     m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
                         m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                            window.I18n.t('selected_reward.value', ctrl.scope())
+                            window.I18n.t('selected_reward.value', state.scope())
                         ),
                         m('.w-clearfix', [
                             m('.fontsize-larger.text-success.u-left',
                                 `R$ ${formatedValue}`
                             ),
-                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? `&subscription_status=${ctrl.subscriptionStatus}` : ''}"]`,
+                            m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${project_id}/subscriptions/start?${state.reward().id ? `reward_id=${state.reward().id}` : ''}${state.isEdit() ? `&subscription_id=${state.subscriptionId()}` : ''}${state.subscriptionStatus ? `&subscription_status=${state.subscriptionStatus}` : ''}"]`,
                                 'Editar'
                             )
                         ]),
                         m('.divider.u-marginbottom-10.u-margintop-10'),
                         m('.back-payment-info-reward', [
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                window.I18n.t('selected_reward.reward', ctrl.scope())
+                                window.I18n.t('selected_reward.reward', state.scope())
                             ),
                             m('.fontsize-smallest.fontweight-semibold',
-                                ctrl.reward().title
+                                state.reward().title
                             ),
                             m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
-                                class: ctrl.isLongDescription(ctrl.reward()) ?
-                                        ctrl.toggleDescription() ? 'extended' : '' : 'extended'
-                            }, ctrl.reward().description ?
-                                ctrl.reward().description :
+                                class: state.isLongDescription(state.reward()) ?
+                                        state.toggleDescription() ? 'extended' : '' : 'extended'
+                            }, state.reward().description ?
+                                state.reward().description :
                                 m.trust(
                                     window.I18n.t('selected_reward.review_without_reward_html',
-                                        ctrl.scope(
+                                        state.scope(
                                             _.extend({
                                                 value: formatedValue
                                             })
@@ -230,26 +234,26 @@ const projectsSubscriptionCheckout = {
                                     )
                                 )
                             ),
-                            ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
-                                onclick: ctrl.toggleDescription.toggle
+                            state.isLongDescription(state.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                                onclick: state.toggleDescription.toggle
                             }, [
-                                ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                                state.toggleDescription() ? 'menos ' : 'mais ',
                                 m('span.fa.fa-angle-down', {
-                                    class: ctrl.toggleDescription() ? 'reversed' : ''
+                                    class: state.toggleDescription() ? 'reversed' : ''
                                 })
                             ]) : '',
-                            ctrl.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
+                            state.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
                                 m('span.fontweight-semibold',
                                     'Entrega prevista:'
                                 ),
-                                ` ${h.momentify(ctrl.reward().deliver_at, 'MMM/YYYY')}`
+                                ` ${h.momentify(state.reward().deliver_at, 'MMM/YYYY')}`
                             ]) : '',
-                            (rewardVM.hasShippingOptions(ctrl.reward()) || ctrl.reward().shipping_options === 'presential') ?
+                            (rewardVM.hasShippingOptions(state.reward()) || state.reward().shipping_options === 'presential') ?
                             m('.fontcolor-secondary.fontsize-smallest', [
                                 m('span.fontweight-semibold',
                                     'Forma de envio: '
                                 ),
-                                window.I18n.t(`shipping_options.${ctrl.reward().shipping_options}`, {
+                                window.I18n.t(`shipping_options.${state.reward().shipping_options}`, {
                                     scope: 'projects.contributions'
                                 })
                             ]) :
@@ -265,10 +269,10 @@ const projectsSubscriptionCheckout = {
                             m('form.u-marginbottom-40', [
                                 m('.u-marginbottom-40.u-text-center-small-only', [
                                     m('.fontweight-semibold.lineheight-tight.fontsize-large',
-                                        window.I18n.t('title', ctrl.scope())
+                                        window.I18n.t('title', state.scope())
                                     ),
                                     m('.fontsize-smaller',
-                                        window.I18n.t('required', ctrl.scope())
+                                        window.I18n.t('required', state.scope())
                                     )
                                 ]),
 
@@ -281,7 +285,7 @@ const projectsSubscriptionCheckout = {
                                             m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
                                                 m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
                                                     (project ? 'Dados do apoiador ' : 'Dados do usuário '),
-                                                    m(`a.alt-link[href="/not-my-account?redirect_to=${encodeURIComponent(m.route())}"]`, 'Não é você?')
+                                                    m(`a.alt-link[href="/not-my-account?redirect_to=${encodeURIComponent(m.route.get())}"]`, 'Não é você?')
                                                 ]),
                                                 m('.fontsize-base.fontweight-semibold', user.name),
                                                 (user.owner_document ?
@@ -297,30 +301,30 @@ const projectsSubscriptionCheckout = {
                                     (m('.w-row', [
                                         m('.w-col.w-col-7.w-sub-col', [
                                             m('label.field-label.fontweight-semibold[for=\'complete-name\']',
-                                                window.I18n.t('fields.complete_name', ctrl.scope())
+                                                window.I18n.t('fields.complete_name', state.scope())
                                             ),
                                             m('input.positive.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
-                                                onfocus: ctrl.vm.resetFieldError('completeName'),
-                                                class: ctrl.fieldHasError('completeName') ? 'error' : false,
+                                                onfocus: state.vm.resetFieldError('completeName'),
+                                                class: state.fieldHasError('completeName') ? 'error' : false,
                                                 type: 'text',
-                                                onchange: m.withAttr('value', ctrl.vm.fields.completeName),
-                                                value: ctrl.vm.fields.completeName(),
+                                                onchange: m.withAttr('value', state.vm.fields.completeName),
+                                                value: state.vm.fields.completeName(),
                                                 placeholder: 'Nome Completo'
                                             }),
-                                            ctrl.fieldHasError('completeName')
+                                            state.fieldHasError('completeName')
                                         ]),
                                         m('.w-col.w-col-5', addVM.international() ? '' : [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
-                                                window.I18n.t('fields.owner_document', ctrl.scope())
+                                                window.I18n.t('fields.owner_document', state.scope())
                                             ),
                                             m('input.positive.w-input.text-field[id=\'document\']', {
-                                                onfocus: ctrl.vm.resetFieldError('ownerDocument'),
-                                                class: ctrl.fieldHasError('ownerDocument') ? 'error' : false,
+                                                onfocus: state.vm.resetFieldError('ownerDocument'),
+                                                class: state.fieldHasError('ownerDocument') ? 'error' : false,
                                                 type: 'tel',
-                                                onkeyup: m.withAttr('value', ctrl.applyDocumentMask),
-                                                value: ctrl.vm.fields.ownerDocument()
+                                                onkeyup: m.withAttr('value', state.applyDocumentMask),
+                                                value: state.vm.fields.ownerDocument()
                                             }),
-                                            ctrl.fieldHasError('ownerDocument')
+                                            state.fieldHasError('ownerDocument')
                                         ]),
                                     ])),
                                     anonymousCheckbox
@@ -330,68 +334,68 @@ const projectsSubscriptionCheckout = {
                                     m(addressForm, {
                                         addVM,
                                         addressFields: addVM.fields,
-                                        fields: m.prop(ctrl.vm.fields),
+                                        fields: prop(state.vm.fields),
                                         international: addVM.international,
                                         hideNationality: true
                                     })
                                 )
                             ])
                         ]),
-                        m('.w-row.u-marginbottom-40', !ctrl.showPaymentForm() ? m('.w-col.w-col-push-3.w-col-6',
+                        m('.w-row.u-marginbottom-40', !state.showPaymentForm() ? m('.w-col.w-col-push-3.w-col-6',
                             m('button.btn.btn-large', {
                                 onclick: () => CatarseAnalytics.event({
                                     cat: 'contribution_finish',
                                     act: 'contribution_next_click'
-                                }, ctrl.validateForm)
+                                }, state.validateForm)
                             },
-                                window.I18n.t('next_step', ctrl.scope())
+                                window.I18n.t('next_step', state.scope())
                             )
                         ) : ''),
-                        ctrl.showPaymentForm() ? m.component(paymentForm, {
+                        state.showPaymentForm() ? m(paymentForm, {
                             addressVM: addVM,
-                            vm: ctrl.vm,
-                            project_id: projectVM.currentProject().project_id,
-                            isSubscriptionEdit: ctrl.isEdit,
-                            isReactivation: ctrl.isReactivation,
-                            subscriptionId: ctrl.subscriptionId,
+                            vm: state.vm,
+                            project_id,
+                            isSubscriptionEdit: state.isEdit,
+                            isReactivation: state.isReactivation,
+                            subscriptionId: state.subscriptionId,
                             user_id: user.id,
-                            reward: ctrl.reward,
-                            reward_common_id: ctrl.reward().common_id,
+                            reward: state.reward,
+                            reward_common_id: state.reward().common_id,
                             project_common_id: projectVM.currentProject().common_id,
                             user_common_id: user.common_id,
                             isSubscription: true,
-                            oldSubscription: ctrl.oldSubscription,
-                            value: ctrl.value,
+                            oldSubscription: state.oldSubscription,
+                            value: state.value,
                             hideSave: true
                         }) : ''
                     ]),
                     m('.w-col.w-col-4', [
                         m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                                window.I18n.t('selected_reward.value', ctrl.scope())
+                                window.I18n.t('selected_reward.value', state.scope())
                             ),
                             m('.w-clearfix', [
                                 m('.fontsize-larger.text-success.u-left',
                                     `R$ ${formatedValue}`
                                 ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/subscriptions/start?${ctrl.reward().id ? `reward_id=${ctrl.reward().id}` : ''}${ctrl.isEdit() ? `&subscription_id=${ctrl.subscriptionId()}` : ''}${ctrl.subscriptionStatus ? `&subscription_status=${ctrl.subscriptionStatus}` : ''}"]`,
-                                    { config: m.route },
-                                    window.I18n.t('selected_reward.edit', ctrl.scope())
+                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${project_id}/subscriptions/start?${state.reward().id ? `reward_id=${state.reward().id}` : ''}${state.isEdit() ? `&subscription_id=${state.subscriptionId()}` : ''}${state.subscriptionStatus ? `&subscription_status=${state.subscriptionStatus}` : ''}"]`,
+                                    { oncreate: m.route.link },
+                                    window.I18n.t('selected_reward.edit', state.scope())
                                 )
                             ]),
                             m('.divider.u-marginbottom-10.u-margintop-10'),
                             m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                window.I18n.t('selected_reward.payment_plan', ctrl.scope())
+                                window.I18n.t('selected_reward.payment_plan', state.scope())
                             ),
                             m('.fontsize-smaller',
                                 [
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-money.text-success'),
-                                            ` ${window.I18n.t('selected_reward.charged_today', ctrl.scope())} `
+                                            ` ${window.I18n.t('selected_reward.charged_today', state.scope())} `
                                         ]
                                     ),
-                                    ctrl.isEdit() && !ctrl.isReactivation()
+                                    state.isEdit() && !state.isReactivation()
                                         ? ` ${window.I18n.t('invoice_none', I18nScope())}`
                                         : `R$ ${formatedValue}`
                                 ]
@@ -401,12 +405,12 @@ const projectsSubscriptionCheckout = {
                                     m('span.fontweight-semibold',
                                         [
                                             m('span.fa.fa-calendar-o.text-success'),
-                                            ` ${window.I18n.t('selected_reward.next_charge', ctrl.scope())} `
+                                            ` ${window.I18n.t('selected_reward.next_charge', state.scope())} `
                                         ]
                                     ),
-                                    ctrl.isEdit() && !ctrl.isReactivation()
-                                        ? ctrl.oldSubscription().next_charge_at
-                                            ? h.momentify(ctrl.oldSubscription().next_charge_at)
+                                    state.isEdit() && !state.isReactivation()
+                                        ? state.oldSubscription().next_charge_at
+                                            ? h.momentify(state.oldSubscription().next_charge_at)
                                             : h.momentify(Date.now())
                                         : h.lastDayOfNextMonth()
                                 ]
@@ -414,42 +418,42 @@ const projectsSubscriptionCheckout = {
                             m('.divider.u-marginbottom-10.u-margintop-10'),
                             m('.back-payment-info-reward', [
                                 m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                    window.I18n.t('selected_reward.reward', ctrl.scope())
+                                    window.I18n.t('selected_reward.reward', state.scope())
                                 ),
                                 m('.fontsize-smallest.fontweight-semibold',
-                                    ctrl.reward().title
+                                    state.reward().title
                                 ),
                                 m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
-                                    class: ctrl.isLongDescription(ctrl.reward()) ?
-                                            ctrl.toggleDescription() ? 'extended' : '' : 'extended'
-                                }, ctrl.reward().description ?
-                                    ctrl.reward().description :
+                                    class: state.isLongDescription(state.reward()) ?
+                                            state.toggleDescription() ? 'extended' : '' : 'extended'
+                                }, state.reward().description ?
+                                    state.reward().description :
                                     m.trust(
                                         window.I18n.t('selected_reward.review_without_reward_html',
-                                            ctrl.scope(
+                                            state.scope(
                                                 _.extend({
-                                                    value: Number(ctrl.value).toFixed()
+                                                    value: Number(state.value).toFixed()
                                                 })
                                             )
                                         )
                                     )
                                 ),
-                                ctrl.isLongDescription(ctrl.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
-                                    onclick: ctrl.toggleDescription.toggle
+                                state.isLongDescription(state.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
+                                    onclick: state.toggleDescription.toggle
                                 }, [
-                                    ctrl.toggleDescription() ? 'menos ' : 'mais ',
+                                    state.toggleDescription() ? 'menos ' : 'mais ',
                                     m('span.fa.fa-angle-down', {
-                                        class: ctrl.toggleDescription() ? 'reversed' : ''
+                                        class: state.toggleDescription() ? 'reversed' : ''
                                     })
                                 ]) : ''
                             ]),
                         ]),
-                        m.component(faqBox, {
+                        m(faqBox, {
                             mode: project.mode,
-                            isEdit: ctrl.isEdit(),
-                            isReactivate: ctrl.isReactivation(),
-                            vm: ctrl.vm,
-                            faq: ctrl.vm.faq(ctrl.isEdit() ? ctrl.isReactivation() ? `${project.mode}_reactivate` : `${project.mode}_edit` : project.mode),
+                            isEdit: state.isEdit(),
+                            isReactivate: state.isReactivation(),
+                            vm: state.vm,
+                            faq: state.vm.faq(state.isEdit() ? state.isReactivation() ? `${project.mode}_reactivate` : `${project.mode}_edit` : project.mode),
                             projectUserId: project.user_id
                         })
                     ])

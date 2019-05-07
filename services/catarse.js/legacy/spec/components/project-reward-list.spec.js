@@ -1,4 +1,6 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../../src/h';
 import projectRewardList from '../../src/c/project-reward-list';
 
@@ -8,19 +10,17 @@ describe('ProjectRewardList', () => {
     describe('view', () => {
         beforeAll(() => {
             generateContextByNewState = (newState = {}) => {
-                spyOn(m, 'component').and.callThrough();
-                let rewardDetail = RewardDetailsMockery(newState),
-                    component = m.component(projectRewardList, {
-                        project: m.prop({
+                let rewardDetail = RewardDetailsMockery(newState);
+
+                return {
+                    output: mq(projectRewardList, {
+                        project: prop({
                             id: 1231,
                             open_for_contributions: true
                         }),
-                        hasSubscription: m.prop(false),
-                        rewardDetails: m.prop(rewardDetail)
-                    });
-
-                return {
-                    output: mq(component),
+                        hasSubscription: prop(false),
+                        rewardDetails: prop(rewardDetail)
+                    }),
                     rewardDetail: rewardDetail[0]
                 };
             };

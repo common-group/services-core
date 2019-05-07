@@ -11,7 +11,7 @@ import faqBox from '../c/faq-box';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsContribution = {
-    controller: function() {
+    oninit: function(vnode) {
         const rewards = () => _.union(
             [{
                 id: null,
@@ -38,15 +38,15 @@ const projectsContribution = {
 
         projectVM.getCurrentProject();
 
-        return {
+        vnode.state = {
             project: projectVM.currentProject,
             paymentVM: paymentVM(),
             submitContribution,
             sortedRewards: () => _.sortBy(rewards(), reward => Number(reward.row_order))
         };
     },
-    view: function(ctrl, args) {
-        const project = ctrl.project;
+    view: function({state, attrs}) {
+        const project = state.project;
 
         return m('#contribution-new',
                     !_.isEmpty(project()) ? [
@@ -67,10 +67,10 @@ const projectsContribution = {
                             m('.w-col.w-col-8',
                         m('.w-form.back-reward-form',
                             m(`form.simple_form.new_contribution[accept-charset="UTF-8"][action="/${window.I18n.locale}/projects/${project().id}/contributions/fallback_create"][id="contribution_form"][method="get"][novalidate="novalidate"]`,
-                                { onsubmit: ctrl.submitContribution }
+                                { onsubmit: state.submitContribution }
                             , [
                                 m('input[name="utf8"][type="hidden"][value="✓"]'),
-                                _.map(ctrl.sortedRewards(), reward => m(rewardSelectCard, { reward }))
+                                _.map(state.sortedRewards(), reward => m(rewardSelectCard, { reward }))
                             ])
                         )
                     ),
@@ -81,11 +81,11 @@ const projectsContribution = {
                                     m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', window.I18n.t('contribution_warning.info', I18nScope())),
                                     m(`a.alt-link.fontsize-smallest[target="__blank"][href="${window.I18n.t('contribution_warning.link', I18nScope())}"]`, window.I18n.t('contribution_warning.link_label', I18nScope()))
                                 ]),
-                                m.component(faqBox, {
+                                m(faqBox, {
                                     mode: project().mode,
-                                    vm: ctrl.paymentVM,
-                                    faq: ctrl.paymentVM.faq(project().mode),
-                                    projectUserId: args.project_user_id
+                                    vm: state.paymentVM,
+                                    faq: state.paymentVM.faq(project().mode),
+                                    projectUserId: attrs.project_user_id
                                 })
                             ])
                         ])))

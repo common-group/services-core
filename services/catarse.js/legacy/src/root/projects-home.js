@@ -12,7 +12,7 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
             friendListVM = catarse.paginationVM(models.userFriend, 'user_id.desc', {
                 Prefer: 'count=exact'
@@ -27,13 +27,13 @@ const projectsHome = {
             friendListVM.firstPage(userFriendVM.parameters());
         }
 
-        return {
+        vnode.state = {
             slidesContent: vm.banners,
             hasFBAuth
         };
     },
-    view: function(ctrl) {
-        const slides = () => _.map(ctrl.slidesContent, (slide) => {
+    view: function({state}) {
+        const slides = () => _.map(state.slidesContent, (slide) => {
             const customStyle = `background-image: url(${slide.image});`;
             const content = m('.w-container.u-text-center', [
                 m('.w-row.u-marginbottom-40', [
@@ -50,10 +50,10 @@ const projectsHome = {
         });
 
         return m('#projects-home-component', {
-                config: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
-            }, 
+                oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
+            },
             [
-                m.component(slider, {
+                m(slider, {
                     slides: slides(),
                     effect: 'fade',
                     slideClass: 'hero-slide start',
@@ -61,8 +61,8 @@ const projectsHome = {
                     sliderTime: 10000
                 }),
                 m(projectsDisplay),
-                (!ctrl.hasFBAuth ? m.component(UnsignedFriendFacebookConnect, { largeBg: true }) : ''),
-                m.component(blogBanner)
+                (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect, { largeBg: true }) : ''),
+                m(blogBanner)
             ]
         );
     }

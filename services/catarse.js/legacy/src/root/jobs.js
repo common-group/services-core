@@ -5,7 +5,7 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'pages.jobs');
 
 const jobs = {
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('.page-jobs', [
             m('.w-section.hero-jobs.hero-medium', [
                 m('.w-containe.u-text-center', [

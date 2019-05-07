@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
     entry: './legacy/src/app.js',
-    mode: !isProd && 'development',
+    mode: isProd ? 'production' : 'development',
     module: {
       rules: [
           { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" },
@@ -29,7 +29,5 @@ module.exports = {
       filename: 'catarse.js',
       path: path.resolve(__dirname, 'dist'),
     },
-    plugins: !isProd ? [] : [
-      new UglifyJsPlugin()
-    ],
+    plugins: !isProd ? [] : [ new UglifyJsPlugin() ],
 };

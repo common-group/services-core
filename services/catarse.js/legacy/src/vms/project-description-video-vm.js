@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectVM from './project-vm';
 import railsErrorsVM from './rails-errors-vm';
 import generateErrorInstance from '../error';
@@ -6,8 +7,8 @@ import generateErrorInstance from '../error';
 const e = generateErrorInstance();
 
 const fields = {
-    about_html: m.prop(''),
-    video_url: m.prop('')
+    about_html: prop(''),
+    video_url: prop('')
 };
 
 const fillFields = (data) => {

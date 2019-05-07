@@ -1,4 +1,6 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectSuccessfulOnboardConfirmAccountAccept from '../../src/c/project-successful-onboard-confirm-account-accept';
 
 describe('Project Successful Onboard Account Accept', () => {
@@ -9,13 +11,11 @@ describe('Project Successful Onboard Account Accept', () => {
             changeActionFn = jasmine.createSpy('change-action');
             acceptAccountFn = jasmine.createSpy('accept-account');
 
-            let component = m.component(projectSuccessfulOnboardConfirmAccountAccept);
-
-            $output = mq(component.view(null, {
+            $output = mq(projectSuccessfulOnboardConfirmAccountAccept, {
                 changeToAction: () => changeActionFn,
                 acceptAccount: acceptAccountFn,
-                acceptAccountLoader: m.prop(false)
-            }));
+                acceptAccountLoader: prop(false)
+            });
         });
 
         it('should render a form', () => {

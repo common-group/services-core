@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import h from '../h';
@@ -6,67 +7,67 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_posts');
 
 const postsPreview = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const togglePreview = () => {
                 h.scrollTop();
-                args.showPreview(false);
+                vnode.attrs.showPreview(false);
             },
-            isLoading = m.prop(false),
+            isLoading = prop(false),
             sendNotification = (e) => {
                 e.preventDefault();
                 isLoading(true);
 
                 const notificationData = {
-                    title: args.title(),
-                    comment_html: args.comment_html(),
-                    rewards: args.rewards,
-                    recipients: args.recipients
+                    title: vnode.attrs.title(),
+                    comment_html: vnode.attrs.comment_html(),
+                    rewards: vnode.attrs.rewards,
+                    recipients: vnode.attrs.recipients
                 };
 
                 m.request({
                     method: 'POST',
-                    url: `/projects/${args.project_id}/posts.json`,
+                    url: `/projects/${vnode.attrs.project_id}/posts.json`,
                     data: {
                         project_post: notificationData,
-                        project: args.project_id
+                        project: vnode.attrs.project_id
                     },
                     config: h.setCsrfToken
                 }).then(() => {
                     isLoading(false);
-                    args.showSuccess(true);
-                    args.comment_html('');
-                    args.title('');
+                    vnode.attrs.showSuccess(true);
+                    vnode.attrs.comment_html('');
+                    vnode.attrs.title('');
                     togglePreview();
                     m.redraw();
                 }).catch((err) => {
                     isLoading(false);
-                    args.errors('Erro ao enviar mensagem.'),
-                    args.showError(true);
+                    vnode.attrs.errors('Erro ao enviar mensagem.'),
+                    vnode.attrs.showError(true);
                     m.redraw();
                 });
             };
             
-        return {
+        vnode.state = {
             sendNotification,
             togglePreview,
             isLoading
         };
     },
-    view: function(ctrl, args) {
-        const comment_html = args.comment_html(),
-            title = args.title(),
-            recipientsText = args.recipients === 'rewards' ?
+    view: function({state, attrs}) {
+        const comment_html = attrs.comment_html(),
+            title = attrs.title(),
+            recipientsText = attrs.recipients === 'rewards' ?
                 m('.fontsize-small.u-marginbottom-30', [
-                    `A novidade acima será enviada por email para os ${args.confirmationLabel} de `,
-                    m('span.fontweight-semibold', args.rewardText),
+                    `A novidade acima será enviada por email para os ${attrs.confirmationLabel} de `,
+                    m('span.fontweight-semibold', attrs.rewardText),
                     ' e ficará ',
-                    m('span.fontweight-semibold', window.I18n.t(`backers_only_${args.mode}`, I18nScope()))
+                    m('span.fontweight-semibold', window.I18n.t(`backers_only_${attrs.mode}`, I18nScope()))
                 ]) 
             :
-                args.recipients === 'backers' ?
+                attrs.recipients === 'backers' ?
                     m('.fontsize-small.u-marginbottom-30', [
                         m('span', ' A novidade acima será  '),
-                        m('span.fontweight-semibold', window.I18n.t(`email_backers_${args.mode}`, I18nScope())),
+                        m('span.fontweight-semibold', window.I18n.t(`email_backers_${attrs.mode}`, I18nScope())),
                         m('span', ' e ficará '),
                         m('span.fontweight-semibold', 'visível somente para esses na plataforma.')
                     ]) 
@@ -74,13 +75,13 @@ const postsPreview = {
                     m('.fontsize-small.u-marginbottom-30', [
                         'A novidade acima será  ',
                         m('span.fontweight-semibold', 'enviada por email para todos'),
-                        window.I18n.t(`all_backers_${args.mode}`, I18nScope()),
+                        window.I18n.t(`all_backers_${attrs.mode}`, I18nScope()),
                         m('span.fontweight-semibold', 'visível publicamente '),
                         'na plataforma.'
                     ]);
 
         return (
-            ctrl.isLoading() ? h.loader() : 
+            state.isLoading() ? h.loader() : 
             m('div', [
                 m('.dashboard-header.u-text-center',
                     m('.w-container',
@@ -122,7 +123,7 @@ const postsPreview = {
                         m('.w-col.w-col-3'),
                         m('.w-sub-col.w-col.w-col-4',
                             m('button.btn.btn-large', {
-                                onclick: ctrl.sendNotification
+                                onclick: state.sendNotification
                             }, [
                                 m('span.fa.fa-paper-plane',
                                     ''
@@ -134,7 +135,7 @@ const postsPreview = {
                         ),
                         m('.w-col.w-col-2',
                             m('button.btn.btn-large.btn-terciary', {
-                                onclick: ctrl.togglePreview
+                                onclick: state.togglePreview
                             },
                                 'Editar'
                             )

@@ -19,16 +19,17 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 
 const tooltip = {
-    controller: function(args) {
-        let parentHeight = m.prop(0),
-            width = m.prop(args.width || 280),
-            top = m.prop(0),
-            left = m.prop(0),
-            opacity = m.prop(0),
-            parentOffset = m.prop({ top: 0, left: 0 }),
+    oninit: function(vnode) {
+        let parentHeight = prop(0),
+            width = prop(vnode.attrs.width || 280),
+            top = prop(0),
+            left = prop(0),
+            opacity = prop(0),
+            parentOffset = prop({ top: 0, left: 0 }),
             tooltip = h.toggleProp(0, 1),
             toggle = () => {
                 tooltip.toggle();
@@ -59,7 +60,7 @@ const tooltip = {
                 }
             };
 
-        return {
+        vnode.state = {
             width,
             top,
             left,
@@ -70,17 +71,17 @@ const tooltip = {
             setParentPosition
         };
     },
-    view: function(ctrl, args) {
-        const width = ctrl.width();
-        return m(args.el, {
-            onclick: ctrl.toggle,
-            config: ctrl.setParentPosition,
+    view: function({state, attrs}) {
+        const width = state.width();
+        return m(attrs.el, {
+            onclick: state.toggle,
+            config: state.setParentPosition,
             style: { cursor: 'pointer' }
-        }, ctrl.tooltip() ? [
-            m(`.tooltip.dark[style="width: ${width}px; top: ${ctrl.top()}px; left: ${ctrl.left()}px;"]`, {
-                config: ctrl.setPosition
+        }, state.tooltip() ? [
+            m(`.tooltip.dark[style="width: ${width}px; top: ${state.top()}px; left: ${state.left()}px;"]`, {
+                config: state.setPosition
             }, [
-                m('.fontsize-smallest', args.text)
+                m('.fontsize-smallest', attrs.text)
             ])
         ] : '');
     }

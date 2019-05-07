@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import dashboardSubscriptionCardDetailPaymentHistoryEntry from '../../src/c/dashboard-subscription-card-detail-payment-history-entry';
 
@@ -6,7 +7,7 @@ describe('DashboardSubscriptionCardDetailPaymentEntry', () => {
 
     beforeAll(() => {
         $paymentEntry = PaymentsMockery()[0];
-        $output = mq(m.component(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment: $paymentEntry }));
+        $output = mq(m(dashboardSubscriptionCardDetailPaymentHistoryEntry, { payment: $paymentEntry }));
     });
 
     it('Should show history of payment entry card brand', () => {
