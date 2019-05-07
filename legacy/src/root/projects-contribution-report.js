@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -15,15 +16,16 @@ import ProjectContributionStateLegendModal from '../c/project-contribution-state
 import ProjectContributionDeliveryLegendModal from '../c/project-contribution-delivery-legend-modal';
 
 const projectContributionReport = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const listVM = catarse.paginationVM(models.projectContribution, 'id.desc', {
                 Prefer: 'count=exact'
             }),
             filterVM = projectsContributionReportVM,
-            project = m.prop([{}]),
-            rewards = m.prop([]),
-            showDownloads = m.prop(false),
-            contributionStateOptions = m.prop([]),
+            project = prop([{}]),
+            rewards = prop([]),
+            showDownloads = prop(false),
+            contributionStateOptions = prop([]),
+            requestRedraw = h.createRequestAutoRedraw(project, rewards),
             reloadSelectOptions = (projectState) => {
                 let opts = [{
                     value: '',
@@ -78,9 +80,9 @@ const projectContributionReport = {
             },
             submit = () => {
                 if (filterVM.reward_id() === 'null') {
-                    listVM.firstPage(filterVM.withNullParameters()).then(null);
+                    listVM.firstPage(filterVM.withNullParameters()).then(requestRedraw);
                 } else {
-                    listVM.firstPage(filterVM.parameters()).then(null);
+                    listVM.firstPage(filterVM.parameters()).then(requestRedraw);
                 }
 
                 return false;
@@ -192,7 +194,7 @@ const projectContributionReport = {
             }
             ];
 
-        filterVM.project_id(args.project_id);
+        filterVM.project_id(vnode.attrs.project_id);
 
         const lReward = catarse.loaderWithToken(models.rewardDetail.getPageOptions({
             project_id: `eq.${filterVM.project_id()}`
@@ -201,10 +203,11 @@ const projectContributionReport = {
             project_id: `eq.${filterVM.project_id()}`
         }));
 
-        lReward.load().then(rewards);
+        lReward.load().then(rewards).then(requestRedraw);
         lProject.load().then((data) => {
             project(data);
             reloadSelectOptions(_.first(data).state);
+            requestRedraw();
         });
 
         const mapRewardsToOptions = () => {
@@ -233,10 +236,10 @@ const projectContributionReport = {
             if (m.route.param('rewardId')) {
                 filterVM.reward_id(m.route.param('rewardId'));
             }
-            listVM.firstPage(filterVM.parameters());
+            listVM.firstPage(filterVM.parameters()).then(requestRedraw);
         }
 
-        return {
+        vnode.state = {
             listVM,
             filterVM,
             filterBuilder,
@@ -248,32 +251,32 @@ const projectContributionReport = {
             mapRewardsToOptions
         };
     },
-    view: function(ctrl) {
-        const list = ctrl.listVM;
+    view: function({state}) {
+        const list = state.listVM;
 
-        if (!ctrl.lProject()) {
+        if (!state.lProject()) {
             return m('', [
-                m.component(projectDashboardMenu, {
-                    project: m.prop(_.first(ctrl.project()))
+                m(projectDashboardMenu, {
+                    project: prop(_.first(state.project()))
                 }),
-                ctrl.showDownloads() ? m(downloadReports, {
-                    project: m.prop(_.first(ctrl.project())),
-                    rewards: ctrl.rewards()
+                state.showDownloads() ? m(downloadReports, {
+                    project: prop(_.first(state.project())),
+                    rewards: state.rewards()
                 }) : [
-                    m(`.w-section.section-product.${_.first(ctrl.project()).mode}`),
-                    m.component(projectContributionReportHeader, {
-                        submit: ctrl.submit,
-                        filterBuilder: ctrl.filterBuilder,
-                        form: ctrl.filterVM.formDescriber,
-                        mapRewardsToOptions: ctrl.mapRewardsToOptions,
-                        filterVM: ctrl.filterVM
+                    m(`.w-section.section-product.${_.first(state.project()).mode}`),
+                    m(projectContributionReportHeader, {
+                        submit: state.submit,
+                        filterBuilder: state.filterBuilder,
+                        form: state.filterVM.formDescriber,
+                        mapRewardsToOptions: state.mapRewardsToOptions,
+                        filterVM: state.filterVM
                     }),
-                    m.component(projectContributionReportContent, {
-                        submit: ctrl.submit,
+                    m(projectContributionReportContent, {
+                        submit: state.submit,
                         list,
-                        showDownloads: ctrl.showDownloads,
-                        filterVM: ctrl.filterVM,
-                        project: m.prop(_.first(ctrl.project()))
+                        showDownloads: state.showDownloads,
+                        filterVM: state.filterVM,
+                        project: prop(_.first(state.project()))
                     })
                 ]
             ]);

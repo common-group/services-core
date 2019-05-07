@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -10,18 +11,18 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_budget');
 
 const projectBudgetEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectBudgetVM,
             mapErrors = [
                   ['budget', ['budget']],
             ],
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            loading = m.prop(false),
+            loading = prop(false),
             onSubmit = (event) => {
                 loading(true);
                 m.redraw();
-                vm.updateProject(args.projectId).then((data) => {
+                vm.updateProject(vnode.attrs.projectId).then((data) => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     if (!showSuccess()) { showSuccess.toggle(); }
@@ -41,9 +42,9 @@ const projectBudgetEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
-        return {
+        vnode.state = {
             onSubmit,
             showSuccess,
             showError,
@@ -51,20 +52,20 @@ const projectBudgetEdit = {
             loading
         };
     },
-    view: function(ctrl, args) {
-        const vm = ctrl.vm;
+    view: function({state, attrs}) {
+        const vm = state.vm;
         return m('#budget-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
@@ -86,7 +87,7 @@ const projectBudgetEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
 
         ]);

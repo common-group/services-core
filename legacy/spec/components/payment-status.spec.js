@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import paymentStatus from '../../src/c/payment-status';
 
@@ -12,9 +13,9 @@ describe('PaymentStatus', () => {
                 state: contribution.state,
                 payment_method: contribution.payment_method
             };
-            ctrl = m.component(paymentStatus, {
-                item: payment
-            }).controller();
+            ctrl = paymentStatus.oninit({
+              attrs: { item: payment }
+            });
         };
 
     describe('stateClass function', () => {
@@ -95,7 +96,7 @@ describe('PaymentStatus', () => {
                     state: contribution.state,
                     payment_method: contribution.payment_method
                 };
-            return mq(m.component(paymentStatus, {
+            return mq(m(paymentStatus, {
                 item: payment
             }));
         };

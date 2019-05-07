@@ -1,4 +1,6 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../../src/h';
 import userSettingsSavedCreditCards from '../../src/c/user-settings-saved-credit-cards';
@@ -10,14 +12,14 @@ describe('UserSettingsSavedCreditCards', () => {
         user = {
             id: 'b1928319b2-91283b0123-123'
         },
-        creditCards = m.prop([
+        creditCards = prop([
             {
                 id: 1,
                 last_digits: '1111',
                 card_brand: 'visa'
             }
         ]),
-        toDeleteCard = m.prop(-1),
+        toDeleteCard = prop(-1),
         deleteCard = id => () => {
             toDeleteCard(id);
             // We must redraw here to update the action output of the hidden form on the DOM.

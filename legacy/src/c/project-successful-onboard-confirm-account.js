@@ -6,6 +6,7 @@
  * m.component(c.ProjectSuccessfulOnboardConfirmAccount, {projectAccount: projectAccount})
  * */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectSuccessfulOnboardConfirmAccountAccept from './project-successful-onboard-confirm-account-accept';
@@ -13,11 +14,11 @@ import projectSuccessfulOnboardConfirmAccountAccept from './project-successful-o
 const I18nScope = _.partial(h.i18nScope, 'projects.successful_onboard.confirm_account');
 
 const projectSuccessfulOnboardConfirmAccount = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const actionStages = {
                 accept: projectSuccessfulOnboardConfirmAccountAccept
             },
-            currentStage = m.prop('start'),
+            currentStage = prop('start'),
             actionStage = () => actionStages[currentStage()],
             changeToAction = stage => () => {
                 currentStage(stage);
@@ -25,16 +26,16 @@ const projectSuccessfulOnboardConfirmAccount = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             changeToAction,
             actionStage,
             currentStage
         };
     },
-    view: function(ctrl, args) {
-        const projectAccount = args.projectAccount,
-            actionStage = ctrl.actionStage,
-            currentStage = ctrl.currentStage,
+    view: function({state, attrs}) {
+        const projectAccount = attrs.projectAccount,
+            actionStage = state.actionStage,
+            currentStage = state.currentStage,
             juridicalPerson = projectAccount.user_type != 'pf';
 
         return m('.w-container.u-marginbottom-40', [
@@ -102,17 +103,17 @@ const projectSuccessfulOnboardConfirmAccount = {
             (currentStage() === 'start') ? m('#confirmation-dialog.w-row.bank-transfer-answer', [
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny'),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
-                    m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: ctrl.changeToAction('accept') }, 'Sim')
+                    m('a#confirm-account.btn.btn-large', { href: '#confirm_account', onclick: state.changeToAction('accept') }, 'Sim')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6', [
                     m('a#refuse-account.btn.btn-large.btn-terciary', { href: `/projects/${projectAccount.project_id}/edit#user_settings` }, 'Não')
                 ]),
                 m('.w-col.w-col-3.w-col-small-6.w-col-tiny-6.w-hidden-small.w-hidden-tiny')
-            ]) : m.component(actionStage(), {
+            ]) : m(actionStage(), {
                 projectAccount,
-                changeToAction: ctrl.changeToAction,
-                acceptAccount: args.acceptAccount,
-                acceptAccountLoader: args.acceptAccountLoader
+                changeToAction: state.changeToAction,
+                acceptAccount: attrs.acceptAccount,
+                acceptAccountLoader: attrs.acceptAccountLoader
             })
         ]);
     }

@@ -1,4 +1,6 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import adminTransactionHistory from '../../src/c/admin-transaction-history';
 
 describe('adminTransactionHistory', () => {
@@ -7,15 +9,11 @@ describe('adminTransactionHistory', () => {
         ctrl, view, $output;
 
     beforeAll(() => {
-        contribution = m.prop(ContributionDetailMockery(1));
-        historyBox = m.component(adminTransactionHistory, {
+        contribution = prop(ContributionDetailMockery(1));
+        ctrl = adminTransactionHistory.oninit({attrs: {contribution: contribution()[0]}});
+        $output = mq(adminTransactionHistory, {
             contribution: contribution()[0]
         });
-        ctrl = historyBox.controller();
-        view = historyBox.view(ctrl, {
-            contribution: contribution
-        });
-        $output = mq(view);
     });
 
     describe('controller', () => {

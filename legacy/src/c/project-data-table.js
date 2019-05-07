@@ -22,14 +22,15 @@
  *  })
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import h from '../h';
 
 const projectDataTable = {
-    controller: function(args) {
-        const table = m.prop(args.table),
-            sortIndex = m.prop(-1);
+    oninit: function(vnode) {
+        const table = prop(vnode.attrs.table),
+            sortIndex = prop(-1);
 
         const comparator = (a, b) => {
             let idx = sortIndex(),
@@ -59,24 +60,24 @@ const projectDataTable = {
             table(_.union([header], body));
         };
 
-        sortTable(Math.abs(args.defaultSortIndex) || 0);
+        sortTable(Math.abs(vnode.attrs.defaultSortIndex) || 0);
 
-        if (args.defaultSortIndex < 0) {
-            sortTable(Math.abs(args.defaultSortIndex) || 0);
+        if (vnode.attrs.defaultSortIndex < 0) {
+            sortTable(Math.abs(vnode.attrs.defaultSortIndex) || 0);
         }
 
-        return {
+        vnode.state = {
             table,
             sortTable
         };
     },
-    view: function(ctrl, args) {
-        const header = _.first(ctrl.table()),
-            body = _.rest(ctrl.table());
+    view: function({state, attrs}) {
+        const header = _.first(state.table()),
+            body = _.rest(state.table());
         return m('.table-outer.u-marginbottom-60', [
             m('.w-row.table-row.fontweight-semibold.fontsize-smaller.header',
                 _.map(header, (heading, idx) => {
-                    const sort = () => ctrl.sortTable(idx);
+                    const sort = () => state.sortTable(idx);
                     return m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.table-col', [
                         m('a.link-hidden[href="javascript:void(0);"]', {
                             onclick: sort

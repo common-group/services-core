@@ -1,11 +1,12 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectVM from './project-vm';
 import generateErrorInstance from '../error';
 
 const e = generateErrorInstance();
 
 const fields = {
-    video_url: m.prop('')
+    video_url: prop('')
 };
 
 const fillFields = (data) => {

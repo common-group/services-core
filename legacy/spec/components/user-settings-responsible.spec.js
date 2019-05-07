@@ -1,4 +1,6 @@
+import mq from 'mithril-query';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../../src/h';
 import userSettingsResponsible from '../../src/c/user-settings-responsible';
@@ -7,12 +9,12 @@ describe('UserSettingsResponsible', () => {
     let $output;
     const 
         disableFields = false,
-        fields = m.prop({
-            account_type: m.prop('pf'),
-            name: m.prop('USER NAME'),
-            owner_document: m.prop('12345678912'),
-            birth_date: m.prop('02/12/1990'),
-            state_inscription: m.prop('123456789')
+        fields = prop({
+            account_type: prop('pf'),
+            name: prop('USER NAME'),
+            owner_document: prop('12345678912'),
+            birth_date: prop('02/12/1990'),
+            state_inscription: prop('123456789')
         }),
         parsedErrors = {
             hasError: function(name) {

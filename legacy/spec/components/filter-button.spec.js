@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import filterButton from '../../src/c/filter-button';
 
@@ -6,7 +7,7 @@ describe('FilterButton', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(m.component(filterButton, {
+            $output = mq(m(filterButton, {
                 title: 'Test',
                 href: 'test'
             }));

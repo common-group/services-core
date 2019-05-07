@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import contributionVM from '../vms/contribution-vm';
@@ -12,7 +13,7 @@ const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
 const userContributedBox = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const displayModal = h.toggleProp(false, true),
             toggleDelivery = (projectId, contribution) => {
                 userVM.toggleDelivery(projectId, contribution).then(() => {
@@ -20,19 +21,19 @@ const userContributedBox = {
                     contribution.delivery_status = contribution.delivery_status === 'received' ? lastStatus : 'received'; // so we don't have to reload the page
                 });
             },
-            installmentTotalAmount = m.prop(h.formatNumber(args.contribution.installments_total_amount, 2));
+            installmentTotalAmount = prop(h.formatNumber(vnode.attrs.contribution.installments_total_amount, 2));
 
-        return {
+        vnode.state = {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
-            contribution: args.contribution,
+            contribution: vnode.attrs.contribution,
             toggleDelivery,
             installmentTotalAmount
         };
     },
-    view: function(ctrl) {
-        const contribution = ctrl.contribution,
-            contactModalC = [ownerMessageContent, m.prop({
+    view: function({state}) {
+        const contribution = state.contribution,
+            contactModalC = [ownerMessageContent, prop({
                 id: contribution.project_user_id,
                 name: contribution.project_owner_name,
                 project_id: contribution.project_id
@@ -41,8 +42,8 @@ const userContributedBox = {
             answeredAt = contribution.survey_answered_at;
 
         return (!_.isEmpty(contribution) ? m('div',
-            (ctrl.displayModal() ? m.component(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m.component(modalBox, {
+                displayModal: state.displayModal,
                 content: contactModalC
             }) : ''), [
                 m('.card.w-row', [
@@ -63,7 +64,7 @@ const userContributedBox = {
                         ]),
                         m("a.btn.btn-edit.btn-inline.btn-small.w-button[href='javascript:void(0);']", {
                             onclick: () => {
-                                ctrl.displayModal.toggle();
+                                state.displayModal.toggle();
                             }
                         },
                             window.I18n.t('contact_author', contributionScope())
@@ -95,7 +96,7 @@ const userContributedBox = {
                                     contribution.installments > 1 ? 
                                         m(".fontsize-smallest.fontweight-semibold.u-marginbottom-10", 
                                             I18n.t('total_amount', contributionScope({
-                                                total_amount: ctrl.installmentTotalAmount()
+                                                total_amount: state.installmentTotalAmount()
                                             }))
                                         ) : ''
                                 ),
@@ -115,7 +116,7 @@ const userContributedBox = {
                                     ) : ''),
                                 m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                                     m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
-                                        onclick: () => ctrl.toggleAnonymous(contribution.project_id, contribution)
+                                        onclick: () => state.toggleAnonymous(contribution.project_id, contribution)
                                     }),
                                     m('label.w-form-label',
                                         window.I18n.t('anonymous', contributionScope())
@@ -183,7 +184,7 @@ const userContributedBox = {
                     ] : '')
                 ])
             ]
-        ) : m('div', ''));
+        ) : m('div', ''))
     }
 };
 

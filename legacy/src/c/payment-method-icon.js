@@ -5,21 +5,21 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.subscription_fields');
 
 const paymentMethodIcon = {
-    controller: function(args) {
-        const subscription = args.subscription;
+    oninit: function(vnode) {
+        const subscription = vnode.attrs.subscription;
 
         const paymentClass = {
             boleto: 'fa-barcode',
             credit_card: 'fa-credit-card'
         };
-        return {
+        vnode.state = {
             subscription,
             paymentClass
         };
     },
-    view: function(ctrl, args) {
-        const subscription = ctrl.subscription,
-            paymentClass = ctrl.paymentClass;
+    view: function({state, attrs}) {
+        const subscription = state.subscription,
+            paymentClass = state.paymentClass;
 
         return m('span', [
             m(`span.fa.${paymentClass[subscription.payment_method]}`,

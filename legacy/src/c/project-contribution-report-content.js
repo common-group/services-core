@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import popNotification from './pop-notification';
@@ -9,17 +10,17 @@ import deliverContributionModalContent from '../c/deliver-contribution-modal-con
 import errorContributionModalContent from '../c/error-contribution-modal-content';
 
 const projectContributionReportContent = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const showSelectedMenu = h.toggleProp(false, true),
-            selectedAny = m.prop(false),
-            showSuccess = m.prop(false),
-            loading = m.prop(false),
+            selectedAny = prop(false),
+            showSuccess = prop(false),
+            loading = prop(false),
             displayDeliverModal = h.toggleProp(false, true),
             displayErrorModal = h.toggleProp(false, true),
-            selectedContributions = m.prop([]),
-            deliveryMessage = m.prop(''),
+            selectedContributions = prop([]),
+            deliveryMessage = prop(''),
             selectAll = () => {
-                projectsContributionReportVM.getAllContributions(args.filterVM).then((data) => {
+                projectsContributionReportVM.getAllContributions(vnode.attrs.filterVM).then((data) => {
                     const exceptReceived = _.filter(data, contrib => contrib.delivery_status !== 'received');
                     selectedContributions().push(..._.pluck(exceptReceived, 'id'));
                     selectedAny(!_.isEmpty(exceptReceived));
@@ -47,7 +48,7 @@ const projectContributionReportContent = {
                     loading(false);
                     showSuccess(true);
                     // update status so we don't have to reload the page
-                    _.map(_.filter(args.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
+                    _.map(_.filter(vnode.attrs.list.collection(), contrib => _.contains(selectedContributions(), contrib.id)),
                           item => item.delivery_status = status);
                 }).catch(() => {
                     m.redraw();
@@ -55,7 +56,7 @@ const projectContributionReportContent = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             showSuccess,
             selectAll,
             unselectAll,
@@ -69,23 +70,23 @@ const projectContributionReportContent = {
             selectedContributions
         };
     },
-    view: function(ctrl, args) {
-        const list = args.list;
-        const isFailed = args.project().state === 'failed';
+    view: function({state, attrs}) {
+        const list = attrs.list;
+        const isFailed = attrs.project().state === 'failed';
 
-        return m('.w-section.bg-gray.before-footer.section', ctrl.loading() ? h.loader() : [
-              (ctrl.displayErrorModal() ? m.component(modalBox, {
-                  displayModal: ctrl.displayErrorModal,
+        return m('.w-section.bg-gray.before-footer.section', state.loading() ? h.loader() : [
+              (state.displayErrorModal() ? m(modalBox, {
+                  displayModal: state.displayErrorModal,
                   hideCloseButton: false,
-                  content: [errorContributionModalContent, { project: args.project, displayModal: ctrl.displayErrorModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+                  content: [errorContributionModalContent, { project: attrs.project, displayModal: state.displayErrorModal, amount: state.selectedContributions().length, updateStatus: state.updateStatus, message: state.deliveryMessage }]
               }) : ''),
-              (ctrl.displayDeliverModal() ? m.component(modalBox, {
-                  displayModal: ctrl.displayDeliverModal,
+              (state.displayDeliverModal() ? m(modalBox, {
+                  displayModal: state.displayDeliverModal,
                   hideCloseButton: false,
-                  content: [deliverContributionModalContent, { project: args.project, displayModal: ctrl.displayDeliverModal, amount: ctrl.selectedContributions().length, updateStatus: ctrl.updateStatus, message: ctrl.deliveryMessage }]
+                  content: [deliverContributionModalContent, { project: attrs.project, displayModal: state.displayDeliverModal, amount: state.selectedContributions().length, updateStatus: state.updateStatus, message: state.deliveryMessage }]
               }) : ''),
 
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: 'As informações foram atualizadas'
             }) : ''),
             m('.w-container', [
@@ -100,22 +101,22 @@ const projectContributionReportContent = {
                             ])
                         ),
                         m('.w-col.w-col-6', isFailed ? '' : [
-                            (!ctrl.selectedAny() ?
+                            (!state.selectedAny() ?
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                                    onclick: ctrl.selectAll
+                                    onclick: state.selectAll
                                 },
                                     'Selecionar todos'
                                 ) :
                                 m('button.btn.btn-inline.btn-small.btn-terciary.u-marginright-20.w-button', {
-                                    onclick: ctrl.unselectAll
+                                    onclick: state.unselectAll
                                 },
                                     'Desmarcar todos'
                                 )
                             ),
-                            (ctrl.selectedAny() ?
+                            (state.selectedAny() ?
                                 m('.w-inline-block', [
                                     m('button.btn.btn-inline.btn-small.btn-terciary.w-button', {
-                                        onclick: ctrl.showSelectedMenu.toggle
+                                        onclick: state.showSelectedMenu.toggle
                                     }, [
                                         'Marcar ',
                                         m('span.w-hidden-tiny',
@@ -123,15 +124,15 @@ const projectContributionReportContent = {
                                         ),
                                         ' como'
                                     ]),
-                                    (ctrl.showSelectedMenu() ?
+                                    (state.showSelectedMenu() ?
                                         m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.displayDeliverModal.toggle()
+                                                onclick: () => state.displayDeliverModal.toggle()
                                             },
                                                 'Entregue'
                                             ),
                                             m('a.dropdown-link.fontsize-smaller[href=\'#\']', {
-                                                onclick: () => ctrl.displayErrorModal.toggle()
+                                                onclick: () => state.displayErrorModal.toggle()
                                             },
                                                 'Erro na entrega'
                                             )
@@ -139,7 +140,7 @@ const projectContributionReportContent = {
                                 ]) : '')
                         ]),
                         m('.w-clearfix.w-col.w-col-4',
-                            m('a.alt-link.fontsize-small.lineheight-looser.u-right', { onclick: () => args.showDownloads(true) }, [
+                            m('a.alt-link.fontsize-small.lineheight-looser.u-right', { onclick: () => attrs.showDownloads(true) }, [
                                 m('span.fa.fa-download',
                                     ''
                                 ),
@@ -150,12 +151,12 @@ const projectContributionReportContent = {
                 ),
 
                 _.map(list.collection(), (item) => {
-                    const contribution = m.prop(item);
-                    return m.component(projectContributionReportContentCard, {
-                        project: args.project,
+                    const contribution = prop(item);
+                    return m(projectContributionReportContentCard, {
+                        project: attrs.project,
                         contribution,
-                        selectedContributions: ctrl.selectedContributions,
-                        selectedAny: ctrl.selectedAny
+                        selectedContributions: state.selectedContributions,
+                        selectedAny: state.selectedAny
                     });
                 })
             ]),

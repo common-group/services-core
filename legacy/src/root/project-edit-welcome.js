@@ -1,16 +1,17 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import rewardVM from '../vms/reward-vm';
 import popNotification from '../c/pop-notification';
 
 const projectEditWelcome = {
-    controller: function(args) {
-        const rewards = m.prop([]),
-            currentRewardId = m.prop(),
-            currentReward = m.prop(),
-            showSuccess = m.prop(false),
-            error = m.prop(false);
+    oninit: function(vnode) {
+        const rewards = prop([]),
+            currentRewardId = prop(),
+            currentReward = prop(),
+            showSuccess = prop(false),
+            error = prop(false);
 
         const changeReward = () => {
             const reward = _.find(rewards(), r => r.id == currentRewardId());
@@ -18,7 +19,7 @@ const projectEditWelcome = {
             m.redraw();
         };
 
-        const loadRewards = () => rewardVM.fetchRewards(args.project_id).then(() => {
+        const loadRewards = () => rewardVM.fetchRewards(vnode.attrs.project_id).then(() => {
             rewards([]);
             _.map(rewardVM.rewards(), (reward) => {
                 const rewardProp = {
@@ -26,8 +27,8 @@ const projectEditWelcome = {
                     project_id: reward.project_id,
                     minimum_value: reward.minimum_value,
                     title: reward.title,
-                    welcome_message_subject: m.prop(reward.welcome_message_subject || ''),
-                    welcome_message_body: m.prop(reward.welcome_message_body || '')
+                    welcome_message_subject: prop(reward.welcome_message_subject || ''),
+                    welcome_message_body: prop(reward.welcome_message_body || '')
                 };
                 rewards().push(rewardProp);
             });
@@ -70,7 +71,7 @@ const projectEditWelcome = {
 
         loadRewards();
 
-        return {
+        vnode.state = {
             error,
             updateRewards,
             currentRewardId,
@@ -81,15 +82,15 @@ const projectEditWelcome = {
         };
     },
 
-    view: function(ctrl, args) {
-        const error = ctrl.error,
-            project = args.project;
+    view: function({state, attrs}) {
+        const error = state.error,
+            project = attrs.project;
         return m("[id='dashboard-welcome-tab']",
             (project() ? [
-                ctrl.showSuccess() ? m.component(popNotification, {
+                state.showSuccess() ? m(popNotification, {
                     message: 'Recompensas salvas com sucesso'
                 }) : '',
-                (ctrl.error() ? m.component(popNotification, {
+                (state.error() ? m(popNotification, {
                     message: 'Erro ao salvar. Preencha todos os campos',
                     error: true
                 }) : ''),
@@ -110,11 +111,11 @@ const projectEditWelcome = {
                                     ),
                                     m('select.u-marginbottom-30.w-input.text-field.w-select.positive.medium', {
                                         onchange: (e) => {
-                                            m.withAttr('value', ctrl.currentRewardId)(e);
-                                            ctrl.changeReward();
+                                            m.withAttr('value', state.currentRewardId)(e);
+                                            state.changeReward();
                                         }
                                     }, [
-                                        _.map(ctrl.rewards(), reward =>
+                                        _.map(state.rewards(), reward =>
                                             m('option', {
                                                 value: reward.id
                                             }, [
@@ -129,28 +130,28 @@ const projectEditWelcome = {
                                             ])
                                         )
                                     ]),
-                                    ctrl.currentReward() ?
+                                    state.currentReward() ?
                                     m('.w-form', [
                                         m('form', [
                                             m('.field-label.fontweight-semibold.u-marginbottom-10',
                                                 'Título'
                                             ),
                                             m("input.text-field.positive.w-input[type='text']", {
-                                                value: ctrl.currentReward().welcome_message_subject(),
-                                                onchange: m.withAttr('value', ctrl.currentReward().welcome_message_subject)
+                                                value: state.currentReward().welcome_message_subject(),
+                                                onchange: m.withAttr('value', state.currentReward().welcome_message_subject)
                                             }),
                                             m('.field-label.fontweight-semibold.u-marginbottom-10',
                                                 'Texto'
                                             ),
                                             m('textarea.text-field.height-medium.positive.u-marginbottom-60.w-input', {
-                                                value: ctrl.currentReward().welcome_message_body(),
-                                                onchange: m.withAttr('value', ctrl.currentReward().welcome_message_body)
+                                                value: state.currentReward().welcome_message_body(),
+                                                onchange: m.withAttr('value', state.currentReward().welcome_message_body)
                                             }),
                                             m('.u-marginbottom-20.w-row', [
                                                 m('.w-col.w-col-3'),
                                                 m('._w-sub-col.w-col.w-col-6',
                                                     m('a.btn.btn-large', {
-                                                        onclick: ctrl.updateRewards
+                                                        onclick: state.updateRewards
                                                     },
                                                         'Salvar'
                                                     )

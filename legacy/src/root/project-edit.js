@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
@@ -24,11 +25,11 @@ import projectEditTab from '../c/project-edit-tab';
 const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 
 const projectEdit = {
-    controller: function(args) {
-        const { project_id, user_id } = args;
+    oninit: function(vnode) {
+        const { project_id, user_id } = vnode.attrs;
 
         const project = projectVM.fetchProject(project_id),
-            hash = m.prop(window.location.hash),
+            hash = prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
                         project_id,
@@ -115,22 +116,31 @@ const projectEdit = {
             };
 
         h.redrawHashChange();
-        return {
+        vnode.state = {
             displayTabContent,
             hash,
             project
         };
     },
-    view: function(ctrl, args) {
-        const project = ctrl.project;
+    view: function({state, attrs}) {
+        const project = state.project;
 
-        return m('.project-dashboard-edit', (project() ? [
-            m(`.w-section.section-product.${project().mode}`),
-            ctrl.displayTabContent(),
-            (project() ? m.component(projectDashboardMenu, {
-                project
-            }) : '')
-        ] : ''));
+        return m('.project-dashboard-edit', 
+            (
+                project() ? [
+                        m(`.w-section.section-product.${project().mode}`),
+                        state.displayTabContent(),
+                        (
+                            project() ? 
+                                m(projectDashboardMenu, { project }) 
+                            : 
+                                ''
+                        )
+                    ] 
+                : 
+                    ''
+            )
+        );
     }
 };
 

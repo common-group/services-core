@@ -5,19 +5,19 @@ import projectVM from '../vms/project-vm';
 import projectCardEdit from '../c/project-card-edit';
 
 const projectEditCard = {
-    controller: function(args) {
-        return {
-            user: userVM.fetchUser(args.user_id),
-            project: projectVM.fetchProject(args.project_id)
+    oninit: function(vnode) {
+        vnode.state = {
+            user: userVM.fetchUser(vnode.attrs.user_id),
+            project: projectVM.fetchProject(vnode.attrs.project_id)
         };
     },
 
-    view: function(ctrl, args) {
-        return (ctrl.user() && ctrl.project() ? m(projectCardEdit, {
-            user: ctrl.user(),
-            userId: args.user_id,
-            projectId: args.project_id,
-            project: ctrl.project()
+    view: function({state, attrs}) {
+        return (state.user() && state.project() ? m(projectCardEdit, {
+            user: state.user(),
+            userId: attrs.user_id,
+            projectId: attrs.project_id,
+            project: state.project()
         }) : m('div', h.loader()));
     }
 };

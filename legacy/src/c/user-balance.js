@@ -18,27 +18,32 @@ import userBalanceRequestModalContent from './user-balance-request-modal-content
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalance = {
-    controller: function(args) {
-        args.balanceManager.load();
+    oninit: function(vnode) {
+        vnode.attrs.balanceManager.load();
 
-        return {
-            userBalances: args.balanceManager.collection,
+        vnode.state = {
+            userBalances: vnode.attrs.balanceManager.collection,
             displayModal: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
-        const balance = _.first(ctrl.userBalances()) || { user_id: args.user_id, amount: 0 },
+    view: function({state, attrs}) {
+        const balance = _.first(state.userBalances()) || { user_id: attrs.user_id, amount: 0 },
             positiveValue = balance.amount >= 0,
             balanceRequestModalC = [
                 userBalanceRequestModalContent,
-                _.extend({}, { balance }, args)
+                _.extend({}, { balance }, attrs)
             ];
 
         return m('.w-section.section.user-balance-section', [
-            (ctrl.displayModal() ? m.component(modalBox, {
-                displayModal: ctrl.displayModal,
-                content: balanceRequestModalC
-            }) : ''),
+            (
+                state.displayModal() ? 
+                    m(modalBox, {
+                        displayModal: state.displayModal,
+                        content: balanceRequestModalC
+                    }) 
+                : 
+                    ''
+            ),
             m('.w-container', [
                 m('.card.card-terciary.u-radius.w-row', [
                     m('.w-col.w-col-8.u-text-center-small-only.u-marginbottom-20', [
@@ -50,7 +55,7 @@ const userBalance = {
                     m('.w-col.w-col-4', [
                         m(`a[class="r-fund-btn w-button btn btn-medium u-marginbottom-10 ${((balance.amount <= 0 || balance.in_period_yet || balance.has_cancelation_request) ? 'btn-inactive' : '')}"][href="javascript:void(0);"]`,
                             {
-                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false) && !balance.has_cancelation_request) ? ctrl.displayModal.toggle : 'javascript:void(0);')
+                                onclick: ((balance.amount > 0 && (_.isNull(balance.in_period_yet) || balance.in_period_yet === false) && !balance.has_cancelation_request) ? state.displayModal.toggle : 'javascript:void(0);')
                             },
                             window.I18n.t('withdraw_cta', I18nScope())
                         ),
@@ -66,7 +71,6 @@ const userBalance = {
                         m('.fontcolor-secondary.fontsize-smallest.lineheight-tight',
                           balance.has_cancelation_request ? window.I18n.t('withdraw_canceling_msg', I18nScope()) : window.I18n.t('withdraw_limits_msg', I18nScope())
                         )
-
                     ])
                 ])
             ])

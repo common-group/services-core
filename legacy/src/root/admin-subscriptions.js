@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import models from '../models';
 import _ from 'underscore';
@@ -13,10 +14,10 @@ import filterMain from '../c/filter-main';
 import modalBox from '../c/modal-box';
 
 const adminSubscriptions = {
-    controller: function() {
+    oninit: function(vnode) {
         let listVM = subscriptionListVM,
             filterVM = subscriptionFilterVM,
-            error = m.prop(''),
+            error = prop(''),
             filterBuilder = [{ // name
                 component: filterMain,
                 data: {
@@ -58,13 +59,14 @@ const adminSubscriptions = {
             }],
             submit = () => {
                 error(false);
-                listVM.firstPage(filterVM.parameters()).then(null, (serverError) => {
+                listVM.firstPage(filterVM.parameters()).then(_ => m.redraw(), (serverError) => {
                     error(serverError.message);
+                    m.redraw();
                 });
                 return false;
             },
             displayChargebackForm = h.toggleProp(false, true),
-            chargebackIds = m.prop(),
+            chargebackIds = prop(),
             generateIdsToData = () => {
                 if (chargebackIds() === undefined) {
                     return null;
@@ -73,16 +75,16 @@ const adminSubscriptions = {
                 return chargebackIds().split(',').map(str => str.trim());
             },
             toChargebackListVM = models.commonPayments,
-            toChargebackCollection = m.prop(),
+            toChargebackCollection = prop(),
             processChargebacksLoader = h.toggleProp(false, true),
             displayChargebackConfirmationModal = h.toggleProp(false, true),
             searchChargebackLoader = h.toggleProp(false, true),
             chargebackConfirmationModalContentWrapper = (customAttrs) => {
                 const wrapper = {
-                    view(ctrl, args) {
+                    view({state, attrs}) {
                         return m('', [
                             m('.modal-dialog-header', [
-                                m('.fontsize-large.u-text-center', args.modalTitle)
+                                m('.fontsize-large.u-text-center', attrs.modalTitle)
                             ]),
                             m('.modal-dialog-content', [
                                 m('.w-row.fontweight-semibold', [
@@ -115,12 +117,12 @@ const adminSubscriptions = {
                                     m('.w-col.w-col-1'),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.w-button', {
-                                            onclick: args.onClickCallback
-                                        }, args.ctaText)
+                                            onclick: attrs.onClickCallback
+                                        }, attrs.ctaText)
                                     ),
                                     m('.w-col.w-col-5',
                                         m('a.btn.btn-medium.btn-terciary.w-button', {
-                                            onclick: args.displayModal.toggle
+                                            onclick: attrs.displayModal.toggle
                                         }, 'Voltar')
                                     ),
                                     m('.w-col.w-col-1')
@@ -184,7 +186,7 @@ const adminSubscriptions = {
                 ])
             ]);
 
-        return {
+        vnode.state = {
             filterVM,
             filterBuilder,
             displayChargebackConfirmationModal,
@@ -203,27 +205,27 @@ const adminSubscriptions = {
         };
     },
 
-    view: function(ctrl) {
+    view: function({state}) {
         const label = 'Assinaturas';
         return m('', [
-            (ctrl.displayChargebackConfirmationModal() ? m(modalBox, {
-                displayModal: ctrl.displayChargebackConfirmationModal,
-                content: ctrl.chargebackConfirmationModalContentWrapper({
+            (state.displayChargebackConfirmationModal() ? m(modalBox, {
+                displayModal: state.displayChargebackConfirmationModal,
+                content: state.chargebackConfirmationModalContentWrapper({
                     modalTitle: 'Aprovar chargebacks',
                     ctaText: 'Aprovar',
-                    displayModal: ctrl.displayChargebackConfirmationModal,
-                    onClickCallback: ctrl.processChargebacks
+                    displayModal: state.displayChargebackConfirmationModal,
+                    onClickCallback: state.processChargebacks
                 })
             }) : ''),
             m('#admin-root-subscriptions', [
-                m.component(adminFilter, {
-                    form: ctrl.filterVM.formDescriber,
-                    filterBuilder: ctrl.filterBuilder,
+                m(adminFilter, {
+                    form: state.filterVM.formDescriber,
+                    filterBuilder: state.filterBuilder,
                     label,
-                    submit: ctrl.submit
+                    submit: state.submit
                 }),
-                m.component(adminList, {
-                    vm: ctrl.listVM,
+                m(adminList, {
+                    vm: state.listVM,
                     listItem: adminSubscriptionItem,
                     listDetail: adminSubscriptionDetail
                 })

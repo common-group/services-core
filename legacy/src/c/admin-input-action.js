@@ -1,48 +1,51 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import { catarse } from '../api';
 
 const adminInputAction = {
-    controller: function(args) {
-        const builder = args.data,
-            complete = m.prop(false),
-            error = m.prop(false),
-            fail = m.prop(false),
+    oninit: function(vnode) {
+        const builder = vnode.attrs.data,
+            complete = prop(false),
+            error = prop(false),
+            fail = prop(false),
             data = {},
-            item = args.item,
+            item = vnode.attrs.item,
             key = builder.property,
             forceValue = builder.forceValue || null,
-            newValue = m.prop(forceValue);
+            newValue = prop(forceValue);
 
         h.idVM.id(item[builder.updateKey]);
 
         const l = catarse.loaderWithToken(builder.model.patchOptions(h.idVM.parameters(), data));
 
         const updateItem = function (res) {
+            console.log('SUBMIT SUCCESS!!!', res);
             _.extend(item, res[0]);
             complete(true);
             error(false);
         };
 
+        const errorOnSubmit = () => {
+            console.log('SOME ERROR HAPPENED!!!');
+            complete(true);
+            error(true);
+        };
+
         const submit = function () {
+            console.log('IS SUBMITTING!!!!!!!!');
             data[key] = newValue();
-            l.load().then(updateItem, () => {
-                complete(true);
-                error(true);
-            });
-            return false;
+            return l.load().then(updateItem, errorOnSubmit);
         };
 
-        const unload = function (el, isinit, context) {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-                newValue(forceValue);
-            };
+        const unload = function () {
+            complete(false);
+            error(false);
+            newValue(forceValue);
         };
 
-        return {
+        vnode.state = {
             complete,
             error,
             l,
@@ -52,27 +55,27 @@ const adminInputAction = {
             unload
         };
     },
-    view: function(ctrl, args) {
-        const data = args.data,
-            btnValue = (ctrl.l()) ? 'por favor, aguarde...' : data.callToAction;
+    view: function({state, attrs}) {
+        const data = attrs.data,
+            btnValue = (state.l()) ? 'por favor, aguarde...' : data.callToAction;
 
         return m('.w-col.w-col-2', [
             m('button.btn.btn-small.btn-terciary', {
-                onclick: ctrl.toggler.toggle
-            }, data.outerLabel), (ctrl.toggler()) ?
+                onclick: state.toggler.toggle
+            }, data.outerLabel), (state.toggler()) ?
             m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                config: ctrl.unload
+                onremove: state.unload
             }, [
                 m('form.w-form', {
-                    onsubmit: ctrl.submit
-                }, (!ctrl.complete()) ? [
+                    onsubmit: state.submit
+                }, (!state.complete()) ? [
                     m('label', data.innerLabel), (data.forceValue === undefined) ?
                     m(`input.w-input.text-field[type="text"][placeholder="${data.placeholder}"]`, {
-                        onchange: m.withAttr('value', ctrl.newValue),
-                        value: ctrl.newValue()
+                        onchange: m.withAttr('value', state.newValue),
+                        value: state.newValue()
                     }) : '',
                     m(`input.w-button.btn.btn-small[type="submit"][value="${btnValue}"]`)
-                ] : (!ctrl.error()) ? [
+                ] : (!state.error()) ? [
                     m('.w-form-done[style="display:block;"]', [
                         m('p', data.successMessage)
                     ])

@@ -2,11 +2,11 @@ import m from 'mithril';
 import h from '../h';
 
 const postForRewardCheckbox = {
-    view: function(ctrl, args) {
-        const r = args.reward,
-            reward_checkbox = args.reward_checkbox,
+    view: function({attrs}) {
+        const r = attrs.reward,
+            reward_checkbox = attrs.reward_checkbox,
             chk_label = `R$${ h.formatNumber(parseInt(r.data.minimum_value))} - ${r.data.title ? r.data.title : `${r.data.description.substring(0, 30)}...`}`,
-            sublabel = `${args.contributions_count} ${args.sublabel}`;
+            sublabel = `${attrs.contributions_count} ${attrs.sublabel}`;
 
         return m('.u-marginbottom-10.w-checkbox', [
             m(`input.w-checkbox-input[type=checkbox]`, {

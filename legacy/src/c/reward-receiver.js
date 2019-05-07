@@ -3,7 +3,7 @@ import userVM from '../vms/user-vm';
 import contributionVM from '../vms/contribution-vm';
 
 const rewardReceiver = {
-    controller: function() {
+    oninit: function(vnode) {
         const toggleDelivery = (projectId, contribution) => {
             userVM.toggleDelivery(projectId, contribution).then(() => {
                 const lastStatus = contribution.reward_sent_at ? 'delivered' : 'undelivered';
@@ -11,16 +11,16 @@ const rewardReceiver = {
             });
         };
 
-        return {
+        vnode.state = {
             toggleDelivery
         };
     },
-    view: function(ctrl, args) {
-        const contribution = args.contribution;
+    view: function({state, attrs}) {
+        const contribution = attrs.contribution;
 
         return contributionVM.canBeDelivered(contribution) ?
             m('.u-text-center.w-col.w-col-1', {
-                onclick: () => ctrl.toggleDelivery(contribution.project_id, contribution)
+                onclick: () => state.toggleDelivery(contribution.project_id, contribution)
             }, [
                 m('.fontsize-smallest',
                     m(`a.checkbox-big${contribution.delivery_status === 'received' ? '.checkbox--selected.fa.fa-check.fa-lg' : ''}`,

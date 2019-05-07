@@ -2,22 +2,18 @@
 import m from 'mithril';
 
 const dashboardSubscriptionCardDetailUserAddress = {
-    controller: function(args)
+    view: function({attrs})
     {
-        return {};
-    },
-    view: function(ctrl, args)
-    {
-        return (args.user && args.user.address) ?
+        return (attrs.user && attrs.user.address) ?
             m('.u-marginbottom-20.card.card-secondary.u-radius', [
                 m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
                     'Endereço'
                 ),
                 m('.fontsize-smaller', [
-                    m('div', [args.user.address.street, args.user.address.street_number, args.user.address.complementary].join(', ')),
-                    m('div', [args.user.address.city, args.user.address.state].join(' - ')),
-                    m('div', `CEP: ${args.user.address.zipcode}`),
-                    m('div', `${args.user.address.country}`)
+                    m('div', [attrs.user.address.street, attrs.user.address.street_number, attrs.user.address.complementary].join(', ')),
+                    m('div', [attrs.user.address.city, attrs.user.address.state].join(' - ')),
+                    m('div', `CEP: ${attrs.user.address.zipcode}`),
+                    m('div', `${attrs.user.address.country}`)
                 ])
             ]) : m('span', '');       
     }

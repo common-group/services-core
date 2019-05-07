@@ -6,8 +6,8 @@ import FilterMain from '../c/filter-main';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_contribution_reports');
 
 const projectContributionReportHeader = {
-    view: function(ctrl, args) {
-        const filterBuilder = args.filterBuilder,
+    view: function({attrs}) {
+        const filterBuilder = attrs.filterBuilder,
             paymentStateFilter = _.findWhere(filterBuilder, {
                 label: 'payment_state'
             }),
@@ -23,9 +23,9 @@ const projectContributionReportHeader = {
             mainFilter = _.findWhere(filterBuilder, {
                 component: FilterMain
             }),
-            project_id = args.filterVM.project_id();
+            project_id = attrs.filterVM.project_id();
 
-        rewardFilter.data.options = args.mapRewardsToOptions();
+        rewardFilter.data.options = attrs.mapRewardsToOptions();
 
         return m('div', [
             m('.dashboard-header',
@@ -57,20 +57,20 @@ const projectContributionReportHeader = {
                     m('.w-container',
                         m('.w-form', [
                             m('form', {
-                                onsubmit: args.submit
+                                onsubmit: attrs.submit
                             },
                                 m('.u-margintop-20.w-row', [
                                     m('.w-col.w-col-8',
                                         m('.w-row', [
-                                            m.component(paymentStateFilter.component, paymentStateFilter.data),
-                                            m.component(rewardFilter.component, rewardFilter.data),
-                                            m.component(deliveryFilter.component, deliveryFilter.data),
-                                            m.component(surveyFilter.component, surveyFilter.data)
+                                            m(paymentStateFilter.component, paymentStateFilter.data),
+                                            m(rewardFilter.component, rewardFilter.data),
+                                            m(deliveryFilter.component, deliveryFilter.data),
+                                            m(surveyFilter.component, surveyFilter.data)
                                         ])
                                     ),
                                     m('.w-col.w-col-4',
                                         m('.u-margintop-20.w-row', [
-                                            m.component(mainFilter.component, mainFilter.data)
+                                            m(mainFilter.component, mainFilter.data)
 
                                         ])
                                     )
