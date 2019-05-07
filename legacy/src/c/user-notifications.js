@@ -9,20 +9,34 @@ const I18nScope = _.partial(h.i18nScope, 'users.edit.notifications_fields');
 const userNotifications = {
     oninit: function(vnode) {
         const contributedProjects = prop(),
+            subscribedProjects = prop(),
             projectReminders = prop(),
             mailMarketingLists = prop(),
             user_id = vnode.attrs.userId,
             showNotifications = h.toggleProp(false, true),
             error = prop(false),
-            loadNewsCounter = prop(3);
+            unsubscribedNewsProjects = prop([]);
+            
+        let loadNewsCounter = 4;
 
         const countDownToDraw = () => {
-            loadNewsCounter(Math.max(0, loadNewsCounter() - 1));
+            loadNewsCounter = Math.max(0, loadNewsCounter - 1);
             
-            if (loadNewsCounter() == 0) {
+            if (loadNewsCounter == 0) {
                 m.redraw();
             }
         }
+
+        userVM
+            .getUserUnsubscribesProjects(user_id)
+            .then(unsubscribes => {
+                unsubscribedNewsProjects(unsubscribes);
+                countDownToDraw();
+            })
+            .catch(err => {
+                error(true);
+                countDownToDraw();                
+            })
         
 
         userVM
@@ -45,8 +59,21 @@ const userNotifications = {
 
         userVM
             .getUserContributedProjects(user_id, null)
-            .then(contributedProjects)
-            .then(countDownToDraw)
+            .then(projects => {
+                contributedProjects(projects);
+                countDownToDraw();
+            })
+            .catch((err) => {
+                error(true);
+                countDownToDraw();
+            });
+
+        userVM
+            .getUserSubscribedProjects(user_id, null)
+            .then(projects => {
+                subscribedProjects(projects);
+                countDownToDraw();
+            })
             .catch((err) => {
                 error(true);
                 countDownToDraw();
@@ -84,7 +111,8 @@ const userNotifications = {
         }));
 
         vnode.state = {
-            projects: contributedProjects,
+            contributedProjects,
+            subscribedProjects,
             mailMarketingLists,
             showNotifications,
             projectReminders,
@@ -92,13 +120,15 @@ const userNotifications = {
             generateListHandler,
             getUserMarketingListId,
             isOnCurrentList,
+            unsubscribedNewsProjects
         };
     },
     view: function({state, attrs}) {
         const user = attrs.user,
             reminders = state.projectReminders(),
-            projects_collection = state.projects(),
-            marketing_lists = state.mailMarketingLists();
+            projects_collection = (state.contributedProjects() || []).concat( (state.subscribedProjects() || [])),
+            marketing_lists = state.mailMarketingLists(),
+            unsubscribedNewsProjects = state.unsubscribedNewsProjects();
 
         return m('[id=\'notifications-tab\']', state.error() ? m(inlineError, {
             message: 'Erro ao carregar a página.'
@@ -190,17 +220,25 @@ const userNotifications = {
                                             ),
                                             (state.showNotifications() ?
                                                 m('ul.w-list-unstyled.u-radius.card.card-secondary[id=\'notifications-box\']', [
-                                                    (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m('li',
+                                                    (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => {
+                                                        
+                                                        const project_id = Number(!!project.project_external_id ? project.project_external_id : project.project_id);
+                                                        const found_index = unsubscribedNewsProjects.findIndex(value => value.project_id === project_id) >= 0;
+                                                        const unsubscribed_truthy = !!project.unsubscribed;
+                                                        const is_unsubscribed = unsubscribed_truthy || found_index;
+
+                                                        return m('li',
                                                             m('.w-checkbox.w-clearfix', [
-                                                                m(`input[id='unsubscribes_${project.project_id}'][type='hidden'][value='']`, {
-                                                                    name: `unsubscribes[${project.project_id}]`
+                                                                m(`input[id='unsubscribes_${project_id}'][type='hidden'][value='']`, {
+                                                                    name: `unsubscribes[${project_id}]`
                                                                 }),
-                                                                m(`input.w-checkbox-input${project.unsubscribed ? '' : '[checked=\'checked\']'}[type='checkbox'][value='1'][id='user_unsubscribes_${project.project_id}']`, {
-                                                                    name: `unsubscribes[${project.project_id}]`
+                                                                m(`input.w-checkbox-input${is_unsubscribed ? '' : '[checked=\'checked\']'}[type='checkbox'][value='1'][id='user_unsubscribes_${project.project_id}']`, {
+                                                                    name: `unsubscribes[${project_id}]`
                                                                 }),
                                                                 m('label.w-form-label.fontsize-small', project.project_name)
                                                             ])
-                                                        )) : '')
+                                                        )
+                                                    }) : '')
                                                 ]) :
                                                 '')
                                         ])
