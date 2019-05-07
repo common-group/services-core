@@ -9,44 +9,42 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.posts');
 
 const projectPosts = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const listVM = catarse.paginationVM(models.projectPostDetail),
-            filterVM = catarse.filtersVM({
-                project_id: 'eq',
-                id: 'eq'
-            });
+            filterVM = catarse.filtersVM({ project_id: 'eq', id: 'eq'});
+            
         const scrollTo = (el, isInit) => {
             if (!isInit) {
                 h.animateScrollTo(el);
             }
         };
 
-        filterVM.project_id(args.project().project_id);
+        filterVM.project_id(vnode.attrs.project().project_id);
 
-        if (_.isNumber(parseInt(args.post_id))) {
-            filterVM.id(args.post_id);
+        if (_.isNumber(parseInt(vnode.attrs.post_id))) {
+            filterVM.id(vnode.attrs.post_id);
         }
 
         if (!listVM.collection().length) {
             listVM.firstPage(filterVM.parameters());
         }
 
-        return {
+        vnode.state = {
             listVM,
             filterVM,
             scrollTo
         };
     },
-    view: function(ctrl, args) {
-        const list = ctrl.listVM,
-            project = args.project() || {},
+    view: function({state, attrs}) {
+        const list = state.listVM,
+            project = attrs.project() || {},
             postHeader = (post) => _.map(post.rewards_that_can_access_post, r => ` R$${h.formatNumber(r.minimum_value)}${r.title ? ` - ${r.title}` : ''}`),
             postTextSubscription = (post) => `Post exclusivo para assinantes${ post.rewards_that_can_access_post ? ' de' : ''}${postHeader(post)}`,
             postTextContribution = (post) => `Post exclusivo para apoiadores${ post.rewards_that_can_access_post ? ' de' : ''}${postHeader(post)}`,
             minimumValueRewardId = (post) => _.first(_.sortBy(post.rewards_that_can_access_post, r => r.minimum_value)).id;
 
         return m('#posts.project-posts.w-section', {
-            config: ctrl.scrollTo
+            config: state.scrollTo
         }, [
             m('.w-container.u-margintop-20', [
                 (project.is_owner_or_admin ? [
@@ -99,18 +97,18 @@ const projectPosts = {
                     ]
                 ]))),
                 m('.w-row', [
-                    (!_.isUndefined(args.post_id) ? m('.w-col.w-col-2.w-col-push-5',
+                    (!_.isUndefined(attrs.post_id) ? m('.w-col.w-col-2.w-col-push-5',
                                                       m(`a#load-more.btn.btn-medium.btn-terciary[href=\'/projects/${project.project_id}#posts']`, {
                                                          }, 'Ver todos')
                                                        ) :
                         (!list.isLoading() ?
-                            (list.collection().length === 0 && args.projectContributions().length === 0) ?
+                            (list.collection().length === 0 && attrs.projectContributions().length === 0) ?
                             !project.is_owner_or_admin ? m('.w-col.w-col-10.w-col-push-1',
                                 m('p.fontsize-base',
                                     m.trust(
                                         window.I18n.t('empty',
                                             I18nScope({
-                                                project_user_name: args.userDetails().name,
+                                                project_user_name: attrs.userDetails().name,
                                                 project_id: project.project_id
                                             })
                                         )

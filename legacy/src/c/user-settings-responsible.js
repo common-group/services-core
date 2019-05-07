@@ -6,19 +6,15 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettingsResponsible = {
-    controller: function(args)
-    {
-        return {};
-    },
-    view: function(ctrl, args)
+    view: function({attrs})
     {
         const 
-            disableFields = args.disableFields,
-            fields = args.fields(),
-            parsedErrors = args.parsedErrors,
-            applyDocumentMask = args.applyDocumentMask,
-            applyBirthDateMask = args.applyBirthDateMask,
-            user = args.user;
+            disableFields = attrs.disableFields,
+            fields = attrs.fields(),
+            parsedErrors = attrs.parsedErrors,
+            applyDocumentMask = attrs.applyDocumentMask,
+            applyBirthDateMask = attrs.applyBirthDateMask,
+            user = attrs.user;
 
         return m(bigCard, {
             label: window.I18n.t('legal_title', I18nScope()),

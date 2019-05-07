@@ -1,15 +1,15 @@
 import m from 'mithril';
 
 const bigCard = {
-    view: function(ctrl, args) {
+    view: function({attrs}) {
         const cardClass = '.card.medium.card-terciary.u-marginbottom-30';
 
         return m(cardClass, [
             m('div.u-marginbottom-30', [
-                m('label.fontweight-semibold.fontsize-base', args.label),
-                (args.label_hint ? m('.fontsize-small', args.label_hint) : '')
+                m('label.fontweight-semibold.fontsize-base', attrs.label),
+                (attrs.label_hint ? m('.fontsize-small', attrs.label_hint) : '')
             ]),
-            m('div', args.children)
+            m('div', attrs.children)
         ]);
     }
 };

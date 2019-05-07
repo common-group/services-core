@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import models from '../models';
 import { catarse } from '../api';
@@ -11,16 +12,16 @@ const { replaceDiacritics } = window;
 const e = generateErrorInstance();
 
 const fields = {
-    tracker_snippet_html: m.prop(''),
-    user_id: m.prop(''),
-    public_tags: m.prop(''),
-    admin_tags: m.prop(''),
-    service_fee: m.prop(''),
-    name: m.prop(''),
-    permalink: m.prop(''),
-    category_id: m.prop(''),
-    city_id: m.prop(''),
-    city_name: m.prop('')
+    tracker_snippet_html: prop(''),
+    user_id: prop(''),
+    public_tags: prop(''),
+    admin_tags: prop(''),
+    service_fee: prop(''),
+    name: prop(''),
+    permalink: prop(''),
+    category_id: prop(''),
+    city_id: prop(''),
+    city_name: prop('')
 };
 
 const fillFields = (data) => {

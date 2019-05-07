@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import { catarse, commonPayment } from '../api';
 import _ from 'underscore';
@@ -8,19 +9,26 @@ import inlineError from './inline-error';
 import userContributedList from './user-contributed-list';
 
 const userPrivateContributed = {
-    controller: function(args) {
-        const user_id = args.userId,
-            userCommonId = args.user && args.user.common_id,
-            subscriptions = commonPayment.paginationVM(models.userSubscription),
+    oninit: function(vnode) {
+        const user_id = vnode.attrs.userId,
+            userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
+            subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', { Prefer: 'count=exact' }),
             onlinePages = catarse.paginationVM(models.userContribution),
             successfulPages = catarse.paginationVM(models.userContribution),
             failedPages = catarse.paginationVM(models.userContribution),
-            error = m.prop(false),
-            loader = m.prop(true),
+            error = prop(false),
+            loader = prop(true),
+            requestCountdown = prop(4),
+            requestRedraw = () => {
+                requestCountdown(Math.max(0, requestCountdown() - 1));
+                if (requestCountdown() == 0) {
+                    m.redraw();
+                }
+            },
             handleError = () => {
                 error(true);
                 loader(false);
-                m.redraw();
+                requestRedraw();
             },
             contextVM = catarse.filtersVM({
                 user_id: 'eq',
@@ -39,28 +47,32 @@ const userPrivateContributed = {
             created_at: 'desc'
         });
 
-        subscriptions.firstPage(contextSubVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        subscriptions.firstPage(contextSubVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 
         contextVM.project_state(['online', 'waiting_funds']);
-        onlinePages.firstPage(contextVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        onlinePages.firstPage(contextVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         contextVM.project_state(['failed']);
-        failedPages.firstPage(contextVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        failedPages.firstPage(contextVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
         contextVM.project_state(['successful']).state(['paid', 'refunded', 'pending_refund']);
-        successfulPages.firstPage(contextVM.parameters()).then(() => {
-            loader(false);
-        }).catch(handleError);
+        successfulPages.firstPage(contextVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(handleError);
 
-        return {
+        vnode.state = {
             subscriptions,
             onlinePages,
             successfulPages,
@@ -69,15 +81,16 @@ const userPrivateContributed = {
             loader
         };
     },
-    view: function(ctrl, args) {
-        const subsCollection = ctrl.subscriptions.collection(),
-            onlineCollection = ctrl.onlinePages.collection(),
-            successfulCollection = ctrl.successfulPages.collection(),
-            failedCollection = ctrl.failedPages.collection();
+    onbeforeupdate: function(vnode) { },
+    view: function({state, attrs}) {
+        const subsCollection = state.subscriptions.collection(),
+            onlineCollection = state.onlinePages.collection(),
+            successfulCollection = state.successfulPages.collection(),
+            failedCollection = state.failedPages.collection();
 
-        return m('.content[id=\'private-contributed-tab\']', ctrl.error() ? m.component(inlineError, {
+        return m('.content[id=\'private-contributed-tab\']', state.error() ? m(inlineError, {
             message: 'Erro ao carregar os projetos.'
-        }) : ctrl.loader() ? h.loader() :
+        }) : state.loader() ? h.loader() :
             (_.isEmpty(subsCollection) && _.isEmpty(onlineCollection) && _.isEmpty(successfulCollection) && _.isEmpty(failedCollection)) ?
             m('.w-container',
                 m('.w-row.u-margintop-30.u-text-center', [
@@ -92,9 +105,9 @@ const userPrivateContributed = {
                             m('.w-col.w-col-3'),
                             m('.w-col.w-col-6',
                                 m(`a.btn.btn-large[href=\'/${window.I18n.locale}/explore\']`, {
-                                    config: m.route,
+                                    oncreate: m.route.link,
                                     onclick: () => {
-                                        m.route('/explore');
+                                        m.route.set('/explore');
                                     }
                                 },
                                     'Apoie agora!'
@@ -107,26 +120,26 @@ const userPrivateContributed = {
                 ])
             ) :
             [
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Assinaturas',
                     collection: subsCollection,
                     isSubscription: true,
-                    pagination: ctrl.subscriptions
+                    pagination: state.subscriptions
                 }),
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Projetos em andamento',
                     collection: onlineCollection,
-                    pagination: ctrl.onlinePages
+                    pagination: state.onlinePages
                 }),
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Projetos bem-sucedidos',
                     collection: successfulCollection,
-                    pagination: ctrl.successfulPages
+                    pagination: state.successfulPages
                 }),
-                m.component(userContributedList, {
+                m(userContributedList, {
                     title: 'Projetos não-financiados',
                     collection: failedCollection,
-                    pagination: ctrl.failedPages,
+                    pagination: state.failedPages,
                     hideSurveys: true
                 }),
 

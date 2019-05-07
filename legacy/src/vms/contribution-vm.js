@@ -1,10 +1,11 @@
 import { catarse } from '../api';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import moment from 'moment';
 import _ from 'underscore';
 import models from '../models';
 
-const currentContribution = m.prop({});
+const currentContribution = prop({});
 
 const getUserProjectContributions = (userId, projectId, states) => {
     const vm = catarse.filtersVM({

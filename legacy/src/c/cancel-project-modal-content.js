@@ -4,14 +4,15 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 
 const cancelProjectModalContent = {
-    controller: function(args) {
-        const checkError = m.prop(false),
-            showRedactor = m.prop(false),
-            check = m.prop(''),
-            commentHtml = m.prop(''),
+    oninit: function(vnode) {
+        const checkError = prop(false),
+            showRedactor = prop(false),
+            check = prop(''),
+            commentHtml = prop(''),
             showNextModal = () => {
                 if (check() === 'cancelar-projeto') {
                     showRedactor(true);
@@ -21,7 +22,7 @@ const cancelProjectModalContent = {
                 return false;
             };
 
-        return {
+        vnode.state = {
             showNextModal,
             commentHtml,
             showRedactor,
@@ -30,9 +31,9 @@ const cancelProjectModalContent = {
         };
     },
 
-    view: function(ctrl, args) {
-        return m(`form.cancel-project-modal.modal-dialog-content[accept-charset='UTF-8'][action='/${window.I18n.locale}/projects/${args.project.id}'][id='edit_project_${args.project.id}'][method='post'][novalidate='novalidate']`,
-            ctrl.showRedactor() ? [
+    view: function({state, attrs}) {
+        return m(`form.cancel-project-modal.modal-dialog-content[accept-charset='UTF-8'][action='/${window.I18n.locale}/projects/${attrs.project.id}'][id='edit_project_${attrs.project.id}'][method='post'][novalidate='novalidate']`,
+            state.showRedactor() ? [
                 m("input[name='utf8'][type='hidden'][value='✓']"),
                 m("input[name='_method'][type='hidden'][value='patch']"),
                 m(`input[name='authenticity_token'][type='hidden'][value='${h.authenticityToken()}']`),
@@ -49,7 +50,7 @@ const cancelProjectModalContent = {
                     m("label.string.optional.field-label.field-label.fontweight-semibold[for='project_posts_attributes_0_comment']",
                         'Texto'
                     ),
-                    h.redactor('project[posts_attributes][0][comment_html]', ctrl.commentHtml)
+                    h.redactor('project[posts_attributes][0][comment_html]', state.commentHtml)
                 ]),
                 m('div',
                     m('.w-row', [
@@ -57,7 +58,7 @@ const cancelProjectModalContent = {
                         m('.u-text-center.w-col.w-col-6', [
                             m("input.btn.btn-inactive.btn-large.u-marginbottom-20[name='commit'][type='submit'][value='Cancelar campanha']"),
                             m(".fontsize-small.link-hidden-light[id='modal-close']", {
-                                onclick: args.displayModal.toggle
+                                onclick: attrs.displayModal.toggle
                             },
                                 'Cancelar'
                             )
@@ -84,9 +85,9 @@ const cancelProjectModalContent = {
                 ]),
                 m('.w-form', [
                     m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', {
-                        class: !ctrl.checkError() ? false : 'error',
+                        class: !state.checkError() ? false : 'error',
                         placeholder: 'cancelar-projeto',
-                        onchange: m.withAttr('value', ctrl.check)
+                        onchange: m.withAttr('value', state.check)
                     })
                 ]),
                 m('div',
@@ -94,10 +95,10 @@ const cancelProjectModalContent = {
                         m('.w-col.w-col-3'),
                         m('.u-text-center.w-col.w-col-6', [
                             m('button.btn.btn-inactive.btn-large.u-marginbottom-20', {
-                                onclick: ctrl.showNextModal
+                                onclick: state.showNextModal
                             }, 'Próximo passo >'),
                             m('a.fontsize-small.link-hidden-light[href=\'#\']', {
-                                onclick: args.displayModal.toggle
+                                onclick: attrs.displayModal.toggle
                             },
                                 'Cancelar'
                             )

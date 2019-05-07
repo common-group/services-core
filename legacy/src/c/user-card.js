@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userVM from '../vms/user-vm';
@@ -7,20 +8,20 @@ import modalBox from './modal-box';
 import UserFollowBtn from './user-follow-btn';
 
 const userCard = {
-    controller: function(args) {
-        const userDetails = m.prop({}),
-            user_id = args.userId;
+    oninit: function(vnode) {
+        const userDetails = prop({}),
+            user_id = vnode.attrs.userId;
 
         userVM.fetchUser(user_id, true, userDetails);
 
-        return {
+        vnode.state = {
             userDetails,
             displayModal: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl) {
-        const user = ctrl.userDetails(),
-            contactModalC = [ownerMessageContent, ctrl.userDetails],
+    view: function({state}) {
+        const user = state.userDetails(),
+            contactModalC = [ownerMessageContent, state.userDetails],
             profileImage = userVM.displayImage(user);
 
         return m('#user-card', m('.card.card-user.u-radius.u-marginbottom-30[itemprop=\'author\']', [
@@ -55,12 +56,12 @@ const userCard = {
                     ]))
                 ]),
             ]),
-            (ctrl.displayModal() ? m.component(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: contactModalC
             }) : ''),
             m(UserFollowBtn, { follow_id: user.id, following: user.following_this_user, enabledClass: '.btn.btn-medium.btn-message.u-marginbottom-10', disabledClass: '.btn.btn-medium.btn-message.u-marginbottom-10' }),
-            (!_.isEmpty(user.email) ? m('a.btn.btn-medium.btn-message[href=\'javascript:void(0);\']', { onclick: ctrl.displayModal.toggle }, 'Enviar mensagem') : '')
+            (!_.isEmpty(user.email) ? m('a.btn.btn-medium.btn-message[href=\'javascript:void(0);\']', { onclick: state.displayModal.toggle }, 'Enviar mensagem') : '')
         ]));
     }
 };

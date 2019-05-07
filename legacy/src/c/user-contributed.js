@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import { catarse } from '../api';
 import _ from 'underscore';
@@ -9,12 +10,12 @@ import inlineError from './inline-error';
 import loadMoreBtn from './load-more-btn';
 
 const userContributed = {
-    controller: function(args) {
-        const contributedProjects = m.prop(),
-            user_id = args.userId,
+    oninit: function(vnode) {
+        const contributedProjects = prop(),
+            user_id = vnode.attrs.userId,
             pages = catarse.paginationVM(models.project),
-            error = m.prop(false),
-            loader = m.prop(true),
+            error = prop(false),
+            loader = prop(true),
             contextVM = catarse.filtersVM({
                 project_id: 'in'
             });
@@ -39,17 +40,17 @@ const userContributed = {
             m.redraw();
         });
 
-        return {
+        vnode.state = {
             projects: pages,
             error,
             loader
         };
     },
-    view: function(ctrl, args) {
-        const projects_collection = ctrl.projects.collection();
-        return (ctrl.error() ? m.component(inlineError, { message: 'Erro ao carregar os projetos.' }) : ctrl.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
+    view: function({state, attrs}) {
+        const projects_collection = state.projects.collection();
+        return state.error() ? m(inlineError, { message: 'Erro ao carregar os projetos.' }) : state.loader() ? h.loader() : m('.content[id=\'contributed-tab\']',
             [
-                  (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m.component(projectCard, {
+                  (!_.isEmpty(projects_collection) ? _.map(projects_collection, project => m(projectCard, {
                       project,
                       ref: 'user_contributed',
                       showFriends: false
@@ -83,11 +84,10 @@ const userContributed = {
 
                   (!_.isEmpty(projects_collection) ?
                   m('.w-row.u-marginbottom-40.u-margintop-30', [
-                      m(loadMoreBtn, { collection: ctrl.projects, cssClass: '.w-col-push-4' })
+                      m(loadMoreBtn, { collection: state.projects, cssClass: '.w-col-push-4' })
                   ]) : '')
             ]
-              ))
-              ;
+              );
     }
 };
 

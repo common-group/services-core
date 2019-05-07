@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -24,13 +25,20 @@ import {
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
 const projectInsights = {
-    controller: function(args) {
-        const filtersVM = args.filtersVM,
+    oninit: function(vnode) {
+        const filtersVM = vnode.attrs.filtersVM,
             displayModal = h.toggleProp(false, true),
-            contributionsPerDay = m.prop([]),
-            visitorsTotal = m.prop(0),
-            visitorsPerDay = m.prop([]),
-            loader = catarse.loaderWithToken;
+            contributionsPerDay = prop([]),
+            visitorsTotal = prop(0),
+            visitorsPerDay = prop([]),
+            loader = catarse.loaderWithToken,
+            countDownToRedraw = prop(4),
+            requestRedraw = () => {
+                countDownToRedraw(Math.max(0, countDownToRedraw() - 1));
+                if (countDownToRedraw() <= 0) {
+                    m.redraw();
+                }
+            };
 
         if (h.paramByName('online_success') === 'true') {
             displayModal.toggle();
@@ -44,10 +52,16 @@ const projectInsights = {
         };
 
         const lVisitorsPerDay = catarseMoments.loaderWithToken(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
-        lVisitorsPerDay.load().then(processVisitors);
+        lVisitorsPerDay
+            .load()
+            .then(processVisitors)
+            .then(requestRedraw);
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
-        lContributionsPerDay.load().then(contributionsPerDay);
+        lContributionsPerDay
+            .load()
+            .then(contributionsPerDay)
+            .then(requestRedraw);
 
         const contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
         const buildPerLocationTable = contributions => (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
@@ -65,7 +79,10 @@ const projectInsights = {
         }) : [];
 
         const lContributionsPerLocation = loader(models.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
-        lContributionsPerLocation.load().then(buildPerLocationTable);
+        lContributionsPerLocation
+            .load()
+            .then(buildPerLocationTable)
+            .then(requestRedraw);
 
         const contributionsPerRefTable = [[
             window.I18n.t('ref_table.header.origin', I18nScope()),
@@ -97,9 +114,12 @@ const projectInsights = {
         }) : [];
 
         const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
-        lContributionsPerRef.load().then(buildPerRefTable);
+        lContributionsPerRef
+            .load()
+            .then(buildPerRefTable)
+            .then(requestRedraw);
 
-        return {
+        vnode.state = {
             lContributionsPerRef,
             lContributionsPerLocation,
             lContributionsPerDay,
@@ -113,9 +133,9 @@ const projectInsights = {
             visitorsTotal
         };
     },
-    view: function(ctrl, args) {
-        const project = args.project,
-            buildTooltip = el => m.component(tooltip, {
+    view: function({state, attrs}) {
+        const project = attrs.project,
+            buildTooltip = el => m(tooltip, {
                 el,
                 text: [
                     'Informa de onde vieram os apoios de seu projeto. Saiba como usar essa tabela e planejar melhor suas ações de comunicação ',
@@ -124,28 +144,28 @@ const projectInsights = {
                 width: 380
             });
 
-        if (!args.l()) {
+        if (!attrs.l()) {
             project.user.name = project.user.name || 'Realizador';
         }
 
-        return m('.project-insights', !args.l() ? [
+        return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
-            (project.is_owner_or_admin ? m.component(projectDashboardMenu, {
-                project: m.prop(project)
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
             }) : ''),
-            (ctrl.displayModal() ? m.component(modalBox, {
-                displayModal: ctrl.displayModal,
+            (state.displayModal() ? m(modalBox, {
+                displayModal: state.displayModal,
                 content: [onlineSuccessModalContent]
             }) : ''),
 
             m('.w-container', 
                 ((project.state === 'successful' || project.state === 'waiting_funds' ) && !project.has_cancelation_request) ? 
-                    m.component(projectSuccessfullNextSteps, { project: m.prop(project) }) : [
+                    m(projectSuccessfullNextSteps, { project: prop(project) }) : [
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-8.w-col-push-2', [
                                 m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', window.I18n.t('campaign_title', I18nScope())),
-                                (project.state === 'online' && !project.has_cancelation_request ? m.component(projectInviteCard, { project }) : ''),
-                                (project.state === 'draft' && !project.has_cancelation_request ? m.component(adminProjectDetailsCard, { resource: project }) : ''),
+                                (project.state === 'online' && !project.has_cancelation_request ? m(projectInviteCard, { project }) : ''),
+                                (project.state === 'draft' && !project.has_cancelation_request ? m(adminProjectDetailsCard, { resource: project }) : ''),
                                 m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`,
                                     project.has_cancelation_request ? 
                                         m.trust(window.I18n.t('has_cancelation_request_explanation', I18nScope())) : [
@@ -163,13 +183,16 @@ const projectInsights = {
                         ])
                     ]),
             (project.state === 'draft' ?
-               m.component(projectDeleteButton, { project })
+               m(projectDeleteButton, { project })
             : ''),
             (project.is_published) ? [
                 m('.divider'),
                 m('.w-section.section-one-column.section.bg-gray.before-footer', [
                     m('.w-container', [
-                        m.component(projectDataStats, { project: m.prop(project), visitorsTotal: ctrl.visitorsTotal }),
+                        m(
+                            projectDataStats,
+                            { project: prop(project), visitorsTotal: state.visitorsTotal }
+                        ),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', {
                                 style: {
@@ -179,8 +202,8 @@ const projectInsights = {
                                 m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', [
                                     window.I18n.t('visitors_per_day_label', I18nScope())
                                 ]),
-                                !ctrl.lVisitorsPerDay() ? m.component(projectDataChart, {
-                                    collection: ctrl.visitorsPerDay,
+                                !state.lVisitorsPerDay() ? m(projectDataChart, {
+                                    collection: state.visitorsPerDay,
                                     dataKey: 'visitors',
                                     xAxis: item => h.momentify(item.day),
                                     emptyState: window.I18n.t('visitors_per_day_empty', I18nScope())
@@ -193,8 +216,8 @@ const projectInsights = {
                                     'min-height': '300px'
                                 }
                             }, [
-                                !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
-                                    collection: ctrl.contributionsPerDay,
+                                !state.lContributionsPerDay() ? m(projectDataChart, {
+                                    collection: state.contributionsPerDay,
                                     label: window.I18n.t('amount_per_day_label', I18nScope()),
                                     dataKey: 'total_amount',
                                     xAxis: item => h.momentify(item.paid_at),
@@ -208,8 +231,8 @@ const projectInsights = {
                                     'min-height': '300px'
                                 }
                             }, [
-                                !ctrl.lContributionsPerDay() ? m.component(projectDataChart, {
-                                    collection: ctrl.contributionsPerDay,
+                                !state.lContributionsPerDay() ? m(projectDataChart, {
+                                    collection: state.contributionsPerDay,
                                     label: window.I18n.t('contributions_per_day_label', I18nScope()),
                                     dataKey: 'total',
                                     xAxis: item => h.momentify(item.paid_at),
@@ -225,8 +248,8 @@ const projectInsights = {
                                         ' ',
                                         buildTooltip('span.fontsize-smallest.tooltip-wrapper.fa.fa-question-circle.fontcolor-secondary')
                                     ]),
-                                    !ctrl.lContributionsPerRef() ? !_.isEmpty(_.rest(ctrl.contributionsPerRefTable)) ? m.component(projectDataTable, {
-                                        table: ctrl.contributionsPerRefTable,
+                                    !state.lContributionsPerRef() ? !_.isEmpty(_.rest(state.contributionsPerRefTable)) ? m(projectDataTable, {
+                                        table: state.contributionsPerRefTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
                                             m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
@@ -242,8 +265,8 @@ const projectInsights = {
                             m('.w-col.w-col-12.u-text-center', [
                                 m('.project-contributions-per-ref', [
                                     m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', window.I18n.t('location_origin_title', I18nScope())),
-                                    !ctrl.lContributionsPerLocation() ? !_.isEmpty(_.rest(ctrl.contributionsPerLocationTable)) ? m.component(projectDataTable, {
-                                        table: ctrl.contributionsPerLocationTable,
+                                    !state.lContributionsPerLocation() ? !_.isEmpty(_.rest(state.contributionsPerLocationTable)) ? m(projectDataTable, {
+                                        table: state.contributionsPerLocationTable,
                                         defaultSortIndex: -2
                                     }) : m('.card.u-radius.medium.u-marginbottom-60',
                                             m('.w-row.u-text-center.u-margintop-40.u-marginbottom-40',
@@ -257,7 +280,7 @@ const projectInsights = {
                         ]),
                         m('.w-row', [
                             m('.w-col.w-col-12.u-text-center', [
-                                m.component(projectReminderCount, {
+                                m(projectReminderCount, {
                                     resource: project
                                 })
                             ]),
@@ -265,7 +288,7 @@ const projectInsights = {
                     ])
                 ]),
             (project.can_cancel ?
-                m.component(projectCancelButton, { project })
+                m(projectCancelButton, { project })
             : '')
 
             ] : ''

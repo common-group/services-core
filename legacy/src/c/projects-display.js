@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import projectFilters from '../vms/project-filters-vm';
 import models from '../models';
 import { catarse } from '../api';
@@ -10,7 +11,7 @@ import projectRowWithHeader from './project-row-with-header';
 
 const projectsDisplay = {
 
-    controller: function(args) {
+    oninit: function(vnode) {
 
         const 
             EXPERIMENT_CASE_CURRENT = 'EXPERIMENT_CASE_CURRENT',
@@ -24,9 +25,9 @@ const projectsDisplay = {
 
         const 
             filters = projectFilters().filters,
-            currentCase = m.prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_CURRENT),
-            subHomeWith6 = m.prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_6SUBHOM),
-            subHomeWith3 = m.prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_3SUBHOM),
+            currentCase = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_CURRENT),
+            subHomeWith6 = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_6SUBHOM),
+            subHomeWith3 = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_3SUBHOM),
             sample6 = _.partial(_.sample, _, 6),
             sample3 = _.partial(_.sample, _, 3),
             loader = catarse.loaderWithToken,
@@ -48,8 +49,8 @@ const projectsDisplay = {
                     offset: '0'
                 },
                 cLoader = loader(project.getPageOptions(_.extend(forSubPledged, defaultOptions, f.filter.parameters()))),
-                collection = m.prop([]);
-
+                collection = prop([]);
+            
             cLoader.load().then(_.compose(collection, sample_no));
 
             return {
@@ -62,8 +63,8 @@ const projectsDisplay = {
             };
         }
 
-        const collections = _.map(collectionsMap, collectionsMapper.bind(collectionsMapper, sample6));
-        const aonAndFlex_Sub_6 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample6));
+        //const collections = _.map(collectionsMap, collectionsMapper.bind(collectionsMapper, sample6));
+        //const aonAndFlex_Sub_6 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample6));
         const aonAndFlex_Sub_3 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample3));
 
         window.addEventListener('optimize_load', (event) => {
@@ -73,9 +74,9 @@ const projectsDisplay = {
             console.log('Experiment Name:', window.__GO_EXPE_NAME)
         });
 
-        return {
-            collections,
-            aonAndFlex_Sub_6,
+        vnode.state = {
+            //collections,
+            //aonAndFlex_Sub_6,
             aonAndFlex_Sub_3,
             currentCase,
             subHomeWith6,
@@ -84,17 +85,17 @@ const projectsDisplay = {
         };
     },
 
-    view: function(ctrl, args) {
+    view: function({state}) {
 
-        if (ctrl.windowEventNOTDispatched) {
+        if (state.windowEventNOTDispatched) {
             window.dispatchEvent(new Event('on_projects_controller_loaded'));
-            ctrl.windowEventNOTDispatched = false;
+            state.windowEventNOTDispatched = false;
         }
 
 
-        if (ctrl.subHomeWith6()) {
+        if (state.subHomeWith6()) {
             return m('div', 
-                _.map(ctrl.aonAndFlex_Sub_6, (collection, index) => m.component(projectRowWithHeader, {
+                _.map(state.aonAndFlex_Sub_6, (collection, index) => m(projectRowWithHeader, {
                     collection,
                     title: collection.title,
                     ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
@@ -103,8 +104,8 @@ const projectsDisplay = {
                 }))
             );
         }
-        else if (ctrl.subHomeWith3()) {
-            return m('div', _.map(ctrl.aonAndFlex_Sub_3, (collection, index) => m.component(projectRowWithHeader, {
+        else if (state.subHomeWith3()) {
+            return m('div', _.map(state.aonAndFlex_Sub_3, (collection, index) => m(projectRowWithHeader, {
                     collection,
                     title: collection.title,
                     ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,
@@ -114,7 +115,7 @@ const projectsDisplay = {
             );
         }
         else {
-            return m('div', _.map(ctrl.collections, collection => m.component(projectRow, {
+            return m('div', _.map(state.collections, collection => m(projectRow, {
                 collection,
                 title: collection.title,
                 ref: `home_${(collection.hash === 'all' ? 'score' : collection.hash)}`,

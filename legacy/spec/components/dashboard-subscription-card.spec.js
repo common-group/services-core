@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import subscriptionStatusIcon from '../../src/c/subscription-status-icon';
 import dashboardSubscriptionCard from '../../src/c/dashboard-subscription-card';
@@ -8,10 +9,10 @@ describe('ShowDateFromSubscriptionTransition', () => {
 
     beforeAll(() => {
         $subscription = SubscriptionMockery()[1];
-        $output = mq(m.component(subscriptionStatusIcon, {subscription:$subscription}));
+        $output = mq(m(subscriptionStatusIcon, {subscription:$subscription}));
 
         $subscription2 = SubscriptionMockery()[2];
-        $output2 = mq(m.component(dashboardSubscriptionCard, {subscription: $subscription2}));
+        $output2 = mq(m(dashboardSubscriptionCard, {subscription: $subscription2}));
     });
 
     it('Should show subscription transition date', () => {

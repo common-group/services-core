@@ -2,19 +2,19 @@ import m from 'mithril';
 import h from '../h';
 
 const adminBalanceTransferItem = {
-    view: function(ctrl, args) {
-        const item = args.item;
+    view: function({attrs}) {
+        const item = attrs.item;
         return m('.w-row', [
             m('.w-col.w-col-1.w-col-tiny-1', [
                 m('.w-checkbox.w-clearfix', [
                     m('input.w-checkbox-input[type=\'checkbox\']', {
                         disabled: (item.state != 'pending'),
-                        checked: args.listWrapper.isSelected(item.id),
+                        checked: attrs.listWrapper.isSelected(item.id),
                         onchange: (event) => {
                             if (event.currentTarget.checked) {
-                                args.listWrapper.selectItem(item);
+                                attrs.listWrapper.selectItem(item);
                             } else {
-                                args.listWrapper.unSelectItem(item);
+                                attrs.listWrapper.unSelectItem(item);
                             }
                         }
                     })

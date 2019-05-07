@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -12,7 +13,7 @@ import projectEditSaveBtn from './project-edit-save-btn';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_basics');
 
 const projectBasicsEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectBasicsVM,
             mapErrors = [
                   ['name', ['name']],
@@ -21,15 +22,15 @@ const projectBasicsEdit = {
                   ['category_id', ['category']],
                   ['city_id', ['city']]
             ],
-            loading = m.prop(false),
-            cities = m.prop(),
-            categories = m.prop([]),
+            loading = prop(false),
+            cities = prop(),
+            categories = prop([]),
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            selectedTags = m.prop([]),
-            tagOptions = m.prop([]),
-            isEditingTags = m.prop(false),
-            tagEditingLoading = m.prop(false),
+            selectedTags = prop([]),
+            tagOptions = prop([]),
+            isEditingTags = prop(false),
+            tagEditingLoading = prop(false),
             onSubmit = () => {
                 if (isEditingTags()) {
                     return false;
@@ -39,7 +40,7 @@ const projectBasicsEdit = {
                 m.redraw();
                 const tagString = _.pluck(selectedTags(), 'name').join(',');
                 vm.fields.public_tags(tagString);
-                vm.updateProject(args.projectId).then(() => {
+                vm.updateProject(vnode.attrs.projectId).then(() => {
                     loading(false);
                     vm.e.resetFieldErrors();
                     showSuccess(true);
@@ -58,7 +59,7 @@ const projectBasicsEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
         if (vm.fields.public_tags()) {
             selectedTags(_.map(vm.fields.public_tags().split(','), name => ({ name })));
@@ -90,8 +91,8 @@ const projectBasicsEdit = {
 
             return false;
         };
-        const tagString = m.prop('');
-        const transport = m.prop({ abort: Function.prototype });
+        const tagString = prop('');
+        const transport = prop({ abort: Function.prototype });
         const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
         const searchTags = () => m.request({ method: 'POST', background: true, config: transport, data: { query: tagString(), count: 3 }, url: searchTagsUrl });
         const triggerTagSearch = (e) => {
@@ -129,7 +130,7 @@ const projectBasicsEdit = {
             }
         };
 
-        return {
+        vnode.state = {
             vm,
             onSubmit,
             loading,
@@ -147,25 +148,25 @@ const projectBasicsEdit = {
             tagEditingLoading
         };
     },
-    view: function(ctrl, args) {
-        const vm = ctrl.vm;
+    view: function({state, attrs}) {
+        const vm = state.vm;
 
         return m('#basics-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
             // add pop notifications here
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-container', [
                     // admin fields
-                    (args.user.is_admin ?
+                    (attrs.user.is_admin ?
                       m('.w-row', [
                           m('.w-col.w-col-10.w-col-push-1', [
                               m(inputCard, {
@@ -225,28 +226,28 @@ const projectBasicsEdit = {
                             m(inputCard, {
                                 label: window.I18n.t('tags', I18nScope()),
                                 label_hint: window.I18n.t('tags_hint', I18nScope()),
-                                onclick: () => ctrl.isEditingTags(false),
+                                onclick: () => state.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        config: ctrl.editTag,
+                                        config: state.editTag,
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
                                         onfocus: () => vm.e.inlineError('public_tags', false)
                                     }),
-                                    ctrl.isEditingTags() ? m('.options-list.table-outer',
-                                         ctrl.tagEditingLoading()
+                                    state.isEditingTags() ? m('.options-list.table-outer',
+                                         state.tagEditingLoading()
                                             ? m('.dropdown-link', m('.fontsize-smallest', 'Carregando...'))
-                                            : ctrl.tagOptions().length
-                                                ? _.map(ctrl.tagOptions(), tag => m('.dropdown-link',
-                                                    { onclick: ctrl.addTag(tag) },
+                                            : state.tagOptions().length
+                                                ? _.map(state.tagOptions(), tag => m('.dropdown-link',
+                                                    { onclick: state.addTag(tag) },
                                                     m('.fontsize-smaller', tag.name)
                                                 ))
                                                 : m('.dropdown-link', m('.fontsize-smallest', 'Nenhuma tag relacionada...'))
                                     ) : '',
                                     vm.e.inlineError('public_tags'),
                                     m('div.tag-choices',
-                                        _.map(ctrl.selectedTags(), choice => m('.tag-div',
+                                        _.map(state.selectedTags(), choice => m('.tag-div',
                                             m('div', [
-                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: ctrl.removeTag(choice) }),
+                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: state.removeTag(choice) }),
                                                 ` ${choice.name}`
                                             ]))
                                         )
@@ -281,7 +282,7 @@ const projectBasicsEdit = {
                                         value: vm.fields.category_id(),
                                         class: vm.e.hasError('category_id') ? 'error' : '',
                                         onchange: m.withAttr('value', vm.fields.category_id)
-                                    }, ctrl.categories()),
+                                    }, state.categories()),
                                     vm.e.inlineError('category_id')
                                 ]
                             }),
@@ -292,16 +293,16 @@ const projectBasicsEdit = {
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.city_name(),
                                         class: vm.e.hasError('city_id') ? 'error' : '',
-                                        onkeyup: vm.generateSearchCity(ctrl.cities)
+                                        onkeyup: vm.generateSearchCity(state.cities)
                                     }),
                                     vm.e.inlineError('city_id'),
-                                    ctrl.cities()
+                                    state.cities()
                                 ]
                             })
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
         ]);
     }

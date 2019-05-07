@@ -7,20 +7,21 @@
  */
 
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 
 const UserFollowBtn = {
-    controller: function(args) {
-        const following = m.prop((args.following || false)),
+    oninit: function(vnode) {
+        const following = prop((vnode.attrs.following || false)),
             followVM = catarse.filtersVM({ follow_id: 'eq' }),
-            loading = m.prop(false),
-            hover = m.prop(false),
+            loading = prop(false),
+            hover = prop(false),
             userFollowInsert = models.userFollow.postOptions({
-                follow_id: args.follow_id }),
+                follow_id: vnode.attrs.follow_id }),
             userFollowDelete = (() => {
-                followVM.follow_id(args.follow_id);
+                followVM.follow_id(vnode.attrs.follow_id);
 
                 return models.userFollow.deleteOptions(
                       followVM.parameters());
@@ -44,7 +45,7 @@ const UserFollowBtn = {
                 });
             };
 
-        return {
+        vnode.state = {
             following,
             follow,
             unfollow,
@@ -52,22 +53,22 @@ const UserFollowBtn = {
             hover
         };
     },
-    view: function(ctrl, args) {
-        if (h.userSignedIn() && h.getUserID() != args.follow_id) {
-            let disableClass = args.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
-                enabledClass = args.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';
-            if (ctrl.loading()) { return h.loader(); }
-            if (ctrl.following()) {
+    view: function({state, attrs}) {
+        if (h.userSignedIn() && h.getUserID() != attrs.follow_id) {
+            let disableClass = attrs.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
+                enabledClass = attrs.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';
+            if (state.loading()) { return h.loader(); }
+            if (state.following()) {
                 return m(`a${enabledClass}`,
                     {
-                        onclick: ctrl.unfollow,
-                        onmouseover: () => ctrl.hover(true),
-                        onmouseout: () => ctrl.hover(false)
+                        onclick: state.unfollow,
+                        onmouseover: () => state.hover(true),
+                        onmouseout: () => state.hover(false)
                     },
-                         (ctrl.hover() ? 'Deixar de seguir' : 'Seguindo'));
+                         (state.hover() ? 'Deixar de seguir' : 'Seguindo'));
             }
             return m(`a${disableClass}`,
-                         { onclick: ctrl.follow },
+                         { onclick: state.follow },
                          'Seguir');
         }
         return m('');

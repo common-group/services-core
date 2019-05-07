@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
@@ -11,7 +12,7 @@ import projectCard from './project-card';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_card');
 
 const projectCardEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const vm = projectCardVM,
             mapErrors = [
                   ['uploaded_image', ['uploaded_image']],
@@ -20,12 +21,12 @@ const projectCardEdit = {
             ],
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
-            loading = m.prop(false),
+            loading = prop(false),
             onSubmit = (event) => {
                 loading(true);
                 m.redraw();
-                vm.uploadImage(args.projectId).then((uploaded) => {
-                    vm.updateProject(args.projectId).then((data) => {
+                vm.uploadImage(vnode.attrs.projectId).then((uploaded) => {
+                    vm.updateProject(vnode.attrs.projectId).then((data) => {
                         loading(false);
                         vm.e.resetFieldErrors();
                         if (!showSuccess()) { showSuccess.toggle(); }
@@ -55,9 +56,9 @@ const projectCardEdit = {
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, vm.e);
         }
-        vm.fillFields(args.project);
+        vm.fillFields(vnode.attrs.project);
 
-        return {
+        vnode.state = {
             onSubmit,
             showSuccess,
             showError,
@@ -65,20 +66,20 @@ const projectCardEdit = {
             loading
         };
     },
-    view: function(ctrl, args) {
-        const vm = ctrl.vm;
+    view: function({state, attrs}) {
+        const vm = state.vm;
         return m('#card-tab', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
-                toggleOpt: ctrl.showSuccess
+                toggleOpt: state.showSuccess
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
+            (state.showError() ? m(popNotification, {
                 message: window.I18n.t('shared.failed_update'),
-                toggleOpt: ctrl.showError,
+                toggleOpt: state.showError,
                 error: true
             }) : ''),
 
-            m('form.w-form', { onsubmit: ctrl.onSubmit }, [
+            m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-section.section', [
                     m('.w-container', [
                         (vm.currentProject().mode === 'sub' ?
@@ -132,7 +133,7 @@ const projectCardEdit = {
                         ])
                     ])
                 ]),
-                m(projectEditSaveBtn, { loading: ctrl.loading, onSubmit: ctrl.onSubmit })
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
             ])
 
         ]);

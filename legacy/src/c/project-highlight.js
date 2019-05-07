@@ -8,13 +8,13 @@ import categoryTag from './category-tag';
 import projectVM from '../vms/project-vm';
 
 const projectHighlight = {
-    controller: function() {
-        return {
+    oninit: function(vnode) {
+        vnode.state = {
             displayShareBox: h.toggleProp(false, true)
         };
     },
-    view: function(ctrl, args) {
-        const project = args.project;
+    view: function({state, attrs}) {
+        const project = attrs.project;
         const isSub = projectVM.isSubscription(project);
 
         return m('#project-highlight', [
@@ -26,8 +26,8 @@ const projectHighlight = {
                 style: `background-image:url('${project().original_image || project().project_img}');`
             })),
             m('.w-hidden-small.w-hidden-tiny', [
-                m.component(addressTag, { project, isDark: isSub }),
-                m.component(categoryTag, { project, isDark: isSub })
+                m(addressTag, { project, isDark: isSub }),
+                m(categoryTag, { project, isDark: isSub })
             ]),
             !isSub ? m('.project-blurb', project().headline) : null,
             m('.project-share.w-hidden-small.w-hidden-tiny',
@@ -35,11 +35,11 @@ const projectHighlight = {
                     m('.w-inline-block.fontcolor-secondary.fontsize-smaller.u-marginright-20',
                         'Compartilhar:'
                     ),
-                    project().permalink ? m.component(facebookButton, {
+                    project().permalink ? m(facebookButton, {
                         class: isSub ? 'btn-terciary-negative' : null,
                         url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`
                     }) : '',
-                    project().permalink ? m.component(facebookButton, {
+                    project().permalink ? m(facebookButton, {
                         class: isSub ? 'btn-terciary-negative' : null,
                         messenger: true,
                         url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share`
@@ -49,14 +49,14 @@ const projectHighlight = {
                         style: {
                             transition: 'all 0.5s ease 0s'
                         },
-                        onclick: ctrl.displayShareBox.toggle
+                        onclick: state.displayShareBox.toggle
                     }, [
                         '···',
                         ' Mais'
                     ]),
-                    (ctrl.displayShareBox() ? m(projectShareBox, {
+                    (state.displayShareBox() ? m(projectShareBox, {
                         project,
-                        displayShareBox: ctrl.displayShareBox
+                        displayShareBox: state.displayShareBox
                     }) : '')
                 ])
             )

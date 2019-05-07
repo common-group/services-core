@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import facebookButton from '../c/facebook-button';
@@ -10,16 +11,16 @@ import CommonPaymentVM from '../vms/common-payment-vm.js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const ProjectsSubscriptionThankYou = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const paymentMethod = m.route.param('payment_method');
         const paymentConfirmed = JSON.parse(m.route.param('payment_confirmed'));
         const paymentId = m.route.param('payment_id');
-        const paymentData = m.prop({});
-        const error = m.prop(false);
+        const paymentData = prop({});
+        const error = prop(false);
         const projectId = m.route.param('project_id');
         const isEdit = m.route.param('is_edit');
-        const project = m.prop({});
-        const projectUser = m.prop();
+        const project = prop({});
+        const projectUser = prop();
         const recommendedProjects = UserVM.getUserRecommendedProjects();
         const sendSubscriptionDataToAnalyticsInterceptingPaymentInfoRequest = (payData) => {
             const analyticsData = {
@@ -50,7 +51,7 @@ const ProjectsSubscriptionThankYou = {
             .then(projectUserData => projectUser(_.first(projectUserData)))
             .catch(() => error(true));
 
-        return {
+        vnode.state = {
             displayShareBox: h.toggleProp(false, true),
             recommendedProjects,
             paymentMethod,
@@ -62,10 +63,10 @@ const ProjectsSubscriptionThankYou = {
             isEdit
         };
     },
-    view: function(ctrl, args) {
-        const project = ctrl.project();
+    view: function({state, attrs}) {
+        const project = state.project();
         const user = h.getUser();
-        const projectUser = ctrl.projectUser();
+        const projectUser = state.projectUser();
 
         return m('#thank-you', !project ? h.loader() : [
             m('.page-header.u-marginbottom-30',
@@ -77,18 +78,18 @@ const ProjectsSubscriptionThankYou = {
                             ),
                             m('#thank-you.u-text-center', [
                                 m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
-                                  ctrl.isEdit
+                                  state.isEdit
                                     ? window.I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
                                     : window.I18n.t('thank_you.thank_you', I18nScope())
                                 ),
                                 m('.fontsize-base.u-marginbottom-40',
                                     m.trust(
                                         window.I18n.t(
-                                            ctrl.isEdit
+                                            state.isEdit
                                                 ? 'thank_you.subscription_edit.text_html'
-                                                : ctrl.paymentMethod === 'credit_card'
+                                                : state.paymentMethod === 'credit_card'
                                                     ? 'thank_you.thank_you_text_html'
-                                                    : ctrl.paymentConfirmed
+                                                    : state.paymentConfirmed
                                                         ? 'thank_you_slip.thank_you_text_html'
                                                         : 'thank_you.thank_you_slip_unconfirmed_text_html',
                                             I18nScope({
@@ -106,11 +107,11 @@ const ProjectsSubscriptionThankYou = {
                             ]),
                             m('.w-row', [
                                 m('.w-hidden-small.w-hidden-tiny', _.isEmpty(project) ? h.loader() : [
-                                    m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
+                                    m('.w-sub-col.w-col.w-col-4', m(facebookButton, {
                                         url: `https://www.catarse.me/${project.permalink}?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`,
                                         big: true
                                     })),
-                                    m('.w-sub-col.w-col.w-col-4', m.component(facebookButton, {
+                                    m('.w-sub-col.w-col.w-col-4', m(facebookButton, {
                                         messenger: true,
                                         big: true,
                                         url: `https://www.catarse.me/${project.permalink}?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=messenger&utm_campaign=thanks_share`
@@ -121,14 +122,14 @@ const ProjectsSubscriptionThankYou = {
                                 ]),
                                 m('.w-hidden-main.w-hidden-medium', [
                                     m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
-                                        onclick: ctrl.displayShareBox.toggle
+                                        onclick: state.displayShareBox.toggle
                                     }, 'Compartilhe')),
-                                    ctrl.displayShareBox() ? m(projectShareBox, {
-                                        project: m.prop({
+                                    state.displayShareBox() ? m(projectShareBox, {
+                                        project: prop({
                                             permalink: project.permalink,
                                             name: project.name
                                         }),
-                                        displayShareBox: ctrl.displayShareBox
+                                        displayShareBox: state.displayShareBox
                                     }) : ''
                                 ])
                             ]),
@@ -137,17 +138,17 @@ const ProjectsSubscriptionThankYou = {
                     )
                 )
             ),
-            ctrl.error()
+            state.error()
                 ? m('.w-row',
                     m('.w-col.w-col-8.w-col-offset-2',
                         m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller', window.I18n.translate('thank_you.thank_you_error', I18nScope()))
                     )
                 )
-                : ctrl.paymentData().boleto_url
+                : state.paymentData().boleto_url
                     ? m('.w-row',
                         m('.w-col.w-col-8.w-col-offset-2',
                             m('iframe.slip', {
-                                src: ctrl.paymentData().boleto_url,
+                                src: state.paymentData().boleto_url,
                                 width: '100%',
                                 height: '905px',
                                 frameborder: '0',
@@ -159,8 +160,8 @@ const ProjectsSubscriptionThankYou = {
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
                                 window.I18n.t('thank_you.project_recommendations', I18nScope())
                             ),
-                            m.component(projectRow, {
-                                collection: ctrl.recommendedProjects,
+                            m(projectRow, {
+                                collection: state.recommendedProjects,
                                 ref: 'ctrse_thankyou_r'
                             })
                         ])

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 import _ from 'underscore';
 import { catarse } from '../api';
@@ -8,12 +9,12 @@ import modalBox from './modal-box';
 import inviteEmailsFromImport from './invite-emails-from-import';
 
 const projectGoogleContactImport = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const clientId = document.getElementById('google_oauth_client'),
             modalToggle = h.toggleProp(false, true),
             feedPageUrl = 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&max-results=1000',
-            dataEmails = m.prop([]),
-            loadingContacts = m.prop(false),
+            dataEmails = prop([]),
+            loadingContacts = prop(false),
             fetch = (token, pageUrl) => {
                 if (!modalToggle()) {
                     modalToggle.toggle();
@@ -64,29 +65,29 @@ const projectGoogleContactImport = {
                 });
             };
 
-        return {
+        vnode.state = {
             auth,
             modalToggle,
             loadingContacts,
             dataEmails
         };
     },
-    view: function(ctrl, args) {
-        const project = args.project;
+    view: function({state, attrs}) {
+        const project = attrs.project;
 
         return m('#google_contact_wrapper', [
-            (ctrl.modalToggle() ? m.component(modalBox, {
-                displayModal: ctrl.modalToggle,
+            (state.modalToggle() ? m(modalBox, {
+                displayModal: state.modalToggle,
                 content: [inviteEmailsFromImport, {
-                    project: args.project,
-                    dataEmails: ctrl.dataEmails,
-                    loadingContacts: ctrl.loadingContacts,
-                    modalToggle: ctrl.modalToggle,
-                    showSuccess: args.showSuccess
+                    project: attrs.project,
+                    dataEmails: state.dataEmails,
+                    loadingContacts: state.loadingContacts,
+                    modalToggle: state.modalToggle,
+                    showSuccess: attrs.showSuccess
                 }]
             }) : ''),
             m('a.btn.btn-inline.btn-no-border.btn-terciary.w-inline-block[href=\'javascript:void(0);\']', {
-                onclick: ctrl.auth
+                onclick: state.auth
             }, [
                 m('img[src=\'http://uploads.webflow.com/57ba58b4846cc19e60acdd5b/57bc339f77f314e23b94d44d_gmail-icon.png\'][width=\'25\']'),
                 m('._w-inline-block.fontsize-smallest', 'Contatos do gmail')

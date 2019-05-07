@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import youtubeLightbox from '../../src/c/youtube-lightbox';
 
 describe('YoutubeLightbox', () => {

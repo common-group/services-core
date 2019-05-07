@@ -3,8 +3,8 @@ import _ from 'underscore';
 import h from '../h';
 
 const adminTransactionHistory = {
-    controller: function(args) {
-        const contribution = args.contribution,
+    oninit: function(vnode) {
+        const contribution = vnode.attrs.contribution,
             mapEvents = _.reduce([{
                 date: contribution.paid_at,
                 name: 'Apoio confirmado'
@@ -36,14 +36,16 @@ const adminTransactionHistory = {
                 return memo;
             }, []);
 
-        return {
+        vnode.state = {
             orderedEvents: _.sortBy(mapEvents, 'originalDate')
         };
+
+        return vnode.state;
     },
-    view: function(ctrl) {
+    view: function({state}) {
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Histórico da transação'),
-            ctrl.orderedEvents.map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
+            state.orderedEvents.map(cEvent => m('.w-row.fontsize-smallest.lineheight-looser.date-event', [
                 m('.w-col.w-col-6', [
                     m('.fontcolor-secondary', cEvent.date)
                 ]),

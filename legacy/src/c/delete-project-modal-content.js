@@ -4,22 +4,23 @@
  *
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import h from '../h';
 import models from '../models';
 
 const deleteProjectModalContent = {
-    controller: function(args) {
-        let l = m.prop(false);
-        const deleteSuccess = m.prop(false),
-            confirmed = m.prop(true),
-            error = m.prop(''),
-            check = m.prop('');
+    oninit: function(vnode) {
+        let l = prop(false);
+        const deleteSuccess = prop(false),
+            confirmed = prop(true),
+            error = prop(''),
+            check = prop('');
 
         const deleteProject = () => {
             if (check() === 'deletar-rascunho') {
                 const loaderOpts = models.deleteProject.postOptions({
-                    _project_id: args.project.project_id
+                    _project_id: vnode.attrs.project.project_id
                 });
                 l = catarse.loaderWithToken(loaderOpts);
                 l.load().then(() => {
@@ -36,7 +37,7 @@ const deleteProjectModalContent = {
             return false;
         };
 
-        return {
+        vnode.state = {
             deleteProject,
             confirmed,
             deleteSuccess,
@@ -44,9 +45,9 @@ const deleteProjectModalContent = {
             check
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div',
-                 (ctrl.deleteSuccess() ? '' : m('.modal-dialog-header',
+                 (state.deleteSuccess() ? '' : m('.modal-dialog-header',
                   m('.fontsize-large.u-text-center',
                       [
                           'Confirmar ',
@@ -56,8 +57,8 @@ const deleteProjectModalContent = {
                       ]
                   )
                 )),
-                m('form.modal-dialog-content', { onsubmit: ctrl.deleteProject },
-                  (ctrl.deleteSuccess() ? [m('.fontsize-base.u-margintop-30', 'Projeto deletado com sucesso. Clique no link abaixo para voltar a página inicial.'),
+                m('form.modal-dialog-content', { onsubmit: state.deleteProject },
+                  (state.deleteSuccess() ? [m('.fontsize-base.u-margintop-30', 'Projeto deletado com sucesso. Clique no link abaixo para voltar a página inicial.'),
                       m(`a.btn.btn-inactive.btn-large.u-margintop-30[href='/${window.I18n.locale}/users/${h.getUser().user_id}/edit#projects']`, 'Voltar')
                   ] :
                   [
@@ -76,10 +77,10 @@ const deleteProjectModalContent = {
                           ]
                     ),
                       m('.w-form',
-                      m('.text-error.u-marginbottom-10', ctrl.error()),
+                      m('.text-error.u-marginbottom-10', state.error()),
                           [
                               m('div',
-                          m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', { class: ctrl.confirmed() ? false : 'error', placeholder: 'deletar-rascunho', onchange: m.withAttr('value', ctrl.check) })
+                          m('input.positive.text-field.u-marginbottom-40.w-input[maxlength=\'256\'][type=\'text\']', { class: state.confirmed() ? false : 'error', placeholder: 'deletar-rascunho', onchange: m.withAttr('value', state.check) })
                         )
                           ]
                     ),
@@ -90,7 +91,7 @@ const deleteProjectModalContent = {
                               m('.u-text-center.w-col.w-col-6',
                                   [
                                       m('input.btn.btn-inactive.btn-large.u-marginbottom-20[type=\'submit\'][value=\'Deletar para sempre\']'),
-                                      m('a.fontsize-small.link-hidden-light[href=\'#\']', { onclick: args.displayDeleteModal.toggle }, 'Cancelar'
+                                      m('a.fontsize-small.link-hidden-light[href=\'#\']', { onclick: attrs.displayDeleteModal.toggle }, 'Cancelar'
                               )
                                   ]
                           ),

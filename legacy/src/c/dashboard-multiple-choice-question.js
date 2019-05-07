@@ -4,8 +4,8 @@ import surveyVM from '../vms/survey-vm';
 import inlineError from '../c/inline-error';
 
 const dashboardMultipleChoiceQuestion = {
-    controller: function(args) {
-        const { question } = args;
+    oninit: function(vnode) {
+        const { question } = vnode.attrs;
         const deleteOption = (question, idx) => () => {
             surveyVM.deleteMultipleQuestionOption(question, idx);
 
@@ -30,14 +30,14 @@ const dashboardMultipleChoiceQuestion = {
             question.survey_question_choices_attributes(survey_question_choices_attributes);
         };
 
-        return {
+        vnode.state = {
             addOption,
             deleteOption,
             updateOption
         };
     },
-    view: function(ctrl, args) {
-        const { question, index } = args;
+    view: function({state, attrs}) {
+        const { question, index } = attrs;
 
         return m('.card.u-marginbottom-30.u-radius.w-form', [
             m('.dashboard-question', [
@@ -84,14 +84,14 @@ const dashboardMultipleChoiceQuestion = {
                             m('.fa.fa-circle-o.fontcolor-terciary.prefix.u-text-center.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1'),
                             m('.w-col.w-col-10.w-col-medium-10.w-col-small-10.w-col-tiny-10',
                                     m('input.positive.text-field.w-input[type="text"]', {
-                                        onchange: m.withAttr('value', ctrl.updateOption(idx)),
+                                        onchange: m.withAttr('value', state.updateOption(idx)),
                                         name: `reward[surveys_attributes][questions][${index}][question][survey_question_choices_attributes][${idx}][option]`,
                                         value: option.option
                                     })
                                 ),
                             m('.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1',
                                     m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-trash', {
-                                        onclick: ctrl.deleteOption(question, idx)
+                                        onclick: state.deleteOption(question, idx)
                                     })
                                 )
                         ])),
@@ -99,7 +99,7 @@ const dashboardMultipleChoiceQuestion = {
                             m('.w-col.w-col-1.w-col-medium-1.w-col-small-1.w-col-tiny-1'),
                             m('.w-col.w-col-11.w-col-medium-11.w-col-small-11.w-col-tiny-11',
                                     m('button.fontcolor-secondary.fontsize-smallest.link-hidden',
-                                        { onclick: ctrl.addOption(question) },
+                                        { onclick: state.addOption(question) },
                                         'Adicionar mais uma opção'
                                     )
                                 )

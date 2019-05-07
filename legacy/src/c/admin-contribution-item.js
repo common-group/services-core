@@ -7,8 +7,8 @@ import adminContributionUser from './admin-contribution-user';
 import paymentStatus from './payment-status';
 
 const adminContributionItem = {
-    controller: function() {
-        return {
+    oninit: function(vnode) {
+        vnode.state = {
             itemBuilder: [{
                 component: adminContributionUser,
                 wrapperClass: '.w-col.w-col-4'
@@ -24,13 +24,13 @@ const adminContributionItem = {
             }]
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m(
             '.w-row',
-            _.map(ctrl.itemBuilder, panel => m(panel.wrapperClass, [
-                m.component(panel.component, {
-                    item: args.item,
-                    key: args.key
+            _.map(state.itemBuilder, panel => m(panel.wrapperClass, [
+                m(panel.component, {
+                    item: attrs.item,
+                    key: attrs.key
                 })
             ]))
         );

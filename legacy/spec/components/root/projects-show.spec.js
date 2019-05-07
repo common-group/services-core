@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import projectsShow from '../../../src/root/projects-show';
 
 describe('ProjectsShow', () => {
@@ -6,9 +7,8 @@ describe('ProjectsShow', () => {
   beforeAll(() => {
     window.location.hash = '';
     projectDetail = ProjectDetailsMockery()[0];
-    let component = m.component(projectsShow, {project_id: 123, project_user_id: 1231}),
-        view = component.view(component.controller());
-    $output = mq(view);
+    let component = m(projectsShow, {project_id: 123, project_user_id: 1231});
+    $output = mq(component);
   });
 
   it('should render project some details', () => {

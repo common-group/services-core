@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import projectCancelButton from '../../src/c/project-cancel-button';
 
@@ -8,7 +9,7 @@ describe('ProjectCancelButton', () => {
     describe('view', () => {
         beforeAll(() => {
             project = ProjectMockery()[0];
-            $output = mq(m.component(projectCancelButton, {
+            $output = mq(m(projectCancelButton, {
                 project,
                 category: {
                     project

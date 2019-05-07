@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import moment from 'moment';
 import {
@@ -15,11 +16,11 @@ import anonymousBadge from './anonymous-badge';
 const subscriptionScope = _.partial(h.i18nScope, 'users.subscription_row');
 
 const dashboardSubscriptionCard = {
-    controller: function(args) {
-        const subscription = args.subscription,
-            reward = m.prop(),
+    oninit: function(vnode) {
+        const subscription = vnode.attrs.subscription,
+            reward = prop(),
             toggleDetails = h.toggleProp(false, true),
-            user = m.prop();
+            user = prop();
 
         if (subscription.user_external_id) {
             const filterUserVM = catarse.filtersVM({
@@ -44,30 +45,29 @@ const dashboardSubscriptionCard = {
                 reward(_.first(data));
             });
         }
-        
-        return {
+        vnode.state = {
             toggleDetails,
             reward,
             user
         };
     },
-    view: function(ctrl, args) {
-        const subscription = args.subscription,
-            user = ctrl.user(),
-            cardClass = ctrl.toggleDetails() ? '.card-detailed-open' : '';
+    view: function({state, attrs}) {
+        const subscription = attrs.subscription,
+            user = state.user(),
+            cardClass = state.toggleDetails() ? '.card-detailed-open' : '';
 
         return m(`div${cardClass}`, [m('.card.card-clickable', {
-            onclick: ctrl.toggleDetails.toggle
-        }, ctrl.user() ?
+            onclick: state.toggleDetails.toggle
+        }, state.user() ?
                 m('.w-row', [
                     m('.table-col.w-col.w-col-3',
                         m('.w-row', [
                             m('.w-col.w-col-3',
-                                m(`img.u-marginbottom-10.user-avatar[src='${h.useAvatarOrDefault(ctrl.user().profile_img_thumbnail)}']`)
+                                m(`img.u-marginbottom-10.user-avatar[src='${h.useAvatarOrDefault(state.user().profile_img_thumbnail)}']`)
                             ),
                             m('.w-col.w-col-9', [
                                 m('.fontsize-smaller.fontweight-semibold.lineheight-tighter',
-                                    ctrl.user().name
+                                    state.user().name
                                 ),
                                 m(anonymousBadge, {
                                     isAnonymous: subscription.anonymous,
@@ -81,7 +81,7 @@ const dashboardSubscriptionCard = {
                     ),
                     m('.table-col.w-col.w-col-2',
                         m('.fontsize-smaller',
-                            _.isEmpty(ctrl.reward()) ? '' : `${ctrl.reward().description.substring(0, 20)}...`
+                            _.isEmpty(state.reward()) ? '' : `${state.reward().description.substring(0, 20)}...`
                         )
                     ),
                     m('.table-col.w-col.w-col-1.u-text-center', [
@@ -113,9 +113,9 @@ const dashboardSubscriptionCard = {
                     m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary')
                 ]) : ''
             ),
-            ctrl.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
+            state.toggleDetails() ? m(dashboardSubscriptionCardDetail, {
                 subscription,
-                reward: ctrl.reward(),
+                reward: state.reward(),
                 user
             }) : ''
         ]);

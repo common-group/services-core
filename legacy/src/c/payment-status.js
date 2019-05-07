@@ -5,8 +5,8 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'projects.payment');
 
 const paymentStatus = {
-    controller: function(args) {
-        const payment = args.item;
+    oninit: function(vnode) {
+        const payment = vnode.attrs.item;
         let card = null,
             displayPaymentMethod,
             paymentMethodClass,
@@ -73,24 +73,26 @@ const paymentStatus = {
             }
         };
 
-        return {
+        vnode.state = {
             displayPaymentMethod,
             paymentMethodClass,
             stateClass
         };
+
+        return vnode.state;
     },
-    view: function(ctrl, args) {
-        const payment = args.item;
+    view: function({state, attrs}) {
+        const payment = attrs.item;
 
         return m('.w-row.payment-status', [
             m('.fontsize-smallest.lineheight-looser.fontweight-semibold', [
-                m(`span.fa.fa-circle${ctrl.stateClass()}`), ` ${window.window.I18n.t(payment.state, I18nScope())}`
+                m(`span.fa.fa-circle${state.stateClass()}`), ` ${window.window.I18n.t(payment.state, I18nScope())}`
             ]),
             m('.fontsize-smallest.fontweight-semibold', [
-                m(`span.fa${ctrl.paymentMethodClass()}`), ' ', m('a.link-hidden[href="#"]', payment.payment_method)
+                m(`span.fa${state.paymentMethodClass()}`), ' ', m('a.link-hidden[href="#"]', payment.payment_method)
             ]),
             m('.fontsize-smallest.fontcolor-secondary.lineheight-tight', [
-                ctrl.displayPaymentMethod()
+                state.displayPaymentMethod()
             ])
         ]);
     }

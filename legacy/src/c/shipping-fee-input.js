@@ -4,10 +4,10 @@ import h from '../h';
 import inlineError from '../c/inline-error';
 
 const shippingFeeInput = {
-    controller: function(args) {
-        const states = args.states;
-        const fee = args.fee,
-            fees = args.fees,
+    oninit: function(vnode) {
+        const states = vnode.attrs.states;
+        const fee = vnode.attrs.fee,
+            fees = vnode.attrs.fees,
             deleted = h.toggleProp(false, true),
             stateInUse = (state) => {
                 const destinations = _.map(fees(), fee => fee.destination());
@@ -17,7 +17,7 @@ const shippingFeeInput = {
 
         _.extend(fee, { deleted });
         fee.value(fee.value() ? `${h.formatNumber(fee.value(), 2, 3)}` : '0,00');
-        return {
+        vnode.state = {
             fee,
             applyMask,
             fees,
@@ -27,17 +27,17 @@ const shippingFeeInput = {
             states
         };
     },
-    view: function(ctrl) {
-        const deleted = ctrl.deleted,
-            othersCount = _.filter(ctrl.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international').length,
-            states = ctrl.states;
+    view: function({state}) {
+        const deleted = state.deleted,
+            othersCount = _.filter(state.fees(), fee => fee.destination !== 'others' && fee.destination !== 'international').length,
+            states = state.states;
 
         return m(`div${deleted() ? '.w-hidden' : ''}`, [
             m('.u-marginbottom-10.w-row', [
                 m('.w-col.w-col-6',
 
                     (
-                        ctrl.fee.destination() === 'others' ? [
+                        state.fee.destination() === 'others' ? [
 
                             m('input[type=\'hidden\']', {
                                 value: 'others'
@@ -47,7 +47,7 @@ const shippingFeeInput = {
                             )
                         ] :
 
-                        ctrl.fee.destination() === 'international' ?
+                        state.fee.destination() === 'international' ?
 
                         [
                             m('input[type=\'hidden\']', {
@@ -59,14 +59,14 @@ const shippingFeeInput = {
                         ] :
 
                         m('select.fontsize-smallest.text-field.text-field-light.w-select', {
-                            class: ctrl.fee.error ? 'error' : false,
-                            value: ctrl.fee.destination(),
-                            onchange: m.withAttr('value', ctrl.fee.destination)
+                            class: state.fee.error ? 'error' : false,
+                            value: state.fee.destination(),
+                            onchange: m.withAttr('value', state.fee.destination)
                         }, [
                             (_.map(states(), state =>
                                 m('option', {
                                     value: state.acronym,
-                                    disabled: ctrl.stateInUse(state)
+                                    disabled: state.stateInUse(state)
                                 },
                                     state.name
                                 )))
@@ -82,29 +82,29 @@ const shippingFeeInput = {
                         ),
                         m('.w-col.w-col-9',
                             m('input.positive.postfix.text-field.w-input', {
-                                value: ctrl.feeValue(),
+                                value: state.feeValue(),
                                 autocomplete: 'off',
                                 type: 'text',
-                                onkeyup: m.withAttr('value', ctrl.applyMask),
-                                oninput: m.withAttr('value', ctrl.feeValue)
+                                onkeyup: m.withAttr('value', state.applyMask),
+                                oninput: m.withAttr('value', state.feeValue)
                             })
                         )
                     ])
                 ),
                 m('.w-col.w-col-1', [
                     m('input[type=\'hidden\']', {
-                        value: ctrl.deleted()
+                        value: state.deleted()
                     }),
 
-                    (ctrl.fee.destination() === 'others' || ctrl.fee.destination() === 'international' ? '' :
+                    (state.fee.destination() === 'others' || state.fee.destination() === 'international' ? '' :
                         m('a.btn.btn-no-border.btn-small.btn-terciary.fa.fa-1.fa-trash', {
-                            onclick: () => ctrl.deleted.toggle()
+                            onclick: () => state.deleted.toggle()
                         }))
                 ])
 
 
             ],
-            ctrl.fee.error ? m(inlineError, { message: 'Estado não pode ficar em branco.' }) : ''
+            state.fee.error ? m(inlineError, { message: 'Estado não pode ficar em branco.' }) : ''
             ), m('.divider.u-marginbottom-10')
         ]);
     }

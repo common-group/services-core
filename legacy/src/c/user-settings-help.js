@@ -1,10 +1,7 @@
 import m from 'mithril';
 
 const userSettingsHelp = {
-    controller: function (args) {
-        return {};
-    },
-    view: function (ctrl, args) {
+    view: function ({state, attrs}) {
         return m('.w-col.w-col-4', [
             m('.card.u-radius.card-message.u-marginbottom-20',
                 [

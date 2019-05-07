@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import userFriends from '../c/user-friends';
@@ -7,18 +8,18 @@ import userFollowers from '../c/user-followers';
 import userCreators from '../c/user-creators';
 
 const FollowFoundFriends = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const user = h.getUser(),
-            hash = m.prop(window.location.hash),
+            hash = prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
                         user
                     },
                     tabs = {
-                        '#creators': m.component(userCreators, c_opts),
-                        '#friends': m.component(userFriends, c_opts),
-                        '#follows': m.component(userFollows, c_opts),
-                        '#followers': m.component(userFollowers, c_opts)
+                        '#creators': m(userCreators, c_opts),
+                        '#friends': m(userFriends, c_opts),
+                        '#follows': m(userFollows, c_opts),
+                        '#followers': m(userFollowers, c_opts)
                     };
 
                 hash(window.location.hash);
@@ -32,12 +33,12 @@ const FollowFoundFriends = {
 
         h.redrawHashChange();
 
-        return {
+        vnode.state = {
             user,
             displayTabContent
         };
     },
-    view: function(ctrl, args) {
+    view: function({state, attrs}) {
         return m('div', [
             m('.w-section.dashboard-header', [
                 m('.w-container', [
@@ -66,7 +67,7 @@ const FollowFoundFriends = {
                               'Seguindo',
                               m.trust('&nbsp;'),
                               m('span.w-hidden-small.w-hidden-tiny.badge',
-                            ctrl.user.follows_count
+                            state.user.follows_count
                            )
                           ]
                      ),
@@ -75,14 +76,14 @@ const FollowFoundFriends = {
                               'Seguidores',
                               m.trust('&nbsp;'),
                               m('span.w-hidden-small.w-hidden-tiny.badge',
-                            ctrl.user.followers_count
+                            state.user.followers_count
                            )
                           ]
                      )
                   ]
                )
              ),
-            ctrl.displayTabContent()
+            state.displayTabContent()
         ]);
     }
 };

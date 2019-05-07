@@ -1,3 +1,4 @@
+import mq from 'mithril-query';
 import m from 'mithril';
 import dashboardInfo from '../../src/c/dashboard-info';
 
@@ -12,7 +13,7 @@ describe('Dashboard Info', () => {
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(m.component(dashboardInfo, {content: content}));
+            $output = mq(m(dashboardInfo, {content: content}));
         });
 
         it('should render an given icon', () => {

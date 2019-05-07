@@ -1,8 +1,9 @@
 import _ from 'underscore';
 import m from 'mithril';
+import prop from 'mithril/stream';
 import h from '../h';
 
-const railsErrors = m.prop('');
+const railsErrors = prop('');
 const setRailsErrors = errors => railsErrors(errors);
 const errorGroups = {
     basics: ['public_name', 'permalink', 'category_id', 'city', 'public_tags', 'name'],

@@ -10,6 +10,7 @@
  * }
  */
 import m from 'mithril';
+import prop from 'mithril/stream';
 import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
@@ -18,11 +19,11 @@ import UserFollowCard from '../c/user-follow-card';
 import loadMoreBtn from '../c/load-more-btn';
 
 const userFollows = {
-    controller: function(args) {
+    oninit: function(vnode) {
         models.userFollow.pageSize(9);
         const userFriendVM = catarse.filtersVM({ user_id: 'eq' }),
-            user = args.user,
-            hash = m.prop(window.location.hash),
+            user = vnode.attrs.user,
+            hash = prop(window.location.hash),
             followsListVM = catarse.paginationVM(models.userFollow,
                                                      'created_at.desc', {
                                                          Prefer: 'count=exact'
@@ -33,32 +34,33 @@ const userFollows = {
             followsListVM.firstPage(userFriendVM.parameters());
         }
 
-        return {
+        vnode.state = {
             followsListVM
         };
     },
-    view: function(ctrl, args) {
-        const followsVM = ctrl.followsListVM;
+    view: function({state, attrs}) {
+        const followsVM = state.followsListVM;
         return m('.w-section.bg-gray.before-footer.section', [
             m('.w-container', [
                 m('.w-row', [
-                    _.map(followsVM.collection(), friend => m.component(UserFollowCard,
-                                           { friend: _.extend({}, { following: true, friend_id: friend.follow_id }, friend.source) })),
+                    _.map(followsVM.collection(), friend => m(
+                        UserFollowCard,
+                        { friend: _.extend({}, { following: true, friend_id: friend.follow_id }, friend.source) }
+                    )),
                 ]),
                 m('.w-section.section.bg-gray', [
                     m('.w-container', [
                         m('.w-row.u-marginbottom-60', [
                             m('.w-col.w-col-5', [
                                 m('.u-marginright-20')
-                            ]), m.component(loadMoreBtn, { collection: followsVM }),
+                            ]), m(loadMoreBtn, { collection: followsVM }),
                             m('.w-col.w-col-5')
                         ])
                     ])
                 ])
 
             ])
-        ])
-      ;
+        ]);
     }
 };
 

@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import models from '../models';
 import _ from 'underscore';
 import h from '../h';
@@ -15,7 +16,7 @@ import railsErrorsVM from '../vms/rails-errors-vm';
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
 const projectGoalsEdit = {
-    controller: function(args) {
+    oninit: function(vnode) {
         const e = generateErrorInstance();
         const mapErrors = [
             ['goals', ['goals.size']]
@@ -23,26 +24,26 @@ const projectGoalsEdit = {
         const goals = projectGoalsVM.goals;
 
         const l = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({
-            id: args.project.common_id
+            id: vnode.attrs.project.common_id
         }));
 
-        const currentGoal = m.prop();
-        const subscribersDetails = m.prop({});
+        const currentGoal = prop();
+        const subscribersDetails = prop({});
         l.load().then((subData) => {
             subscribersDetails(subData);
             const sortedGoals = _.sortBy(goals(), g => g().value()),
                 nextGoal = _.find(sortedGoals, goal => goal().value() > subscribersDetails().amount_paid_for_valid_period);
             currentGoal(nextGoal());
         });
-        const showSuccess = m.prop(false);
-        const error = m.prop(false);
+        const showSuccess = prop(false);
+        const error = prop(false);
 
-        projectGoalsVM.fetchGoalsEdit(args.projectId);
+        projectGoalsVM.fetchGoalsEdit(vnode.attrs.projectId);
 
         if (railsErrorsVM.railsErrors()) {
             railsErrorsVM.mapRailsErrors(railsErrorsVM.railsErrors(), mapErrors, e);
         }
-        return {
+        vnode.state = {
             showSuccess,
             e,
             error,
@@ -52,22 +53,22 @@ const projectGoalsEdit = {
         };
     },
 
-    view: function(ctrl, args) {
-        const showSuccess = ctrl.showSuccess,
-            error = ctrl.error;
+    view: function({state, attrs}) {
+        const showSuccess = state.showSuccess,
+            error = state.error;
         return m('.w-container',
             m('.w-row', [
-                (ctrl.showSuccess() ? m.component(popNotification, {
+                (state.showSuccess() ? m(popNotification, {
                     message: 'Meta salva com sucesso'
                 }) : ''),
-                (ctrl.error() ? m.component(popNotification, {
+                (state.error() ? m(popNotification, {
                     message: 'Erro ao salvar informações',
                     error: true
                 }) : ''),
 
                 m('.w-col.w-col-8',
                     m('.w-form', [
-                        ctrl.e.inlineError('goals'),
+                        state.e.inlineError('goals'),
                         m('div',
                             m(".card.card-terciary.medium.u-marginbottom-30[id='arrecadacao']", [
                                 m('.u-marginbottom-30', [
@@ -80,13 +81,13 @@ const projectGoalsEdit = {
                                         'Você pode alterar suas metas a qualquer momento durante sua campanha.'
                                     ])
                                 ]),
-                                _.map(ctrl.goals(), (goal) => {
+                                _.map(state.goals(), (goal) => {
                                     if (goal().editing()) {
                                         return m(projectGoalEditCard, {
                                             goal,
                                             showSuccess,
-                                            project: args.project,
-                                            currentGoal: ctrl.currentGoal,
+                                            project: attrs.project,
+                                            currentGoal: state.currentGoal,
                                             error
                                         });
                                     }
@@ -96,7 +97,7 @@ const projectGoalsEdit = {
                                 }),
                                 m('button.btn.btn-large.btn-message', {
                                     onclick: () => {
-                                        ctrl.addGoal(args.projectId);
+                                        state.addGoal(attrs.projectId);
                                     }
                                 }, [
                                     '+ ',

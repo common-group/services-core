@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import h from '../h';
@@ -8,10 +9,10 @@ import projectRow from '../c/project-row';
 import landingQA from '../c/landing-qa';
 
 const Flex = {
-    controller: function() {
-        const stats = m.prop([]),
-            projects = m.prop([]),
-            l = m.prop(),
+    oninit: function(vnode) {
+        const stats = prop([]),
+            projects = prop([]),
+            l = prop(),
             sample3 = _.partial(_.sample, _, 3),
             builder = {
                 customAction: 'http://fazum.catarse.me/obrigado-landing-catarse-flex'
@@ -36,7 +37,7 @@ const Flex = {
 
         projectsLoader.load().then(_.compose(projects, sample3));
 
-        return {
+        vnode.state = {
             addDisqus,
             builder,
             statsLoader,
@@ -48,8 +49,8 @@ const Flex = {
             }
         };
     },
-    view: function(ctrl, args) {
-        const stats = _.first(ctrl.stats());
+    view: function({state, attrs}) {
+        const stats = _.first(state.stats());
 
         return [
             m('.w-section.hero-full.hero-zelo', [
@@ -60,8 +61,8 @@ const Flex = {
                     ]),
                     m('.w-row', [
                         m('.w-col.w-col-2'),
-                        m.component(landingSignup, {
-                            builder: ctrl.builder
+                        m(landingSignup, {
+                            builder: state.builder
                         }),
                         m('.w-col.w-col-2')
                     ])
@@ -111,7 +112,10 @@ const Flex = {
                 m('.w-section.section', [
                     m('.w-container', [
                         m('.w-editable.fontsize-larger.u-margintop-40.u-margin-bottom-40.u-text-center', 'Conheça alguns dos primeiros projetos flex'),
-                        ctrl.projectsLoader() ? h.loader() : m.component(projectRow, { collection: ctrl.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40' })
+                        state.projectsLoader() ? h.loader() : m(
+                            projectRow,
+                            { collection: state.projects, ref: 'ctrse_flex', wrapper: '.w-row.u-margintop-40' }
+                        )
                     ])
                 ]),
                 m('.w-section.divider'),
@@ -119,28 +123,28 @@ const Flex = {
                     m('.w-container', [
                         m('.fontsize-larger.u-text-center.u-marginbottom-60.u-margintop-40', 'Dúvidas'), m('.w-row.u-marginbottom-60', [
                             m('.w-col.w-col-6', [
-                                m.component(landingQA, {
+                                m(landingQA, {
                                     question: 'Quais são as taxas da modalidade flexível? ',
                                     answer: 'Como no Catarse, enviar um projeto não custa nada! A taxa cobrada no serviço Catarse flex é de 13% sobre o valor arrecadado.'
                                 }),
-                                m.component(landingQA, {
+                                m(landingQA, {
                                     question: 'De onde vem o dinheiro do meu projeto?',
                                     answer: 'Família, amigos, fãs e membros de comunidades que você faz parte são seus maiores colaboradores. São eles que irão divulgar sua campanha para as pessoas que eles conhecem, e assim o círculo de apoiadores vai aumentando e a sua campanha ganha força.'
                                 }),
-                                m.component(landingQA, {
+                                m(landingQA, {
                                     question: 'Qual a diferença entre o flexível e o "tudo ou nada"?',
                                     answer: 'Atualmente o Catarse utiliza apenas o modelo "tudo ou nada", onde você só fica com o dinheiro se bater a meta de arrecadação dentro do prazo da campanha. O modelo flexível é diferente pois permite que o realizador fique com o que arrecadar, independente de atingir ou não a meta do projeto no prazo da campanha. Não haverá limite de tempo para as campanhas. Nosso sistema flexível será algo novo em relação aos modelos que existem atualmente no mercado.'
                                 }),
                             ]), m('.w-col.w-col-6', [
-                                m.component(landingQA, {
+                                m(landingQA, {
                                     question: 'Posso inscrever projetos para a modalidade flexível já?',
                                     answer: 'Sim. Cadastre seu email e saiba como inscrever o seu projeto no flex!'
                                 }),
-                                m.component(landingQA, {
+                                m(landingQA, {
                                     question: 'Por quê vocês querem fazer o Catarse flex?',
                                     answer: 'Acreditamos que o ambiente do crowdfunding brasileiro ainda tem espaço para muitas ações, testes e experimentações para entender de fato o que as pessoas precisam. Sonhamos com tornar o financiamento coletivo um hábito no Brasil. O Catarse flex é mais um passo nessa direção.'
                                 }),
-                                m.component(landingQA, {
+                                m(landingQA, {
                                     question: 'Quando vocês irão lançar o Catarse flex?',
                                     answer: 'Ainda não sabemos quando abriremos o flex para o público em geral, mas você pode cadastrar seu email nessa página e receber um material especial de como inscrever seu projeto.'
                                 })
@@ -152,8 +156,8 @@ const Flex = {
                     m('.w-container.fontcolor-negative', [
                         m('.fontsize-largest', 'Inscreva seu projeto!'), m('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), m('.w-row', [
                             m('.w-col.w-col-2'),
-                            m.component(landingSignup, {
-                                builder: ctrl.builder
+                            m(landingSignup, {
+                                builder: state.builder
                             }),
                             m('.w-col.w-col-2')
                         ])
@@ -161,7 +165,7 @@ const Flex = {
                 ]), m('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [
                     m('.w-container.u-text-center', [
                         m('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'),
-                        m('.w-row.u-text-center', (ctrl.statsLoader()) ? h.loader() : [
+                        m('.w-row.u-text-center', (state.statsLoader()) ? h.loader() : [
                             m('.w-col.w-col-4', [
                                 m('.fontsize-jumbo.text-success.lineheight-loose', h.formatNumber(stats.total_contributors, 0, 3)), m('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')
                             ]),
@@ -204,7 +208,7 @@ const Flex = {
                             m('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), m('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')
                         ]),
                         m('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
-                            config: ctrl.addDisqus
+                            config: state.addDisqus
                         })
                     ])
                 ])

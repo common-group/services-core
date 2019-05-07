@@ -1,4 +1,5 @@
 import m from 'mithril';
+import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse } from '../api';
 import models from '../models';
@@ -7,36 +8,36 @@ import userVM from '../vms/user-vm';
 import popNotification from './pop-notification';
 
 const userBilling = {
-    controller: function(args) {
+    oninit: function(vnode) {
         models.bank.pageSize(false);
-        const user = args.user,
-            bankAccount = m.prop({}),
+        const user = vnode.attrs.user,
+            bankAccount = prop({}),
             fields = {
-                owner_name: m.prop(''),
-                agency: m.prop(''),
-                bank_id: m.prop(''),
-                agency_digit: m.prop(''),
-                account: m.prop(''),
-                account_digit: m.prop(''),
-                owner_document: m.prop(''),
-                bank_account_id: m.prop('')
+                owner_name: prop(''),
+                agency: prop(''),
+                bank_id: prop(''),
+                agency_digit: prop(''),
+                account: prop(''),
+                account_digit: prop(''),
+                owner_document: prop(''),
+                bank_account_id: prop('')
             },
-            userId = args.userId,
-            error = m.prop(''),
-            showError = m.prop(false),
-            loader = m.prop(true),
-            bankInput = m.prop(''),
-            bankCode = m.prop('-1'),
-            banks = m.prop(),
+            userId = vnode.attrs.userId,
+            error = prop(''),
+            showError = prop(false),
+            loader = prop(true),
+            bankInput = prop(''),
+            bankCode = prop('-1'),
+            banks = prop(),
             handleError = () => {
                 error(true);
                 loader(false);
                 m.redraw();
             },
             banksLoader = catarse.loader(models.bank.getPageOptions()),
-            showSuccess = m.prop(false),
+            showSuccess = prop(false),
             showOtherBanks = h.toggleProp(false, true),
-            showOtherBanksInput = m.prop(false),
+            showOtherBanksInput = prop(false),
             setCsrfToken = (xhr) => {
                 if (h.authenticityToken()) {
                     xhr.setRequestHeader('X-CSRF-Token', h.authenticityToken());
@@ -143,7 +144,7 @@ const userBilling = {
 
         banksLoader.load().then(banks).catch(handleError);
 
-        return {
+        vnode.state = {
             bankAccount,
             confirmDelete,
             bankInput,
@@ -161,22 +162,22 @@ const userBilling = {
             error
         };
     },
-    view: function(ctrl, args) {
-        let user = args.user,
-            fields = ctrl.fields,
-            bankAccount = ctrl.bankAccount();
+    view: function({state, attrs}) {
+        let user = attrs.user,
+            fields = state.fields,
+            bankAccount = state.bankAccount();
 
         return m('[id=\'billing-tab\']', [
-            (ctrl.showSuccess() ? m.component(popNotification, {
+            (state.showSuccess() ? m(popNotification, {
                 message: 'As suas informações foram atualizadas'
             }) : ''),
-            (ctrl.showError() ? m.component(popNotification, {
-                message: m.trust(ctrl.error()),
+            (state.showError() ? m(popNotification, {
+                message: m.trust(state.error()),
                 error: true
             }) : ''),
             m('.w-row',
                 m('.w-col.w-col-10.w-col-push-1', [
-                    m('form.simple_form.refund_bank_account_form', { onsubmit: ctrl.onSubmit }, [
+                    m('form.simple_form.refund_bank_account_form', { onsubmit: state.onSubmit }, [
                         m('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'billing\']'),
                         m('.w-form.card.card-terciary', [
                             m('.fontsize-base.fontweight-semibold',
@@ -217,7 +218,7 @@ const userBilling = {
                                 ])
                             ]),
                             m('.w-row', [
-                                m(`.w-col.w-col-6.w-sub-col${ctrl.showOtherBanksInput() ? '.w-hidden' : ''}[id='bank_select']`,
+                                m(`.w-col.w-col-6.w-sub-col${state.showOtherBanksInput() ? '.w-hidden' : ''}[id='bank_select']`,
                                     m('.input.select.required.user_bank_account_bank_id', [
                                         m('label.field-label',
                                             'Banco'
@@ -225,16 +226,16 @@ const userBilling = {
                                         m('select.select.required.w-input.text-field.bank-select.positive[id=\'user_bank_account_attributes_bank_id\']', {
                                             name: 'user[bank_account_attributes][bank_id]',
                                             onchange: (e) => {
-                                                m.withAttr('value', ctrl.bankCode)(e);
-                                                ctrl.showOtherBanksInput(ctrl.bankCode() == '0');
+                                                m.withAttr('value', state.bankCode)(e);
+                                                state.showOtherBanksInput(state.bankCode() == '0');
                                             }
                                         }, [
                                             m('option[value=\'\']', { selected: fields.bank_id() === '' }),
-                                            (_.map(ctrl.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
+                                            (_.map(state.popularBanks, bank => (fields.bank_id() != bank.id ? m(`option[value='${bank.id}']`, {
                                                 selected: fields.bank_id() == bank.id
                                             },
                                                     `${bank.code} . ${bank.name}`) : ''))),
-                                            (fields.bank_id() === '' || _.find(ctrl.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
+                                            (fields.bank_id() === '' || _.find(state.popularBanks, bank => bank.id === fields.bank_id()) ? '' :
                                                 m(`option[value='${fields.bank_id()}']`, {
                                                     selected: true
                                                 },
@@ -250,7 +251,7 @@ const userBilling = {
                                         )
                                     ])
                                 ),
-                                (ctrl.showOtherBanksInput() ?
+                                (state.showOtherBanksInput() ?
                                     m('.w-col.w-col-6.w-sub-col',
                                         m('.w-row.u-marginbottom-20[id=\'bank_search\']',
                                             m('.w-col.w-col-12', [
@@ -260,8 +261,8 @@ const userBilling = {
                                                     ),
                                                     m('input.string.optional.w-input.text-field.bank_account_input_bank_number[id=\'user_bank_account_attributes_input_bank_number\'][maxlength=\'3\'][size=\'3\'][type=\'text\']', {
                                                         name: 'user[bank_account_attributes][input_bank_number]',
-                                                        value: ctrl.bankInput(),
-                                                        onchange: m.withAttr('value', ctrl.bankInput)
+                                                        value: state.bankInput(),
+                                                        onchange: m.withAttr('value', state.bankInput)
                                                     }),
                                                     m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'user_bank_account_attributes_input_bank_number\']',
 
@@ -269,14 +270,14 @@ const userBilling = {
                                                     )
                                                 ]),
                                                 m('a.w-hidden-small.w-hidden-tiny.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                                                    onclick: ctrl.showOtherBanks.toggle
+                                                    onclick: state.showOtherBanks.toggle
                                                 }, [
                                                     'Busca por nome  ',
                                                     m.trust('&nbsp;'),
                                                     m.trust('&gt;')
                                                 ]),
                                                 m('a.w-hidden-main.w-hidden-medium.alt-link.fontsize-smaller[href=\'javascript:void(0);\'][id=\'show_bank_list\']', {
-                                                    onclick: ctrl.showOtherBanks.toggle
+                                                    onclick: state.showOtherBanks.toggle
                                                 }, [
                                                     'Busca por nome  ',
                                                     m.trust('&nbsp;'),
@@ -285,7 +286,7 @@ const userBilling = {
                                             ])
                                         )
                                     ) : ''),
-                                (ctrl.showOtherBanks() ?
+                                (state.showOtherBanks() ?
                                     m('.w-row[id=\'bank_search_list\']',
                                         m('.w-col.w-col-12',
                                             m('.select-bank-list[data-ix=\'height-0-on-load\']', {
@@ -310,13 +311,13 @@ const userBilling = {
                                                                 )
                                                             )
                                                         ]),
-                                                        (!_.isEmpty(ctrl.banks()) ?
-                                                            _.map(ctrl.banks(), bank => m('.w-row.card.fontsize-smallest', [
+                                                        (!_.isEmpty(state.banks()) ?
+                                                            _.map(state.banks(), bank => m('.w-row.card.fontsize-smallest', [
                                                                 m('.w-col.w-col-3.w-col-small-3.w-col-tiny-3',
                                                                         m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
                                                                             onclick: () => {
-                                                                                ctrl.bankInput(bank.code);
-                                                                                ctrl.showOtherBanks.toggle();
+                                                                                state.bankInput(bank.code);
+                                                                                state.showOtherBanks.toggle();
                                                                             }
                                                                         },
                                                                             bank.code
@@ -325,8 +326,8 @@ const userBilling = {
                                                                 m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                                                         m(`a.link-hidden.bank-resource-link[data-code='${bank.code}'][data-id='${bank.id}'][href='javascript:void(0)']`, {
                                                                             onclick: () => {
-                                                                                ctrl.bankInput(bank.code);
-                                                                                ctrl.showOtherBanks.toggle();
+                                                                                state.bankInput(bank.code);
+                                                                                state.showOtherBanks.toggle();
                                                                             }
                                                                         },
                                                                             `${bank.code} . ${bank.name}`
