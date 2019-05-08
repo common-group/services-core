@@ -31,7 +31,7 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec_api_documentation'
   gem 'rspec-rails'
-  gem 'factory_bot'
+  gem 'factory_bot', '4.11.1'
   gem 'database_cleaner'
   gem 'shoulda-matchers', '4.0.0.rc1'
   gem 'rails-controller-testing'
