@@ -32,9 +32,9 @@ FactoryBot.define do
     f.domain { generate(:domain) }
   end
 
-  factory :platform, class: CommonModels::Platform do
-    name 'Platform name'
-    token { SecureRandom.uuid }
+  factory :platform, class: CommonModels::Platform do |f|
+    f.name 'Platform name'
+    f.token { SecureRandom.uuid }
   end
 
   factory :country, class: CommonModels::Country do
