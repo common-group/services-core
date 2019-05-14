@@ -19688,24 +19688,35 @@ var _inlineError2 = _interopRequireDefault(_inlineError);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'users.edit.notifications_fields');
+var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, "users.edit.notifications_fields");
 var userNotifications = {
     oninit: function oninit(vnode) {
         var contributedProjects = (0, _stream2.default)(),
+            subscribedProjects = (0, _stream2.default)(),
             projectReminders = (0, _stream2.default)(),
             mailMarketingLists = (0, _stream2.default)(),
             user_id = vnode.attrs.userId,
             showNotifications = _h2.default.toggleProp(false, true),
             error = (0, _stream2.default)(false),
-            loadNewsCounter = (0, _stream2.default)(3);
+            unsubscribedNewsProjects = (0, _stream2.default)([]);
+
+        var loadNewsCounter = 4;
 
         var countDownToDraw = function countDownToDraw() {
-            loadNewsCounter(Math.max(0, loadNewsCounter() - 1));
+            loadNewsCounter = Math.max(0, loadNewsCounter - 1);
 
-            if (loadNewsCounter() == 0) {
+            if (loadNewsCounter == 0) {
                 _mithril2.default.redraw();
             }
         };
+
+        _userVm2.default.getUserUnsubscribesProjects(user_id).then(function (unsubscribes) {
+            unsubscribedNewsProjects(unsubscribes);
+            countDownToDraw();
+        }).catch(function (err) {
+            error(true);
+            countDownToDraw();
+        });
 
         _userVm2.default.getUserProjectReminders(user_id).then(projectReminders).then(countDownToDraw).catch(function (err) {
             error(true);
@@ -19719,7 +19730,18 @@ var userNotifications = {
             countDownToDraw();
         });
 
-        _userVm2.default.getUserContributedProjects(user_id, null).then(contributedProjects).then(countDownToDraw).catch(function (err) {
+        _userVm2.default.getUserContributedProjects(user_id, null).then(function (projects) {
+            contributedProjects(projects);
+            countDownToDraw();
+        }).catch(function (err) {
+            error(true);
+            countDownToDraw();
+        });
+
+        _userVm2.default.getUserSubscribedProjects(user_id, null).then(function (projects) {
+            subscribedProjects(projects);
+            countDownToDraw();
+        }).catch(function (err) {
             error(true);
             countDownToDraw();
         });
@@ -19762,14 +19784,16 @@ var userNotifications = {
         };
 
         vnode.state = {
-            projects: contributedProjects,
+            contributedProjects: contributedProjects,
+            subscribedProjects: subscribedProjects,
             mailMarketingLists: mailMarketingLists,
             showNotifications: showNotifications,
             projectReminders: projectReminders,
             error: error,
             generateListHandler: generateListHandler,
             getUserMarketingListId: getUserMarketingListId,
-            isOnCurrentList: isOnCurrentList
+            isOnCurrentList: isOnCurrentList,
+            unsubscribedNewsProjects: unsubscribedNewsProjects
         };
     },
     view: function view(_ref) {
@@ -19778,18 +19802,29 @@ var userNotifications = {
 
         var user = attrs.user,
             reminders = state.projectReminders(),
-            projects_collection = state.projects(),
-            marketing_lists = state.mailMarketingLists();
+            projects_collection = (state.contributedProjects() || []).concat(state.subscribedProjects() || []),
+            marketing_lists = state.mailMarketingLists(),
+            unsubscribedNewsProjects = state.unsubscribedNewsProjects(),
+            user_contributed_and_subscribed_projects_count = projects_collection.length;
 
-        return (0, _mithril2.default)('[id=\'notifications-tab\']', state.error() ? (0, _mithril2.default)(_inlineError2.default, {
-            message: 'Erro ao carregar a página.'
-        }) : (0, _mithril2.default)('form.simple_form.edit_user[accept-charset=\'UTF-8\'][action=\'/' + window.I18n.locale + '/users/' + user.id + '\'][method=\'post\'][novalidate=\'novalidate\']', [(0, _mithril2.default)('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), (0, _mithril2.default)('input[name=\'_method\'][type=\'hidden\'][value=\'patch\']'), (0, _mithril2.default)('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + _h2.default.authenticityToken() + '\']'), (0, _mithril2.default)('input[id=\'anchor\'][name=\'anchor\'][type=\'hidden\'][value=\'notifications\']'), (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', (0, _mithril2.default)('.w-form.card.card-terciary', [(0, _mithril2.default)('.w-row.u-marginbottom-20', [(0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Newsletters:')), (0, _mithril2.default)('.w-col.w-col-8', _underscore2.default.isEmpty(marketing_lists) ? _h2.default.loader() : _underscore2.default.map(marketing_lists, function (_item, i) {
+        return (0, _mithril2.default)("[id='notifications-tab']", state.error() ? (0, _mithril2.default)(_inlineError2.default, {
+            message: "Erro ao carregar a página."
+        }) : (0, _mithril2.default)("form.simple_form.edit_user[accept-charset='UTF-8'][action='/" + window.I18n.locale + "/users/" + user.id + "'][method='post'][novalidate='novalidate']", [(0, _mithril2.default)("input[name='utf8'][type='hidden'][value='✓']"), (0, _mithril2.default)("input[name='_method'][type='hidden'][value='patch']"), (0, _mithril2.default)("input[name='authenticity_token'][type='hidden'][value='" + _h2.default.authenticityToken() + "']"), (0, _mithril2.default)("input[id='anchor'][name='anchor'][type='hidden'][value='notifications']"), (0, _mithril2.default)(".w-container", [(0, _mithril2.default)(".w-row", (0, _mithril2.default)(".w-col.w-col-10.w-col-push-1", (0, _mithril2.default)(".w-form.card.card-terciary", [(0, _mithril2.default)(".w-row.u-marginbottom-20", [(0, _mithril2.default)(".w-col.w-col-4", (0, _mithril2.default)(".fontweight-semibold.fontsize-small.u-marginbottom-10", "Newsletters:")), (0, _mithril2.default)(".w-col.w-col-8", _underscore2.default.isEmpty(marketing_lists) ? _h2.default.loader() : _underscore2.default.map(marketing_lists, function (_item, i) {
             var item = _item.item;
 
-            return (0, _mithril2.default)('.card.u-marginbottom-20.u-radius.u-text-center-small-only', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-sub-col.w-col.w-col-6', (0, _mithril2.default)('img', {
-                src: window.I18n.t('newsletters.' + item.list_id + '.image_src', I18nScope())
-            })), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-base.fontweight-semibold', window.I18n.t('newsletters.' + item.list_id + '.title', I18nScope())), (0, _mithril2.default)('.fontsize-small.u-marginbottom-30', window.I18n.t('newsletters.' + item.list_id + '.description', I18nScope())), _item.should_insert() || _item.should_destroy() ? (0, _mithril2.default)('input[type=\'hidden\']', { name: 'user[mail_marketing_users_attributes][' + i + '][mail_marketing_list_id]', value: item.id }) : '', _item.should_destroy() ? (0, _mithril2.default)('input[type=\'hidden\']', { name: 'user[mail_marketing_users_attributes][' + i + '][id]', value: state.getUserMarketingListId(item) }) : '', _item.should_destroy() ? (0, _mithril2.default)('input[type=\'hidden\']', { name: 'user[mail_marketing_users_attributes][' + i + '][_destroy]', value: _item.should_destroy() }) : '', (0, _mithril2.default)('button.btn.btn-medium.w-button', {
-                class: !_item.isInsertInListState() ? 'btn-terciary' : null,
+            return (0, _mithril2.default)(".card.u-marginbottom-20.u-radius.u-text-center-small-only", (0, _mithril2.default)(".w-row", [(0, _mithril2.default)(".w-sub-col.w-col.w-col-6", (0, _mithril2.default)("img", {
+                src: window.I18n.t("newsletters." + item.list_id + ".image_src", I18nScope())
+            })), (0, _mithril2.default)(".w-col.w-col-6", [(0, _mithril2.default)(".fontsize-base.fontweight-semibold", window.I18n.t("newsletters." + item.list_id + ".title", I18nScope())), (0, _mithril2.default)(".fontsize-small.u-marginbottom-30", window.I18n.t("newsletters." + item.list_id + ".description", I18nScope())), _item.should_insert() || _item.should_destroy() ? (0, _mithril2.default)("input[type='hidden']", {
+                name: "user[mail_marketing_users_attributes][" + i + "][mail_marketing_list_id]",
+                value: item.id
+            }) : "", _item.should_destroy() ? (0, _mithril2.default)("input[type='hidden']", {
+                name: "user[mail_marketing_users_attributes][" + i + "][id]",
+                value: state.getUserMarketingListId(item)
+            }) : "", _item.should_destroy() ? (0, _mithril2.default)("input[type='hidden']", {
+                name: "user[mail_marketing_users_attributes][" + i + "][_destroy]",
+                value: _item.should_destroy()
+            }) : "", (0, _mithril2.default)("button.btn.btn-medium.w-button", {
+                class: !_item.isInsertInListState() ? "btn-terciary" : null,
                 onclick: function onclick(event) {
                     // If user already has this list, click should enable destroy state
                     if (state.isOnCurrentList(user.mail_marketing_lists, item)) {
@@ -19805,22 +19840,29 @@ var userNotifications = {
                 onmouseout: function onmouseout() {
                     _item.hovering(false);
                 }
-            }, _item.in_list ? _item.hovering() ? 'Descadastrar' : 'Assinado' : 'Assinar')])]));
-        }))]), (0, _mithril2.default)('.w-row.u-marginbottom-20', [(0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Projetos que você apoiou:')), (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)('input[name=user[subscribed_to_project_posts]][type=\'hidden\'][value=\'0\']'), (0, _mithril2.default)('input.w-checkbox-input' + (user.subscribed_to_project_posts ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_project_posts\'][name=user[subscribed_to_project_posts]][type=\'checkbox\'][value=\'1\']'), (0, _mithril2.default)('label.w-form-label.fontsize-base.fontweight-semibold', ' Quero receber atualizações dos projetos'), (0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('a.alt-link[href=\'javascript:void(0);\']', {
+            }, _item.in_list ? _item.hovering() ? "Descadastrar" : "Assinado" : "Assinar")])]));
+        }))]), (0, _mithril2.default)(".w-row.u-marginbottom-20", [(0, _mithril2.default)(".w-col.w-col-4", (0, _mithril2.default)(".fontweight-semibold.fontsize-small.u-marginbottom-10", "Projetos que você apoiou:")), (0, _mithril2.default)(".w-col.w-col-8", (0, _mithril2.default)(".w-checkbox.w-clearfix", [(0, _mithril2.default)("input[name=user[subscribed_to_project_posts]][type='hidden'][value='0']"), (0, _mithril2.default)("input.w-checkbox-input" + (user.subscribed_to_project_posts ? "[checked='checked']" : "") + "[id='user_subscribed_to_project_posts'][name=user[subscribed_to_project_posts]][type='checkbox'][value='1']"), (0, _mithril2.default)("label.w-form-label.fontsize-base.fontweight-semibold", " Quero receber atualizações dos projetos"), (0, _mithril2.default)(".u-marginbottom-20", (0, _mithril2.default)("a.alt-link[href='javascript:void(0);']", {
             onclick: state.showNotifications.toggle
-        }, ' Gerenciar as notifica\xE7\xF5es de ' + user.total_contributed_projects + ' projetos')), state.showNotifications() ? (0, _mithril2.default)('ul.w-list-unstyled.u-radius.card.card-secondary[id=\'notifications-box\']', [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
-            return (0, _mithril2.default)('li', (0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)('input[id=\'unsubscribes_' + project.project_id + '\'][type=\'hidden\'][value=\'\']', {
-                name: 'unsubscribes[' + project.project_id + ']'
-            }), (0, _mithril2.default)('input.w-checkbox-input' + (project.unsubscribed ? '' : '[checked=\'checked\']') + '[type=\'checkbox\'][value=\'1\'][id=\'user_unsubscribes_' + project.project_id + '\']', {
-                name: 'unsubscribes[' + project.project_id + ']'
-            }), (0, _mithril2.default)('label.w-form-label.fontsize-small', project.project_name)]));
-        }) : '']) : '']))]), (0, _mithril2.default)('.w-row.u-marginbottom-20', [(0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Social:')), (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)('input[name=user[subscribed_to_friends_contributions]][type=\'hidden\'][value=\'0\']'), (0, _mithril2.default)('input.w-checkbox-input' + (user.subscribed_to_friends_contributions ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_friends_contributions\'][name=user[subscribed_to_friends_contributions]][type=\'checkbox\'][value=\'1\']'), (0, _mithril2.default)('label.w-form-label.fontsize-small', 'Um amigo apoiou ou lançou um projeto')])), (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)('input[name=user[subscribed_to_new_followers]][type=\'hidden\'][value=\'0\']'), (0, _mithril2.default)('input.w-checkbox-input' + (user.subscribed_to_new_followers ? '[checked=\'checked\']' : '') + '[id=\'user_subscribed_to_new_followers\'][name=user[subscribed_to_new_followers]][type=\'checkbox\'][value=\'1\']'), (0, _mithril2.default)('label.w-form-label.fontsize-small', 'Um amigo começou a me seguir')]))]), (0, _mithril2.default)('.w-row.u-marginbottom-20', [(0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontweight-semibold.fontsize-small.u-marginbottom-10', 'Lembretes de projetos:')), (0, _mithril2.default)('.w-col.w-col-8', [!_underscore2.default.isEmpty(reminders) ? _underscore2.default.map(reminders, function (reminder) {
-            return (0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)('input[id=\'user_reminders_' + reminder.project_id + '\'][type=\'hidden\'][value=\'false\']', {
-                name: 'user[reminders][' + reminder.project_id + ']'
-            }), (0, _mithril2.default)('input.w-checkbox-input[checked=\'checked\'][type=\'checkbox\'][value=\'1\'][id=\'user_reminders_' + reminder.project_id + '\']', {
-                name: 'user[reminders][' + reminder.project_id + ']'
-            }), (0, _mithril2.default)('label.w-form-label.fontsize-small', (0, _mithril2.default)('a.alt-link[href=\'/projects/' + reminder.project_id + '?ref=ctrse_profile_reminder\'][target=\'_blank\']', reminder.project_name))]);
-        }) : ''])])]))), (0, _mithril2.default)('.u-margintop-30', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', (0, _mithril2.default)('.w-col.w-col-4.w-col-push-4', (0, _mithril2.default)('input.btn.btn-large[id=\'save\'][name=\'commit\'][type=\'submit\'][value=\'Salvar\']')))))])]));
+        }, " Gerenciar as notifica\xE7\xF5es de " + user_contributed_and_subscribed_projects_count + " projetos")), state.showNotifications() ? (0, _mithril2.default)("ul.w-list-unstyled.u-radius.card.card-secondary[id='notifications-box']", [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
+            var project_id = Number(!!project.project_external_id ? project.project_external_id : project.project_id);
+            var found_index = unsubscribedNewsProjects.findIndex(function (value) {
+                return value.project_id === project_id;
+            }) >= 0;
+            var unsubscribed_truthy = !!project.unsubscribed;
+            var is_unsubscribed = unsubscribed_truthy || found_index;
+
+            return (0, _mithril2.default)("li", (0, _mithril2.default)(".w-checkbox.w-clearfix", [(0, _mithril2.default)("input[id='unsubscribes_" + project_id + "'][type='hidden'][value='']", {
+                name: "unsubscribes[" + project_id + "]"
+            }), (0, _mithril2.default)("input.w-checkbox-input" + (is_unsubscribed ? "" : "[checked='checked']") + "[type='checkbox'][value='1'][id='user_unsubscribes_" + project.project_id + "']", {
+                name: "unsubscribes[" + project_id + "]"
+            }), (0, _mithril2.default)("label.w-form-label.fontsize-small", project.project_name)]));
+        }) : ""]) : ""]))]), (0, _mithril2.default)(".w-row.u-marginbottom-20", [(0, _mithril2.default)(".w-col.w-col-4", (0, _mithril2.default)(".fontweight-semibold.fontsize-small.u-marginbottom-10", "Social:")), (0, _mithril2.default)(".w-col.w-col-8", (0, _mithril2.default)(".w-checkbox.w-clearfix", [(0, _mithril2.default)("input[name=user[subscribed_to_friends_contributions]][type='hidden'][value='0']"), (0, _mithril2.default)("input.w-checkbox-input" + (user.subscribed_to_friends_contributions ? "[checked='checked']" : "") + "[id='user_subscribed_to_friends_contributions'][name=user[subscribed_to_friends_contributions]][type='checkbox'][value='1']"), (0, _mithril2.default)("label.w-form-label.fontsize-small", "Um amigo apoiou ou lançou um projeto")])), (0, _mithril2.default)(".w-col.w-col-8", (0, _mithril2.default)(".w-checkbox.w-clearfix", [(0, _mithril2.default)("input[name=user[subscribed_to_new_followers]][type='hidden'][value='0']"), (0, _mithril2.default)("input.w-checkbox-input" + (user.subscribed_to_new_followers ? "[checked='checked']" : "") + "[id='user_subscribed_to_new_followers'][name=user[subscribed_to_new_followers]][type='checkbox'][value='1']"), (0, _mithril2.default)("label.w-form-label.fontsize-small", "Um amigo começou a me seguir")]))]), (0, _mithril2.default)(".w-row.u-marginbottom-20", [(0, _mithril2.default)(".w-col.w-col-4", (0, _mithril2.default)(".fontweight-semibold.fontsize-small.u-marginbottom-10", "Lembretes de projetos:")), (0, _mithril2.default)(".w-col.w-col-8", [!_underscore2.default.isEmpty(reminders) ? _underscore2.default.map(reminders, function (reminder) {
+            return (0, _mithril2.default)(".w-checkbox.w-clearfix", [(0, _mithril2.default)("input[id='user_reminders_" + reminder.project_id + "'][type='hidden'][value='false']", {
+                name: "user[reminders][" + reminder.project_id + "]"
+            }), (0, _mithril2.default)("input.w-checkbox-input[checked='checked'][type='checkbox'][value='1'][id='user_reminders_" + reminder.project_id + "']", {
+                name: "user[reminders][" + reminder.project_id + "]"
+            }), (0, _mithril2.default)("label.w-form-label.fontsize-small", (0, _mithril2.default)("a.alt-link[href='/projects/" + reminder.project_id + "?ref=ctrse_profile_reminder'][target='_blank']", reminder.project_name))]);
+        }) : ""])])]))), (0, _mithril2.default)(".u-margintop-30", (0, _mithril2.default)(".w-container", (0, _mithril2.default)(".w-row", (0, _mithril2.default)(".w-col.w-col-4.w-col-push-4", (0, _mithril2.default)("input.btn.btn-large[id='save'][name='commit'][type='submit'][value='Salvar']")))))])]));
     }
 };
 
@@ -22398,7 +22440,8 @@ var models = {
     city: _api.catarse.model('cities'),
     mailMarketingList: _api.catarse.model('mail_marketing_lists'),
     commonUserDetails: _api.commonCommunity.model('rpc/user_details'),
-    rechargeSubscription: _api.commonPayment.model('rpc/recharge_subscription')
+    rechargeSubscription: _api.commonPayment.model('rpc/recharge_subscription'),
+    unsubscribes: _api.catarse.model('unsubscribes')
 };
 
 models.teamMember.pageSize(40);
@@ -36251,6 +36294,20 @@ var getUserProjectReminders = function getUserProjectReminders(user_id) {
     return lUserReminders.load();
 };
 
+var getUserUnsubscribesProjects = function getUserUnsubscribesProjects(user_id) {
+    var contextVM = _api.catarse.filtersVM({
+        user_id: 'eq'
+    });
+
+    contextVM.user_id(user_id);
+
+    _models2.default.unsubscribes;
+
+    var lUserReminders = _api.catarse.loaderWithToken(_models2.default.unsubscribes.getPageOptions(contextVM.parameters()));
+
+    return lUserReminders.load();
+};
+
 var getMailMarketingLists = function getMailMarketingLists() {
     var l = _api.catarse.loaderWithToken(_models2.default.mailMarketingList.getPageOptions({ order: 'id.asc' }));
 
@@ -36304,6 +36361,25 @@ var getUserContributedProjects = function getUserContributedProjects(user_id) {
     var lUserContributed = _api.catarse.loaderWithToken(_models2.default.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
+};
+
+var getUserSubscribedProjects = function getUserSubscribedProjects(user_external_id) {
+    var pageSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+
+    var contextVM = _api.commonPayment.filtersVM({
+        user_external_id: 'eq',
+        status: 'in'
+    });
+
+    contextVM.user_external_id(user_external_id).order({
+        created_at: 'desc'
+    }).status(['started', 'active', 'canceling']);
+
+    _models2.default.userSubscription.pageSize(pageSize);
+
+    var loaderUserSubscribed = _api.commonPayment.loaderWithToken(_models2.default.userSubscription.getPageOptions(contextVM.parameters()));
+
+    return loaderUserSubscribed.load();
 };
 
 var fetchUser = function fetchUser(user_id) {
@@ -36413,6 +36489,7 @@ var userVM = {
     getUserProjectReminders: getUserProjectReminders,
     getUserRecommendedProjects: getUserRecommendedProjects,
     getUserContributedProjects: getUserContributedProjects,
+    getUserSubscribedProjects: getUserSubscribedProjects,
     getUserBalance: getUserBalance,
     getUserBankAccount: getUserBankAccount,
     getPublicUserContributedProjects: getPublicUserContributedProjects,
@@ -36422,7 +36499,8 @@ var userVM = {
     fetchUser: fetchUser,
     getCurrentUser: getCurrentUser,
     currentUser: currentUser,
-    getMailMarketingLists: getMailMarketingLists
+    getMailMarketingLists: getMailMarketingLists,
+    getUserUnsubscribesProjects: getUserUnsubscribesProjects
 };
 
 exports.default = userVM;
