@@ -11,12 +11,11 @@ import addressFormNational from './address-form-national';
 
 const addressForm = {
     oninit: function(vnode) {
-        
         const parsedErrors = vnode.attrs.parsedErrors;
         const statesLoader = catarse.loader(models.state.getPageOptions()),
             data = vnode.attrs.fields().address(),
             vm = addressVM({
-                data
+                data,
             }),
             defaultCountryID = vm.defaultCountryID,
             defaultForeignCountryID = vm.defaultForeignCountryID,
@@ -33,13 +32,19 @@ const addressForm = {
                 addressCity: prop(parsedErrors ? parsedErrors.hasError('city') : false),
                 addressState: prop(parsedErrors ? parsedErrors.hasError('state') : false),
                 addressZipCode: prop(parsedErrors ? parsedErrors.hasError('zipcode') : false),
-                phoneNumber: prop(parsedErrors ? parsedErrors.hasError('phonenumber') : false)
+                phoneNumber: prop(parsedErrors ? parsedErrors.hasError('phonenumber') : false),
             },
             phoneMask = _.partial(h.mask, '(99) 9999-99999'),
             zipcodeMask = _.partial(h.mask, '99999-999'),
-            applyZipcodeMask = _.compose(fields.addressZipCode, zipcodeMask),
-            applyPhoneMask = _.compose(fields.phoneNumber, phoneMask),
-            international = vnode.attrs.disableInternational ? prop(false) : (vnode.attrs.international || vm.international);
+            applyZipcodeMask = _.compose(
+                fields.addressZipCode,
+                zipcodeMask
+            ),
+            applyPhoneMask = _.compose(
+                fields.phoneNumber,
+                phoneMask
+            ),
+            international = vnode.attrs.disableInternational ? prop(false) : vnode.attrs.international || vm.international;
 
         const checkPhone = () => {
             let hasError = false;
@@ -62,14 +67,16 @@ const addressForm = {
         _.extend(vnode.attrs.fields(), {
             validate: () => {
                 let hasError = false;
-                const fieldsToIgnore = international() ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber'] : ['id', 'addressComplement', 'addressState', 'phoneNumber'];
+                const fieldsToIgnore = international()
+                    ? ['id', 'stateID', 'addressComplement', 'addressNumber', 'addressNeighbourhood', 'phoneNumber']
+                    : ['id', 'addressComplement', 'addressState', 'phoneNumber'];
                 // clear all errors
                 _.mapObject(errors, (val, key) => {
                     val(false);
                 });
                 // check for empty fields
                 _.mapObject(_.omit(fields, fieldsToIgnore), (val, key) => {
-                    if (!val()) {                        
+                    if (!val()) {
                         errors[key](true);
                         hasError = true;
                     }
@@ -79,33 +86,35 @@ const addressForm = {
                     hasError = hasError || hasPhoneError;
                 }
                 return !hasError;
-            }
+            },
         });
 
-        const lookupZipCode = (zipCode) => {
+        const lookupZipCode = zipCode => {
             fields.addressZipCode(zipCode);
             if (zipCode.length === 9) {
                 m.request({
                     method: 'GET',
-                    url: `https://api.pagar.me/1/zipcodes/${zipCode}`
-                }).then((response) => {
-                    fields.addressStreet(response.street);
-                    fields.addressNeighbourhood(response.neighborhood);
-                    fields.addressCity(response.city);
-                    fields.stateID(_.find(states(), state => state.acronym === response.state).id);
-                    errors.addressStreet(false);
-                    errors.addressNeighbourhood(false);
-                    errors.addressCity(false);
-                    errors.stateID(false);
-                    errors.addressZipCode(false);
-                }).catch((err) => {
-                    zipCodeErrorMessage(err.errors[0].message);
-                    errors.addressZipCode(true);
-                });
+                    url: `https://api.pagar.me/1/zipcodes/${zipCode}`,
+                })
+                    .then(response => {
+                        fields.addressStreet(response.street);
+                        fields.addressNeighbourhood(response.neighborhood);
+                        fields.addressCity(response.city);
+                        fields.stateID(_.find(states(), state => state.acronym === response.state).id);
+                        errors.addressStreet(false);
+                        errors.addressNeighbourhood(false);
+                        errors.addressCity(false);
+                        errors.stateID(false);
+                        errors.addressZipCode(false);
+                    })
+                    .catch(err => {
+                        zipCodeErrorMessage(err.errors[0].message);
+                        errors.addressZipCode(true);
+                    });
             }
         };
 
-        statesLoader.load().then((data) => {
+        statesLoader.load().then(data => {
             states(data);
             addressVM.states(states());
         });
@@ -119,11 +128,11 @@ const addressForm = {
             defaultForeignCountryID,
             fields,
             international,
-            states
+            states,
         };
     },
-    onbeforeupdate: function(vnode) { },
-    view: function({state, attrs}) {
+    onbeforeupdate: function(vnode) {},
+    view: function({ state, attrs }) {
         const fields = state.fields,
             international = state.international,
             defaultCountryID = state.defaultCountryID,
@@ -142,15 +151,15 @@ const addressForm = {
                 address_city: fields.addressCity(),
                 address_state: fields.addressState(),
                 address_zip_code: fields.addressZipCode(),
-                phone_number: fields.phoneNumber()
+                phone_number: fields.phoneNumber(),
             },
             applyZipcodeMask = state.applyZipcodeMask,
             lookupZipCode = state.lookupZipCode,
             zipCodeErrorMessage = state.zipCodeErrorMessage,
             countryStates = state.states,
             disableInternational = attrs.disableInternational,
-            hideNationality = attrs.hideNationality;
-
+            hideNationality = attrs.hideNationality,
+            applyPhoneMask = state.applyPhoneMask;
 
         attrs.fields().address(address);
         if (attrs.stateName) {
@@ -158,51 +167,44 @@ const addressForm = {
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
-            (
-                !hideNationality ?
-                    m('.u-marginbottom-30',
-                        m(nationalityRadio, {
-                            fields,
-                            defaultCountryID,
-                            defaultForeignCountryID,
-                            international
-                        })
-                    ) 
-                : 
-                    ''
-            ),
-            (
-                international() ?
-                (
-                    m(addressFormInternational, {
-                        fields,
-                        disableInternational,
-                        addVM: attrs.addVM,
-                        international,
-                        defaultCountryID,
-                        defaultForeignCountryID,
-                        errors
-                    })
-                )
-                    :
-                (
-                    m(addressFormNational, {
-                        disableInternational,
-                        countryName,
-                        fields,
-                        international,
-                        defaultCountryID,
-                        defaultForeignCountryID,
-                        errors,
-                        applyZipcodeMask,
-                        lookupZipCode,
-                        zipCodeErrorMessage,
-                        countryStates
-                    })
-                )
-            )
+            !hideNationality
+                ? m(
+                      '.u-marginbottom-30',
+                      m(nationalityRadio, {
+                          fields,
+                          defaultCountryID,
+                          defaultForeignCountryID,
+                          international,
+                      })
+                  )
+                : '',
+            international()
+                ? m(addressFormInternational, {
+                      fields,
+                      disableInternational,
+                      addVM: attrs.addVM,
+                      international,
+                      defaultCountryID,
+                      defaultForeignCountryID,
+                      errors,
+                      applyPhoneMask,
+                  })
+                : m(addressFormNational, {
+                      disableInternational,
+                      countryName,
+                      fields,
+                      international,
+                      defaultCountryID,
+                      defaultForeignCountryID,
+                      errors,
+                      applyZipcodeMask,
+                      lookupZipCode,
+                      zipCodeErrorMessage,
+                      countryStates,
+                      applyPhoneMask,
+                  }),
         ]);
-    }
+    },
 };
 
 export default addressForm;
