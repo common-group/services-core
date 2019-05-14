@@ -435,4 +435,28 @@ services:
     networks:
       - cluster
 
+#### TEST ENV services
+
+  catarse_specs:
+    build:
+      context: ./services/catarse
+      dockerfile: dev.Dockerfile
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db_test
+      REDIS_URL: redis://catarse_redis:6379
+    command: "bash run_specs"
+    volumes:
+      # mount volumes for development on catarse / catarse.js
+      - ./services/catarse/:/usr/app
+     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
+    links:
+      - service_core_db
+      - "catarse_db:localhostcatarse"
+      - "catarse_redis:catarse_redis"
+    depends_on:
+      - catarse_db
+      - catarse_redis
+    networks:
+      - cluster
 
