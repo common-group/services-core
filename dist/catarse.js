@@ -510,7 +510,6 @@ var addressFormNational = {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-
         var disableInternational = attrs.disableInternational;
         var countryName = attrs.countryName;
         var fields = attrs.fields;
@@ -522,6 +521,7 @@ var addressFormNational = {
         var lookupZipCode = attrs.lookupZipCode;
         var zipCodeErrorMessage = attrs.zipCodeErrorMessage;
         var countryStates = attrs.countryStates;
+        var applyPhoneMask = attrs.applyPhoneMask;
 
         return (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('div', [disableInternational ? null : (0, _mithril2.default)(_countrySelect2.default, {
             countryName: countryName,
@@ -650,7 +650,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var addressForm = {
     oninit: function oninit(vnode) {
-
         var parsedErrors = vnode.attrs.parsedErrors;
         var statesLoader = _api.catarse.loader(_models2.default.state.getPageOptions()),
             data = vnode.attrs.fields().address(),
@@ -794,7 +793,8 @@ var addressForm = {
             zipCodeErrorMessage = state.zipCodeErrorMessage,
             countryStates = state.states,
             disableInternational = attrs.disableInternational,
-            hideNationality = attrs.hideNationality;
+            hideNationality = attrs.hideNationality,
+            applyPhoneMask = state.applyPhoneMask;
 
         attrs.fields().address(address);
         if (attrs.stateName) {
@@ -815,7 +815,8 @@ var addressForm = {
             international: international,
             defaultCountryID: defaultCountryID,
             defaultForeignCountryID: defaultForeignCountryID,
-            errors: errors
+            errors: errors,
+            applyPhoneMask: applyPhoneMask
         }) : (0, _mithril2.default)(_addressFormNational2.default, {
             disableInternational: disableInternational,
             countryName: countryName,
@@ -827,7 +828,8 @@ var addressForm = {
             applyZipcodeMask: applyZipcodeMask,
             lookupZipCode: lookupZipCode,
             zipCodeErrorMessage: zipCodeErrorMessage,
-            countryStates: countryStates
+            countryStates: countryStates,
+            applyPhoneMask: applyPhoneMask
         })]);
     }
 };
@@ -15381,9 +15383,7 @@ var _projectRowWithHeader2 = _interopRequireDefault(_projectRowWithHeader);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var projectsDisplay = {
-
     oninit: function oninit(vnode) {
-
         var EXPERIMENT_CASE_CURRENT = 'EXPERIMENT_CASE_CURRENT',
             EXPERIMENT_CASE_6SUBHOM = 'EXPERIMENT_CASE_6SUBHOM',
             EXPERIMENT_CASE_3SUBHOM = 'EXPERIMENT_CASE_3SUBHOM';
@@ -15405,7 +15405,7 @@ var projectsDisplay = {
 
         project.pageSize(20);
 
-        var collectionsMapper = function collectionsMapper(sample_no, name) {
+        var collectionsMapper = function collectionsMapper(sampleNo, name) {
             var f = filters[name],
                 forSubPledged = name === 'sub' ? { pledged: 'gte.1000' } : {},
                 defaultOptions = {
@@ -15417,7 +15417,9 @@ var projectsDisplay = {
                 cLoader = loader(project.getPageOptions(_underscore2.default.extend(forSubPledged, defaultOptions, f.filter.parameters()))),
                 collection = (0, _stream2.default)([]);
 
-            cLoader.load().then(_underscore2.default.compose(collection, sample_no));
+            cLoader.load().then(_underscore2.default.compose(collection, sampleNo)).then(function () {
+                return _mithril2.default.redraw();
+            });
 
             return {
                 title: f.nicename,
@@ -15453,7 +15455,6 @@ var projectsDisplay = {
 
     view: function view(_ref) {
         var state = _ref.state;
-
 
         if (state.windowEventNOTDispatched) {
             window.dispatchEvent(new Event('on_projects_controller_loaded'));
