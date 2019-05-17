@@ -7176,8 +7176,8 @@ var ownerMessageContent = {
                 from_email: from_email(),
                 user_id: _h2.default.getUser().user_id,
                 content: content(),
-                project_id: vnode.attrs().project_id,
-                to_user_id: userDetails().id,
+                project_id: vnode.attrs.project_id,
+                to_user_id: userDetails.id,
                 data: {
                     page_title: document.title,
                     page_url: window.location.href
@@ -7207,7 +7207,7 @@ var ownerMessageContent = {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        var successMessage = (0, _mithril2.default)('.modal-dialog-content.u-text-center', [(0, _mithril2.default)('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), (0, _mithril2.default)('p.fontsize-large', 'Sua mensagem foi enviada com sucesso para ' + state.userDetails().name + '. Voc\xEA vai receber uma c\xF3pia no seu email e pode seguir a conversa por l\xE1!')]),
+        var successMessage = (0, _mithril2.default)('.modal-dialog-content.u-text-center', [(0, _mithril2.default)('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'), (0, _mithril2.default)('p.fontsize-large', 'Sua mensagem foi enviada com sucesso para ' + state.userDetails.name + '. Voc\xEA vai receber uma c\xF3pia no seu email e pode seguir a conversa por l\xE1!')]),
             contactForm = [(0, _mithril2.default)('.modal-dialog-content', [(0, _mithril2.default)('.w-form', [(0, _mithril2.default)('form', {
             onsubmit: _h2.default.validate().submit([{
                 prop: state.from_name,
@@ -7225,7 +7225,7 @@ var ownerMessageContent = {
         })]), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('label.fontsize-smaller', 'Seu email'), (0, _mithril2.default)('input.w-input.text-field[value=\'' + state.from_email() + '\'][type=\'text\'][required=\'required\']', {
             onchange: _mithril2.default.withAttr('value', state.from_email),
             class: _h2.default.validate().hasError(state.from_email) ? 'error' : ''
-        })])]), (0, _mithril2.default)('label', 'Mensagem'), (0, _mithril2.default)('textarea.w-input.text-field.height-small[required=\'required\']', {
+        })])]), (0, _mithril2.default)('label', 'Mensagem'), (0, _mithril2.default)("textarea.w-input.text-field.height-small[required='required']", {
             onchange: _mithril2.default.withAttr('value', state.content),
             class: _h2.default.validate().hasError(state.content) ? 'error' : ''
         }), (0, _mithril2.default)('.u-marginbottom-10.fontsize-smallest.fontcolor-terciary', 'Você receberá uma cópia desta mensagem em seu email.'), (0, _mithril2.default)('.w-row', _h2.default.validationErrors().length ? _underscore2.default.map(_h2.default.validationErrors(), function (errors) {
@@ -8682,10 +8682,9 @@ var projectBasicsEdit = {
             return false;
         };
 
-        var editTag = function editTag(el, isinit) {
-            if (!isinit) {
-                el.onkeyup = triggerTagSearch;
-            }
+        var editTag = function editTag(event) {
+            console.log('evnete, ', event);
+            return triggerTagSearch(event);
         };
 
         vnode.state = {
@@ -8720,7 +8719,6 @@ var projectBasicsEdit = {
             toggleOpt: state.showError,
             error: true
         }) : '',
-
         // add pop notifications here
         (0, _mithril2.default)('form.w-form', { onsubmit: state.onSubmit }, [(0, _mithril2.default)('.w-container', [
         // admin fields
@@ -8764,7 +8762,9 @@ var projectBasicsEdit = {
                 return state.isEditingTags(false);
             },
             children: [(0, _mithril2.default)('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                config: state.editTag,
+                onkeyup: function onkeyup(event) {
+                    return state.editTag(event);
+                },
                 class: vm.e.hasError('public_tags') ? 'error' : '',
                 onfocus: function onfocus() {
                     return vm.e.inlineError('public_tags', false);
@@ -15133,10 +15133,9 @@ var projectUserCard = {
             attrs = _ref.attrs;
 
         var project = attrs.project;
-        var contactModalC = [_ownerMessageContent2.default, (0, _stream2.default)(_underscore2.default.extend(attrs.userDetails(), {
-            project_id: project().id
-        }))];
         var userDetail = attrs.userDetails();
+        var contactData = _underscore2.default.extend(attrs.userDetails(), { project_id: project().id });
+        var contactModalC = [_ownerMessageContent2.default, contactData];
 
         return (0, _mithril2.default)('#user-card', _underscore2.default.isEmpty(userDetail) ? 'carregando...' : (0, _mithril2.default)('.u-marginbottom-30.u-text-center-small-only', [state.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayModal,
