@@ -16,18 +16,18 @@
 import m from 'mithril';
 
 const modalBox = {
-    view: function({attrs}) {
+    view: function({ attrs }) {
         return m('.modal-backdrop', [
             m('.modal-dialog-outer', [
                 m('.modal-dialog-inner.modal-dialog-small.fontcolor-primary', [
                     m(`a.w-inline-block.fa.fa-lg.modal-close${attrs.hideCloseButton ? '' : '.fa-close'}[href="javascript:void(0);"]`, {
-                        onclick: attrs.displayModal.toggle
+                        onclick: attrs.displayModal.toggle,
                     }),
-                    m(attrs.content[0], attrs.content[1])
+                    m(attrs.content[0], attrs.content[1]),
                 ]),
-            ])
+            ]),
         ]);
-    }
+    },
 };
 
 export default modalBox;
