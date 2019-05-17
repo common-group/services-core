@@ -34,9 +34,10 @@ const projectsPayment = {
             currentUserID = h.getUserID(),
             user = usersVM.getCurrentUser();
 
-        const shippingFee = () => _.findWhere(rewardVM.fees(), {
-            id: contribution().shipping_fee_id
-        });
+        const shippingFee = () =>
+            _.findWhere(rewardVM.fees(), {
+                id: contribution().shipping_fee_id,
+            });
 
         const validateForm = () => {
             if (vm.validate()) {
@@ -45,17 +46,19 @@ const projectsPayment = {
             }
         };
 
-        const fieldHasError = (fieldName) => {
+        const fieldHasError = fieldName => {
             const fieldWithError = _.findWhere(vm.fields.errors(), {
-                field: fieldName
+                field: fieldName,
             });
 
-            return fieldWithError ? m(inlineError, {
-                message: fieldWithError.message
-            }) : '';
+            return fieldWithError
+                ? m(inlineError, {
+                      message: fieldWithError.message,
+                  })
+                : '';
         };
 
-        const applyDocumentMask = (value) => {
+        const applyDocumentMask = value => {
             if (value.length > 14) {
                 isCnpj(true);
                 vm.fields.ownerDocument(documentCompanyMask(value));
@@ -65,10 +68,10 @@ const projectsPayment = {
             }
         };
 
-        const addressChange = fn => (e) => {
+        const addressChange = fn => e => {
             CatarseAnalytics.oneTimeEvent({
                 cat: 'contribution_finish',
-                act: vm.isInternational ? 'contribution_address_br' : 'contribution_address_int'
+                act: vm.isInternational ? 'contribution_address_br' : 'contribution_address_int',
             });
 
             if (_.isFunction(fn)) {
@@ -76,9 +79,7 @@ const projectsPayment = {
             }
         };
 
-        const scope = attr => vm.isInternational() ?
-            I18nIntScope(attr) :
-            I18nScope(attr);
+        const scope = attr => (vm.isInternational() ? I18nIntScope(attr) : I18nScope(attr));
 
         const isLongDescription = reward => reward.description && reward.description.length > 110;
 
@@ -89,9 +90,11 @@ const projectsPayment = {
             rewardVM.getFees(reward()).then(rewardVM.fees);
         }
         vm.fetchUser().then(() => {
-            addVM(addressVM({
-                data: vm.fields.address()
-            }));
+            addVM(
+                addressVM({
+                    data: vm.fields.address(),
+                })
+            );
         });
         vm.kondutoExecute();
         projectVM.getCurrentProject();
@@ -113,299 +116,339 @@ const projectsPayment = {
             project,
             shippingFee,
             isLongDescription,
-            toggleDescription: h.toggleProp(false, true)
+            toggleDescription: h.toggleProp(false, true),
         };
     },
-    view: function({state}) {
+    view: function({ state }) {
         const user = state.user(),
             addVM = state.addVM(),
             project = state.project(),
+            isInternational = addVM.international && typeof addVM.international === 'function' && addVM.international(),
             formatedValue = h.formatNumber(Number(state.value), 2, 3),
             anonymousCheckbox = m('.w-row', [
                 m('.w-checkbox.w-clearfix', [
-                    m('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
-                        onclick: () => CatarseAnalytics.event({
-                            cat: 'contribution_finish',
-                            act: 'contribution_anonymous_change'
-                        }),
+                    m("input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']", {
+                        onclick: () =>
+                            CatarseAnalytics.event({
+                                cat: 'contribution_finish',
+                                act: 'contribution_anonymous_change',
+                            }),
                         onchange: () => {
                             state.vm.fields.anonymous.toggle();
                         },
                         checked: state.vm.fields.anonymous(),
                     }),
-                    m('label.w-form-label.fontsize-smallest[for=\'anonymous\']',
-                        window.I18n.t('fields.anonymous', state.scope())
-                    )
+                    m("label.w-form-label.fontsize-smallest[for='anonymous']", window.I18n.t('fields.anonymous', state.scope())),
                 ]),
 
-                (state.vm.fields.anonymous() ? m('.card.card-message.u-radius.zindex-10.fontsize-smallest',
-                    m('div', [
-                        m('span.fontweight-bold', [
-                            window.I18n.t('anonymous_confirmation_title', state.scope()),
-                            m('br')
-                        ]),
-                        m('br'),
-                        window.I18n.t('anonymous_confirmation', state.scope())
-                    ])
-                ) : '')
+                state.vm.fields.anonymous()
+                    ? m(
+                          '.card.card-message.u-radius.zindex-10.fontsize-smallest',
+                          m('div', [
+                              m('span.fontweight-bold', [window.I18n.t('anonymous_confirmation_title', state.scope()), m('br')]),
+                              m('br'),
+                              window.I18n.t('anonymous_confirmation', state.scope()),
+                          ])
+                      )
+                    : '',
             ]);
 
-        return m('#project-payment.w-section.w-clearfix.section', (addVM && !_.isEmpty(project)) ? [
-            m('.w-col',
-                m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
-                    m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                        window.I18n.t('selected_reward.value', state.scope())
-                    ),
-                    m('.w-clearfix', [
-                        m('.fontsize-larger.text-success.u-left',
-                            `R$ ${formatedValue}`
-                        ),
-                        m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${state.reward().id ? `?reward_id=${state.reward().id}` : ''}"]`,
-                            'Editar'
-                        )
-                    ]),
-                    m('.divider.u-marginbottom-10.u-margintop-10'),
-                    m('.back-payment-info-reward', [
-                        m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                            window.I18n.t('selected_reward.reward', state.scope())
-                        ),
-                        m('.fontsize-smallest.fontweight-semibold',
-                            state.reward().title
-                        ),
-                        m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
-                            class: state.isLongDescription(state.reward()) ?
-                                    state.toggleDescription() ? 'extended' : '' : 'extended'
-                        }, state.reward().description ?
-                            state.reward().description :
-                            m.trust(
-                                window.I18n.t('selected_reward.review_without_reward_html',
-                                    state.scope(
-                                        _.extend({
-                                            value: formatedValue
-                                        })
-                                    )
-                                )
-                            )
-                        ),
-                        state.isLongDescription(state.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
-                            onclick: state.toggleDescription.toggle
-                        }, [
-                            state.toggleDescription() ? 'menos ' : 'mais ',
-                            m('span.fa.fa-angle-down', {
-                                class: state.toggleDescription() ? 'reversed' : ''
-                            })
-                        ]) : '',
-                        state.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
-                            m('span.fontweight-semibold',
-                                'Entrega prevista:'
-                            ),
-                            ` ${h.momentify(state.reward().deliver_at, 'MMM/YYYY')}`
-                        ]) : '',
-                        (rewardVM.hasShippingOptions(state.reward()) || state.reward().shipping_options === 'presential') ?
-                        m('.fontcolor-secondary.fontsize-smallest', [
-                            m('span.fontweight-semibold',
-                                'Forma de envio: '
-                            ),
-                            window.I18n.t(`shipping_options.${state.reward().shipping_options}`, {
-                                scope: 'projects.contributions'
-                            })
-                        ]) :
-                        ''
-                    ])
-                ])
-            ),
-
-            m('.w-container',
-                m('.w-row', [
-                    m('.w-col.w-col-8', [
-                        m('.w-form', [
-                            m('form.u-marginbottom-40', [
-                                m('.u-marginbottom-40.u-text-center-small-only', [
-                                    m('.fontweight-semibold.lineheight-tight.fontsize-large',
-                                        window.I18n.t('title', state.scope())
-                                    ),
-                                    m('.fontsize-smaller',
-                                        window.I18n.t('required', state.scope())
-                                    )
-                                ]),
-
-                                (user.name && user.owner_document ?
-                                    m('.card.card-terciary.u-radius.u-marginbottom-40', [
-                                        m('.w-row.u-marginbottom-20', [
-                                            m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
-                                                m(`img.thumb.u-margintop-10.u-round[src="${h.useAvatarOrDefault(user.profile_img_thumbnail)}"][width="100"]`)
-                                            ]),
-                                            m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
-                                                m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
-                                                    (project ? 'Dados do apoiador ' : 'Dados do usuário '),
-                                                    m(`a.alt-link[href="/not-my-account${project ? `?project_id=${project.project_id}` : ''}${state.reward() ? `&reward_id=${state.reward().id}` : ''}${state.value ? `&value=${state.value * 100}` : ''}"]`, 'Não é você?')
-                                                ]),
-                                                m('.fontsize-base.fontweight-semibold', user.name),
-                                                (user.owner_document ?
-                                                    m('label.field-label', `CPF/CNPJ: ${user.owner_document}`) : ''),
-
-                                            ])
-                                        ]),
-                                        anonymousCheckbox
-                                    ]) : ''),
-
-                                m('.card.card-terciary.u-marginbottom-30.u-radius.w-form',
-                                    m(nationalityRadio, {
-                                        fields: addVM.fields,
-                                        defaultCountryID: addVM.defaultCountryID,
-                                        defaultForeignCountryID: addVM.defaultForeignCountryID,
-                                        international: addVM.international
-                                    })
-                                ),
-
-                                (user.name && user.owner_document) ? '' : m('.card.card-terciary.u-radius.u-marginbottom-40', [
-                                    (m('.w-row', [
-                                        m('.w-col.w-col-7.w-sub-col', [
-                                            m('label.field-label.fontweight-semibold[for=\'complete-name\']',
-                                                window.I18n.t('fields.complete_name', state.scope())
-                                            ),
-                                            m('input.positive.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
-                                                onfocus: state.vm.resetFieldError('completeName'),
-                                                class: state.fieldHasError('completeName') ? 'error' : false,
-                                                type: 'text',
-                                                onchange: m.withAttr('value', state.vm.fields.completeName),
-                                                value: state.vm.fields.completeName(),
-                                                placeholder: 'Nome Completo'
-                                            }),
-                                            state.fieldHasError('completeName')
-                                        ]),
-                                        m('.w-col.w-col-5', (addVM.international() ? '' : [
-                                            m('label.field-label.fontweight-semibold[for=\'document\']',
-                                                window.I18n.t('fields.owner_document', state.scope())
-                                            ),
-                                            m('input.positive.w-input.text-field[id=\'document\']', {
-                                                onfocus: state.vm.resetFieldError('ownerDocument'),
-                                                class: state.fieldHasError('ownerDocument') ? 'error' : false,
-                                                type: 'tel',
-                                                onkeyup: m.withAttr('value', state.applyDocumentMask),
-                                                value: state.vm.fields.ownerDocument()
-                                            }),
-                                            state.fieldHasError('ownerDocument')
-                                        ])),
-                                    ])),
-                                    anonymousCheckbox
-                                ]),
-
-                                m('.card.card-terciary.u-radius.u-marginbottom-40',
-                                    m(addressForm, {
-                                        addressFields: addVM.fields,
-                                        fields: prop(state.vm.fields),
-                                        international: addVM.international,
-                                        hideNationality: true
-                                    })
-                                )
-                            ])
-                        ]),
-                        m('.w-row.u-marginbottom-40', !state.showPaymentForm() ? m('.w-col.w-col-push-3.w-col-6',
-                            m('button.btn.btn-large', {
-                                onclick: () => CatarseAnalytics.event({
-                                    cat: 'contribution_finish',
-                                    act: 'contribution_next_click'
-                                }, state.validateForm)
-                            },
-                                window.I18n.t('next_step', state.scope())
-                            )
-                        ) : ''),
-                        state.showPaymentForm() ? m(paymentForm, {
-                            vm: state.vm,
-                            contribution_id: state.contribution().id,
-                            project_id: projectVM.currentProject().project_id,
-                            user_id: user.id
-                        }) : ''
-                    ]),
-                    m('.w-col.w-col-4', [
-                        m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [
-                            m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20',
-                                window.I18n.t('selected_reward.value', state.scope())
-                            ),
-                            m('.w-clearfix', [
-                                m('.fontsize-larger.text-success.u-left',
-                                    `R$ ${formatedValue}`
-                                ),
-                                m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${state.reward().id ? `?reward_id=${state.reward().id}` : ''}"]`,
-                                    'Editar'
-                                )
-                            ]),
-                            m('.divider.u-marginbottom-10.u-margintop-10'),
-                            m('.back-payment-info-reward', [
-                                m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10',
-                                    window.I18n.t('selected_reward.reward', state.scope())
-                                ),
-                                m('.fontsize-smallest.fontweight-semibold',
-                                    state.reward().title
-                                ),
-                                m('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
-                                    class: state.isLongDescription(state.reward()) ?
-                                            state.toggleDescription() ? 'extended' : '' : 'extended'
-                                }, state.reward().description ?
-                                    state.reward().description :
-                                    m.trust(
-                                        window.I18n.t('selected_reward.review_without_reward_html',
-                                            state.scope(
-                                                _.extend({
-                                                    value: Number(state.value).toFixed()
-                                                })
+        return m(
+            '#project-payment.w-section.w-clearfix.section',
+            addVM && !_.isEmpty(project)
+                ? [
+                      m(
+                          '.w-col',
+                          m('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [
+                              m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())),
+                              m('.w-clearfix', [
+                                  m('.fontsize-larger.text-success.u-left', `R$ ${formatedValue}`),
+                                  m(
+                                      `a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${
+                                          state.reward().id ? `?reward_id=${state.reward().id}` : ''
+                                      }"]`,
+                                      'Editar'
+                                  ),
+                              ]),
+                              m('.divider.u-marginbottom-10.u-margintop-10'),
+                              m('.back-payment-info-reward', [
+                                  m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())),
+                                  m('.fontsize-smallest.fontweight-semibold', state.reward().title),
+                                  m(
+                                      '.fontsize-smallest.reward-description.opened.fontcolor-secondary',
+                                      {
+                                          class: state.isLongDescription(state.reward()) ? (state.toggleDescription() ? 'extended' : '') : 'extended',
+                                      },
+                                      state.reward().description
+                                          ? state.reward().description
+                                          : m.trust(
+                                                window.I18n.t(
+                                                    'selected_reward.review_without_reward_html',
+                                                    state.scope(
+                                                        _.extend({
+                                                            value: formatedValue,
+                                                        })
+                                                    )
+                                                )
                                             )
+                                  ),
+                                  state.isLongDescription(state.reward())
+                                      ? m(
+                                            'a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20',
+                                            {
+                                                onclick: state.toggleDescription.toggle,
+                                            },
+                                            [
+                                                state.toggleDescription() ? 'menos ' : 'mais ',
+                                                m('span.fa.fa-angle-down', {
+                                                    class: state.toggleDescription() ? 'reversed' : '',
+                                                }),
+                                            ]
                                         )
-                                    )
-                                ),
-                                state.isLongDescription(state.reward()) ? m('a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20', {
-                                    onclick: state.toggleDescription.toggle
-                                }, [
-                                    state.toggleDescription() ? 'menos ' : 'mais ',
-                                    m('span.fa.fa-angle-down', {
-                                        class: state.toggleDescription() ? 'reversed' : ''
-                                    })
-                                ]) : '',
-                                state.reward().deliver_at ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
-                                    m('span.fontweight-semibold',
-                                        'Entrega prevista:'
-                                    ),
-                                    ` ${h.momentify(state.reward().deliver_at, 'MMM/YYYY')}`
-                                ]) : '',
-                                (state.reward() && (rewardVM.hasShippingOptions(state.reward()) || state.reward().shipping_options === 'presential')) ?
-                                m('.fontcolor-secondary.fontsize-smallest', [
-                                    m('span.fontweight-semibold',
-                                        'Forma de envio: '
-                                    ),
-                                    window.I18n.t(`shipping_options.${state.reward().shipping_options}`, {
-                                        scope: 'projects.contributions'
-                                    })
-                                ]) :
-                                '',
-                                m('div',
-                                    // state.contribution().shipping_fee_id ? [
-                                    //     m('.divider.u-marginbottom-10.u-margintop-10'),
-                                    //     m('.fontsize-smaller.fontweight-semibold',
-                                    //         'Destino da recompensa:'
-                                    //     ),
-                                    //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${state.reward().id ? `?reward_id=${state.reward().id}` : ''}"]`,
-                                    //         'Editar'
-                                    //     ),
-                                    //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
-                                    //         `${rewardVM.feeDestination(state.reward(), state.contribution().shipping_fee_id)}`
-                                    //     ),
-                                    //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(state.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(state.contribution().shipping_fee_id).value : '...'})`)
-                                    // ] : ''
-                                )
-                            ]),
-                        ]),
-                        m(faqBox, {
-                            mode: project.mode,
-                            vm: state.vm,
-                            faq: state.vm.faq(project.mode),
-                            projectUserId: project.user_id
-                        })
-                    ])
-                ])
-            )
-        ] : h.loader());
-    }
+                                      : '',
+                                  state.reward().deliver_at
+                                      ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
+                                            m('span.fontweight-semibold', 'Entrega prevista:'),
+                                            ` ${h.momentify(state.reward().deliver_at, 'MMM/YYYY')}`,
+                                        ])
+                                      : '',
+                                  rewardVM.hasShippingOptions(state.reward()) || state.reward().shipping_options === 'presential'
+                                      ? m('.fontcolor-secondary.fontsize-smallest', [
+                                            m('span.fontweight-semibold', 'Forma de envio: '),
+                                            window.I18n.t(`shipping_options.${state.reward().shipping_options}`, {
+                                                scope: 'projects.contributions',
+                                            }),
+                                        ])
+                                      : '',
+                              ]),
+                          ])
+                      ),
+
+                      m(
+                          '.w-container',
+                          m('.w-row', [
+                              m('.w-col.w-col-8', [
+                                  m('.w-form', [
+                                      m('form.u-marginbottom-40', [
+                                          m('.u-marginbottom-40.u-text-center-small-only', [
+                                              m('.fontweight-semibold.lineheight-tight.fontsize-large', window.I18n.t('title', state.scope())),
+                                              m('.fontsize-smaller', window.I18n.t('required', state.scope())),
+                                          ]),
+
+                                          user.name && user.owner_document
+                                              ? m('.card.card-terciary.u-radius.u-marginbottom-40', [
+                                                    m('.w-row.u-marginbottom-20', [
+                                                        m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2.w-hidden-tiny', [
+                                                            m(
+                                                                `img.thumb.u-margintop-10.u-round[src="${h.useAvatarOrDefault(
+                                                                    user.profile_img_thumbnail
+                                                                )}"][width="100"]`
+                                                            ),
+                                                        ]),
+                                                        m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', [
+                                                            m('.fontcolor-secondary.fontsize-smallest.u-marginbottom-10', [
+                                                                project ? 'Dados do apoiador ' : 'Dados do usuário ',
+                                                                m(
+                                                                    `a.alt-link[href="/not-my-account${project ? `?project_id=${project.project_id}` : ''}${
+                                                                        state.reward() ? `&reward_id=${state.reward().id}` : ''
+                                                                    }${state.value ? `&value=${state.value * 100}` : ''}"]`,
+                                                                    'Não é você?'
+                                                                ),
+                                                            ]),
+                                                            m('.fontsize-base.fontweight-semibold', user.name),
+                                                            user.owner_document ? m('label.field-label', `CPF/CNPJ: ${user.owner_document}`) : '',
+                                                        ]),
+                                                    ]),
+                                                    anonymousCheckbox,
+                                                ])
+                                              : '',
+                                          m(
+                                              '.card.card-terciary.u-marginbottom-30.u-radius.w-form',
+                                              m(nationalityRadio, {
+                                                  fields: addVM.fields,
+                                                  defaultCountryID: addVM.defaultCountryID,
+                                                  defaultForeignCountryID: addVM.defaultForeignCountryID,
+                                                  international: addVM.international,
+                                              })
+                                          ),
+
+                                          user.name && user.owner_document
+                                              ? ''
+                                              : m('.card.card-terciary.u-radius.u-marginbottom-40', [
+                                                    m('.w-row', [
+                                                        m('.w-col.w-col-7.w-sub-col', [
+                                                            m(
+                                                                "label.field-label.fontweight-semibold[for='complete-name']",
+                                                                window.I18n.t('fields.complete_name', state.scope())
+                                                            ),
+                                                            m("input.positive.w-input.text-field[id='complete-name'][name='complete-name']", {
+                                                                onfocus: state.vm.resetFieldError('completeName'),
+                                                                class: state.fieldHasError('completeName') ? 'error' : false,
+                                                                type: 'text',
+                                                                onchange: m.withAttr('value', state.vm.fields.completeName),
+                                                                value: state.vm.fields.completeName(),
+                                                                placeholder: 'Nome Completo',
+                                                            }),
+                                                            state.fieldHasError('completeName'),
+                                                        ]),
+                                                        m(
+                                                            '.w-col.w-col-5',
+                                                            isInternational
+                                                                ? ''
+                                                                : [
+                                                                      m(
+                                                                          "label.field-label.fontweight-semibold[for='document']",
+                                                                          window.I18n.t('fields.owner_document', state.scope())
+                                                                      ),
+                                                                      m("input.positive.w-input.text-field[id='document']", {
+                                                                          onfocus: state.vm.resetFieldError('ownerDocument'),
+                                                                          class: state.fieldHasError('ownerDocument') ? 'error' : false,
+                                                                          type: 'tel',
+                                                                          onkeyup: m.withAttr('value', state.applyDocumentMask),
+                                                                          value: state.vm.fields.ownerDocument(),
+                                                                      }),
+                                                                      state.fieldHasError('ownerDocument'),
+                                                                  ]
+                                                        ),
+                                                    ]),
+                                                    anonymousCheckbox,
+                                                ]),
+
+                                          m(
+                                              '.card.card-terciary.u-radius.u-marginbottom-40',
+                                              m(addressForm, {
+                                                  addressFields: addVM.fields,
+                                                  fields: prop(state.vm.fields),
+                                                  international: addVM.international,
+                                                  hideNationality: true,
+                                              })
+                                          ),
+                                      ]),
+                                  ]),
+                                  m(
+                                      '.w-row.u-marginbottom-40',
+                                      !state.showPaymentForm()
+                                          ? m(
+                                                '.w-col.w-col-push-3.w-col-6',
+                                                m(
+                                                    'button.btn.btn-large',
+                                                    {
+                                                        onclick: () =>
+                                                            CatarseAnalytics.event(
+                                                                {
+                                                                    cat: 'contribution_finish',
+                                                                    act: 'contribution_next_click',
+                                                                },
+                                                                state.validateForm
+                                                            ),
+                                                    },
+                                                    window.I18n.t('next_step', state.scope())
+                                                )
+                                            )
+                                          : ''
+                                  ),
+                                  state.showPaymentForm()
+                                      ? m(paymentForm, {
+                                            vm: state.vm,
+                                            contribution_id: state.contribution().id,
+                                            project_id: projectVM.currentProject().project_id,
+                                            user_id: user.id,
+                                        })
+                                      : '',
+                              ]),
+                              m('.w-col.w-col-4', [
+                                  m('.card.u-marginbottom-20.u-radius.w-hidden-small.w-hidden-tiny', [
+                                      m('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())),
+                                      m('.w-clearfix', [
+                                          m('.fontsize-larger.text-success.u-left', `R$ ${formatedValue}`),
+                                          m(
+                                              `a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${
+                                                  state.reward().id ? `?reward_id=${state.reward().id}` : ''
+                                              }"]`,
+                                              'Editar'
+                                          ),
+                                      ]),
+                                      m('.divider.u-marginbottom-10.u-margintop-10'),
+                                      m('.back-payment-info-reward', [
+                                          m('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())),
+                                          m('.fontsize-smallest.fontweight-semibold', state.reward().title),
+                                          m(
+                                              '.fontsize-smallest.reward-description.opened.fontcolor-secondary',
+                                              {
+                                                  class: state.isLongDescription(state.reward()) ? (state.toggleDescription() ? 'extended' : '') : 'extended',
+                                              },
+                                              state.reward().description
+                                                  ? state.reward().description
+                                                  : m.trust(
+                                                        window.I18n.t(
+                                                            'selected_reward.review_without_reward_html',
+                                                            state.scope(
+                                                                _.extend({
+                                                                    value: Number(state.value).toFixed(),
+                                                                })
+                                                            )
+                                                        )
+                                                    )
+                                          ),
+                                          state.isLongDescription(state.reward())
+                                              ? m(
+                                                    'a[href="javascript:void(0);"].link-hidden.link-more.u-marginbottom-20',
+                                                    {
+                                                        onclick: state.toggleDescription.toggle,
+                                                    },
+                                                    [
+                                                        state.toggleDescription() ? 'menos ' : 'mais ',
+                                                        m('span.fa.fa-angle-down', {
+                                                            class: state.toggleDescription() ? 'reversed' : '',
+                                                        }),
+                                                    ]
+                                                )
+                                              : '',
+                                          state.reward().deliver_at
+                                              ? m('.fontcolor-secondary.fontsize-smallest.u-margintop-10', [
+                                                    m('span.fontweight-semibold', 'Entrega prevista:'),
+                                                    ` ${h.momentify(state.reward().deliver_at, 'MMM/YYYY')}`,
+                                                ])
+                                              : '',
+                                          state.reward() && (rewardVM.hasShippingOptions(state.reward()) || state.reward().shipping_options === 'presential')
+                                              ? m('.fontcolor-secondary.fontsize-smallest', [
+                                                    m('span.fontweight-semibold', 'Forma de envio: '),
+                                                    window.I18n.t(`shipping_options.${state.reward().shipping_options}`, {
+                                                        scope: 'projects.contributions',
+                                                    }),
+                                                ])
+                                              : '',
+                                          m(
+                                              'div'
+                                              // state.contribution().shipping_fee_id ? [
+                                              //     m('.divider.u-marginbottom-10.u-margintop-10'),
+                                              //     m('.fontsize-smaller.fontweight-semibold',
+                                              //         'Destino da recompensa:'
+                                              //     ),
+                                              //     m(`a.alt-link.fontsize-smaller.u-right[href="/projects/${projectVM.currentProject().project_id}/contributions/new${state.reward().id ? `?reward_id=${state.reward().id}` : ''}"]`,
+                                              //         'Editar'
+                                              //     ),
+                                              //     m('.fontsize-smaller', { style: 'padding-right: 42px;' },
+                                              //         `${rewardVM.feeDestination(state.reward(), state.contribution().shipping_fee_id)}`
+                                              //     ),
+                                              //     m('p.fontsize-smaller', `(R$ ${rewardVM.shippingFeeById(state.contribution().shipping_fee_id) ? rewardVM.shippingFeeById(state.contribution().shipping_fee_id).value : '...'})`)
+                                              // ] : ''
+                                          ),
+                                      ]),
+                                  ]),
+                                  m(faqBox, {
+                                      mode: project.mode,
+                                      vm: state.vm,
+                                      faq: state.vm.faq(project.mode),
+                                      projectUserId: project.user_id,
+                                  }),
+                              ]),
+                          ])
+                      ),
+                  ]
+                : h.loader()
+        );
+    },
 };
 
 export default projectsPayment;

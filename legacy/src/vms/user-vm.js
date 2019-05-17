@@ -22,121 +22,118 @@ const getUserCreatedProjects = (user_id, pageSize = 3) => {
 
 const getPublicUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = catarse.filtersVM({
-        user_id: 'eq'
+        user_id: 'eq',
     });
 
     contextVM.user_id(user_id);
 
     models.contributor.pageSize(pageSize);
 
-    const lUserContributed = catarse.loaderWithToken(
-        models.contributor.getPageOptions(contextVM.parameters()));
+    const lUserContributed = catarse.loaderWithToken(models.contributor.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
 
-const getUserBalance = (user_id) => {
+const getUserBalance = user_id => {
     const contextVM = catarse.filtersVM({
-        user_id: 'eq'
+        user_id: 'eq',
     });
     contextVM.user_id(user_id);
 
-    const loader = catarse.loaderWithToken(
-        models.balance.getPageOptions(contextVM.parameters()));
+    const loader = catarse.loaderWithToken(models.balance.getPageOptions(contextVM.parameters()));
     return loader.load();
 };
 
-const getUserBankAccount = (user_id) => {
+const getUserBankAccount = user_id => {
     const contextVM = catarse.filtersVM({
-        user_id: 'eq'
+        user_id: 'eq',
     });
 
     contextVM.user_id(user_id);
 
-    const lUserAccount = catarse.loaderWithToken(
-        models.bankAccount.getPageOptions(contextVM.parameters()));
+    const lUserAccount = catarse.loaderWithToken(models.bankAccount.getPageOptions(contextVM.parameters()));
     return lUserAccount.load();
 };
 
-const getUserProjectReminders = (user_id) => {
+const getUserProjectReminders = user_id => {
     const contextVM = catarse.filtersVM({
         user_id: 'eq',
-        without_notification: 'eq'
+        without_notification: 'eq',
     });
 
     contextVM.user_id(user_id).without_notification(true);
 
     models.projectReminder;
 
-    const lUserReminders = catarse.loaderWithToken(
-        models.projectReminder.getPageOptions(contextVM.parameters()));
+    const lUserReminders = catarse.loaderWithToken(models.projectReminder.getPageOptions(contextVM.parameters()));
 
     return lUserReminders.load();
 };
 
 const getUserUnsubscribesProjects = user_id => {
     const contextVM = catarse.filtersVM({
-        user_id: 'eq'
+        user_id: 'eq',
     });
 
     contextVM.user_id(user_id);
 
     models.unsubscribes;
 
-    const lUserReminders = catarse.loaderWithToken(
-        models.unsubscribes.getPageOptions(contextVM.parameters()));
+    const lUserReminders = catarse.loaderWithToken(models.unsubscribes.getPageOptions(contextVM.parameters()));
 
     return lUserReminders.load();
 };
 
 const getMailMarketingLists = () => {
-    const l = catarse.loaderWithToken(
-        models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
+    const l = catarse.loaderWithToken(models.mailMarketingList.getPageOptions({ order: 'id.asc' }));
 
     return l.load();
 };
 
-const getUserCreditCards = (user_id) => {
+const getUserCreditCards = user_id => {
     const contextVM = catarse.filtersVM({
-        user_id: 'eq'
+        user_id: 'eq',
     });
 
     contextVM.user_id(user_id);
 
     models.userCreditCard.pageSize(false);
 
-    const lUserCards = catarse.loaderWithToken(
-        models.userCreditCard.getPageOptions(contextVM.parameters()));
+    const lUserCards = catarse.loaderWithToken(models.userCreditCard.getPageOptions(contextVM.parameters()));
 
     return lUserCards.load();
 };
 
-const toggleDelivery = (projectId, contribution) => m.request({
-    method: 'GET',
-    config: h.setCsrfToken,
-    url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_delivery`
-});
+const toggleDelivery = (projectId, contribution) =>
+    m.request({
+        method: 'GET',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_delivery`,
+    });
 
-const toggleAnonymous = (projectId, contribution) => m.request({
-    method: 'GET',
-    config: h.setCsrfToken,
-    url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_anonymous`
-});
+const toggleAnonymous = (projectId, contribution) =>
+    m.request({
+        method: 'GET',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/contributions/${contribution.contribution_id}/toggle_anonymous`,
+    });
 
 const getUserContributedProjects = (user_id, pageSize = 3) => {
     const contextVM = catarse.filtersVM({
         user_id: 'eq',
-        state: 'in'
+        state: 'in',
     });
 
-    contextVM.user_id(user_id).order({
-        created_at: 'desc'
-    }).state(['refunded', 'pending_refund', 'paid']);
+    contextVM
+        .user_id(user_id)
+        .order({
+            created_at: 'desc',
+        })
+        .state(['refunded', 'pending_refund', 'paid']);
 
     models.userContribution.pageSize(pageSize);
 
-    const lUserContributed = catarse.loaderWithToken(
-        models.userContribution.getPageOptions(contextVM.parameters()));
+    const lUserContributed = catarse.loaderWithToken(models.userContribution.getPageOptions(contextVM.parameters()));
 
     return lUserContributed.load();
 };
@@ -144,17 +141,19 @@ const getUserContributedProjects = (user_id, pageSize = 3) => {
 const getUserSubscribedProjects = (user_external_id, pageSize = 3) => {
     const contextVM = commonPayment.filtersVM({
         user_external_id: 'eq',
-        status: 'in'
+        status: 'in',
     });
 
-    contextVM.user_external_id(user_external_id).order({
-        created_at: 'desc'
-    }).status(['started', 'active', 'canceling']);
+    contextVM
+        .user_external_id(user_external_id)
+        .order({
+            created_at: 'desc',
+        })
+        .status(['started', 'active', 'canceling']);
 
     models.userSubscription.pageSize(pageSize);
 
-    const loaderUserSubscribed = commonPayment.loaderWithToken(
-        models.userSubscription.getPageOptions(contextVM.parameters()));
+    const loaderUserSubscribed = commonPayment.loaderWithToken(models.userSubscription.getPageOptions(contextVM.parameters()));
 
     return loaderUserSubscribed.load();
 };
@@ -165,12 +164,16 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     const lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
     if (!handlePromise) {
-        return lUser
-            .load();
+        return lUser.load();
     } else {
         lUser
             .load()
-            .then(_.compose(customProp, _.first))
+            .then(
+                _.compose(
+                    customProp,
+                    _.first
+                )
+            )
             .then(_ => m.redraw());
         return customProp;
     }
@@ -181,12 +184,12 @@ const getCurrentUser = () => {
     return currentUser;
 };
 
-const displayName = (user) => {
+const displayName = user => {
     const u = user || { name: 'no name' };
     return _.isEmpty(u.public_name) ? u.name : u.public_name;
 };
 
-const displayImage = (user) => {
+const displayImage = user => {
     const defaultImg = 'https://catarse.me/assets/catarse_bootstrap/user.jpg';
 
     if (user) {
@@ -196,75 +199,87 @@ const displayImage = (user) => {
     return defaultImg;
 };
 
-const displayCover = (user) => {
+const displayCover = user => {
     if (user) {
-        return user.profile_cover_image || displayImage(user);//
+        return user.profile_cover_image || displayImage(user); //
     }
 
     return displayImage(user);
 };
 
-const getUserRecommendedProjects = (contribution) => {
+const getUserRecommendedProjects = contribution => {
     const sample3 = _.partial(_.sample, _, 3),
         loaders = prop([]),
         collection = prop([]),
         { user_id } = h.getUser();
 
-    const loader = () => _.reduce(loaders(), (memo, curr) => {
-        const _memo = _.isFunction(memo) ? memo() : memo,
-            _curr = _.isFunction(curr) ? curr() : curr;
+    const loader = () =>
+        _.reduce(
+            loaders(),
+            (memo, curr) => {
+                const _memo = _.isFunction(memo) ? memo() : memo,
+                    _curr = _.isFunction(curr) ? curr() : curr;
 
-        return _memo && _curr;
-    }, true);
+                return _memo && _curr;
+            },
+            true
+        );
 
     const loadPopular = () => {
         const filters = projectFilters().filters;
-        const popular = catarse.loaderWithToken(
-            models.project.getPageOptions(
-                _.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())
-            )
-        );
+        const popular = catarse.loaderWithToken(models.project.getPageOptions(_.extend({}, { order: 'score.desc' }, filters.score.filter.parameters())));
 
         loaders().push(popular);
 
-        popular.load().then(_.compose(collection, sample3));
+        popular
+            .load()
+            .then(
+                _.compose(
+                    collection,
+                    sample3
+                )
+            )
+            .then(() => m.redraw());
     };
 
     const pushProject = ({ project_id }) => {
         const project = catarse.loaderWithToken(
             models.project.getPageOptions(
-                catarse.filtersVM({ project_id: 'eq' })
+                catarse
+                    .filtersVM({ project_id: 'eq' })
                     .project_id(project_id)
                     .parameters()
             )
         );
 
         loaders().push(project);
-        project.load().then((data) => {
+        project.load().then(data => {
             collection().push(_.first(data));
+            m.redraw();
         });
     };
 
     const projects = catarse.loaderWithToken(
         models.recommendedProjects.getPageOptions(
-            catarse.filtersVM({ user_id: 'eq' })
+            catarse
+                .filtersVM({ user_id: 'eq' })
                 .user_id(user_id)
                 .parameters()
         )
     );
 
-
-    projects.load().then((recommended) => {
+    projects.load().then(recommended => {
         if (recommended.length > 0) {
             _.map(recommended, pushProject);
         } else {
             loadPopular();
         }
+        m.redraw();
     });
 
     return {
         loader,
-        collection
+        collection,
     };
 };
 
@@ -287,7 +302,7 @@ const userVM = {
     getCurrentUser,
     currentUser,
     getMailMarketingLists,
-    getUserUnsubscribesProjects
+    getUserUnsubscribesProjects,
 };
 
 export default userVM;
