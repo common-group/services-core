@@ -16,11 +16,11 @@ const projectBasicsEdit = {
     oninit: function(vnode) {
         const vm = projectBasicsVM,
             mapErrors = [
-                  ['name', ['name']],
-                  ['public_tags', ['public_tags']],
-                  ['permalink', ['permalink']],
-                  ['category_id', ['category']],
-                  ['city_id', ['city']]
+                ['name', ['name']],
+                ['public_tags', ['public_tags']],
+                ['permalink', ['permalink']],
+                ['category_id', ['category']],
+                ['city_id', ['city']],
             ],
             loading = prop(false),
             cities = prop(),
@@ -40,19 +40,21 @@ const projectBasicsEdit = {
                 m.redraw();
                 const tagString = _.pluck(selectedTags(), 'name').join(',');
                 vm.fields.public_tags(tagString);
-                vm.updateProject(vnode.attrs.projectId).then(() => {
-                    loading(false);
-                    vm.e.resetFieldErrors();
-                    showSuccess(true);
-                    showError(false);
-                }).catch((err) => {
-                    if (err.errors_json) {
-                        railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
-                    }
-                    loading(false);
-                    showSuccess(false);
-                    showError(true);
-                });
+                vm.updateProject(vnode.attrs.projectId)
+                    .then(() => {
+                        loading(false);
+                        vm.e.resetFieldErrors();
+                        showSuccess(true);
+                        showError(false);
+                    })
+                    .catch(err => {
+                        if (err.errors_json) {
+                            railsErrorsVM.mapRailsErrors(err.errors_json, mapErrors, vm.e);
+                        }
+                        loading(false);
+                        showSuccess(false);
+                        showError(true);
+                    });
 
                 return false;
             };
@@ -95,7 +97,7 @@ const projectBasicsEdit = {
         const transport = prop({ abort: Function.prototype });
         const searchTagsUrl = `${h.getApiHost()}/rpc/tag_search`;
         const searchTags = () => m.request({ method: 'POST', background: true, config: transport, data: { query: tagString(), count: 3 }, url: searchTagsUrl });
-        const triggerTagSearch = (e) => {
+        const triggerTagSearch = e => {
             tagString(e.target.value);
 
             isEditingTags(true);
@@ -104,9 +106,7 @@ const projectBasicsEdit = {
             const keyCode = e.keyCode;
 
             if (keyCode === 188 || keyCode === 13) {
-                const tag = tagString().charAt(tagString().length - 1) === ','
-                    ? tagString().substr(0, tagString().length - 1)
-                    : tagString();
+                const tag = tagString().charAt(tagString().length - 1) === ',' ? tagString().substr(0, tagString().length - 1) : tagString();
 
                 addTag({ name: tag.toLowerCase() }).call();
                 e.target.value = '';
@@ -115,7 +115,7 @@ const projectBasicsEdit = {
 
             tagEditingLoading(true);
             transport().abort();
-            searchTags().then((data) => {
+            searchTags().then(data => {
                 tagOptions(data);
                 tagEditingLoading(false);
                 m.redraw(true);
@@ -124,10 +124,9 @@ const projectBasicsEdit = {
             return false;
         };
 
-        const editTag = (el, isinit) => {
-            if (!isinit) {
-                el.onkeyup = triggerTagSearch;
-            }
+        const editTag = event => {
+            console.log('evnete, ', event);
+            return triggerTagSearch(event);
         };
 
         vnode.state = {
@@ -145,70 +144,73 @@ const projectBasicsEdit = {
             isEditingTags,
             triggerTagSearch,
             selectedTags,
-            tagEditingLoading
+            tagEditingLoading,
         };
     },
-    view: function({state, attrs}) {
+    view: function({ state, attrs }) {
         const vm = state.vm;
 
         return m('#basics-tab', [
-            (state.showSuccess() ? m(popNotification, {
-                message: window.I18n.t('shared.successful_update'),
-                toggleOpt: state.showSuccess
-            }) : ''),
-            (state.showError() ? m(popNotification, {
-                message: window.I18n.t('shared.failed_update'),
-                toggleOpt: state.showError,
-                error: true
-            }) : ''),
-
+            state.showSuccess()
+                ? m(popNotification, {
+                      message: window.I18n.t('shared.successful_update'),
+                      toggleOpt: state.showSuccess,
+                  })
+                : '',
+            state.showError()
+                ? m(popNotification, {
+                      message: window.I18n.t('shared.failed_update'),
+                      toggleOpt: state.showError,
+                      error: true,
+                  })
+                : '',
             // add pop notifications here
             m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-container', [
                     // admin fields
-                    (attrs.user.is_admin ?
-                      m('.w-row', [
-                          m('.w-col.w-col-10.w-col-push-1', [
-                              m(inputCard, {
-                                  label: window.I18n.t('tracker_snippet_html', I18nScope()),
-                                  children: [
-                                      m('textarea.text.optional.w-input.text-field.positive.medium', {
-                                          value: vm.fields.tracker_snippet_html(),
-                                          onchange: m.withAttr('value', vm.fields.tracker_snippet_html)
-                                      })
-                                  ]
-                              }),
-                              m(inputCard, {
-                                  label: window.I18n.t('user_id', I18nScope()),
-                                  children: [
-                                      m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                          value: vm.fields.user_id(),
-                                          onchange: m.withAttr('value', vm.fields.user_id)
-                                      })
-                                  ]
-                              }),
-                              m(inputCard, {
-                                  label: window.I18n.t('admin_tags', I18nScope()),
-                                  label_hint: window.I18n.t('admin_tags_hint', I18nScope()),
-                                  children: [
-                                      m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                          value: vm.fields.admin_tags(),
-                                          onchange: m.withAttr('value', vm.fields.admin_tags)
-                                      })
-                                  ]
-                              }),
-                              m(inputCard, {
-                                  label: window.I18n.t('service_fee', I18nScope()),
-                                  children: [
-                                      m('input.string.optional.w-input.text-field.positive.medium[type="number"]', {
-                                          value: vm.fields.service_fee(),
-                                          onchange: m.withAttr('value', vm.fields.service_fee)
-                                      })
-                                  ]
-                              })
+                    attrs.user.is_admin
+                        ? m('.w-row', [
+                              m('.w-col.w-col-10.w-col-push-1', [
+                                  m(inputCard, {
+                                      label: window.I18n.t('tracker_snippet_html', I18nScope()),
+                                      children: [
+                                          m('textarea.text.optional.w-input.text-field.positive.medium', {
+                                              value: vm.fields.tracker_snippet_html(),
+                                              onchange: m.withAttr('value', vm.fields.tracker_snippet_html),
+                                          }),
+                                      ],
+                                  }),
+                                  m(inputCard, {
+                                      label: window.I18n.t('user_id', I18nScope()),
+                                      children: [
+                                          m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
+                                              value: vm.fields.user_id(),
+                                              onchange: m.withAttr('value', vm.fields.user_id),
+                                          }),
+                                      ],
+                                  }),
+                                  m(inputCard, {
+                                      label: window.I18n.t('admin_tags', I18nScope()),
+                                      label_hint: window.I18n.t('admin_tags_hint', I18nScope()),
+                                      children: [
+                                          m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
+                                              value: vm.fields.admin_tags(),
+                                              onchange: m.withAttr('value', vm.fields.admin_tags),
+                                          }),
+                                      ],
+                                  }),
+                                  m(inputCard, {
+                                      label: window.I18n.t('service_fee', I18nScope()),
+                                      children: [
+                                          m('input.string.optional.w-input.text-field.positive.medium[type="number"]', {
+                                              value: vm.fields.service_fee(),
+                                              onchange: m.withAttr('value', vm.fields.service_fee),
+                                          }),
+                                      ],
+                                  }),
+                              ]),
                           ])
-                      ])
-                     : ''),
+                        : '',
                     m('.w-row', [
                         m('.w-col.w-col-10.w-col-push-1', [
                             m(inputCard, {
@@ -218,10 +220,10 @@ const projectBasicsEdit = {
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"][maxlength="50"]', {
                                         value: vm.fields.name(),
                                         class: vm.e.hasError('name') ? 'error' : '',
-                                        onchange: m.withAttr('value', vm.fields.name)
+                                        onchange: m.withAttr('value', vm.fields.name),
                                     }),
-                                    vm.e.inlineError('name')
-                                ]
+                                    vm.e.inlineError('name'),
+                                ],
                             }),
                             m(inputCard, {
                                 label: window.I18n.t('tags', I18nScope()),
@@ -229,62 +231,72 @@ const projectBasicsEdit = {
                                 onclick: () => state.isEditingTags(false),
                                 children: [
                                     m('input.string.optional.w-input.text-field.positive.medium[type="text"]', {
-                                        config: state.editTag,
+                                        onkeyup: event => state.editTag(event),
                                         class: vm.e.hasError('public_tags') ? 'error' : '',
-                                        onfocus: () => vm.e.inlineError('public_tags', false)
+                                        onfocus: () => vm.e.inlineError('public_tags', false),
                                     }),
-                                    state.isEditingTags() ? m('.options-list.table-outer',
-                                         state.tagEditingLoading()
-                                            ? m('.dropdown-link', m('.fontsize-smallest', 'Carregando...'))
-                                            : state.tagOptions().length
-                                                ? _.map(state.tagOptions(), tag => m('.dropdown-link',
-                                                    { onclick: state.addTag(tag) },
-                                                    m('.fontsize-smaller', tag.name)
-                                                ))
-                                                : m('.dropdown-link', m('.fontsize-smallest', 'Nenhuma tag relacionada...'))
-                                    ) : '',
+                                    state.isEditingTags()
+                                        ? m(
+                                              '.options-list.table-outer',
+                                              state.tagEditingLoading()
+                                                  ? m('.dropdown-link', m('.fontsize-smallest', 'Carregando...'))
+                                                  : state.tagOptions().length
+                                                  ? _.map(state.tagOptions(), tag =>
+                                                        m('.dropdown-link', { onclick: state.addTag(tag) }, m('.fontsize-smaller', tag.name))
+                                                    )
+                                                  : m('.dropdown-link', m('.fontsize-smallest', 'Nenhuma tag relacionada...'))
+                                          )
+                                        : '',
                                     vm.e.inlineError('public_tags'),
-                                    m('div.tag-choices',
-                                        _.map(state.selectedTags(), choice => m('.tag-div',
-                                            m('div', [
-                                                m('a.tag-close-btn.fa.fa-times-circle', { onclick: state.removeTag(choice) }),
-                                                ` ${choice.name}`
-                                            ]))
+                                    m(
+                                        'div.tag-choices',
+                                        _.map(state.selectedTags(), choice =>
+                                            m(
+                                                '.tag-div',
+                                                m('div', [m('a.tag-close-btn.fa.fa-times-circle', { onclick: state.removeTag(choice) }), ` ${choice.name}`])
+                                            )
                                         )
-                                    )
-                                ]
+                                    ),
+                                ],
                             }),
                             m(inputCard, {
                                 label: window.I18n.t('permalink', I18nScope()),
                                 label_hint: window.I18n.t('permalink_hint', I18nScope()),
                                 children: [
                                     m('.w-row', [
-                                        m('.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink', {
-                                            class: vm.e.hasError('permalink') ? 'error' : ''
-                                        },
-                                          m('.fontcolor-secondary.u-text-center.fontcolor-secondary.u-text-center.fontsize-smallest', 'www.catarse.me/')),
+                                        m(
+                                            '.w-col.w-col-4.w-col-small-6.w-col-tiny6.text-field.prefix.no-hover.medium.prefix-permalink',
+                                            {
+                                                class: vm.e.hasError('permalink') ? 'error' : '',
+                                            },
+                                            m('.fontcolor-secondary.u-text-center.fontcolor-secondary.u-text-center.fontsize-smallest', 'www.catarse.me/')
+                                        ),
                                         m('.w-col.w-col-8.w-col-small-6.w-col-tiny-6', [
                                             m('input.string.required.w-input.text-field.postfix.positive.medium[type="text"]', {
                                                 value: vm.fields.permalink(),
                                                 class: vm.e.hasError('permalink') ? 'error' : '',
-                                                onchange: m.withAttr('value', vm.fields.permalink)
+                                                onchange: m.withAttr('value', vm.fields.permalink),
                                             }),
                                         ]),
                                     ]),
-                                    m('.w-row', vm.e.inlineError('permalink'))
-                                ]
+                                    m('.w-row', vm.e.inlineError('permalink')),
+                                ],
                             }),
                             m(inputCard, {
                                 label: window.I18n.t('category', I18nScope()),
                                 label_hint: window.I18n.t('category_hint', I18nScope()),
                                 children: [
-                                    m('select.required.w-input.text-field.w-select.positive.medium', {
-                                        value: vm.fields.category_id(),
-                                        class: vm.e.hasError('category_id') ? 'error' : '',
-                                        onchange: m.withAttr('value', vm.fields.category_id)
-                                    }, state.categories()),
-                                    vm.e.inlineError('category_id')
-                                ]
+                                    m(
+                                        'select.required.w-input.text-field.w-select.positive.medium',
+                                        {
+                                            value: vm.fields.category_id(),
+                                            class: vm.e.hasError('category_id') ? 'error' : '',
+                                            onchange: m.withAttr('value', vm.fields.category_id),
+                                        },
+                                        state.categories()
+                                    ),
+                                    vm.e.inlineError('category_id'),
+                                ],
                             }),
                             m(inputCard, {
                                 label: window.I18n.t('city', I18nScope()),
@@ -293,19 +305,19 @@ const projectBasicsEdit = {
                                     m('input.string.required.w-input.text-field.positive.medium[type="text"]', {
                                         value: vm.fields.city_name(),
                                         class: vm.e.hasError('city_id') ? 'error' : '',
-                                        onkeyup: vm.generateSearchCity(state.cities)
+                                        onkeyup: vm.generateSearchCity(state.cities),
                                     }),
                                     vm.e.inlineError('city_id'),
-                                    state.cities()
-                                ]
-                            })
-                        ])
-                    ])
+                                    state.cities(),
+                                ],
+                            }),
+                        ]),
+                    ]),
                 ]),
-                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit })
-            ])
+                m(projectEditSaveBtn, { loading: state.loading, onSubmit: state.onSubmit }),
+            ]),
         ]);
-    }
+    },
 };
 
 export default projectBasicsEdit;
