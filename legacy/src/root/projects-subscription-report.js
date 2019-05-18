@@ -15,6 +15,7 @@ import projectDashboardMenu from '../c/project-dashboard-menu';
 import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
 import projectsSubscriptionReportVM from '../vms/projects-subscription-report-vm';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
+import projectSubscriptionsListVM from '../vms/project-subscriptions-list-vm';
 
 const statusCustomFilter = {
     view: () => m('.fontsize-smaller.u-text-center', [
@@ -44,16 +45,14 @@ const projectSubscriptionReport = {
             isRewardsDataLoaded = prop(false),
             rewards = prop([]),
             requestRedraw = h.createRequestAutoRedraw(isProjectDataLoaded, rewards),
-            subscriptions = commonPayment.paginationVM(models.userSubscription, 'last_payment_data_created_at.desc', {
-                Prefer: 'count=exact'
-            }),
+            subscriptions = projectSubscriptionsListVM(),
             submit = () => {
                 // Set order by last paid on filters too
                 filterVM.order({ last_payment_data_created_at: 'desc' });
                 if (filterVM.reward_external_id() === 'null') {
-                    subscriptions.firstPage(filterVM.withNullParameters()).then(requestRedraw);
+                    subscriptions.firstPage(filterVM.withNullParameters());
                 } else {
-                    subscriptions.firstPage(filterVM.parameters()).then(requestRedraw);
+                    subscriptions.firstPage(filterVM.parameters());
                 }
 
                 return false;
@@ -250,7 +249,7 @@ const projectSubscriptionReport = {
             subscriptions.firstPage(filterVM.parameters()).then(() => {
                 loader(false);
                 isProjectDataLoaded(true);
-                requestRedraw();
+                m.redraw();
             }).catch(handleError);
             project(data);
         });
