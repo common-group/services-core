@@ -65,11 +65,14 @@ const adminList = {
                             m('.w-container', [
                                 m('.w-row', [
                                     m('.w-col.w-col-2.w-col-push-5', [
-                                        list.isLoading() ?
-                                        h.loader() :
-                                        m('button#load-more.btn.btn-medium.btn-terciary', {
-                                            onclick: state.loadNextPage
-                                        }, 'Carregar mais'),
+                                        (
+                                            list.isLoading() ?
+                                               h.loader() 
+                                            :
+                                                m('button#load-more.btn.btn-medium.btn-terciary', {
+                                                    onclick: state.loadNextPage
+                                                }, 'Carregar mais')
+                                        ),
                                     ])
                                 ])
                             ])
