@@ -132,7 +132,7 @@ const adminBalanceTranfers = {
             },
             generateWrapperModal = (customAttrs) => {
                 const wrapper = {
-                    view: function(ctrl, {attrs}) {
+                    view: function({state, attrs}) {
                         actionMenuToggle(false);
                         return m('', [
                             m('.modal-dialog-header', [
