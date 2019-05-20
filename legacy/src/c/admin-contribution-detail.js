@@ -23,7 +23,7 @@ const adminContributionDetail = {
             l = catarse.loaderWithToken(opts);
 
             if (reward_id) {
-                l.load().then(_.compose(reward, _.first));
+                l.load().then(_.compose(reward, _.first)).then(() => m.redraw());
             }
 
             return reward;
@@ -99,13 +99,17 @@ const adminContributionDetail = {
                     data: actions.transfer,
                     item
                 }),
-                (state.l()) ? h.loader :
-                m(adminRadioAction, {
-                    data: actions.reward,
-                    item: reward,
-                    getKeyValue: item.project_id,
-                    updateKeyValue: item.contribution_id
-                }),
+                (
+                    state.l() ? 
+                        h.loader() 
+                    :
+                    m(adminRadioAction, {
+                        data: actions.reward,
+                        item: reward,
+                        getKeyValue: item.project_id,
+                        updateKeyValue: item.contribution_id
+                    })
+                ),
                 m(adminExternalAction, {
                     data: addOptions(actions.refund, item.id),
                     item
@@ -122,12 +126,16 @@ const adminContributionDetail = {
                 m(adminTransactionHistory, {
                     contribution: item
                 }),
-                (state.l()) ? h.loader :
-                m(adminReward, {
-                    reward,
-                    contribution: item,
-                    key: item.key
-                })
+                (
+                    state.l() ? 
+                        h.loader()
+                    :
+                        m(adminReward, {
+                            reward,
+                            contribution: item,
+                            key: item.key
+                        })
+                )
             ])
         ]);
     }
