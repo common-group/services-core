@@ -21,15 +21,18 @@ const adminItem = {
             m(attrs.listItem, {
                 item,
                 listWrapper: attrs.listWrapper,
-                key: attrs.key
             }),
             m('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
                 onclick: state.displayDetailBox.toggle
             }),
-            state.displayDetailBox() ? m(attrs.listDetail, {
-                item,
-                key: attrs.key
-            }) : ''
+            (
+                state.displayDetailBox() ? 
+                    m(attrs.listDetail, {
+                        item,
+                    }) 
+                : 
+                    ''
+            )
         ]);
     }
 };
