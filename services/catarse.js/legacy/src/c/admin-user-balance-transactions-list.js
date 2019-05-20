@@ -16,7 +16,7 @@ const adminUserBalanceTransactionsList = {
                   'created_at.desc',
                   { Prefer: 'count=exact' }
               ),
-            loadNextPage = () => state.transactionsListVM.nextPage().then(_ => m.redraw());
+            loadNextPage = () => transactionsListVM.nextPage().then(_ => m.redraw());
 
         models.balanceTransaction.pageSize(2);
         userVM.getUserBalance(vnode.attrs.user_id).then(_.compose(userBalance, _.first));
@@ -79,14 +79,21 @@ const adminUserBalanceTransactionsList = {
                     })
                 ])
             ])),
+
+
             m('.w-row', [
-                m('.w-col.w-col-3.w-col-push-4', [
-                    state.transactionsListVM.isLoading() ?
-                        h.loader() :
-                        m('button#load-more.btn.btn-terciary', {
-                            onclick: state.loadNextPage
-                        }, window.I18n.t('shared.load_more'))
-                ])
+                (
+                    state.transactionsListVM.isLastPage() ? 
+                        '' 
+                    :
+                        m('.w-col.w-col-3.w-col-push-4', [
+                            state.transactionsListVM.isLoading() ?
+                            h.loader() :
+                            m('button#load-more.btn.btn-terciary', {
+                                onclick: state.loadNextPage
+                            }, window.I18n.t('shared.load_more'))
+                        ])
+                )
             ])
         ]);
     }
