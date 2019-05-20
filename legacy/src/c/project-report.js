@@ -77,10 +77,8 @@ const projectReport = {
                 submitDisabled(false);
                 return false;
             },
-            checkScroll = (el, isInit) => {
-                if (!isInit && hasPendingAction) {
-                    h.animateScrollTo(el);
-                }
+            checkScroll = (localVnode) => {
+                h.animateScrollTo(localVnode.dom);
             };
 
 

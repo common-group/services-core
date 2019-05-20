@@ -60,7 +60,8 @@ const projectsShow = {
                     const statuses = ['started', 'active', 'canceling', 'canceled', 'inactive'];
                     subscriptionVM
                         .getUserProjectSubscriptions(currentUser.common_id, projectVM.currentProject().common_id, statuses)
-                        .then(userProjectSubscriptions);
+                        .then(userProjectSubscriptions)
+                        .then(() => m.redraw());
                 }
             }
         };
@@ -79,7 +80,7 @@ const projectsShow = {
             projectVM = state.projectVM;
         
         return m('.project-show', {
-            config: projectVM.setProjectPageTitle()
+            oncreate: projectVM.setProjectPageTitle()
         }, project() ? [
             state.loadUserSubscriptions(),
             m(projectHeader, {

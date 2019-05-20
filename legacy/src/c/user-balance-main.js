@@ -14,6 +14,8 @@ import models from '../models';
 import userBalance from './user-balance';
 import userBalanceTransactions from './user-balance-transactions';
 import userBalanceWithdrawHistory from './user-balance-withdraw-history';
+import userBalanceTransactionsListVM from '../vms/user-balance-transactions-list-vm';
+import userBalanceTransfersListVM from '../vms/user-balance-transfers-list-vm';
 
 const userBalanceMain = {
     oninit: function(vnode) {
@@ -38,21 +40,8 @@ const userBalanceMain = {
             })(),
 
             // Handles with user balance transactions list data
-            balanceTransactionManager = (() => {
-                const listVM = catarse.paginationVM(models.balanceTransaction, 'created_at.desc'),
-                    load = () => {
-                        listVM
-                            .firstPage(userIdVM.parameters())
-                            .then(r => {
-                                m.redraw();
-                            });
-                    };
-
-                return {
-                    load,
-                    list: listVM
-                };
-            })(),
+            userBalanceTransactionsList = userBalanceTransactionsListVM(userIdVM.parameters()),
+            userBalanceTransfersList = userBalanceTransfersListVM(userIdVM.parameters()),
 
             // Handles with bank account to check
             bankAccountManager = (() => {
@@ -77,14 +66,15 @@ const userBalanceMain = {
         vnode.state = {
             bankAccountManager,
             balanceManager,
-            balanceTransactionManager
+            userBalanceTransactionsList,
+            userBalanceTransfersList
         };
     },
     view: function({state, attrs}) {
         const opts = _.extend({}, attrs, state);
         return m('#balance-area', [
             m(userBalance, opts),
-            m(userBalanceWithdrawHistory, { user_id: attrs.user_id }),
+            m(userBalanceWithdrawHistory, opts),
             m('.divider'),
             m(userBalanceTransactions, opts),
             m('.u-marginbottom-40'),

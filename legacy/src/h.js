@@ -498,15 +498,13 @@ const
         }
     },
 
-    toAnchor = () => (el, isInitialized) => {
-        if (!isInitialized) {
-            const hash = window.location.hash.substr(1);
-            if (hash === el.id) {
-                window.location.hash = '';
-                setTimeout(() => {
-                    window.location.hash = el.id;
-                });
-            }
+    toAnchor = () => (vnode) => {
+        const hash = window.location.hash.substr(1);
+        if (hash === vnode.dom.id) {
+            window.location.hash = '';
+            setTimeout(() => {
+                window.location.hash = vnode.dom.id;
+            });
         }
     },
 
@@ -646,9 +644,9 @@ const
             };
         };
 
-        return (el, isInitialized) => {
-            if (!isInitialized && el.hash) {
-                setTrigger(el, el.hash.slice(1));
+        return (localVnode) => {
+            if (localVnode.dom.hash) {
+                setTrigger(localVnode.dom, localVnode.dom.hash.slice(1));
             }
         };
     },
@@ -698,20 +696,18 @@ const
         return statusText[state];
     },
 
-    RDTracker = eventId => (el, isInitialized) => {
-        if (!isInitialized) {
-            const integrationScript = document.createElement('script');
-            integrationScript.type = 'text/javascript';
-            integrationScript.id = 'RDIntegration';
+    RDTracker = eventId => () => {
+        const integrationScript = document.createElement('script');
+        integrationScript.type = 'text/javascript';
+        integrationScript.id = 'RDIntegration';
 
-            if (!document.getElementById(integrationScript.id)) {
-                document.body.appendChild(integrationScript);
-                integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
-                integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
-            }
-
-            return false;
+        if (!document.getElementById(integrationScript.id)) {
+            document.body.appendChild(integrationScript);
+            integrationScript.onload = () => window.RdIntegration.integrate(getRdToken(), eventId);
+            integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
         }
+
+        return false;
     },
 
     analyticsEvent = (eventObj, fn = Function.prototype) => {
@@ -977,7 +973,6 @@ const
 
     redactor = (name, prop) => m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
         name,
-        //config: setRedactor(prop)
         oncreate: setRedactor(prop)
     }),
 

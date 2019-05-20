@@ -7,15 +7,8 @@ import userBalanceTransactionRow from './user-balance-transaction-row';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceTransactions = {
-    oninit: function(vnode) {
-        vnode.attrs.balanceTransactionManager.load();
-
-        vnode.state = {
-            list: vnode.attrs.balanceTransactionManager.list
-        };
-    },
     view: function({state, attrs}) {
-        const list = state.list;
+        const userBalanceTransactionsList = attrs.userBalanceTransactionsList;
 
         return m('.w-section.section.card-terciary.before-footer.balance-transactions-area', [
             m('.w-container', [
@@ -24,7 +17,7 @@ const userBalanceTransactions = {
                     )
                 ].concat(
                     _.map(
-                        list.collection(), 
+                        userBalanceTransactionsList.collection(), 
                         (item, index) => m(userBalanceTransactionRow, { item, index })
                     )
                 )
@@ -32,13 +25,13 @@ const userBalanceTransactions = {
             m('.container', [
                 m('.w-row.u-margintop-40', [
                     m('.w-col.w-col-2.w-col-push-5', [
-                        !list.isLoading() ? 
+                        !userBalanceTransactionsList.isLoading() ? 
                             (
-                                list.isLastPage() ? 
+                                userBalanceTransactionsList.isLastPage() ? 
                                     '' 
                                 : 
                                     m('button#load-more.btn.btn-medium.btn-terciary', { 
-                                        onclick: list.nextPage
+                                        onclick: userBalanceTransactionsList.nextPage
                                     }, 'Carregar mais')
                             ) 
                         :

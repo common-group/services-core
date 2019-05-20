@@ -42,7 +42,7 @@ const projectReportDisrespectRules = {
           m('.w-form',
             m('form', {
                 onsubmit: state.sendReport,
-                config: attrs.checkScroll
+                oncreate: attrs.checkScroll
             },
                 [
                     m('.report-option.w-radio',

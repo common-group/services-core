@@ -141,7 +141,7 @@ const adminProjectDetail = {
                     }, 'Trocar realizador'),
                     (state.actions.changeUserAction.toggler() ? 
                         m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-                            config: state.actionUnload(state.actions.changeUserAction)
+                            oncreate: state.actionUnload(state.actions.changeUserAction)
                         }, [
                             m('form.w-form', {
                                 onsubmit: state.actions.changeUserAction.submit
