@@ -1160,7 +1160,9 @@ var adminContributionDetail = {
             l = _api.catarse.loaderWithToken(opts);
 
             if (reward_id) {
-                l.load().then(_underscore2.default.compose(reward, _underscore2.default.first));
+                l.load().then(_underscore2.default.compose(reward, _underscore2.default.first)).then(function () {
+                    return _mithril2.default.redraw();
+                });
             }
 
             return reward;
@@ -1237,7 +1239,7 @@ var adminContributionDetail = {
         return (0, _mithril2.default)('#admin-contribution-detail-box', [(0, _mithril2.default)('.divider.u-margintop-20.u-marginbottom-20'), (0, _mithril2.default)('.w-row.u-marginbottom-30', [(0, _mithril2.default)(_adminInputAction2.default, {
             data: actions.transfer,
             item: item
-        }), state.l() ? _h2.default.loader : (0, _mithril2.default)(_adminRadioAction2.default, {
+        }), state.l() ? _h2.default.loader() : (0, _mithril2.default)(_adminRadioAction2.default, {
             data: actions.reward,
             item: reward,
             getKeyValue: item.project_id,
@@ -1252,7 +1254,7 @@ var adminContributionDetail = {
             contribution: item
         }), (0, _mithril2.default)(_adminTransactionHistory2.default, {
             contribution: item
-        }), state.l() ? _h2.default.loader : (0, _mithril2.default)(_adminReward2.default, {
+        }), state.l() ? _h2.default.loader() : (0, _mithril2.default)(_adminReward2.default, {
             reward: reward,
             contribution: item,
             key: item.key
@@ -1313,15 +1315,19 @@ var adminContributionItem = {
         vnode.state = {
             itemBuilder: [{
                 component: _adminContributionUser2.default,
+                componentName: 'adminContributionUser',
                 wrapperClass: '.w-col.w-col-4'
             }, {
                 component: _adminProject2.default,
+                componentName: 'adminProject',
                 wrapperClass: '.w-col.w-col-4'
             }, {
                 component: _adminContribution2.default,
+                componentName: 'adminContribution',
                 wrapperClass: '.w-col.w-col-2'
             }, {
                 component: _paymentStatus2.default,
+                componentName: 'paymentStatus',
                 wrapperClass: '.w-col.w-col-2'
             }]
         };
@@ -1331,6 +1337,7 @@ var adminContributionItem = {
             attrs = _ref.attrs;
 
         return (0, _mithril2.default)('.w-row', _underscore2.default.map(state.itemBuilder, function (panel) {
+
             return (0, _mithril2.default)(panel.wrapperClass, [(0, _mithril2.default)(panel.component, {
                 item: attrs.item,
                 key: attrs.key
@@ -1782,13 +1789,11 @@ var adminItem = {
             class: selectedItem ? 'card-alert' : ''
         }, [(0, _mithril2.default)(attrs.listItem, {
             item: item,
-            listWrapper: attrs.listWrapper,
-            key: attrs.key
+            listWrapper: attrs.listWrapper
         }), (0, _mithril2.default)('button.w-inline-block.arrow-admin.fa.fa-chevron-down.fontcolor-secondary', {
             onclick: state.displayDetailBox.toggle
         }), state.displayDetailBox() ? (0, _mithril2.default)(attrs.listDetail, {
-            item: item,
-            key: attrs.key
+            item: item
         }) : '']);
     }
 };
@@ -3338,7 +3343,7 @@ var adminUserBalanceTransactionsList = {
         var userBalance = (0, _stream2.default)({}),
             transactionsListVM = _api.catarse.paginationVM(_models2.default.balanceTransaction, 'created_at.desc', { Prefer: 'count=exact' }),
             loadNextPage = function loadNextPage() {
-            return state.transactionsListVM.nextPage().then(function (_) {
+            return transactionsListVM.nextPage().then(function (_) {
                 return _mithril2.default.redraw();
             });
         };
@@ -3378,7 +3383,7 @@ var adminUserBalanceTransactionsList = {
                     return '';
                 }
             })])]);
-        }), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3.w-col-push-4', [state.transactionsListVM.isLoading() ? _h2.default.loader() : (0, _mithril2.default)('button#load-more.btn.btn-terciary', {
+        }), (0, _mithril2.default)('.w-row', [state.transactionsListVM.isLastPage() ? '' : (0, _mithril2.default)('.w-col.w-col-3.w-col-push-4', [state.transactionsListVM.isLoading() ? _h2.default.loader() : (0, _mithril2.default)('button#load-more.btn.btn-terciary', {
             onclick: state.loadNextPage
         }, window.I18n.t('shared.load_more'))])])]);
     }
@@ -9329,13 +9334,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var projectComments = {
     oninit: function oninit(vnode) {
-        var loadComments = function loadComments(el, isInitialized) {
-            return function (el, isInitialized) {
-                if (isInitialized) {
-                    return;
-                }
-                _h2.default.fbParse();
-            };
+        var loadComments = function loadComments(vnode) {
+            _h2.default.fbParse();
         };
 
         vnode.state = { loadComments: loadComments };
@@ -9345,7 +9345,7 @@ var projectComments = {
             attrs = _ref.attrs;
 
         var project = attrs.project();
-        return (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-7', (0, _mithril2.default)('.fb-comments[data-href="http://www.catarse.me/' + project.permalink + '"][data-num-posts=50][data-width="610"]', { config: state.loadComments() })), (0, _mithril2.default)('.w-col.w-col-5', (0, _mithril2.default)(_projectReport2.default))]);
+        return (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-7', (0, _mithril2.default)('.fb-comments[data-href="http://www.catarse.me/' + project.permalink + '"][data-num-posts=50][data-width="610"]', { oncreate: state.loadComments })), (0, _mithril2.default)('.w-col.w-col-5', (0, _mithril2.default)(_projectReport2.default))]);
     }
 };
 
@@ -23156,8 +23156,9 @@ var adminBalanceTranfers = {
         },
             generateWrapperModal = function generateWrapperModal(customAttrs) {
             var wrapper = {
-                view: function view(ctrl, _ref) {
-                    var attrs = _ref.attrs;
+                view: function view(_ref) {
+                    var state = _ref.state,
+                        attrs = _ref.attrs;
 
                     actionMenuToggle(false);
                     return (0, _mithril2.default)('', [(0, _mithril2.default)('.modal-dialog-header', [(0, _mithril2.default)('.fontsize-large.u-text-center', attrs.modalTitle)]), (0, _mithril2.default)('.modal-dialog-content', [(0, _mithril2.default)('.w-row.fontweight-semibold', [(0, _mithril2.default)('.w-col.w-col-6', 'Nome'), (0, _mithril2.default)('.w-col.w-col-3', 'Valor'), (0, _mithril2.default)('.w-col.w-col-3', 'Solicitado em')]), _underscore2.default.map(selectedItemsIDs(), function (item, index) {
@@ -27045,13 +27046,15 @@ var _projectContributionDeliveryLegendModal = __webpack_require__(/*! ../c/proje
 
 var _projectContributionDeliveryLegendModal2 = _interopRequireDefault(_projectContributionDeliveryLegendModal);
 
+var _projectContributionsListVm = __webpack_require__(/*! ../vms/project-contributions-list-vm */ "./legacy/src/vms/project-contributions-list-vm.js");
+
+var _projectContributionsListVm2 = _interopRequireDefault(_projectContributionsListVm);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var projectContributionReport = {
     oninit: function oninit(vnode) {
-        var listVM = _api.catarse.paginationVM(_models2.default.projectContribution, 'id.desc', {
-            Prefer: 'count=exact'
-        }),
+        var listVM = (0, _projectContributionsListVm2.default)(),
             filterVM = _projectsContributionReportVm2.default,
             project = (0, _stream2.default)([{}]),
             rewards = (0, _stream2.default)([]),
@@ -27104,9 +27107,9 @@ var projectContributionReport = {
         },
             submit = function submit() {
             if (filterVM.reward_id() === 'null') {
-                listVM.firstPage(filterVM.withNullParameters()).then(requestRedraw);
+                listVM.firstPage(filterVM.withNullParameters());
             } else {
-                listVM.firstPage(filterVM.parameters()).then(requestRedraw);
+                listVM.firstPage(filterVM.parameters());
             }
 
             return false;
@@ -27247,7 +27250,7 @@ var projectContributionReport = {
             if (_mithril2.default.route.param('rewardId')) {
                 filterVM.reward_id(_mithril2.default.route.param('rewardId'));
             }
-            listVM.firstPage(filterVM.parameters()).then(requestRedraw);
+            listVM.firstPage(filterVM.parameters());
         }
 
         vnode.state = {
@@ -28367,8 +28370,9 @@ var projectsPayment = {
         var user = state.user(),
             addVM = state.addVM(),
             project = state.project(),
+            isInternational = addVM.international && typeof addVM.international === 'function' && addVM.international(),
             formatedValue = _h2.default.formatNumber(Number(state.value), 2, 3),
-            anonymousCheckbox = (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)('input.w-checkbox-input[id=\'anonymous\'][name=\'anonymous\'][type=\'checkbox\']', {
+            anonymousCheckbox = (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)("input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']", {
             onclick: function onclick() {
                 return CatarseAnalytics.event({
                     cat: 'contribution_finish',
@@ -28379,7 +28383,7 @@ var projectsPayment = {
                 state.vm.fields.anonymous.toggle();
             },
             checked: state.vm.fields.anonymous()
-        }), (0, _mithril2.default)('label.w-form-label.fontsize-smallest[for=\'anonymous\']', window.I18n.t('fields.anonymous', state.scope()))]), state.vm.fields.anonymous() ? (0, _mithril2.default)('.card.card-message.u-radius.zindex-10.fontsize-smallest', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-bold', [window.I18n.t('anonymous_confirmation_title', state.scope()), (0, _mithril2.default)('br')]), (0, _mithril2.default)('br'), window.I18n.t('anonymous_confirmation', state.scope())])) : '']);
+        }), (0, _mithril2.default)("label.w-form-label.fontsize-smallest[for='anonymous']", window.I18n.t('fields.anonymous', state.scope()))]), state.vm.fields.anonymous() ? (0, _mithril2.default)('.card.card-message.u-radius.zindex-10.fontsize-smallest', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-bold', [window.I18n.t('anonymous_confirmation_title', state.scope()), (0, _mithril2.default)('br')]), (0, _mithril2.default)('br'), window.I18n.t('anonymous_confirmation', state.scope())])) : '']);
 
         return (0, _mithril2.default)('#project-payment.w-section.w-clearfix.section', addVM && !_underscore2.default.isEmpty(project) ? [(0, _mithril2.default)('.w-col', (0, _mithril2.default)('.w-clearfix.w-hidden-main.w-hidden-medium.card.u-radius.u-marginbottom-20', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-20', window.I18n.t('selected_reward.value', state.scope())), (0, _mithril2.default)('.w-clearfix', [(0, _mithril2.default)('.fontsize-larger.text-success.u-left', 'R$ ' + formatedValue), (0, _mithril2.default)('a.alt-link.fontsize-smaller.u-right[href="/projects/' + _projectVm2.default.currentProject().project_id + '/contributions/new' + (state.reward().id ? '?reward_id=' + state.reward().id : '') + '"]', 'Editar')]), (0, _mithril2.default)('.divider.u-marginbottom-10.u-margintop-10'), (0, _mithril2.default)('.back-payment-info-reward', [(0, _mithril2.default)('.fontsize-smaller.fontweight-semibold.u-marginbottom-10', window.I18n.t('selected_reward.reward', state.scope())), (0, _mithril2.default)('.fontsize-smallest.fontweight-semibold', state.reward().title), (0, _mithril2.default)('.fontsize-smallest.reward-description.opened.fontcolor-secondary', {
             class: state.isLongDescription(state.reward()) ? state.toggleDescription() ? 'extended' : '' : 'extended'
@@ -28396,14 +28400,14 @@ var projectsPayment = {
             defaultCountryID: addVM.defaultCountryID,
             defaultForeignCountryID: addVM.defaultForeignCountryID,
             international: addVM.international
-        })), user.name && user.owner_document ? '' : (0, _mithril2.default)('.card.card-terciary.u-radius.u-marginbottom-40', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-7.w-sub-col', [(0, _mithril2.default)('label.field-label.fontweight-semibold[for=\'complete-name\']', window.I18n.t('fields.complete_name', state.scope())), (0, _mithril2.default)('input.positive.w-input.text-field[id=\'complete-name\'][name=\'complete-name\']', {
+        })), user.name && user.owner_document ? '' : (0, _mithril2.default)('.card.card-terciary.u-radius.u-marginbottom-40', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-7.w-sub-col', [(0, _mithril2.default)("label.field-label.fontweight-semibold[for='complete-name']", window.I18n.t('fields.complete_name', state.scope())), (0, _mithril2.default)("input.positive.w-input.text-field[id='complete-name'][name='complete-name']", {
             onfocus: state.vm.resetFieldError('completeName'),
             class: state.fieldHasError('completeName') ? 'error' : false,
             type: 'text',
             onchange: _mithril2.default.withAttr('value', state.vm.fields.completeName),
             value: state.vm.fields.completeName(),
             placeholder: 'Nome Completo'
-        }), state.fieldHasError('completeName')]), (0, _mithril2.default)('.w-col.w-col-5', addVM.international() ? '' : [(0, _mithril2.default)('label.field-label.fontweight-semibold[for=\'document\']', window.I18n.t('fields.owner_document', state.scope())), (0, _mithril2.default)('input.positive.w-input.text-field[id=\'document\']', {
+        }), state.fieldHasError('completeName')]), (0, _mithril2.default)('.w-col.w-col-5', isInternational ? '' : [(0, _mithril2.default)("label.field-label.fontweight-semibold[for='document']", window.I18n.t('fields.owner_document', state.scope())), (0, _mithril2.default)("input.positive.w-input.text-field[id='document']", {
             onfocus: state.vm.resetFieldError('ownerDocument'),
             class: state.fieldHasError('ownerDocument') ? 'error' : false,
             type: 'tel',
@@ -29364,6 +29368,10 @@ var _projectsContributionReportVm = __webpack_require__(/*! ../vms/projects-cont
 
 var _projectsContributionReportVm2 = _interopRequireDefault(_projectsContributionReportVm);
 
+var _projectSubscriptionsListVm = __webpack_require__(/*! ../vms/project-subscriptions-list-vm */ "./legacy/src/vms/project-subscriptions-list-vm.js");
+
+var _projectSubscriptionsListVm2 = _interopRequireDefault(_projectSubscriptionsListVm);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var statusCustomFilter = {
@@ -29394,16 +29402,14 @@ var projectSubscriptionReport = {
             isRewardsDataLoaded = (0, _stream2.default)(false),
             rewards = (0, _stream2.default)([]),
             requestRedraw = _h2.default.createRequestAutoRedraw(isProjectDataLoaded, rewards),
-            subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'last_payment_data_created_at.desc', {
-            Prefer: 'count=exact'
-        }),
+            subscriptions = (0, _projectSubscriptionsListVm2.default)(),
             submit = function submit() {
             // Set order by last paid on filters too
             filterVM.order({ last_payment_data_created_at: 'desc' });
             if (filterVM.reward_external_id() === 'null') {
-                subscriptions.firstPage(filterVM.withNullParameters()).then(requestRedraw);
+                subscriptions.firstPage(filterVM.withNullParameters());
             } else {
-                subscriptions.firstPage(filterVM.parameters()).then(requestRedraw);
+                subscriptions.firstPage(filterVM.parameters());
             }
 
             return false;
@@ -29577,7 +29583,7 @@ var projectSubscriptionReport = {
             subscriptions.firstPage(filterVM.parameters()).then(function () {
                 loader(false);
                 isProjectDataLoaded(true);
-                requestRedraw();
+                _mithril2.default.redraw();
             }).catch(handleError);
             project(data);
         });
@@ -33658,6 +33664,59 @@ exports.default = projectCardVM;
 
 /***/ }),
 
+/***/ "./legacy/src/vms/project-contributions-list-vm.js":
+/*!*********************************************************!*\
+  !*** ./legacy/src/vms/project-contributions-list-vm.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
+
+var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
+
+var _models2 = _interopRequireDefault(_models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var projectContributionsListVM = function projectContributionsListVM() {
+    var listVM = _api.catarse.paginationVM(_models2.default.projectContribution, 'id.desc', {
+        Prefer: 'count=exact'
+    });
+
+    return {
+        firstPage: function firstPage(parameters) {
+            return listVM.firstPage(parameters).then(function () {
+                return _mithril2.default.redraw();
+            });
+        },
+        nextPage: function nextPage() {
+            return listVM.nextPage().then(function () {
+                return _mithril2.default.redraw();
+            });
+        },
+        isLoading: listVM.isLoading,
+        collection: listVM.collection,
+        isLastPage: listVM.isLastPage,
+        total: listVM.total
+    };
+};
+
+exports.default = projectContributionsListVM;
+
+/***/ }),
+
 /***/ "./legacy/src/vms/project-description-video-vm.js":
 /*!********************************************************!*\
   !*** ./legacy/src/vms/project-description-video-vm.js ***!
@@ -34316,6 +34375,63 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _models2.default.adminProject.pageSize(9);
 exports.default = _api.catarse.paginationVM(_models2.default.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
+
+/***/ }),
+
+/***/ "./legacy/src/vms/project-subscriptions-list-vm.js":
+/*!*********************************************************!*\
+  !*** ./legacy/src/vms/project-subscriptions-list-vm.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
+
+var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
+
+var _models2 = _interopRequireDefault(_models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var projectSubscriptionsListVM = function projectSubscriptionsListVM() {
+    // const listVM = catarse.paginationVM(models.projectContribution, 'id.desc', {
+    //     Prefer: 'count=exact',
+    // });
+
+    var subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'last_payment_data_created_at.desc', {
+        Prefer: 'count=exact'
+    });
+
+    return {
+        firstPage: function firstPage(parameters) {
+            return subscriptions.firstPage(parameters).then(function () {
+                return _mithril2.default.redraw();
+            });
+        },
+        nextPage: function nextPage() {
+            return subscriptions.nextPage().then(function () {
+                return _mithril2.default.redraw();
+            });
+        },
+        isLoading: subscriptions.isLoading,
+        collection: subscriptions.collection,
+        isLastPage: subscriptions.isLastPage,
+        total: subscriptions.total
+    };
+};
+
+exports.default = projectSubscriptionsListVM;
 
 /***/ }),
 
@@ -36451,7 +36567,9 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
 
         loaders().push(popular);
 
-        popular.load().then(_underscore2.default.compose(collection, sample3));
+        popular.load().then(_underscore2.default.compose(collection, sample3)).then(function () {
+            return _mithril2.default.redraw();
+        });
     };
 
     var pushProject = function pushProject(_ref) {
@@ -36462,6 +36580,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
         loaders().push(project);
         project.load().then(function (data) {
             collection().push(_underscore2.default.first(data));
+            _mithril2.default.redraw();
         });
     };
 
@@ -36473,6 +36592,7 @@ var getUserRecommendedProjects = function getUserRecommendedProjects(contributio
         } else {
             loadPopular();
         }
+        _mithril2.default.redraw();
     });
 
     return {
