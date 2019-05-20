@@ -2142,7 +2142,7 @@ var adminProjectDetail = {
         return (0, _mithril2.default)('#admin-contribution-detail-box', [(0, _mithril2.default)('.divider.u-margintop-20.u-marginbottom-20'), (0, _mithril2.default)('.w-row.u-marginbottom-30', [(0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('button.btn.btn-small.btn-terciary', {
             onclick: state.actions.changeUserAction.toggler.toggle
         }, 'Trocar realizador'), state.actions.changeUserAction.toggler() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-            config: state.actionUnload(state.actions.changeUserAction)
+            oncreate: state.actionUnload(state.actions.changeUserAction)
         }, [(0, _mithril2.default)('form.w-form', {
             onsubmit: state.actions.changeUserAction.submit
         }, !state.actions.changeUserAction.complete() ? [(0, _mithril2.default)('label', 'Id do novo realizador:'), (0, _mithril2.default)('input.w-input.text-field[type="tel"][placeholder="ex: 239049"]', {
@@ -2458,12 +2458,10 @@ var adminRadioAction = {
             return false;
         };
 
-        var unload = function unload(el, isinit, context) {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-                newID('');
-            };
+        var unload = function unload() {
+            complete(false);
+            error(false);
+            newID('');
         };
 
         var setDescription = function setDescription(text) {
@@ -2497,7 +2495,7 @@ var adminRadioAction = {
 
         return (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('button.btn.btn-small.btn-terciary', {
             onclick: state.toggler.toggle
-        }, data.outerLabel), state.toggler() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', { config: state.unload }, [(0, _mithril2.default)('form.w-form', {
+        }, data.outerLabel), state.toggler() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', { onremove: state.unload }, [(0, _mithril2.default)('form.w-form', {
             onsubmit: state.submit
         }, !state.complete() ? [state.radios() ? _underscore2.default.map(state.radios(), function (radio, index) {
             return (0, _mithril2.default)('.w-radio', [(0, _mithril2.default)('input#r-' + index + '.w-radio-input[type=radio][name="admin-radio"][value="' + radio.id + '"]', {
@@ -2600,11 +2598,9 @@ var adminResetPassword = {
             return false;
         };
 
-        var unload = function unload(el, isinit, context) {
-            context.onunload = function () {
-                complete(false);
-                error(false);
-            };
+        var unload = function unload() {
+            complete(false);
+            error(false);
         };
 
         vnode.state = {
@@ -2628,7 +2624,7 @@ var adminResetPassword = {
         return (0, _mithril2.default)('.w-col.w-col-2', [(0, _mithril2.default)('button.btn.btn-small.btn-terciary', {
             onclick: state.toggler.toggle
         }, data.outerLabel), state.toggler() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', {
-            config: state.unload
+            onremove: state.unload
         }, [(0, _mithril2.default)('form.w-form', {
             onsubmit: state.submit
         }, !state.complete() ? [(0, _mithril2.default)('label', data.innerLabel), (0, _mithril2.default)('input.w-input.text-field[type="text"][name="' + data.property + '"][placeholder="' + data.placeholder + '"]', {
@@ -4083,24 +4079,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var copyTextInput = {
     oninit: function oninit(vnode) {
         var showSuccess = (0, _stream2.default)(false);
-        var setClickHandler = function setClickHandler(el, isInitialized) {
+        var setClickHandler = function setClickHandler(localVnode) {
             var copy = void 0;
-            if (!isInitialized) {
-                var textarea = el.parentNode.previousSibling.firstChild;
+            var el = localVnode.dom;
+            var textarea = el.parentNode.previousSibling.firstChild;
 
-                textarea.innerText = vnode.attrs.value; // This fixes an issue when instantiating multiple copy clipboard components
-                el.onclick = function () {
-                    (0, _select2.default)(textarea);
-                    copy = document.execCommand('copy');
-                    if (copy) {
-                        showSuccess(true);
-                        _mithril2.default.redraw();
-                    } else {
-                        textarea.blur();
-                    }
-                    return false;
-                };
-            }
+            textarea.innerText = vnode.attrs.value; // This fixes an issue when instantiating multiple copy clipboard components
+            el.onclick = function () {
+                (0, _select2.default)(textarea);
+                copy = document.execCommand('copy');
+                if (copy) {
+                    showSuccess(true);
+                    _mithril2.default.redraw();
+                } else {
+                    textarea.blur();
+                }
+                return false;
+            };
         };
 
         vnode.state = {
@@ -4115,7 +4110,7 @@ var copyTextInput = {
         return (0, _mithril2.default)('.clipboard.w-row', [(0, _mithril2.default)('.w-col.w-col-10.w-col-small-10.w-col-tiny-10', (0, _mithril2.default)('textarea.copy-textarea.text-field.w-input', {
             style: 'margin-bottom:0;'
         }, attrs.value)), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
-            config: state.setClickHandler
+            oncreate: state.setClickHandler
         })), state.showSuccess() ? (0, _mithril2.default)(_popNotification2.default, { message: 'Link copiado' }) : '']);
     }
 };
@@ -6762,7 +6757,7 @@ var landingSignup = {
         return (0, _mithril2.default)('form.w-form[id="email-form"][method="post"][action="' + attrs.builder.customAction + '"]', {
             onsubmit: state.submit
         }, [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('input' + errorClasses + '.w-input.text-field.medium[name="EMAIL"][placeholder="Digite seu email"][type="text"]', {
-            config: _h2.default.RDTracker('landing-flex'),
+            oncreate: _h2.default.RDTracker('landing-flex'),
             onchange: _mithril2.default.withAttr('value', state.email),
             value: state.email()
         }), state.error() ? (0, _mithril2.default)('span.fontsize-smaller.text-error', 'E-mail inválido') : '']), (0, _mithril2.default)('.w-col.w-col-3', [(0, _mithril2.default)('input.w-button.btn.btn-large[type="submit"][value="Cadastrar"]')])]);
@@ -8065,7 +8060,7 @@ var popNotification = {
             attrs = _ref.attrs;
 
         return state.displayNotification() ? (0, _mithril2.default)('.flash.w-clearfix.card.card-notification.u-radius.zindex-20', {
-            config: state.setPopTimeout,
+            oncreate: state.setPopTimeout,
             class: attrs.error ? 'card-error' : ''
         }, [(0, _mithril2.default)('img.icon-close[src="/assets/catarse_bootstrap/x.png"][width="12"][alt="fechar"]', {
             onclick: state.displayNotification.toggle
@@ -12782,10 +12777,8 @@ var projectPosts = {
         var listVM = _api.catarse.paginationVM(_models2.default.projectPostDetail),
             filterVM = _api.catarse.filtersVM({ project_id: 'eq', id: 'eq' });
 
-        var scrollTo = function scrollTo(el, isInit) {
-            if (!isInit) {
-                _h2.default.animateScrollTo(el);
-            }
+        var scrollTo = function scrollTo(localVnode) {
+            _h2.default.animateScrollTo(localVnode.dom);
         };
 
         filterVM.project_id(vnode.attrs.project().project_id);
@@ -12828,7 +12821,7 @@ var projectPosts = {
         };
 
         return (0, _mithril2.default)('#posts.project-posts.w-section', {
-            config: state.scrollTo
+            oncreate: state.scrollTo
         }, [(0, _mithril2.default)('.w-container.u-margintop-20', [project.is_owner_or_admin ? [!list.isLoading() ? _underscore2.default.isEmpty(list.collection()) ? (0, _mithril2.default)('.w-hidden-small.w-hidden-tiny', [(0, _mithril2.default)('.fontsize-base.u-marginbottom-30.u-margintop-20', 'Toda novidade publicada no Catarse é enviada diretamente para o email de quem já apoiou seu projeto e também fica disponível para visualização no site. Você pode optar por deixá-la pública, ou visível somente para seus apoiadores aqui nesta aba.')]) : '' : '', (0, _mithril2.default)('.w-row.u-marginbottom-20', [(0, _mithril2.default)('.w-col.w-col-4.w-col-push-4', [(0, _mithril2.default)('a.btn.btn-edit.btn-small[href=\'/' + window.I18n.locale + '/projects/' + project.project_id + '/posts\']', 'Escrever novidade')])])] : '', _underscore2.default.map(list.collection(), function (post) {
             return (0, _mithril2.default)('.w-row', [_underscore2.default.isEmpty(post.comment_html) ? [(0, _mithril2.default)('.fontsize-small.fontcolor-secondary.u-text-center', _h2.default.momentify(post.created_at)), (0, _mithril2.default)('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [(0, _mithril2.default)('a.link-hidden[href="/projects/' + post.project_id + '/posts/' + post.id + '#posts"]', post.title)]), (0, _mithril2.default)('.card.card-message.u-radius.card-big.u-text-center.u-marginbottom-60', [(0, _mithril2.default)('.fa.fa-lock.fa-3x.fontcolor-secondary', ''), project.mode === 'sub' ? [(0, _mithril2.default)('.fontsize-base.fontweight-semibold.u-marginbottom-20', postTextSubscription(post)), (0, _mithril2.default)('a.btn.btn-medium.btn-inline.w-button[href="/projects/' + post.project_id + '/subscriptions/start' + (post.rewards_that_can_access_post ? '?reward_id=' + minimumValueRewardId(post) : '') + '"]', 'Acessar esse post')] : [(0, _mithril2.default)('.fontsize-base.fontweight-semibold.u-marginbottom-20', postTextContribution(post)), (0, _mithril2.default)('a.btn.btn-medium.btn-inline.w-button[href="/projects/' + post.project_id + '/contributions/new' + (post.rewards_that_can_access_post ? '?reward_id=' + minimumValueRewardId(post) : '') + '"]', 'Acessar esse post')]])] : [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-8', [(0, _mithril2.default)('.post', [(0, _mithril2.default)('.u-marginbottom-60 .w-clearfix', [(0, _mithril2.default)('.fontsize-small.fontcolor-secondary.u-text-center', _h2.default.momentify(post.created_at)), (0, _mithril2.default)('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [(0, _mithril2.default)('a.link-hidden[href="/projects/' + post.project_id + '/posts/' + post.id + '#posts"]', post.title)]), (0, _mithril2.default)('.fontsize-base', _mithril2.default.trust(post.comment_html))]), (0, _mithril2.default)('.divider.u-marginbottom-60')])]), (0, _mithril2.default)('.w-col.w-col-2')]]);
         }), (0, _mithril2.default)('.w-row', [!_underscore2.default.isUndefined(attrs.post_id) ? (0, _mithril2.default)('.w-col.w-col-2.w-col-push-5', (0, _mithril2.default)('a#load-more.btn.btn-medium.btn-terciary[href=\'/projects/' + project.project_id + '#posts\']', {}, 'Ver todos')) : !list.isLoading() ? list.collection().length === 0 && attrs.projectContributions().length === 0 ? !project.is_owner_or_admin ? (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', (0, _mithril2.default)('p.fontsize-base', _mithril2.default.trust(window.I18n.t('empty', I18nScope({
@@ -13073,7 +13066,7 @@ var projectReportDisrespectRules = {
 
         return (0, _mithril2.default)('.card.u-radius.u-margintop-20', (0, _mithril2.default)('.w-form', (0, _mithril2.default)('form', {
             onsubmit: state.sendReport,
-            config: attrs.checkScroll
+            oncreate: attrs.checkScroll
         }, [(0, _mithril2.default)('.report-option.w-radio', [(0, _mithril2.default)('input.w-radio-input[type=\'radio\']', {
             value: state.formName,
             checked: attrs.displayFormWithName() === state.formName,
@@ -13194,7 +13187,7 @@ var projectReportInfringesIntellectualProperty = {
 
 		return (0, _mithril2.default)('.card.u-radius.u-margintop-20', (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('form', {
 			onsubmit: state.sendReport,
-			config: state.checkScroll
+			oncreate: state.checkScroll
 		}, [(0, _mithril2.default)('.report-option.w-radio', [(0, _mithril2.default)('input.w-radio-input[type=\'radio\']', {
 			value: state.formName,
 			onchange: _mithril2.default.withAttr('value', attrs.displayFormWithName),
@@ -13256,16 +13249,16 @@ var projectReportInfringesIntellectualProperty = {
 			}
 		}), assertError(state.detailsError(), 'Informe os detalhes da denúncia')]),
 		/*
-  m('.u-marginbottom-30',
-  [
-  m('.fontsize-smaller.fontweight-semibold',
-  'Documentos comprobatórios'
-  ),
-  m('.fontsize-smaller.fontcolor-secondary',
-  'Faça upload de documentos que possam ajudar na denúncia. Caso você tenha mais de 01 documento, por favor junte todos em um único arquivo comprimido.'
-  )
-  ]
-  ), */
+  			  m('.u-marginbottom-30',
+  				  [
+  						m('.fontsize-smaller.fontweight-semibold',
+  							'Documentos comprobatórios'
+  						 ),
+  						m('.fontsize-smaller.fontcolor-secondary',
+  							'Faça upload de documentos que possam ajudar na denúncia. Caso você tenha mais de 01 documento, por favor junte todos em um único arquivo comprimido.'
+  						 )
+  				  ]
+  			   ), */
 		(0, _mithril2.default)('.u-marginbottom-40', [(0, _mithril2.default)('.w-checkbox', [(0, _mithril2.default)('input.w-checkbox-input[id=\'checkbox\'][type=\'checkbox\']', {
 			value: attrs.termsAgreed(),
 			onchange: function onchange() {
@@ -13528,10 +13521,8 @@ var projectReport = {
             submitDisabled(false);
             return false;
         },
-            checkScroll = function checkScroll(el, isInit) {
-            if (!isInit && hasPendingAction) {
-                _h2.default.animateScrollTo(el);
-            }
+            checkScroll = function checkScroll(localVnode) {
+            _h2.default.animateScrollTo(localVnode.dom);
         };
 
         if (!_underscore2.default.isEmpty(user) && hasPendingAction) {
@@ -13655,8 +13646,8 @@ var projectRewardCard = {
             return false;
         };
 
-        var setInput = function setInput(el, isInitialized) {
-            return !isInitialized ? el.focus() : false;
+        var setInput = function setInput(localVnode) {
+            return localVnode.dom.focus();
         };
 
         var selectDestination = function selectDestination(destination) {
@@ -13771,7 +13762,7 @@ var projectRewardCard = {
         }, _underscore2.default.map(state.locationOptions(reward, state.selectedDestination), function (option) {
             return (0, _mithril2.default)('option', { selected: option.value === state.selectedDestination(), value: option.value }, [option.name + ' ', option.value != '' ? '+R$' + _h2.default.formatNumber(option.fee, 2, 3) : null]);
         }))]) : '', (0, _mithril2.default)('.fontcolor-secondary.u-marginbottom-10', 'Valor do apoio' + (isSub ? ' mensal' : '')), (0, _mithril2.default)('.w-row.u-marginbottom-20', [(0, _mithril2.default)('.w-col.w-col-3.w-col-small-3.w-col-tiny-3', (0, _mithril2.default)('.back-reward-input-reward.placeholder', 'R$')), (0, _mithril2.default)('.w-col.w-col-9.w-col-small-9.w-col-tiny-9', (0, _mithril2.default)('input.w-input.back-reward-input-reward[type="tel"]', {
-            config: state.setInput,
+            oncreate: state.setInput,
             onkeyup: _mithril2.default.withAttr('value', state.applyMask),
             value: state.contributionValue()
         }))]), (0, _mithril2.default)('input.w-button.btn.btn-medium[type="submit"][value="Continuar >"]'), state.error().length > 0 ? (0, _mithril2.default)('.text-error', [(0, _mithril2.default)('br'), (0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' ' + state.error()]) : ''])]) : ''] : '']);
@@ -13932,7 +13923,9 @@ var projectRowWithHeader = {
             showFriendsLinkComponent = showFriends ? (0, _mithril2.default)('a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only.btn-no-border[href="/connect-facebook?ref=' + ref + '"]', 'Encontrar amigos') : '',
             collectionHeaderComponent = !_underscore2.default.isUndefined(collection.title) || !_underscore2.default.isUndefined(collection.hash) ? (0, _mithril2.default)('.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('div', _underscore2.default.map(collection.badges, function (badge) {
             return (0, _mithril2.default)('img[src="/assets/catarse_bootstrap/' + badge + '.png"][width=\'105\']');
-        })), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-larger.u-marginbottom-20', '' + title)), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=' + ref + '&filter=' + collection.hash + '"]', { oncreate: _mithril2.default.route.link }, 'Ver todos'), showFriendsLinkComponent])])]) : '',
+        })), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-larger.u-marginbottom-20', '' + title)), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=' + ref + '&filter=' + collection.hash + '"]', {
+            oncreate: _mithril2.default.route.link
+        }, 'Ver todos'), showFriendsLinkComponent])])]) : '',
             projectsOrLoadingIconComponent = collection.loader() ? _h2.default.loader() : (0, _mithril2.default)('.w-row', _underscore2.default.map(collection.collection(), function (project) {
             return (0, _mithril2.default)(_projectCard2.default, {
                 project: project,
@@ -14698,8 +14691,7 @@ var projectSuccessfulOnboard = {
             projectTransfers = (0, _stream2.default)([]),
             showTaxModal = _h2.default.toggleProp(false, true),
             loader = _api.catarse.loaderWithToken,
-            listenToReplace = function listenToReplace(element, isInitialized, context) {
-            if (isInitialized) return;
+            listenToReplace = function listenToReplace(localVnode) {
 
             var toRedraw = {
                 tax_link: {
@@ -14711,7 +14703,7 @@ var projectSuccessfulOnboard = {
                 }
             };
 
-            _underscore2.default.map(element.children, function (item) {
+            _underscore2.default.map(localVnode.dom.children, function (item) {
                 var toR = toRedraw[item.getAttribute('id')];
 
                 if (toR) {
@@ -14754,7 +14746,7 @@ var projectSuccessfulOnboard = {
                 projectTransfer: projectTransfer
             }]
         }) : '', !lpa() && !lpt() ? (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-40', [(0, _mithril2.default)('.w-col.w-col-6.w-col-push-3', [(0, _mithril2.default)('.u-text-center', [(0, _mithril2.default)('img.u-marginbottom-20', { src: window.I18n.t('finished.icon', I18nScope()), width: 94 }), (0, _mithril2.default)('.fontsize-large.fontweight-semibold.u-marginbottom-20', window.I18n.t('finished.title', I18nScope())), (0, _mithril2.default)('.fontsize-base.u-marginbottom-30', {
-            config: state.listenToReplace
+            oncreate: state.listenToReplace
         }, _mithril2.default.trust(window.I18n.t('finished.text', I18nScope({ link_news: '/projects/' + attrs.project().id + '/posts', link_surveys: '/projects/' + attrs.project().id + '/surveys' }))))]
         // m('a.btn.btn-large.btn-inline', { href: `/users/${attrs.project().user_id}/edit#balance` }, window.I18n.t('start.cta', I18nScope()))
         )])])]) : _h2.default.loader()]);
@@ -14983,11 +14975,9 @@ var projectTabs = {
             };
         };
 
-        var navDisplay = function navDisplay(el, isInitialized) {
-            if (!isInitialized) {
-                var fixNavBar = fixOnScroll(el);
-                window.addEventListener('scroll', fixNavBar);
-            }
+        var navDisplay = function navDisplay(localVnode) {
+            var fixNavBar = fixOnScroll(localVnode.dom);
+            window.addEventListener('scroll', fixNavBar);
         };
 
         var navigate = function navigate(event) {
@@ -15017,7 +15007,7 @@ var projectTabs = {
             rewards = attrs.rewardDetails;
 
         return (0, _mithril2.default)('nav-wrapper', project() ? [(0, _mithril2.default)('.w-section.project-nav', {
-            config: state.navDisplay
+            oncreate: state.navDisplay
         }, [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', [!_underscore2.default.isEmpty(rewards()) ? (0, _mithril2.default)('a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf  ' + (_h2.default.hashMatch('#rewards') || _h2.default.mobileScreen() && _h2.default.hashMatch('') ? 'selected' : '') + '"][href="/' + project().permalink + '#rewards"]', {
             style: 'float: left;',
             onclick: _h2.default.analytics.event({
@@ -15688,8 +15678,8 @@ var rewardSelectCard = {
     oninit: function oninit(vnode) {
         var MINIMUM_VALUE = 10;
         var queryRewardValue = _h2.default.getParams('value');
-        var setInput = function setInput(el, isInitialized) {
-            return !isInitialized ? el.focus() : null;
+        var setInput = function setInput(localVnode) {
+            return localVnode.dom.focus();
         };
         var isSelected = function isSelected(currentReward) {
             return currentReward.id == null && !_rewardVm2.default.selectedReward() && queryRewardValue || _rewardVm2.default.selectedReward() && currentReward.id === _rewardVm2.default.selectedReward().id;
@@ -15797,7 +15787,7 @@ var rewardSelectCard = {
             min: reward.minimum_value,
             placeholder: reward.minimum_value,
             type: 'tel',
-            config: state.setInput,
+            oncreate: state.setInput,
             onkeyup: _mithril2.default.withAttr('value', state.applyMask),
             value: state.contributionValue()
         }))]), (0, _mithril2.default)('.fontsize-smaller.text-error.u-marginbottom-20.w-hidden', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O valor do apoio está incorreto'])]), (0, _mithril2.default)('.submit-form.w-col.w-col-4', (0, _mithril2.default)('button.btn.btn-medium.u-margintop-30', {
@@ -16020,21 +16010,19 @@ var slider = {
             clearInterval(interval);
             startSliderTimer();
         },
-            config = function config(el, isInitialized, context) {
-            if (!isInitialized) {
-                translationSize(Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
-                _mithril2.default.redraw();
-            }
-
-            context.onunload = function () {
-                return clearInterval(interval);
-            };
+            translationSizeAndRedraw = function translationSizeAndRedraw(localVnode) {
+            translationSize(Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
+            _mithril2.default.redraw();
+        },
+            clearTheIntervalSettle = function clearTheIntervalSettle(localVnode) {
+            return clearInterval(interval);
         };
 
         startSliderTimer();
 
         vnode.state = {
-            config: config,
+            translationSizeAndRedraw: translationSizeAndRedraw,
+            clearTheIntervalSettle: clearTheIntervalSettle,
             selectedSlideIdx: selectedSlideIdx,
             translationSize: translationSize,
             decrementSlide: decrementSlide,
@@ -16062,7 +16050,8 @@ var slider = {
         };
 
         return (0, _mithril2.default)('.w-slider.' + wrapperClass, {
-            config: state.config
+            oncreate: state.translationSizeAndRedraw,
+            onremove: state.clearTheIntervalSettle
         }, [(0, _mithril2.default)('.fontsize-larger', attrs.title), (0, _mithril2.default)('.w-slider-mask', [_underscore2.default.map(attrs.slides, function (slide, idx) {
             var translateValue = (idx - state.selectedSlideIdx()) * state.translationSize(),
                 translateStr = 'translate3d(' + translateValue + 'px, 0, 0)';
@@ -16949,29 +16938,26 @@ var tooltip = {
             _mithril2.default.redraw();
         };
 
-        var setParentPosition = function setParentPosition(el, isInitialized) {
-            if (!isInitialized) {
-                parentOffset(_h2.default.cumulativeOffset(el));
-            }
+        var setParentPosition = function setParentPosition(localVnode) {
+            parentOffset(_h2.default.cumulativeOffset(localVnode.dom));
         },
-            setPosition = function setPosition(el, isInitialized) {
-            if (!isInitialized) {
-                var elTop = el.offsetHeight + el.offsetParent.offsetHeight;
-                var style = window.getComputedStyle(el);
+            setPosition = function setPosition(localVnode) {
+            var el = localVnode.dom;
+            var elTop = el.offsetHeight + el.offsetParent.offsetHeight;
+            var style = window.getComputedStyle(el);
 
-                if (window.innerWidth < el.offsetWidth + 2 * parseFloat(style.paddingLeft) + 30) {
-                    // 30 here is a safe margin
-                    el.style.width = window.innerWidth - 30; // Adding the safe margin
-                    left(-parentOffset().left + 15); // positioning center of window, considering margin
-                } else if (parentOffset().left + el.offsetWidth / 2 <= window.innerWidth && parentOffset().left - el.offsetWidth / 2 >= 0) {
-                    left(-el.offsetWidth / 2); // Positioning to the center
-                } else if (parentOffset().left + el.offsetWidth / 2 > window.innerWidth) {
-                    left(-el.offsetWidth + el.offsetParent.offsetWidth); // Positioning to the left
-                } else if (parentOffset().left - el.offsetWidth / 2 < 0) {
-                    left(-el.offsetParent.offsetWidth); // Positioning to the right
-                }
-                top(-elTop); // Setting top position
+            if (window.innerWidth < el.offsetWidth + 2 * parseFloat(style.paddingLeft) + 30) {
+                // 30 here is a safe margin
+                el.style.width = window.innerWidth - 30; // Adding the safe margin
+                left(-parentOffset().left + 15); // positioning center of window, considering margin
+            } else if (parentOffset().left + el.offsetWidth / 2 <= window.innerWidth && parentOffset().left - el.offsetWidth / 2 >= 0) {
+                left(-el.offsetWidth / 2); // Positioning to the center
+            } else if (parentOffset().left + el.offsetWidth / 2 > window.innerWidth) {
+                left(-el.offsetWidth + el.offsetParent.offsetWidth); // Positioning to the left
+            } else if (parentOffset().left - el.offsetWidth / 2 < 0) {
+                left(-el.offsetParent.offsetWidth); // Positioning to the right
             }
+            top(-elTop); // Setting top position
         };
 
         vnode.state = {
@@ -16992,10 +16978,10 @@ var tooltip = {
         var width = state.width();
         return (0, _mithril2.default)(attrs.el, {
             onclick: state.toggle,
-            config: state.setParentPosition,
+            oncreate: state.setParentPosition,
             style: { cursor: 'pointer' }
         }, state.tooltip() ? [(0, _mithril2.default)('.tooltip.dark[style="width: ' + width + 'px; top: ' + state.top() + 'px; left: ' + state.left() + 'px;"]', {
-            config: state.setPosition
+            oncreate: state.setPosition
         }, [(0, _mithril2.default)('.fontsize-smallest', attrs.text)])] : '');
     }
 }; /**
@@ -17295,12 +17281,10 @@ var userAboutEdit = {
 
             return !passwordHasError();
         },
-            setDeleteForm = function setDeleteForm(el, isInit) {
-            if (!isInit) {
-                deleteUser = function deleteUser() {
-                    return el.submit();
-                };
-            }
+            setDeleteForm = function setDeleteForm(localVnode) {
+            deleteUser = function deleteUser() {
+                return localVnode.dom.submit();
+            };
         },
             deleteAccount = function deleteAccount() {
             if (window.confirm('Tem certeza que deseja desativar a sua conta?')) {
@@ -17440,7 +17424,7 @@ var userAboutEdit = {
         }, 'Desativar minha conta no Catarse'), (0, _mithril2.default)('form.w-hidden', {
             action: '/' + window.I18n.locale + '/users/' + user.id,
             method: 'post',
-            config: state.setDeleteForm
+            oncreate: state.setDeleteForm
         }, [(0, _mithril2.default)('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + _h2.default.authenticityToken() + '\']'), (0, _mithril2.default)('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']')])]))]))), (0, _mithril2.default)(_projectEditSaveBtn2.default, {
             loading: state.loading,
             onSubmit: state.onSubmit
@@ -17569,6 +17553,14 @@ var _userBalanceWithdrawHistory = __webpack_require__(/*! ./user-balance-withdra
 
 var _userBalanceWithdrawHistory2 = _interopRequireDefault(_userBalanceWithdrawHistory);
 
+var _userBalanceTransactionsListVm = __webpack_require__(/*! ../vms/user-balance-transactions-list-vm */ "./legacy/src/vms/user-balance-transactions-list-vm.js");
+
+var _userBalanceTransactionsListVm2 = _interopRequireDefault(_userBalanceTransactionsListVm);
+
+var _userBalanceTransfersListVm = __webpack_require__(/*! ../vms/user-balance-transfers-list-vm */ "./legacy/src/vms/user-balance-transfers-list-vm.js");
+
+var _userBalanceTransfersListVm2 = _interopRequireDefault(_userBalanceTransfersListVm);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -17602,19 +17594,8 @@ var userBalanceMain = {
 
 
         // Handles with user balance transactions list data
-        balanceTransactionManager = function () {
-            var listVM = _api.catarse.paginationVM(_models2.default.balanceTransaction, 'created_at.desc'),
-                load = function load() {
-                listVM.firstPage(userIdVM.parameters()).then(function (r) {
-                    _mithril2.default.redraw();
-                });
-            };
-
-            return {
-                load: load,
-                list: listVM
-            };
-        }(),
+        userBalanceTransactionsList = (0, _userBalanceTransactionsListVm2.default)(userIdVM.parameters()),
+            userBalanceTransfersList = (0, _userBalanceTransfersListVm2.default)(userIdVM.parameters()),
 
 
         // Handles with bank account to check
@@ -17639,7 +17620,8 @@ var userBalanceMain = {
         vnode.state = {
             bankAccountManager: bankAccountManager,
             balanceManager: balanceManager,
-            balanceTransactionManager: balanceTransactionManager
+            userBalanceTransactionsList: userBalanceTransactionsList,
+            userBalanceTransfersList: userBalanceTransfersList
         };
     },
     view: function view(_ref) {
@@ -17647,7 +17629,7 @@ var userBalanceMain = {
             attrs = _ref.attrs;
 
         var opts = _underscore2.default.extend({}, attrs, state);
-        return (0, _mithril2.default)('#balance-area', [(0, _mithril2.default)(_userBalance2.default, opts), (0, _mithril2.default)(_userBalanceWithdrawHistory2.default, { user_id: attrs.user_id }), (0, _mithril2.default)('.divider'), (0, _mithril2.default)(_userBalanceTransactions2.default, opts), (0, _mithril2.default)('.u-marginbottom-40'), (0, _mithril2.default)('.w-section.section.card-terciary.before-footer')]);
+        return (0, _mithril2.default)('#balance-area', [(0, _mithril2.default)(_userBalance2.default, opts), (0, _mithril2.default)(_userBalanceWithdrawHistory2.default, opts), (0, _mithril2.default)('.divider'), (0, _mithril2.default)(_userBalanceTransactions2.default, opts), (0, _mithril2.default)('.u-marginbottom-40'), (0, _mithril2.default)('.w-section.section.card-terciary.before-footer')]);
     }
 };
 
@@ -17778,7 +17760,9 @@ var userBalanceRequestModelContent = {
                     parsedErrors.resetFieldErrors();
                 }
 
-                _userVm2.default.getUserBankAccount(user_id).then(bankAccounts);
+                _userVm2.default.getUserBankAccount(user_id).then(bankAccounts).then(function () {
+                    return _mithril2.default.redraw();
+                });
                 loading(false);
                 displayConfirmation(true);
                 _mithril2.default.redraw();
@@ -17951,23 +17935,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'users.balance');
 
 var userBalanceTransactions = {
-    oninit: function oninit(vnode) {
-        vnode.attrs.balanceTransactionManager.load();
-
-        vnode.state = {
-            list: vnode.attrs.balanceTransactionManager.list
-        };
-    },
     view: function view(_ref) {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        var list = state.list;
+        var userBalanceTransactionsList = attrs.userBalanceTransactionsList;
 
-        return (0, _mithril2.default)('.w-section.section.card-terciary.before-footer.balance-transactions-area', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope())))].concat(_underscore2.default.map(list.collection(), function (item, index) {
+        return (0, _mithril2.default)('.w-section.section.card-terciary.before-footer.balance-transactions-area', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('.fontsize-base.fontweight-semibold', I18n.t('activities_group', I18nScope())))].concat(_underscore2.default.map(userBalanceTransactionsList.collection(), function (item, index) {
             return (0, _mithril2.default)(_userBalanceTransactionRow2.default, { item: item, index: index });
-        }))), (0, _mithril2.default)('.container', [(0, _mithril2.default)('.w-row.u-margintop-40', [(0, _mithril2.default)('.w-col.w-col-2.w-col-push-5', [!list.isLoading() ? list.isLastPage() ? '' : (0, _mithril2.default)('button#load-more.btn.btn-medium.btn-terciary', {
-            onclick: list.nextPage
+        }))), (0, _mithril2.default)('.container', [(0, _mithril2.default)('.w-row.u-margintop-40', [(0, _mithril2.default)('.w-col.w-col-2.w-col-push-5', [!userBalanceTransactionsList.isLoading() ? userBalanceTransactionsList.isLastPage() ? '' : (0, _mithril2.default)('button#load-more.btn.btn-medium.btn-terciary', {
+            onclick: userBalanceTransactionsList.nextPage
         }, 'Carregar mais') : _h2.default.loader()])])])]);
     }
 };
@@ -18115,10 +18092,6 @@ var _userBalanceWithdrawHistoryItemRequest = __webpack_require__(/*! ./user-bala
 
 var _userBalanceWithdrawHistoryItemRequest2 = _interopRequireDefault(_userBalanceWithdrawHistoryItemRequest);
 
-var _userBalanceTransfersVm = __webpack_require__(/*! ../vms/user-balance-transfers-vm */ "./legacy/src/vms/user-balance-transfers-vm.js");
-
-var _userBalanceTransfersVm2 = _interopRequireDefault(_userBalanceTransfersVm);
-
 var _loadMoreBtn = __webpack_require__(/*! ./load-more-btn */ "./legacy/src/c/load-more-btn.js");
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
@@ -18131,10 +18104,6 @@ var I18nScopeBank = _underscore2.default.partial(_h2.default.i18nScope, 'users.b
 
 var userBalanceWithdrawHistory = {
     oninit: function oninit(vnode) {
-        var userIdVM = _api.catarse.filtersVM({ user_id: 'eq' });
-        var balanceTransfersList = _userBalanceTransfersVm2.default.getWithPagination;
-        userIdVM.user_id(vnode.attrs.user_id);
-        balanceTransfersList.firstPage(userIdVM.parameters());
 
         var explitInArraysOf3 = function explitInArraysOf3(collection) {
             var array = [];
@@ -18162,7 +18131,6 @@ var userBalanceWithdrawHistory = {
         };
 
         vnode.state = {
-            balanceTransfersList: balanceTransfersList,
             explitInArraysOf3: explitInArraysOf3
         };
     },
@@ -18171,12 +18139,14 @@ var userBalanceWithdrawHistory = {
             attrs = _ref.attrs;
 
 
-        return (0, _mithril2.default)('div', (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('.fontsize-base.fontweight-semibold', I18n.t('withdraw_history_group', I18nScope()))), _underscore2.default.map(state.explitInArraysOf3(state.balanceTransfersList.collection()), function (transferList) {
+        var userBalanceTransfersList = attrs.userBalanceTransfersList;
+
+        return (0, _mithril2.default)('div', (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('.fontsize-base.fontweight-semibold', I18n.t('withdraw_history_group', I18nScope()))), _underscore2.default.map(state.explitInArraysOf3(userBalanceTransfersList.collection()), function (transferList) {
             return (0, _mithril2.default)('.u-marginbottom-30.w-row', _underscore2.default.map(transferList, function (transfer, index) {
                 return (0, _mithril2.default)(_userBalanceWithdrawHistoryItemRequest2.default, { transfer: transfer, index: index });
             }));
-        }), state.balanceTransfersList.isLoading() ? _h2.default.loader() : state.balanceTransfersList.isLastPage() ? '' : (0, _mithril2.default)('.u-margintop-40.u-marginbottom-80.w-row', [(0, _mithril2.default)('.w-col.w-col-5'), (0, _mithril2.default)('.w-col.w-col-2', (0, _mithril2.default)('a.btn.btn-medium.btn-terciary.w-button[href=\'javascript:void(0);\']', {
-            onclick: state.balanceTransfersList.nextPage
+        }), userBalanceTransfersList.isLoading() ? _h2.default.loader() : userBalanceTransfersList.isLastPage() ? '' : (0, _mithril2.default)('.u-margintop-40.u-marginbottom-80.w-row', [(0, _mithril2.default)('.w-col.w-col-5'), (0, _mithril2.default)('.w-col.w-col-2', (0, _mithril2.default)('a.btn.btn-medium.btn-terciary.w-button[href=\'javascript:void(0);\']', {
+            onclick: userBalanceTransfersList.nextPage
         }, 'Carregar mais')), (0, _mithril2.default)('.w-col.w-col-5')])]));
     }
 };
@@ -20300,7 +20270,7 @@ var userSettingsSavedCreditCards = {
         }), (0, _mithril2.default)('form.w-hidden', {
             action: '/' + window.I18n.locale + '/users/' + user.id + '/credit_cards/' + toDeleteCard(),
             method: 'POST',
-            config: setCardDeletionForm
+            oncreate: setCardDeletionForm
         }, [(0, _mithril2.default)('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), (0, _mithril2.default)('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'), (0, _mithril2.default)('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + _h2.default.authenticityToken() + '\']')])]);
     }
 
@@ -20416,12 +20386,10 @@ var userSettings = {
                 return false;
             };
         },
-            setCardDeletionForm = function setCardDeletionForm(el, isInit) {
-            if (!isInit) {
-                deleteFormSubmit = function deleteFormSubmit() {
-                    return el.submit();
-                };
-            }
+            setCardDeletionForm = function setCardDeletionForm(localVnode) {
+            deleteFormSubmit = function deleteFormSubmit() {
+                return localVnode.dom.submit();
+            };
         },
             updateUserData = function updateUserData() {
             var userData = {
@@ -20976,14 +20944,12 @@ var youtubeLightbox = {
     oninit: function oninit(vnode) {
         var player = void 0;
         var showLightbox = _h2.default.toggleProp(false, true),
-            setYoutube = function setYoutube(el, isInitialized) {
-            if (!isInitialized) {
-                var tag = document.createElement('script'),
-                    firstScriptTag = document.getElementsByTagName('script')[0];
-                tag.src = 'https://www.youtube.com/iframe_api';
-                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-                window.onYouTubeIframeAPIReady = createPlayer;
-            }
+            setYoutube = function setYoutube() {
+            var tag = document.createElement('script'),
+                firstScriptTag = document.getElementsByTagName('script')[0];
+            tag.src = 'https://www.youtube.com/iframe_api';
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            window.onYouTubeIframeAPIReady = createPlayer;
         },
             closeVideo = function closeVideo() {
             if (!_underscore2.default.isUndefined(player)) {
@@ -21026,7 +20992,7 @@ var youtubeLightbox = {
                 state.showLightbox.toggle();
                 attrs.onclick && attrs.onclick();
             }
-        }), (0, _mithril2.default)('#lightbox.w-lightbox-backdrop[style="display:' + (state.showLightbox() ? 'block' : 'none') + '"]', [(0, _mithril2.default)('.w-lightbox-container', [(0, _mithril2.default)('.w-lightbox-content', [(0, _mithril2.default)('.w-lightbox-view', [(0, _mithril2.default)('.w-lightbox-frame', [(0, _mithril2.default)('figure.w-lightbox-figure', [(0, _mithril2.default)('img.w-lightbox-img.w-lightbox-image[src=\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22940%22%20height=%22528%22/%3E\']'), (0, _mithril2.default)('#ytvideo.embedly-embed.w-lightbox-embed', { config: state.setYoutube })])])]), (0, _mithril2.default)('.w-lightbox-spinner.w-lightbox-hide'), (0, _mithril2.default)('.w-lightbox-control.w-lightbox-left.w-lightbox-inactive'), (0, _mithril2.default)('.w-lightbox-control.w-lightbox-right.w-lightbox-inactive'), (0, _mithril2.default)('#youtube-close.w-lightbox-control.w-lightbox-close', { onclick: state.closeVideo })]), (0, _mithril2.default)('.w-lightbox-strip')])])]);
+        }), (0, _mithril2.default)('#lightbox.w-lightbox-backdrop[style="display:' + (state.showLightbox() ? 'block' : 'none') + '"]', [(0, _mithril2.default)('.w-lightbox-container', [(0, _mithril2.default)('.w-lightbox-content', [(0, _mithril2.default)('.w-lightbox-view', [(0, _mithril2.default)('.w-lightbox-frame', [(0, _mithril2.default)('figure.w-lightbox-figure', [(0, _mithril2.default)('img.w-lightbox-img.w-lightbox-image[src=\'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22940%22%20height=%22528%22/%3E\']'), (0, _mithril2.default)('#ytvideo.embedly-embed.w-lightbox-embed', { oncreate: state.setYoutube })])])]), (0, _mithril2.default)('.w-lightbox-spinner.w-lightbox-hide'), (0, _mithril2.default)('.w-lightbox-control.w-lightbox-left.w-lightbox-inactive'), (0, _mithril2.default)('.w-lightbox-control.w-lightbox-right.w-lightbox-inactive'), (0, _mithril2.default)('#youtube-close.w-lightbox-control.w-lightbox-close', { onclick: state.closeVideo })]), (0, _mithril2.default)('.w-lightbox-strip')])])]);
     }
 };
 
@@ -21680,15 +21646,13 @@ loader = function loader() {
     };
 },
     toAnchor = function toAnchor() {
-    return function (el, isInitialized) {
-        if (!isInitialized) {
-            var hash = window.location.hash.substr(1);
-            if (hash === el.id) {
-                window.location.hash = '';
-                setTimeout(function () {
-                    window.location.hash = el.id;
-                });
-            }
+    return function (vnode) {
+        var hash = window.location.hash.substr(1);
+        if (hash === vnode.dom.id) {
+            window.location.hash = '';
+            setTimeout(function () {
+                window.location.hash = vnode.dom.id;
+            });
         }
     };
 },
@@ -21823,9 +21787,9 @@ loader = function loader() {
         };
     };
 
-    return function (el, isInitialized) {
-        if (!isInitialized && el.hash) {
-            setTrigger(el, el.hash.slice(1));
+    return function (localVnode) {
+        if (localVnode.dom.hash) {
+            setTrigger(localVnode.dom, localVnode.dom.hash.slice(1));
         }
     };
 },
@@ -21874,22 +21838,20 @@ loader = function loader() {
     return statusText[state];
 },
     RDTracker = function RDTracker(eventId) {
-    return function (el, isInitialized) {
-        if (!isInitialized) {
-            var integrationScript = document.createElement('script');
-            integrationScript.type = 'text/javascript';
-            integrationScript.id = 'RDIntegration';
+    return function () {
+        var integrationScript = document.createElement('script');
+        integrationScript.type = 'text/javascript';
+        integrationScript.id = 'RDIntegration';
 
-            if (!document.getElementById(integrationScript.id)) {
-                document.body.appendChild(integrationScript);
-                integrationScript.onload = function () {
-                    return window.RdIntegration.integrate(getRdToken(), eventId);
-                };
-                integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
-            }
-
-            return false;
+        if (!document.getElementById(integrationScript.id)) {
+            document.body.appendChild(integrationScript);
+            integrationScript.onload = function () {
+                return window.RdIntegration.integrate(getRdToken(), eventId);
+            };
+            integrationScript.src = 'https://d335luupugsy2.cloudfront.net/js/integration/stable/rd-js-integration.min.js';
         }
+
+        return false;
     };
 },
     analyticsEvent = function analyticsEvent(eventObj) {
@@ -22183,7 +22145,6 @@ mask = function mask(maskDefinition, value) {
     redactor = function redactor(name, prop) {
     return (0, _mithril2.default)('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
         name: name,
-        //config: setRedactor(prop)
         oncreate: setRedactor(prop)
     });
 },
@@ -24682,10 +24643,8 @@ var Flex = {
             builder = {
             customAction: 'http://fazum.catarse.me/obrigado-landing-catarse-flex'
         },
-            addDisqus = function addDisqus(el, isInitialized) {
-            if (!isInitialized) {
-                _h2.default.discuss('https://catarse.me/flex', 'flex_page');
-            }
+            addDisqus = function addDisqus() {
+            _h2.default.discuss('https://catarse.me/flex', 'flex_page');
         },
             flexVM = _api.catarse.filtersVM({
             mode: 'eq',
@@ -24742,8 +24701,8 @@ var Flex = {
             answer: 'Ainda não sabemos quando abriremos o flex para o público em geral, mas você pode cadastrar seu email nessa página e receber um material especial de como inscrever seu projeto.'
         })])])])]), (0, _mithril2.default)('.w-section.section-large.u-text-center.bg-purple', [(0, _mithril2.default)('.w-container.fontcolor-negative', [(0, _mithril2.default)('.fontsize-largest', 'Inscreva seu projeto!'), (0, _mithril2.default)('.fontsize-base.u-marginbottom-60', 'Cadastre seu email e saiba como inscrever o seu projeto no flex!'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)(_landingSignup2.default, {
             builder: state.builder
-        }), (0, _mithril2.default)('.w-col.w-col-2')])])]), (0, _mithril2.default)('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [(0, _mithril2.default)('.w-container.u-text-center', [(0, _mithril2.default)('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'), (0, _mithril2.default)('.w-row.u-text-center', state.statsLoader() ? _h2.default.loader() : [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-jumbo.text-success.lineheight-loose', _h2.default.formatNumber(stats.total_contributors, 0, 3)), (0, _mithril2.default)('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-jumbo.text-success.lineheight-loose', _h2.default.formatNumber(stats.total_projects_success, 0, 3)), (0, _mithril2.default)('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), (0, _mithril2.default)('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')])])])]), (0, _mithril2.default)('.w-section.section.bg-blue-one.fontcolor-negative', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-8', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [(0, _mithril2.default)('div', [(0, _mithril2.default)('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'), (0, _mithril2.default)('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')])]), (0, _mithril2.default)('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [(0, _mithril2.default)('div', [(0, _mithril2.default)('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'), (0, _mithril2.default)('a.w-button.btn.btn-large.btn-tweet[href="https://twitter.com/intent/tweet?text=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')])])])]), (0, _mithril2.default)('.w-col.w-col-2')])])]), (0, _mithril2.default)('.w-section.section-large.bg-greenlime', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('#participe-do-debate.u-text-center', { config: _h2.default.toAnchor() }, [(0, _mithril2.default)('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), (0, _mithril2.default)('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')]), (0, _mithril2.default)('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
-            config: state.addDisqus
+        }), (0, _mithril2.default)('.w-col.w-col-2')])])]), (0, _mithril2.default)('.w-section.section-one-column.bg-catarse-zelo.section-large[style="min-height: 50vh;"]', [(0, _mithril2.default)('.w-container.u-text-center', [(0, _mithril2.default)('.w-editable.u-marginbottom-40.fontsize-larger.lineheight-tight.fontcolor-negative', 'O flex é um experimento e iniciativa do Catarse, maior plataforma de crowdfunding do Brasil.'), (0, _mithril2.default)('.w-row.u-text-center', state.statsLoader() ? _h2.default.loader() : [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-jumbo.text-success.lineheight-loose', _h2.default.formatNumber(stats.total_contributors, 0, 3)), (0, _mithril2.default)('p.start-stats.fontsize-base.fontcolor-negative', 'Pessoas ja apoiaram pelo menos 01 projeto no Catarse')]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-jumbo.text-success.lineheight-loose', _h2.default.formatNumber(stats.total_projects_success, 0, 3)), (0, _mithril2.default)('p.start-stats.fontsize-base.fontcolor-negative', 'Projetos ja foram financiados no Catarse')]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-jumbo.text-success.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), (0, _mithril2.default)('p.start-stats.fontsize-base.fontcolor-negative', 'Foram investidos em ideias publicadas no Catarse')])])])]), (0, _mithril2.default)('.w-section.section.bg-blue-one.fontcolor-negative', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-20', 'Recomende o Catarse flex para amigos! '), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-8', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-6.w-col-small-6.w-col-tiny-6.w-sub-col-middle', [(0, _mithril2.default)('div', [(0, _mithril2.default)('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f66e05eb6144171d8edb_facebook-xxl.png\']'), (0, _mithril2.default)('a.w-button.btn.btn-large.btn-fb[href="http://www.facebook.com/sharer/sharer.php?u=https://www.catarse.me/flex?ref=facebook&title=' + encodeURIComponent('Conheça o novo Catarse Flex!') + '"][target="_blank"]', 'Compartilhar')])]), (0, _mithril2.default)('.w-col.w-col-6.w-col-small-6.w-col-tiny-6', [(0, _mithril2.default)('div', [(0, _mithril2.default)('img.icon-share-mobile[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/53a3f65105eb6144171d8eda_twitter-256.png\']'), (0, _mithril2.default)('a.w-button.btn.btn-large.btn-tweet[href="https://twitter.com/intent/tweet?text=' + encodeURIComponent('Vamos construir uma nova modalidade de crowdfunding para o Catarse! Junte-se a nós, inscreva seu email!') + 'https://www.catarse.me/flex?ref=twitter"][target="_blank"]', 'Tuitar')])])])]), (0, _mithril2.default)('.w-col.w-col-2')])])]), (0, _mithril2.default)('.w-section.section-large.bg-greenlime', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('#participe-do-debate.u-text-center', { oncreate: _h2.default.toAnchor() }, [(0, _mithril2.default)('h1.fontsize-largest.fontcolor-negative', 'Construa o flex conosco'), (0, _mithril2.default)('.fontsize-base.u-marginbottom-60.fontcolor-negative', 'Inicie uma conversa, pergunte, comente, critique e faça sugestões!')]), (0, _mithril2.default)('#disqus_thread.card.u-radius[style="min-height: 50vh;"]', {
+            oncreate: state.addDisqus
         })])])]];
     }
 };
@@ -25401,12 +25360,10 @@ var posts = {
                 return false;
             };
         },
-            setPostDeletionForm = function setPostDeletionForm(el, isInit) {
-            if (!isInit) {
-                deleteFormSubmit = function deleteFormSubmit() {
-                    return el.submit();
-                };
-            }
+            setPostDeletionForm = function setPostDeletionForm(localVnode) {
+            deleteFormSubmit = function deleteFormSubmit() {
+                return localVnode.dom.submit();
+            };
         },
             openedPercentage = function openedPercentage(post) {
             return Math.floor(post.open_count / post.delivered_count * 100) || 0;
@@ -25605,7 +25562,7 @@ var posts = {
         }), (0, _mithril2.default)('form.w-hidden', {
             action: '/' + window.I18n.locale + '/projects/' + project.project_id + '/posts/' + state.toDeletePost(),
             method: 'POST',
-            config: state.setPostDeletionForm
+            oncreate: state.setPostDeletionForm
         }, [(0, _mithril2.default)('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'), (0, _mithril2.default)('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'), (0, _mithril2.default)('input[name=\'authenticity_token\'][type=\'hidden\'][value=\'' + _h2.default.authenticityToken() + '\']')])]) : _h2.default.loader()])]), (0, _mithril2.default)('.w-col.w-col-1')])))]) : _h2.default.loader();
     }
 };
@@ -26147,9 +26104,9 @@ var projectEditReward = {
             });
         };
 
-        var setSorting = function setSorting(el, isInit) {
-            if (!isInit && window.$) {
-                window.$(el).sortable({
+        var setSorting = function setSorting(localVnode) {
+            if (window.$) {
+                window.$(localVnode.dom).sortable({
                     update: function update(event, ui) {
                         var rewardId = ui.item[0].id;
                         updateRewardSortPosition(rewardId, ui.item.index());
@@ -26270,7 +26227,7 @@ var projectEditReward = {
             message: state.errors(),
             error: true
         }) : '', (0, _mithril2.default)('.w-row', (0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', (0, _mithril2.default)('.u-marginbottom-60.u-text-center', (0, _mithril2.default)('.w-inline-block.card.fontsize-small.u-radius', [(0, _mithril2.default)('span.fa.fa-lightbulb-o'), _mithril2.default.trust(' ' + window.I18n.t('reward_know_more_cta_html', I18nScope()))])))), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.w-form', [state.rewards().length === 0 ? '' : (0, _mithril2.default)(".ui-sortable[id='rewards']", {
-            config: state.setSorting
+            oncreate: state.setSorting
         }, [_underscore2.default.map(_underscore2.default.sortBy(state.rewards(), function (reward) {
             return Number(reward().row_order());
         }), function (reward, index) {
@@ -27788,7 +27745,9 @@ var projectsExplore = {
             changeFilter(chosenRecommender());
         }
         _models2.default.project.pageSize(9);
-        loadCategories().then(loadRoute);
+        loadCategories().then(loadRoute).then(function () {
+            return _mithril2.default.redraw();
+        });
 
         if (vnode.attrs.filter) {
             currentFilter(filtersMap[vnode.attrs.filter]);
@@ -27799,6 +27758,7 @@ var projectsExplore = {
         }
 
         var notWasTried = true;
+        var firstLoad = true;
 
         var tryLoadFromQueryPath = function tryLoadFromQueryPath() {
             var innerDefaultFilter = _h2.default.paramByName('filter') || vnode.attrs.filter || 'all';
@@ -27812,6 +27772,11 @@ var projectsExplore = {
                 notWasTried = false;
             } else if (filterIsForContributedByFriends) {
                 currentFilter(filtersMap[innerDefaultFilter]);
+            }
+
+            if (firstLoad) {
+                _h2.default.scrollTop();
+                firstLoad = false;
             }
         };
 
@@ -28697,7 +28662,9 @@ var projectsShow = {
                 loading(false);
                 if (_projectVm2.default.isSubscription(_projectVm2.default.currentProject())) {
                     var statuses = ['started', 'active', 'canceling', 'canceled', 'inactive'];
-                    _subscriptionVm2.default.getUserProjectSubscriptions(currentUser.common_id, _projectVm2.default.currentProject().common_id, statuses).then(userProjectSubscriptions);
+                    _subscriptionVm2.default.getUserProjectSubscriptions(currentUser.common_id, _projectVm2.default.currentProject().common_id, statuses).then(userProjectSubscriptions).then(function () {
+                        return _mithril2.default.redraw();
+                    });
                 }
             }
         };
@@ -28723,7 +28690,7 @@ var projectsShow = {
             projectVM = state.projectVM;
 
         return (0, _mithril2.default)('.project-show', {
-            config: projectVM.setProjectPageTitle()
+            oncreate: projectVM.setProjectPageTitle()
         }, project() ? [state.loadUserSubscriptions(), (0, _mithril2.default)(_projectHeader2.default, {
             project: project,
             hasSubscription: state.hasSubscription,
@@ -30125,8 +30092,8 @@ var start = {
             });
         };
 
-        return (0, _mithril2.default)('#start', { config: _h2.default.setPageTitle(window.I18n.t('header_html', I18nScope())) }, [(0, _mithril2.default)('.w-section.hero-full.hero-start', [(0, _mithril2.default)('.w-container.u-text-center', [(0, _mithril2.default)('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', window.I18n.t('slogan', I18nScope())), (0, _mithril2.default)('.w-row.u-marginbottom-40', [(0, _mithril2.default)('.w-col.w-col-4.w-col-push-4', [(0, _mithril2.default)('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
-            config: _h2.default.scrollTo(),
+        return (0, _mithril2.default)('#start', { oncreate: _h2.default.setPageTitle(window.I18n.t('header_html', I18nScope())) }, [(0, _mithril2.default)('.w-section.hero-full.hero-start', [(0, _mithril2.default)('.w-container.u-text-center', [(0, _mithril2.default)('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', window.I18n.t('slogan', I18nScope())), (0, _mithril2.default)('.w-row.u-marginbottom-40', [(0, _mithril2.default)('.w-col.w-col-4.w-col-push-4', [(0, _mithril2.default)('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
+            oncreate: _h2.default.scrollTo(),
             onclick: _h2.default.analytics.event({ cat: 'project_start', act: 'start_btnstart_click' })
         }, window.I18n.t('submit', I18nScope()))])]), (0, _mithril2.default)('.w-row', _underscore2.default.isEmpty(stats) ? '' : [(0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-largest.lineheight-loose', _h2.default.formatNumber(stats.total_contributors, 0, 3)), (0, _mithril2.default)('p.fontsize-small.start-stats', window.I18n.t('header.people', I18nScope()))]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-largest.lineheight-loose', stats.total_contributed.toString().slice(0, 2) + ' milh\xF5es'), (0, _mithril2.default)('p.fontsize-small.start-stats', window.I18n.t('header.money', I18nScope()))]), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)('.fontsize-largest.lineheight-loose', _h2.default.formatNumber(stats.total_projects_success, 0, 3)), (0, _mithril2.default)('p.fontsize-small.start-stats', window.I18n.t('header.success', I18nScope()))])])])]), (0, _mithril2.default)('.w-section.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-10.w-col-push-1.u-text-center', [(0, _mithril2.default)('.fontsize-larger.u-marginbottom-10.fontweight-semibold', window.I18n.t('page-title', I18nScope())), (0, _mithril2.default)('.fontsize-small', window.I18n.t('page-subtitle', I18nScope()))])]), (0, _mithril2.default)('.w-clearfix.how-row', [(0, _mithril2.default)('.w-hidden-small.w-hidden-tiny.how-col-01', [(0, _mithril2.default)('.info-howworks-backers', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large', window.I18n.t('banner.1', I18nScope())), (0, _mithril2.default)('.fontsize-base', window.I18n.t('banner.2', I18nScope()))]), (0, _mithril2.default)('.info-howworks-backers', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large', window.I18n.t('banner.3', I18nScope())), (0, _mithril2.default)('.fontsize-base', window.I18n.t('banner.4', I18nScope()))])]), (0, _mithril2.default)('.how-col-02'), (0, _mithril2.default)('.how-col-03', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large', window.I18n.t('banner.5', I18nScope())), (0, _mithril2.default)('.fontsize-base', window.I18n.t('banner.6', I18nScope())), (0, _mithril2.default)('.fontweight-semibold.fontsize-large.u-margintop-30', window.I18n.t('banner.7', I18nScope())), (0, _mithril2.default)('.fontsize-base', window.I18n.t('banner.8', I18nScope()))]), (0, _mithril2.default)('.w-hidden-main.w-hidden-medium.how-col-01', [(0, _mithril2.default)('.info-howworks-backers', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large', window.I18n.t('banner.1', I18nScope())), (0, _mithril2.default)('.fontsize-base', window.I18n.t('banner.2', I18nScope()))]), (0, _mithril2.default)('.info-howworks-backers', [(0, _mithril2.default)('.fontweight-semibold.fontsize-large', window.I18n.t('banner.3', I18nScope())), (0, _mithril2.default)('.fontsize-base', window.I18n.t('banner.4', I18nScope()))])])])])]), (0, _mithril2.default)('.w-section.divider'), (0, _mithril2.default)('.w-section.section-large', [(0, _mithril2.default)('.w-container.u-text-center.u-marginbottom-60', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-largest.fontweight-semibold', window.I18n.t('features.title', I18nScope()))]), (0, _mithril2.default)('.w-hidden-small.w-hidden-tiny.fontsize-large.u-marginbottom-20', window.I18n.t('features.subtitle', I18nScope())), (0, _mithril2.default)('.w-hidden-main.w-hidden-medium.u-margintop-30', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', window.I18n.t('features.feature_1', I18nScope())), (0, _mithril2.default)('.fontsize-large.u-marginbottom-30', window.I18n.t('features.feature_2', I18nScope())), (0, _mithril2.default)('.fontsize-large.u-marginbottom-30', window.I18n.t('features.feature_3', I18nScope())), (0, _mithril2.default)('.fontsize-large.u-marginbottom-30', window.I18n.t('features.feature_4', I18nScope())), (0, _mithril2.default)('.fontsize-large.u-marginbottom-30', window.I18n.t('features.feature_5', I18nScope())), (0, _mithril2.default)('.fontsize-large.u-marginbottom-30', window.I18n.t('features.feature_6', I18nScope()))])]), (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-tabs.w-hidden-small.w-hidden-tiny', [(0, _mithril2.default)('.w-tab-menu.w-col.w-col-4', _underscore2.default.map(state.paneImages, function (pane, idx) {
             return (0, _mithril2.default)('btn.w-tab-link.w-inline-block.tab-list-item' + (idx === state.selectedPane() ? '.selected' : ''), {
@@ -30143,7 +30110,7 @@ var start = {
             }, [(0, _mithril2.default)('div', category.name)]);
         })), (0, _mithril2.default)('.w-tab-content.u-margintop-40', [(0, _mithril2.default)('.w-tab-pane.w--tab-active', [(0, _mithril2.default)('.w-row', state.selectedCategoryIdx() !== -1 ? _underscore2.default.map(state.selectedCategory(), function (category) {
             return [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.fontsize-jumbo.u-marginbottom-20', category.name), (0, _mithril2.default)('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
-                config: _h2.default.scrollTo()
+                oncreate: _h2.default.scrollTo()
             }, window.I18n.t('submit', I18nScope()))]), (0, _mithril2.default)('.w-col.w-col-7', [(0, _mithril2.default)('.fontsize-megajumbo.fontcolor-negative', 'R$ ' + (category.total_successful_value ? _h2.default.formatNumber(category.total_successful_value, 2, 3) : '...')), (0, _mithril2.default)('.fontsize-large.u-marginbottom-20', 'Doados para projetos'), (0, _mithril2.default)('.fontsize-megajumbo.fontcolor-negative', category.successful_projects ? category.successful_projects : '...'), (0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'Projetos financiados'), !_underscore2.default.isEmpty(state.featuredProjects()) ? _underscore2.default.map(state.featuredProjects(), function (project) {
                 return !_underscore2.default.isUndefined(project) ? (0, _mithril2.default)('.w-row.u-marginbottom-10', [(0, _mithril2.default)('.w-col.w-col-1', [(0, _mithril2.default)('img.user-avatar[src="' + _h2.default.useAvatarOrDefault(project.userThumb) + '"]')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('.fontsize-base.fontweight-semibold', project.user.public_name || project.user.name), (0, _mithril2.default)('.fontsize-smallest', [window.I18n.t('categories.pledged', I18nScope({ pledged: _h2.default.formatNumber(project.pledged), contributors: project.total_contributors })), (0, _mithril2.default)('a.link-hidden[href="/' + project.permalink + '"]', project.name)])])]) : (0, _mithril2.default)('.fontsize-base', window.I18n.t('categories.loading_featured', I18nScope()));
             }) : ''])];
@@ -31081,22 +31048,20 @@ var thankYou = {
             _h2.default.analytics.event(analyticsData)();
         };
 
-        var setEvents = function setEvents(el, isInitialized) {
-            if (!isInitialized) {
-                sendContributionCreationData();
+        var setEvents = function setEvents() {
+            sendContributionCreationData();
 
-                CatarseAnalytics.event({
-                    cat: 'contribution_finish',
-                    act: 'contribution_finished',
-                    lbl: isSlip ? 'slip' : 'creditcard',
-                    val: vnode.attrs.contribution.value,
-                    extraData: {
-                        contribution_id: vnode.attrs.contribution.contribution_id
-                    }
-                });
+            CatarseAnalytics.event({
+                cat: 'contribution_finish',
+                act: 'contribution_finished',
+                lbl: isSlip ? 'slip' : 'creditcard',
+                val: vnode.attrs.contribution.value,
+                extraData: {
+                    contribution_id: vnode.attrs.contribution.contribution_id
+                }
+            });
 
-                CatarseAnalytics.checkout('' + vnode.attrs.contribution.contribution_id, '[' + vnode.attrs.contribution.project.permalink + '] ' + (vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.minimum_value : '10') + ' [' + (isSlip ? 'slip' : 'creditcard') + ']', '' + (vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.reward_id : ''), '' + vnode.attrs.contribution.project.category, '' + vnode.attrs.contribution.value, '' + vnode.attrs.contribution.value * vnode.attrs.contribution.project.service_fee);
-            }
+            CatarseAnalytics.checkout('' + vnode.attrs.contribution.contribution_id, '[' + vnode.attrs.contribution.project.permalink + '] ' + (vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.minimum_value : '10') + ' [' + (isSlip ? 'slip' : 'creditcard') + ']', '' + (vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.reward_id : ''), '' + vnode.attrs.contribution.project.category, '' + vnode.attrs.contribution.value, '' + vnode.attrs.contribution.value * vnode.attrs.contribution.project.service_fee);
         };
 
         vnode.state = {
@@ -31110,7 +31075,7 @@ var thankYou = {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        return (0, _mithril2.default)('#thank-you', { config: state.setEvents }, [(0, _mithril2.default)('.page-header.u-marginbottom-30', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center', (0, _mithril2.default)('img.big.thumb.u-round[src=\'' + attrs.contribution.project.user_thumb + '\']')), (0, _mithril2.default)('#thank-you.u-text-center', !state.isSlip ? [(0, _mithril2.default)('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', window.I18n.t('thank_you.thank_you', I18nScope())), (0, _mithril2.default)('.fontsize-base.u-marginbottom-40', _mithril2.default.trust(window.I18n.t('thank_you.thank_you_text_html', I18nScope({
+        return (0, _mithril2.default)('#thank-you', { oncreate: state.setEvents }, [(0, _mithril2.default)('.page-header.u-marginbottom-30', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center', (0, _mithril2.default)('img.big.thumb.u-round[src=\'' + attrs.contribution.project.user_thumb + '\']')), (0, _mithril2.default)('#thank-you.u-text-center', !state.isSlip ? [(0, _mithril2.default)('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', window.I18n.t('thank_you.thank_you', I18nScope())), (0, _mithril2.default)('.fontsize-base.u-marginbottom-40', _mithril2.default.trust(window.I18n.t('thank_you.thank_you_text_html', I18nScope({
             total: attrs.contribution.project.total_contributions,
             email: attrs.contribution.contribution_email,
             link2: '/' + window.I18n.locale + '/users/' + _h2.default.getUser().user_id + '/edit#contributions',
@@ -35964,10 +35929,64 @@ exports.default = userAboutVM;
 
 /***/ }),
 
-/***/ "./legacy/src/vms/user-balance-transfers-vm.js":
-/*!*****************************************************!*\
-  !*** ./legacy/src/vms/user-balance-transfers-vm.js ***!
-  \*****************************************************/
+/***/ "./legacy/src/vms/user-balance-transactions-list-vm.js":
+/*!*************************************************************!*\
+  !*** ./legacy/src/vms/user-balance-transactions-list-vm.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
+
+var _underscore = __webpack_require__(/*! underscore */ "./node_modules/underscore/underscore.js");
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
+var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
+
+var _models2 = _interopRequireDefault(_models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var userBalanceTransactionsListVM = function userBalanceTransactionsListVM(userIdParameters) {
+
+    var listVM = _api.catarse.paginationVM(_models2.default.balanceTransaction, 'created_at.desc');
+
+    listVM.firstPage(userIdParameters).then(function () {
+        _mithril2.default.redraw();
+    });
+
+    return {
+        collection: listVM.collection,
+        isLoading: listVM.isLoading,
+        isLastPage: listVM.isLastPage,
+        nextPage: function nextPage() {
+            return listVM.nextPage().then(function () {
+                return _mithril2.default.redraw();
+            });
+        }
+    };
+};
+
+exports.default = userBalanceTransactionsListVM;
+
+/***/ }),
+
+/***/ "./legacy/src/vms/user-balance-transfers-list-vm.js":
+/*!**********************************************************!*\
+  !*** ./legacy/src/vms/user-balance-transfers-list-vm.js ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35995,16 +36014,21 @@ var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Defined for UI (balance transfers history is shown in pages of 3 in a row)
-_models2.default.userBalanceTransfers.pageSize(3);
 
-var userBalanceTransfersPager = function () {
+
+var userBalanceTransfersListVM = function userBalanceTransfersListVM(userIdParameters) {
+
+    _models2.default.userBalanceTransfers.pageSize(3);
 
     var loader = _api.catarse.paginationVM(_models2.default.userBalanceTransfers, 'requested_in.desc', { Prefer: 'count=exact' });
 
+    loader.firstPage(userIdParameters).then(function () {
+        _mithril2.default.redraw();
+    });
+
     return {
-        firstPage: loader.firstPage,
         nextPage: function nextPage() {
-            loader.nextPage().then(function (_) {
+            return loader.nextPage().then(function (_) {
                 return _mithril2.default.redraw();
             });
         },
@@ -36012,13 +36036,9 @@ var userBalanceTransfersPager = function () {
         isLastPage: loader.isLastPage,
         collection: loader.collection
     };
-}();
-
-var userBalanceTransfersVM = {
-    getWithPagination: userBalanceTransfersPager
 };
 
-exports.default = userBalanceTransfersVM;
+exports.default = userBalanceTransfersListVM;
 
 /***/ }),
 
