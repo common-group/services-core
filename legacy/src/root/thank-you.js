@@ -27,29 +27,27 @@ const thankYou = {
                 h.analytics.event(analyticsData)();
             };
 
-        const setEvents = (el, isInitialized) => {
-            if (!isInitialized) {
-                sendContributionCreationData();
+        const setEvents = () => {
+            sendContributionCreationData();
 
-                CatarseAnalytics.event({
-                    cat: 'contribution_finish',
-                    act: 'contribution_finished',
-                    lbl: isSlip ? 'slip' : 'creditcard',
-                    val: vnode.attrs.contribution.value,
-                    extraData: {
-                        contribution_id: vnode.attrs.contribution.contribution_id
-                    }
-                });
+            CatarseAnalytics.event({
+                cat: 'contribution_finish',
+                act: 'contribution_finished',
+                lbl: isSlip ? 'slip' : 'creditcard',
+                val: vnode.attrs.contribution.value,
+                extraData: {
+                    contribution_id: vnode.attrs.contribution.contribution_id
+                }
+            });
 
-                CatarseAnalytics.checkout(
-                    `${vnode.attrs.contribution.contribution_id}`,
-                    `[${vnode.attrs.contribution.project.permalink}] ${vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.minimum_value : '10'} [${isSlip ? 'slip' : 'creditcard'}]`,
-                    `${vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.reward_id : ''}`,
-                    `${vnode.attrs.contribution.project.category}`,
-                    `${vnode.attrs.contribution.value}`,
-                    `${vnode.attrs.contribution.value * vnode.attrs.contribution.project.service_fee}`
-                );
-            }
+            CatarseAnalytics.checkout(
+                `${vnode.attrs.contribution.contribution_id}`,
+                `[${vnode.attrs.contribution.project.permalink}] ${vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.minimum_value : '10'} [${isSlip ? 'slip' : 'creditcard'}]`,
+                `${vnode.attrs.contribution.reward ? vnode.attrs.contribution.reward.reward_id : ''}`,
+                `${vnode.attrs.contribution.project.category}`,
+                `${vnode.attrs.contribution.value}`,
+                `${vnode.attrs.contribution.value * vnode.attrs.contribution.project.service_fee}`
+            );
         };
 
         vnode.state = {
@@ -60,7 +58,7 @@ const thankYou = {
         };
     },
     view: function({state, attrs}) {
-        return m('#thank-you', { config: state.setEvents }, [
+        return m('#thank-you', { oncreate: state.setEvents }, [
             m('.page-header.u-marginbottom-30',
               m('.w-container',
                 m('.w-row',

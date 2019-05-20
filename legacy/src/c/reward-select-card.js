@@ -11,7 +11,7 @@ const rewardSelectCard = {
     oninit: function(vnode) {
         const MINIMUM_VALUE = 10;
         const queryRewardValue = h.getParams('value');
-        const setInput = (el, isInitialized) => !isInitialized ? el.focus() : null;
+        const setInput = localVnode => localVnode.dom.focus();
         const isSelected = currentReward => (currentReward.id == null && !rewardVM.selectedReward() && queryRewardValue) || (rewardVM.selectedReward() && currentReward.id === rewardVM.selectedReward().id);
         const selectedDestination = prop('');
         const queryRewardId = h.getParams('reward_id');
@@ -144,7 +144,7 @@ const rewardSelectCard = {
                                     min: reward.minimum_value,
                                     placeholder: reward.minimum_value,
                                     type: 'tel',
-                                    config: state.setInput,
+                                    oncreate: state.setInput,
                                     onkeyup: m.withAttr('value', state.applyMask),
                                     value: state.contributionValue()
                                 })

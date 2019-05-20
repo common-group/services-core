@@ -13,10 +13,8 @@ const projectPosts = {
         const listVM = catarse.paginationVM(models.projectPostDetail),
             filterVM = catarse.filtersVM({ project_id: 'eq', id: 'eq'});
             
-        const scrollTo = (el, isInit) => {
-            if (!isInit) {
-                h.animateScrollTo(el);
-            }
+        const scrollTo = (localVnode) => {
+            h.animateScrollTo(localVnode.dom);
         };
 
         filterVM.project_id(vnode.attrs.project().project_id);
@@ -44,7 +42,7 @@ const projectPosts = {
             minimumValueRewardId = (post) => _.first(_.sortBy(post.rewards_that_can_access_post, r => r.minimum_value)).id;
 
         return m('#posts.project-posts.w-section', {
-            config: state.scrollTo
+            oncreate: state.scrollTo
         }, [
             m('.w-container.u-margintop-20', [
                 (project.is_owner_or_admin ? [

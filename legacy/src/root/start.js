@@ -140,14 +140,14 @@ const start = {
             };
         });
 
-        return m('#start', { config: h.setPageTitle(window.I18n.t('header_html', I18nScope())) }, [
+        return m('#start', { oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope())) }, [
             m('.w-section.hero-full.hero-start', [
                 m('.w-container.u-text-center', [
                     m('.fontsize-megajumbo.fontweight-semibold.u-marginbottom-40', window.I18n.t('slogan', I18nScope())),
                     m('.w-row.u-marginbottom-40', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             m('a.btn.btn-large.u-marginbottom-10[href="#start-form"]', {
-                                config: h.scrollTo(),
+                                oncreate: h.scrollTo(),
                                 onclick: h.analytics.event({ cat: 'project_start', act: 'start_btnstart_click' })
                             }, window.I18n.t('submit', I18nScope()))
                         ])
@@ -360,7 +360,7 @@ const start = {
                                     m('.w-col.w-col-5', [
                                         m('.fontsize-jumbo.u-marginbottom-20', category.name),
                                         m('a.w-button.btn.btn-medium.btn-inline.btn-dark[href="#start-form"]', {
-                                            config: h.scrollTo()
+                                            oncreate: h.scrollTo()
                                         }, window.I18n.t('submit', I18nScope()))
                                     ]),
                                     m('.w-col.w-col-7', [

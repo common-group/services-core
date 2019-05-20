@@ -49,9 +49,9 @@ const projectEditReward = {
             }
         });
 
-        const setSorting = (el, isInit) => {
-            if (!isInit && window.$) {
-                window.$(el).sortable({
+        const setSorting = (localVnode) => {
+            if (window.$) {
+                window.$(localVnode.dom).sortable({
                     update: (event, ui) => {
                         const rewardId = ui.item[0].id;
                         updateRewardSortPosition(rewardId, ui.item.index());
@@ -194,7 +194,7 @@ const projectEditReward = {
                             m('.w-col.w-col-8',
                                 m('.w-form', [
                                     state.rewards().length === 0 ? '' : m(".ui-sortable[id='rewards']", {
-                                        config: state.setSorting
+                                        oncreate: state.setSorting
                                     }, [
                                         _.map(_.sortBy(state.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
                                                 m('.reward-card', [

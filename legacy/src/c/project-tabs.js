@@ -32,11 +32,9 @@ const projectTabs = {
             }
         };
 
-        const navDisplay = (el, isInitialized) => {
-            if (!isInitialized) {
-                const fixNavBar = fixOnScroll(el);
-                window.addEventListener('scroll', fixNavBar);
-            }
+        const navDisplay = localVnode => {
+            const fixNavBar = fixOnScroll(localVnode.dom);
+            window.addEventListener('scroll', fixNavBar);
         };
 
         const navigate = (event) => {
@@ -64,7 +62,7 @@ const projectTabs = {
 
         return m('nav-wrapper', project() ? [
             m('.w-section.project-nav', {
-                config: state.navDisplay
+                oncreate: state.navDisplay
             }, [
                 m('.w-container', [
                     m('.w-row', [

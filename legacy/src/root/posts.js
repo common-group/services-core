@@ -135,10 +135,8 @@ const posts = {
                 deleteFormSubmit();
                 return false;
             },
-            setPostDeletionForm = (el, isInit) => {
-                if (!isInit) {
-                    deleteFormSubmit = () => el.submit();
-                }
+            setPostDeletionForm = (localVnode) => {
+                deleteFormSubmit = () => localVnode.dom.submit();
             },
             openedPercentage = post => (Math.floor((post.open_count / post.delivered_count) * 100) || 0);
 
@@ -425,7 +423,7 @@ const posts = {
                                     m('form.w-hidden', {
                                         action: `/${window.I18n.locale}/projects/${project.project_id}/posts/${state.toDeletePost()}`,
                                         method: 'POST',
-                                        config: state.setPostDeletionForm
+                                        oncreate: state.setPostDeletionForm
                                     }, [
                                         m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                                         m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),
