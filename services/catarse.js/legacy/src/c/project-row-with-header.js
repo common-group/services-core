@@ -23,7 +23,9 @@ const projectRowWithHeader = {
                         m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title}`)),
                         m('.w-col.w-col-4', [
                             m(`a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=${ref}&filter=${collection.hash}"]`, 
-                                { oncreate: m.route.link },
+                                { 
+                                    oncreate: m.route.link
+                                },
                                 'Ver todos'
                             ),
                             showFriendsLinkComponent

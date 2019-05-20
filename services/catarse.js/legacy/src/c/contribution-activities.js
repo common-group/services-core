@@ -35,9 +35,7 @@ const contributionActivities = {
                 resource(collection()[collectionIndex()]);
                 m.redraw();
             },
-            startConfig = (el, isinitialized, context) => {
-                context.onunload = () => clearInterval(interval);
-            },
+            removeTimer = () => clearInterval(interval),
             startTimer = () => {
                 interval = setInterval(nextResource, 15000);
             };
@@ -52,7 +50,7 @@ const contributionActivities = {
 
         vnode.state = {
             collection,
-            startConfig,
+            removeTimer,
             collectionL,
             resource,
             collectionSize
@@ -64,7 +62,7 @@ const contributionActivities = {
                 elapsed = h.translatedTime(resource.elapsed_time),
                 projectLink = `https://catarse.me/${resource.permalink}?ref=ctrse_home_activities`;
 
-            return m('.w-section.section.bg-backs-carrosel', { config: state.startConfig }, [
+            return m('.w-section.section.bg-backs-carrosel', { onremove: state.removeTimer }, [
                 m('.w-container.u-text-center.fontcolor-negative', [
                     m('.fontsize-large.u-marginbottom-30', `há ${parseInt(elapsed.total)} ${elapsed.unit}...`),
                     m('.w-clearfix.w-inline-block.u-marginbottom-10', [

@@ -36,28 +36,25 @@ const tooltip = {
                 m.redraw();
             };
 
-        const setParentPosition = (el, isInitialized) => {
-                if (!isInitialized) {
-                    parentOffset(h.cumulativeOffset(el));
-                }
+        const setParentPosition = (localVnode) => {
+                parentOffset(h.cumulativeOffset(localVnode.dom));
             },
-            setPosition = (el, isInitialized) => {
-                if (!isInitialized) {
-                    const elTop = el.offsetHeight + el.offsetParent.offsetHeight;
-                    const style = window.getComputedStyle(el);
+            setPosition = (localVnode) => {
+                const el = localVnode.dom;
+                const elTop = el.offsetHeight + el.offsetParent.offsetHeight;
+                const style = window.getComputedStyle(el);
 
-                    if (window.innerWidth < (el.offsetWidth + 2 * parseFloat(style.paddingLeft) + 30)) { // 30 here is a safe margin
-                        el.style.width = window.innerWidth - 30; // Adding the safe margin
-                        left(-parentOffset().left + 15); // positioning center of window, considering margin
-                    } else if ((parentOffset().left + (el.offsetWidth / 2)) <= window.innerWidth && (parentOffset().left - (el.offsetWidth / 2)) >= 0) {
-                        left(-el.offsetWidth / 2); // Positioning to the center
-                    } else if ((parentOffset().left + (el.offsetWidth / 2)) > window.innerWidth) {
-                        left(-el.offsetWidth + el.offsetParent.offsetWidth); // Positioning to the left
-                    } else if ((parentOffset().left - (el.offsetWidth / 2)) < 0) {
-                        left(-el.offsetParent.offsetWidth); // Positioning to the right
-                    }
-                    top(-elTop); // Setting top position
+                if (window.innerWidth < (el.offsetWidth + 2 * parseFloat(style.paddingLeft) + 30)) { // 30 here is a safe margin
+                    el.style.width = window.innerWidth - 30; // Adding the safe margin
+                    left(-parentOffset().left + 15); // positioning center of window, considering margin
+                } else if ((parentOffset().left + (el.offsetWidth / 2)) <= window.innerWidth && (parentOffset().left - (el.offsetWidth / 2)) >= 0) {
+                    left(-el.offsetWidth / 2); // Positioning to the center
+                } else if ((parentOffset().left + (el.offsetWidth / 2)) > window.innerWidth) {
+                    left(-el.offsetWidth + el.offsetParent.offsetWidth); // Positioning to the left
+                } else if ((parentOffset().left - (el.offsetWidth / 2)) < 0) {
+                    left(-el.offsetParent.offsetWidth); // Positioning to the right
                 }
+                top(-elTop); // Setting top position
             };
 
         vnode.state = {
@@ -75,11 +72,11 @@ const tooltip = {
         const width = state.width();
         return m(attrs.el, {
             onclick: state.toggle,
-            config: state.setParentPosition,
+            oncreate: state.setParentPosition,
             style: { cursor: 'pointer' }
         }, state.tooltip() ? [
             m(`.tooltip.dark[style="width: ${width}px; top: ${state.top()}px; left: ${state.left()}px;"]`, {
-                config: state.setPosition
+                oncreate: state.setPosition
             }, [
                 m('.fontsize-smallest', attrs.text)
             ])
