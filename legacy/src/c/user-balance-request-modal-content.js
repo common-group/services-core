@@ -74,7 +74,7 @@ const userBalanceRequestModelContent = {
                         parsedErrors.resetFieldErrors();
                     }
 
-                    userVM.getUserBankAccount(user_id).then(bankAccounts);
+                    userVM.getUserBankAccount(user_id).then(bankAccounts).then(() => m.redraw());
                     loading(false);
                     displayConfirmation(true);
                     m.redraw();
