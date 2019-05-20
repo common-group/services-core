@@ -47,19 +47,17 @@ const slider = {
                 clearInterval(interval);
                 startSliderTimer();
             },
-            config = (el, isInitialized, context) => {
-                if (!isInitialized) {
-                    translationSize(Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
-                    m.redraw();
-                }
-
-                context.onunload = () => clearInterval(interval);
-            };
+            translationSizeAndRedraw = localVnode => {
+                translationSize(Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
+                m.redraw();
+            },
+            clearTheIntervalSettle = localVnode => clearInterval(interval);
 
         startSliderTimer();
 
         vnode.state = {
-            config,
+            translationSizeAndRedraw,
+            clearTheIntervalSettle,
             selectedSlideIdx,
             translationSize,
             decrementSlide,
@@ -84,7 +82,8 @@ const slider = {
             };
 
         return m(`.w-slider.${wrapperClass}`, {
-            config: state.config
+            oncreate: state.translationSizeAndRedraw,
+            onremove: state.clearTheIntervalSettle,
         }, [
             m('.fontsize-larger', attrs.title),
             m('.w-slider-mask', [

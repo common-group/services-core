@@ -49,10 +49,8 @@ const userSettings = {
                 deleteFormSubmit();
                 return false;
             },
-            setCardDeletionForm = (el, isInit) => {
-                if (!isInit) {
-                    deleteFormSubmit = () => el.submit();
-                }
+            setCardDeletionForm = (localVnode) => {
+                deleteFormSubmit = () => localVnode.dom.submit();
             },
             updateUserData = () => {
                 const userData = {

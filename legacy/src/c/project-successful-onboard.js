@@ -26,8 +26,7 @@ const projectSuccessfulOnboard = {
             projectTransfers = prop([]),
             showTaxModal = h.toggleProp(false, true),
             loader = catarse.loaderWithToken,
-            listenToReplace = (element, isInitialized, context) => {
-                if (isInitialized) return;
+            listenToReplace = localVnode => {
 
                 const toRedraw = {
                     tax_link: {
@@ -39,7 +38,7 @@ const projectSuccessfulOnboard = {
                     }
                 };
 
-                _.map(element.children, (item) => {
+                _.map(localVnode.dom.children, (item) => {
                     const toR = toRedraw[item.getAttribute('id')];
 
                     if (toR) {
@@ -89,7 +88,7 @@ const projectSuccessfulOnboard = {
                              m('img.u-marginbottom-20', { src: window.I18n.t('finished.icon', I18nScope()), width: 94 }),
                              m('.fontsize-large.fontweight-semibold.u-marginbottom-20', window.I18n.t('finished.title', I18nScope())),
                              m('.fontsize-base.u-marginbottom-30', {
-                                 config: state.listenToReplace
+                                 oncreate: state.listenToReplace
                              }, m.trust(
                                  window.I18n.t('finished.text', I18nScope({ link_news: `/projects/${attrs.project().id}/posts`, link_surveys: `/projects/${attrs.project().id}/surveys` })))),
                              // m('a.btn.btn-large.btn-inline', { href: `/users/${attrs.project().user_id}/edit#balance` }, window.I18n.t('start.cta', I18nScope()))
