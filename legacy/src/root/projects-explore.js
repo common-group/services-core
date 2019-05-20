@@ -255,7 +255,7 @@ const projectsExplore = {
             changeFilter(chosenRecommender());
         }
         models.project.pageSize(9);
-        loadCategories().then(loadRoute);
+        loadCategories().then(loadRoute).then(() => m.redraw());
 
         if (vnode.attrs.filter) {
             currentFilter(filtersMap[vnode.attrs.filter]);
@@ -266,6 +266,7 @@ const projectsExplore = {
         }
 
         let notWasTried = true;
+        let firstLoad = true;
 
         const tryLoadFromQueryPath = () => {
             const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all'
@@ -280,6 +281,11 @@ const projectsExplore = {
             }
             else if (filterIsForContributedByFriends) {
                 currentFilter(filtersMap[innerDefaultFilter]);
+            }
+
+            if (firstLoad) {
+                h.scrollTop();
+                firstLoad = false;
             }
         }
 

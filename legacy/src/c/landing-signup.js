@@ -43,7 +43,7 @@ const landingSignup = {
         }, [
             m('.w-col.w-col-5', [
                 m(`input${errorClasses}.w-input.text-field.medium[name="EMAIL"][placeholder="Digite seu email"][type="text"]`, {
-                    config: h.RDTracker('landing-flex'),
+                    oncreate: h.RDTracker('landing-flex'),
                     onchange: m.withAttr('value', state.email),
                     value: state.email()
                 }),

@@ -17,24 +17,23 @@ import popNotification from './pop-notification';
 const copyTextInput = {
     oninit: function(vnode) {
         const showSuccess = prop(false);
-        const setClickHandler = (el, isInitialized) => {
+        const setClickHandler = localVnode => {
             let copy;
-            if (!isInitialized) {
-                const textarea = el.parentNode.previousSibling.firstChild;
+            const el = localVnode.dom;
+            const textarea = el.parentNode.previousSibling.firstChild;
 
-                textarea.innerText = vnode.attrs.value; // This fixes an issue when instantiating multiple copy clipboard components
-                el.onclick = () => {
-                    select(textarea);
-                    copy = document.execCommand('copy');
-                    if (copy) {
-                        showSuccess(true);
-                        m.redraw();
-                    } else {
-                        textarea.blur();
-                    }
-                    return false;
-                };
-            }
+            textarea.innerText = vnode.attrs.value; // This fixes an issue when instantiating multiple copy clipboard components
+            el.onclick = () => {
+                select(textarea);
+                copy = document.execCommand('copy');
+                if (copy) {
+                    showSuccess(true);
+                    m.redraw();
+                } else {
+                    textarea.blur();
+                }
+                return false;
+            };
         };
 
         vnode.state = {
@@ -48,7 +47,7 @@ const copyTextInput = {
                 style: 'margin-bottom:0;'
             }, attrs.value)),
             m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', m('button.btn.btn-medium.btn-no-border.btn-terciary.fa.fa-clipboard.w-button', {
-                config: state.setClickHandler
+                oncreate: state.setClickHandler
             })),
             state.showSuccess() ? m(popNotification, { message: 'Link copiado' }) : ''
         ]);

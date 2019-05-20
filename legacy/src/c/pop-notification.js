@@ -14,7 +14,7 @@ const popNotification = {
     },
     view: function({state, attrs}) {
         return (state.displayNotification() ? m('.flash.w-clearfix.card.card-notification.u-radius.zindex-20', {
-            config: state.setPopTimeout,
+            oncreate: state.setPopTimeout,
             class: attrs.error ? 'card-error' : ''
         }, [
             m('img.icon-close[src="/assets/catarse_bootstrap/x.png"][width="12"][alt="fechar"]', {

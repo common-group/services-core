@@ -61,7 +61,7 @@ const userSettingsSavedCreditCards = {
             m('form.w-hidden', {
                 action: `/${window.I18n.locale}/users/${user.id}/credit_cards/${toDeleteCard()}`,
                 method: 'POST',
-                config: setCardDeletionForm
+                oncreate: setCardDeletionForm
             }, [
                 m('input[name=\'utf8\'][type=\'hidden\'][value=\'✓\']'),
                 m('input[name=\'_method\'][type=\'hidden\'][value=\'delete\']'),

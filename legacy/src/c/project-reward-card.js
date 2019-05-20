@@ -25,7 +25,7 @@ const projectRewardCard = {
                 return false;
             };
 
-        const setInput = (el, isInitialized) => (!isInitialized ? el.focus() : false);
+        const setInput = localVnode => localVnode.dom.focus();
 
         const selectDestination = (destination) => {
             selectedDestination(destination);
@@ -210,7 +210,7 @@ const projectRewardCard = {
                              ),
                             m('.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                               m('input.w-input.back-reward-input-reward[type="tel"]', {
-                                  config: state.setInput,
+                                  oncreate: state.setInput,
                                   onkeyup: m.withAttr('value', state.applyMask),
                                   value: state.contributionValue()
                               })

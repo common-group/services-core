@@ -82,12 +82,10 @@ const adminRadioAction = {
             return false;
         };
 
-        const unload = (el, isinit, context) => {
-            context.onunload = () => {
-                complete(false);
-                error(false);
-                newID('');
-            };
+        const unload = () => {
+            complete(false);
+            error(false);
+            newID('');
         };
 
         const setDescription = (text) => {
@@ -120,7 +118,7 @@ const adminRadioAction = {
             m('button.btn.btn-small.btn-terciary', {
                 onclick: state.toggler.toggle
             }, data.outerLabel), (state.toggler()) ?
-            m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', { config: state.unload }, [
+            m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', { onremove: state.unload }, [
                 m('form.w-form', {
                     onsubmit: state.submit
                 }, (!state.complete()) ? [
