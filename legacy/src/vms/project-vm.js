@@ -15,6 +15,10 @@ const currentProject = prop(),
     vm = catarse.filtersVM({ project_id: 'eq' }),
     idVM = h.idVM;
 
+prop.merge([currentProject, userDetails, subscriptionData, projectContributions]).map(() => {
+    m.redraw();
+});
+
 const isSubscription = (project = currentProject) => {
     if (_.isFunction(project)) {
         return project() ? project().mode === 'sub' : false;
