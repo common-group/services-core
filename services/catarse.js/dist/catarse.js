@@ -5204,6 +5204,7 @@ var dashboardSubscriptionCard = {
 
             lU.load().then(function (data) {
                 user(_underscore2.default.first(data));
+                _mithril2.default.redraw();
             });
         }
 
@@ -16359,6 +16360,10 @@ var _moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var subscriptionNextChargeDateMethodInfo = {
@@ -16369,14 +16374,18 @@ var subscriptionNextChargeDateMethodInfo = {
             next_charge_at = attrs.next_charge_at;
 
 
+        var hasPaymentMethodDetails = payment_method_details && payment_method_details.last_digits && payment_method_details.brand;
+
         if (payment_method === 'boleto') {
             return (0, _moment2.default)(next_charge_at).format('DD/MM/YYYY') + ' - Boleto';
-        } else {
+        } else if (hasPaymentMethodDetails) {
             var last_digits = payment_method_details.last_digits,
                 brand = payment_method_details.brand;
 
 
             return (0, _moment2.default)(next_charge_at).format('DD/MM/YYYY') + ' - Cart\xE3o ' + brand + ' final ' + last_digits;
+        } else {
+            return _h2.default.loader();
         }
     }
 };
@@ -19927,24 +19936,22 @@ var _userContributedList = __webpack_require__(/*! ./user-contributed-list */ ".
 
 var _userContributedList2 = _interopRequireDefault(_userContributedList);
 
+var _subscriptionListVm = __webpack_require__(/*! ../vms/subscription-list-vm */ "./legacy/src/vms/subscription-list-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var userPrivateContributed = {
     oninit: function oninit(vnode) {
         var user_id = vnode.attrs.userId,
             userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
-            subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'created_at.desc', { Prefer: 'count=exact' }),
+            subscriptions = (0, _subscriptionListVm.getUserPrivateSubscriptionsListVM)(userCommonId),
             onlinePages = _api.catarse.paginationVM(_models2.default.userContribution),
             successfulPages = _api.catarse.paginationVM(_models2.default.userContribution),
             failedPages = _api.catarse.paginationVM(_models2.default.userContribution),
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
-            requestCountdown = (0, _stream2.default)(4),
             requestRedraw = function requestRedraw() {
-            requestCountdown(Math.max(0, requestCountdown() - 1));
-            if (requestCountdown() == 0) {
-                _mithril2.default.redraw();
-            }
+            _mithril2.default.redraw();
         },
             handleError = function handleError() {
             error(true);
@@ -19955,22 +19962,9 @@ var userPrivateContributed = {
             user_id: 'eq',
             state: 'in',
             project_state: 'in'
-        }),
-            contextSubVM = _api.catarse.filtersVM({
-            user_id: 'eq',
-            status: 'in'
         });
 
-        _models2.default.userSubscription.pageSize(9);
         _models2.default.userContribution.pageSize(9);
-
-        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
-            created_at: 'desc'
-        });
-
-        subscriptions.firstPage(contextSubVM.parameters()).then(function () {
-            return loader(false);
-        }).then(requestRedraw).catch(handleError);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 
@@ -29368,7 +29362,6 @@ var projectSubscriptionReport = {
             isProjectDataLoaded = (0, _stream2.default)(false),
             isRewardsDataLoaded = (0, _stream2.default)(false),
             rewards = (0, _stream2.default)([]),
-            requestRedraw = _h2.default.createRequestAutoRedraw(isProjectDataLoaded, rewards),
             subscriptions = (0, _projectSubscriptionsListVm2.default)(),
             submit = function submit() {
             // Set order by last paid on filters too
@@ -29500,7 +29493,6 @@ var projectSubscriptionReport = {
             loader(false);
             isProjectDataLoaded(true);
             _mithril2.default.redraw();
-            requestRedraw();
         },
             project = (0, _stream2.default)([{}]);
 
@@ -29513,7 +29505,7 @@ var projectSubscriptionReport = {
         lReward.load().then(function (loadedRewards) {
             rewards(loadedRewards);
             isRewardsDataLoaded(true);
-            requestRedraw();
+            _mithril2.default.redraw();
         });
         var mapRewardsToOptions = function mapRewardsToOptions() {
             var options = [];
@@ -29547,12 +29539,16 @@ var projectSubscriptionReport = {
             filterVM.project_id(_underscore2.default.first(data).common_id);
             // override default 'created_at' order on vm
             filterVM.order({ last_payment_data_created_at: 'desc' });
-            subscriptions.firstPage(filterVM.parameters()).then(function () {
+            subscriptions.firstPage(filterVM.parameters()).then(function (result) {
                 loader(false);
                 isProjectDataLoaded(true);
                 _mithril2.default.redraw();
-            }).catch(handleError);
+            }).catch(function (err) {
+                handleError(err);
+                _mithril2.default.redraw();
+            });
             project(data);
+            _mithril2.default.redraw();
         });
 
         vnode.state = {
@@ -29697,6 +29693,11 @@ var ProjectsSubscriptionThankYou = {
             _h2.default.analytics.event(analyticsData)();
             return payData;
         };
+
+        _stream2.default.merge([paymentData, project, projectUser, error]).map(function () {
+            _h2.default.scrollTop();
+            _mithril2.default.redraw();
+        });
 
         if (paymentId) {
             _commonPaymentVm2.default.paymentInfo(paymentId).then(sendSubscriptionDataToAnalyticsInterceptingPaymentInfoRequest).then(paymentData).catch(function () {
@@ -34380,8 +34381,11 @@ var projectSubscriptionsListVM = function projectSubscriptionsListVM() {
 
     return {
         firstPage: function firstPage(parameters) {
-            return subscriptions.firstPage(parameters).then(function () {
-                return _mithril2.default.redraw();
+            return new Promise(function (resolve, reject) {
+                subscriptions.firstPage(parameters).then(function (result) {
+                    resolve(result);
+                    _mithril2.default.redraw();
+                }).catch(reject);
             });
         },
         nextPage: function nextPage() {
@@ -34517,6 +34521,10 @@ var currentProject = (0, _stream2.default)(),
     projectContributions = (0, _stream2.default)([]),
     vm = _api.catarse.filtersVM({ project_id: 'eq' }),
     idVM = _h2.default.idVM;
+
+_stream2.default.merge([currentProject, userDetails, subscriptionData, projectContributions]).map(function () {
+    _mithril2.default.redraw();
+});
 
 var isSubscription = function isSubscription() {
     var project = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : currentProject;
@@ -35541,8 +35549,9 @@ exports.default = vm;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
+exports.getUserPrivateSubscriptionsListVM = undefined;
 
 var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
 
@@ -35557,6 +35566,33 @@ var _models2 = _interopRequireDefault(_models);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'id.desc', { Prefer: 'count=exact' });
+var getUserPrivateSubscriptionsListVM = exports.getUserPrivateSubscriptionsListVM = function getUserPrivateSubscriptionsListVM(userCommonId) {
+    _models2.default.userSubscription.pageSize(9);
+    var contextSubVM = _api.commonPayment.filtersVM({
+        user_id: 'eq',
+        status: 'in'
+    });
+    contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
+        created_at: 'desc'
+    });
+
+    var subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'created_at.desc', { Prefer: 'count=exact' });
+
+    subscriptions.firstPage(contextSubVM.parameters()).then(function () {
+        return _mithril2.default.redraw();
+    });
+
+    return {
+        isLoading: subscriptions.isLoading,
+        collection: subscriptions.collection,
+        isLastPage: subscriptions.isLastPage,
+        nextPage: function nextPage() {
+            return subscriptions.nextPage().then(function () {
+                return _mithril2.default.redraw();
+            });
+        }
+    };
+};
 
 /***/ }),
 
