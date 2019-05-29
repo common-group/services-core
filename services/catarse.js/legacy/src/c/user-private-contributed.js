@@ -7,23 +7,20 @@ import h from '../h';
 import contributionVM from '../vms/contribution-vm';
 import inlineError from './inline-error';
 import userContributedList from './user-contributed-list';
+import { getUserPrivateSubscriptionsListVM } from '../vms/subscription-list-vm';
 
 const userPrivateContributed = {
     oninit: function(vnode) {
         const user_id = vnode.attrs.userId,
             userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
-            subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', { Prefer: 'count=exact' }),
+            subscriptions = getUserPrivateSubscriptionsListVM(userCommonId),
             onlinePages = catarse.paginationVM(models.userContribution),
             successfulPages = catarse.paginationVM(models.userContribution),
             failedPages = catarse.paginationVM(models.userContribution),
             error = prop(false),
             loader = prop(true),
-            requestCountdown = prop(4),
             requestRedraw = () => {
-                requestCountdown(Math.max(0, requestCountdown() - 1));
-                if (requestCountdown() == 0) {
-                    m.redraw();
-                }
+                m.redraw();
             },
             handleError = () => {
                 error(true);
@@ -34,23 +31,10 @@ const userPrivateContributed = {
                 user_id: 'eq',
                 state: 'in',
                 project_state: 'in'
-            }),
-            contextSubVM = catarse.filtersVM({
-                user_id: 'eq',
-                status: 'in'
             });
 
-        models.userSubscription.pageSize(9);
+        
         models.userContribution.pageSize(9);
-
-        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
-            created_at: 'desc'
-        });
-
-        subscriptions.firstPage(contextSubVM.parameters())
-            .then(() => loader(false))
-            .then(requestRedraw)
-            .catch(handleError);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
 

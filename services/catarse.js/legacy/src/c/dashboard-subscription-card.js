@@ -30,6 +30,7 @@ const dashboardSubscriptionCard = {
 
             lU.load().then((data) => {
                 user(_.first(data));
+                m.redraw();
             });
         }
 

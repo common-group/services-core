@@ -35,6 +35,13 @@ const ProjectsSubscriptionThankYou = {
             return payData;
         };
 
+        prop
+            .merge([paymentData, project, projectUser, error])
+            .map(() => {
+                h.scrollTop();
+                m.redraw();
+            });
+
         if (paymentId) {
             CommonPaymentVM
                 .paymentInfo(paymentId)
