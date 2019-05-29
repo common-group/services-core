@@ -13,7 +13,15 @@ const projectSubscriptionsListVM = () => {
 
     return {
         firstPage: parameters => {
-            return subscriptions.firstPage(parameters).then(() => m.redraw());
+            return new Promise((resolve, reject) => {
+                subscriptions
+                    .firstPage(parameters)
+                    .then(result => {
+                        resolve(result);
+                        m.redraw();
+                    })
+                .catch(reject);
+            });
         },
         nextPage: () => {
             return subscriptions.nextPage().then(() => m.redraw());
