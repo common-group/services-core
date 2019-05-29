@@ -44,7 +44,6 @@ const projectSubscriptionReport = {
             isProjectDataLoaded = prop(false),
             isRewardsDataLoaded = prop(false),
             rewards = prop([]),
-            requestRedraw = h.createRequestAutoRedraw(isProjectDataLoaded, rewards),
             subscriptions = projectSubscriptionsListVM(),
             submit = () => {
                 // Set order by last paid on filters too
@@ -201,7 +200,6 @@ const projectSubscriptionReport = {
                 loader(false);
                 isProjectDataLoaded(true);
                 m.redraw();
-                requestRedraw()
             },
             project = prop([{}]);
 
@@ -214,7 +212,7 @@ const projectSubscriptionReport = {
         lReward.load().then((loadedRewards) => {
             rewards(loadedRewards);
             isRewardsDataLoaded(true);
-            requestRedraw();
+            m.redraw();
         });
         const mapRewardsToOptions = () => {
             let options = [];
@@ -246,12 +244,16 @@ const projectSubscriptionReport = {
             filterVM.project_id(_.first(data).common_id);
             // override default 'created_at' order on vm
             filterVM.order({ last_payment_data_created_at: 'desc' });
-            subscriptions.firstPage(filterVM.parameters()).then(() => {
+            subscriptions.firstPage(filterVM.parameters()).then(result => {
                 loader(false);
                 isProjectDataLoaded(true);
                 m.redraw();
-            }).catch(handleError);
+            }).catch(err => {
+                handleError(err);
+                m.redraw();
+            });
             project(data);
+            m.redraw();
         });
 
         vnode.state = {
