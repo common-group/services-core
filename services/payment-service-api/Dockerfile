@@ -1,6 +1,6 @@
 FROM comum/pg-dispatcher:latest AS dispatcher-env
 
-FROM node:9.1-stretch
+FROM node:10.15-jessie
 
 RUN apt-get install -y libssl-dev
 
