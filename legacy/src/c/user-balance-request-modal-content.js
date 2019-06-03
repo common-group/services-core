@@ -88,9 +88,8 @@ const userBalanceRequestModelContent = {
                 });
             },
             requestFund = () => {
-                requestLoader.load().then((data) => {
-                    vnode.attrs.balanceManager.load();
-                    vnode.attrs.balanceTransactionManager.load();
+                requestLoader.load().then(data => {
+                    vnode.attrs.balanceManager.load().then(() => m.redraw());
                     displayConfirmation(false);
                     displayDone.toggle();
                     m.redraw();
