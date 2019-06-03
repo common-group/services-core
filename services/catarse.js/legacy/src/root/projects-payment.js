@@ -24,7 +24,7 @@ const projectsPayment = {
         const project = projectVM.currentProject,
             vm = paymentVM(),
             showPaymentForm = prop(false),
-            addVM = prop(vnode.attrs.address || {}),
+            addVM = prop(vnode.attrs.address || { international: prop(false) }),
             contribution = contributionVM.getCurrentContribution(),
             reward = prop(contribution().reward),
             value = contribution().value,
@@ -95,6 +95,7 @@ const projectsPayment = {
                     data: vm.fields.address(),
                 })
             );
+            m.redraw();
         });
         vm.kondutoExecute();
         projectVM.getCurrentProject();
