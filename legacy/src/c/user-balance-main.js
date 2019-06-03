@@ -27,7 +27,7 @@ const userBalanceMain = {
         const balanceManager = (() => {
                 const collection = prop([{ amount: 0, user_id: vnode.attrs.user_id }]),
                     load = () => {
-                        models.balance
+                        return models.balance
                             .getRowWithToken(userIdVM.parameters())
                             .then(collection)
                             .then(_ => m.redraw());
@@ -50,10 +50,10 @@ const userBalanceMain = {
                                 models.bankAccount.getRowOptions(
                                     userIdVM.parameters())))(),
                     load = () => {
-                        loader
+                        return loader
                             .load()
                             .then(collection)
-                            .then(_ => m.redraw());
+                            .then(() => m.redraw());
                     };
 
                 return {
