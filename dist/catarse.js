@@ -17590,7 +17590,7 @@ var userBalanceMain = {
         var balanceManager = function () {
             var collection = (0, _stream2.default)([{ amount: 0, user_id: vnode.attrs.user_id }]),
                 load = function load() {
-                _models2.default.balance.getRowWithToken(userIdVM.parameters()).then(collection).then(function (_) {
+                return _models2.default.balance.getRowWithToken(userIdVM.parameters()).then(collection).then(function (_) {
                     return _mithril2.default.redraw();
                 });
             };
@@ -17614,7 +17614,7 @@ var userBalanceMain = {
                 return _api.catarse.loaderWithToken(_models2.default.bankAccount.getRowOptions(userIdVM.parameters()));
             }(),
                 load = function load() {
-                loader.load().then(collection).then(function (_) {
+                return loader.load().then(collection).then(function () {
                     return _mithril2.default.redraw();
                 });
             };
@@ -17786,8 +17786,9 @@ var userBalanceRequestModelContent = {
         },
             requestFund = function requestFund() {
             requestLoader.load().then(function (data) {
-                vnode.attrs.balanceManager.load();
-                vnode.attrs.balanceTransactionManager.load();
+                vnode.attrs.balanceManager.load().then(function () {
+                    return _mithril2.default.redraw();
+                });
                 displayConfirmation(false);
                 displayDone.toggle();
                 _mithril2.default.redraw();
@@ -28225,7 +28226,7 @@ var projectsPayment = {
         var project = _projectVm2.default.currentProject,
             vm = (0, _paymentVm2.default)(),
             showPaymentForm = (0, _stream2.default)(false),
-            addVM = (0, _stream2.default)(vnode.attrs.address || {}),
+            addVM = (0, _stream2.default)(vnode.attrs.address || { international: (0, _stream2.default)(false) }),
             contribution = _contributionVm2.default.getCurrentContribution(),
             reward = (0, _stream2.default)(contribution().reward),
             value = contribution().value,
@@ -28299,6 +28300,7 @@ var projectsPayment = {
             addVM((0, _addressVm2.default)({
                 data: vm.fields.address()
             }));
+            _mithril2.default.redraw();
         });
         vm.kondutoExecute();
         _projectVm2.default.getCurrentProject();
