@@ -97,11 +97,8 @@ describe("error handler lib", () => {
     });
     describe('e.resetFieldErrors', () => {
         it('should set the error flag of a all fields to false', () => {
-
-            setTimeout(() => {
-                e.resetFieldErrors();
-                expect(hasAnyFieldError()).toBeFalse();
-            }, 500);
+            e.resetFieldErrors();
+            expect(hasAnyFieldError()).toBeFalse();
         });
     });
     describe('e.resetErrors', () => {

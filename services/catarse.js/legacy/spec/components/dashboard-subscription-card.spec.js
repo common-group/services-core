@@ -12,7 +12,7 @@ describe('ShowDateFromSubscriptionTransition', () => {
         $output = mq(m(subscriptionStatusIcon, {subscription:$subscription}));
 
         $subscription2 = SubscriptionMockery()[2];
-        $output2 = mq(m(dashboardSubscriptionCard, {subscription: $subscription2}));
+        $output2 = mq(m(dashboardSubscriptionCard, {subscription: $subscription2, user: {name: 'Test Name', profile_img_thumbnail: 'none'}}));
     });
 
     it('Should show subscription transition date', () => {

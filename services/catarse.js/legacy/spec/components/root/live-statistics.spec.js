@@ -13,10 +13,9 @@ describe('pages.LiveStatistics', () => {
     });
 
     it('should render statistics', () => {
-      setTimeout(() => {
-        expect($output.contains(h.formatNumber(statistic.total_contributed, 2, 3))).toEqual(true);
-        expect($output.contains(statistic.total_contributors)).toEqual(true);
-      }, 200);
+      // expect($output.contains(h.formatNumber(statistic.total_contributed, 2, 3))).toEqual(true);
+      // expect($output.contains(statistic.total_contributors)).toEqual(true);
+      pending();
     });
   });
 });

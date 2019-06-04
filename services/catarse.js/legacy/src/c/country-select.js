@@ -23,6 +23,7 @@ const countrySelect = {
             if (vnode.attrs.addVM) {
                 vnode.attrs.addVM.countries(countries());
             }
+            m.redraw();
         });
 
         vnode.state = {
