@@ -7,7 +7,8 @@ describe('TeamMembers', () => {
 
     describe('view', () => {
         beforeAll(() => {
-            $output = mq(m(teamMembers));
+            var groupCollection = (collection, groupTotal) => _.map(_.range(Math.ceil(collection.length / groupTotal)), i => collection.slice(i * groupTotal, (i + 1) * groupTotal));
+            $output = mq(m(teamMembers, {team_members : groupCollection(TeamMembersMockery(10), 10)}));
         });
 
         it('should render fetched team members', () => {

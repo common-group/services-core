@@ -7,7 +7,8 @@ describe('UsersShow', () => {
   beforeAll(() => {
     window.location.hash = '';
     userDetail = UserDetailMockery()[0];
-    $output = mq(m(usersShow, {user_id: '405699'}));
+    userDetail.user_id = `${userDetail.user_id}`;
+    $output = mq(m(usersShow, userDetail));
   });
 
   it('should render some user details', () => {
