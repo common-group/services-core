@@ -20,7 +20,7 @@ const dashboardSubscriptionCard = {
         const subscription = vnode.attrs.subscription,
             reward = prop(),
             toggleDetails = h.toggleProp(false, true),
-            user = prop();
+            user = prop(vnode.attrs.user);
 
         if (subscription.user_external_id) {
             const filterUserVM = catarse.filtersVM({
@@ -56,7 +56,7 @@ const dashboardSubscriptionCard = {
         const subscription = attrs.subscription,
             user = state.user(),
             cardClass = state.toggleDetails() ? '.card-detailed-open' : '';
-
+            
         return m(`div${cardClass}`, [m('.card.card-clickable', {
             onclick: state.toggleDetails.toggle
         }, state.user() ?
