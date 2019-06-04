@@ -18,10 +18,8 @@ describe('ProjectPosts', () => {
         });
 
         it('should render project post list', () => {
-            setTimeout(() => {
-                expect($output.find('.post').length).toEqual(1);
-                expect($output.contains(projectPostDetail.title)).toEqual(true);
-            }, 200);
+            expect($output.find('.post').length).toEqual(1);
+            expect($output.contains(projectPostDetail.title)).toEqual(true);
         });
     });
 });

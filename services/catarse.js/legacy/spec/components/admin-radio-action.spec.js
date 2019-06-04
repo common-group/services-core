@@ -41,6 +41,7 @@ describe('AdminRadioAction', () => {
             $output = mq(adminRadioAction, {
                 data: args,
                 item: prop(item),
+                radios: [{id: 'id', description: 'description'}],
                 getKeyValue: () => {},
                 updateKeyValue: () => {},
             });
@@ -70,18 +71,17 @@ describe('AdminRadioAction', () => {
                 $output.click('#r-0');
                 $output.trigger('form', 'onsubmit');
 
-                setTimeout(() => {
-                    const lastRequest = jasmine.Ajax.requests.mostRecent();
-                    // Should make a patch request to update item
-                    expect(lastRequest.method).toEqual('PATCH');
-                }, 200);
+                const lastRequest = jasmine.Ajax.requests.mostRecent();
+                // Should make a patch request to update item
+                expect(lastRequest.method).toEqual('PATCH');
             });
 
             describe('when new value is not valid', () => {
                 beforeAll(() => {
                     $output = mq(adminRadioAction, {
                         data: errorArgs,
-                        item: prop(item)
+                        item: prop(item),
+                        radios: [{id:item.id}]
                     });
                     $output.click('button');
                     $output.click('#r-0');
@@ -90,10 +90,7 @@ describe('AdminRadioAction', () => {
 
                 it('should present an error message when new value is invalid', () => {
                     $output.trigger('form', 'onsubmit');
-
-                    setTimeout(() => {
-                        $output.should.contain(errorStr);
-                    }, 200);
+                    $output.should.contain(errorStr);
                 });
             });
         });

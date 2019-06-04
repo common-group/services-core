@@ -16,7 +16,7 @@ import { catarse } from '../api';
 
 const adminNotificationHistory = {
     oninit: function(vnode) {
-        const notifications = prop([]),
+        const notifications = prop(vnode.attrs.notifications || []),
             getNotifications = (user) => {
                 const notification = models.notification;
                 notification.getPageWithToken(catarse.filtersVM({
