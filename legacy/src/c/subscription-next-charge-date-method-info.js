@@ -4,11 +4,9 @@ import h from '../h';
 
 const subscriptionNextChargeDateMethodInfo = {
     view: function({attrs}) {
-        const {
-            payment_method,
-            payment_method_details,
-            next_charge_at,
-        } = attrs;
+        const payment_method = attrs.payment_method;
+        const payment_method_details = attrs.payment_method_details;
+        const next_charge_at = attrs.next_charge_at;
 
         const hasPaymentMethodDetails = payment_method_details && payment_method_details.last_digits && payment_method_details.brand;
 

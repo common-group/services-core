@@ -16,39 +16,37 @@ const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 const projectSidebar = {
     oninit: function(vnode) {
         const project = vnode.attrs.project,
-            animateProgress = (el, isInitialized) => {
-                if (!isInitialized) {
-                    let animation,
-                        progress = 0,
-                        pledged = 0,
-                        contributors = 0;
-                    const pledgedIncrement = project().pledged / project().progress,
-                        contributorsIncrement = project().total_contributors / project().progress;
+            animateProgress = localVnode => {
+                let animation,
+                    progress = 0,
+                    pledged = 0,
+                    contributors = 0;
+                const pledgedIncrement = project().pledged / project().progress,
+                    contributorsIncrement = project().total_contributors / project().progress;
 
-                    const progressBar = document.getElementById('progressBar'),
-                        pledgedEl = document.getElementById('pledged'),
-                        contributorsEl = document.getElementById('contributors'),
-                        incrementProgress = () => {
-                            if (progress <= parseInt(project().progress)) {
-                                progressBar.style.width = `${progress}%`;
-                                pledgedEl.innerText = `R$ ${h.formatNumber(pledged)}`;
-                                contributorsEl.innerText = `${parseInt(contributors)} pessoas`;
-                                el.innerText = `${progress}%`;
-                                pledged += pledgedIncrement;
-                                contributors += contributorsIncrement;
-                                progress += 1;
-                            } else {
-                                clearInterval(animation);
-                            }
-                        },
-                        animate = () => {
-                            animation = setInterval(incrementProgress, 28);
-                        };
+                const progressBar = document.getElementById('progressBar'),
+                    pledgedEl = document.getElementById('pledged'),
+                    contributorsEl = document.getElementById('contributors'),
+                    incrementProgress = () => {
+                        if (progress <= parseInt(project().progress)) {
+                            progressBar.style.width = `${progress}%`;
+                            pledgedEl.innerText = `R$ ${h.formatNumber(pledged)}`;
+                            contributorsEl.innerText = `${parseInt(contributors)} pessoas`;
+                            localVnode.dom.innerText = `${progress}%`;
+                            pledged += pledgedIncrement;
+                            contributors += contributorsIncrement;
+                            progress += 1;
+                        } else {
+                            clearInterval(animation);
+                        }
+                    },
+                    animate = () => {
+                        animation = setInterval(incrementProgress, 28);
+                    };
 
-                    setTimeout(() => {
-                        animate();
-                    }, 1800);
-                }
+                setTimeout(() => {
+                    animate();
+                }, 1800);
             };
 
         const navigate = () => {

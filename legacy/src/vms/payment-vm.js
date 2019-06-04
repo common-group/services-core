@@ -50,6 +50,7 @@ const paymentVM = () => {
         fields.ownerDocument(data.owner_document);
 
         creditCardFields.cardOwnerDocument(data.owner_document);
+        m.redraw();
     };
 
     const expMonthOptions = () => [

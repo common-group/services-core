@@ -124,7 +124,6 @@ const projectsPayment = {
         const user = state.user(),
             addVM = state.addVM(),
             project = state.project(),
-            isInternational = addVM.international && typeof addVM.international === 'function' && addVM.international(),
             formatedValue = h.formatNumber(Number(state.value), 2, 3),
             anonymousCheckbox = m('.w-row', [
                 m('.w-checkbox.w-clearfix', [
@@ -294,7 +293,7 @@ const projectsPayment = {
                                                         ]),
                                                         m(
                                                             '.w-col.w-col-5',
-                                                            isInternational
+                                                            addVM.international()
                                                                 ? ''
                                                                 : [
                                                                       m(

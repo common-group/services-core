@@ -53,7 +53,7 @@ const projectContributions = {
         filterStats.project_id(vnode.attrs.project().project_id);
 
         if (!listVM.collection().length) {
-            listVM.firstPage(projectVM.isSubscription(vnode.attrs.project()) ? subFilterVM.parameters() : filterVM.parameters());
+            listVM.firstPage(projectVM.isSubscription(vnode.attrs.project()) ? subFilterVM.parameters() : filterVM.parameters()).then(() => m.redraw());
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
         const lContributionsPerDay = catarse.loader(models.projectContributionsPerDay.getRowOptions(filterStats.parameters()));

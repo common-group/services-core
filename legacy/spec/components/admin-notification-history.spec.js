@@ -8,15 +8,23 @@ describe('AdminNotificationHistory', () => {
         ctrl, view, $output;
 
     beforeAll(() => {
-        user = prop(UserDetailMockery(1));
-        $output = mq(adminNotificationHistory, {user: user()[0]});
+        user = prop(UserDetailMockery(1));        
+        const dataOptions = {
+            user: user()[0],
+            notifications: [{
+                sent_at: new Date(),
+                relation: 'relation',
+                id: 'id',
+                template_name: 'template_name',
+                origin: 'origin'
+            }]
+        };
+        $output = mq(adminNotificationHistory, dataOptions);
     });
 
     describe('view', () => {
         it('should render fetched notifications', () => {
-            setTimeout(() => {
-                expect($output.find('.date-event').length).toEqual(1);
-            }, 200);
+            expect($output.find('.date-event').length).toEqual(1);
         });
     });
 });

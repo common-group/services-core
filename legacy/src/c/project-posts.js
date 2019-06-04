@@ -24,7 +24,7 @@ const projectPosts = {
         }
 
         if (!listVM.collection().length) {
-            listVM.firstPage(filterVM.parameters());
+            listVM.firstPage(filterVM.parameters()).then(() => m.redraw());
         }
 
         vnode.state = {
@@ -55,8 +55,10 @@ const projectPosts = {
                             m(`a.btn.btn-edit.btn-small[href='/${window.I18n.locale}/projects/${project.project_id}/posts']`, 'Escrever novidade')
                         ])
                     ])
-                ] : ''), (_.map(list.collection(), post => m('.w-row', [
-                    _.isEmpty(post.comment_html) ? [
+                ] : ''), 
+                (_.map(list.collection(), post => m('.w-row', [
+                    _.isEmpty(post.comment_html) ? 
+                    [
                         m('.fontsize-small.fontcolor-secondary.u-text-center', h.momentify(post.created_at)),
                         m('p.fontweight-semibold.fontsize-larger.u-text-center.u-marginbottom-30', [
                             m(`a.link-hidden[href="/projects/${post.project_id}/posts/${post.id}#posts"]`, post.title)
@@ -78,7 +80,10 @@ const projectPosts = {
                             ]
 
                         ])
-                    ] : [m('.w-col.w-col-2'),
+                    ] 
+                    : 
+                    [
+                        m('.w-col.w-col-2'),
                         m('.w-col.w-col-8', [
                             m('.post', [
                                 m('.u-marginbottom-60 .w-clearfix', [
