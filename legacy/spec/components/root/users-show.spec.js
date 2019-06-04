@@ -8,6 +8,7 @@ describe('UsersShow', () => {
     window.location.hash = '';
     userDetail = UserDetailMockery()[0];
     userDetail.user_id = `${userDetail.user_id}`;
+    userDetail.user_details = userDetail;
     $output = mq(m(usersShow, userDetail));
   });
 
