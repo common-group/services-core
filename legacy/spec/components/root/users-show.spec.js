@@ -15,8 +15,6 @@ describe('UsersShow', () => {
     $output.should.have('#created_link');
     $output.should.have('#about_link');
     
-    setTimeout(() => {
-      expect($output.contains(userDetail.name)).toEqual(true);
-    }, 50);
+    expect($output.contains(userDetail.name)).toEqual(true);
   });
 });

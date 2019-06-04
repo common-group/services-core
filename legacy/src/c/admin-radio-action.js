@@ -17,7 +17,7 @@ const adminRadioAction = {
             newID = prop(''),
             getFilter = {},
             setFilter = {},
-            radios = prop([]),
+            radios = prop(vnode.attrs.radios || []),
             getAttr = builder.radios,
             getKey = builder.getKey,
             getKeyValue = vnode.attrs.getKeyValue,
@@ -38,7 +38,7 @@ const adminRadioAction = {
 
         const setLoader = catarse.loaderWithToken(builder.updateModel.patchOptions(setVM.parameters(), data));
 
-        const updateItem = (data) => {
+        const updateItem = data => {
             if (data.length > 0) {
                 const newItem = _.findWhere(radios(), {
                     id: data[0][builder.selectKey]
@@ -50,6 +50,7 @@ const adminRadioAction = {
                 });
             }
             complete(true);
+            m.redraw();
         };
 
         const populateRadios = (data) => {
