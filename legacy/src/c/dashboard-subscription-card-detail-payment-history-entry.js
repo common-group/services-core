@@ -27,7 +27,7 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
             captalize = (str) => str.charAt(0).toUpperCase() + str.slice(1),
             paymentStatus = attrs.payment.status,
             paymentAmount = attrs.payment.amount,
-            paymentMethod = attrs.payment.payment_method,
+            paymentMethod = attrs.payment ? attrs.payment.payment_method : '',
             paymentDate = attrs.payment.created_at,
             paymentDetails = attrs.payment.payment_method_details,
             paymentMethodText = I18n.t(`${paymentMethod}`, I18nScopePaymentMethod()),

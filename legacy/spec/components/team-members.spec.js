@@ -11,10 +11,8 @@ describe('TeamMembers', () => {
         });
 
         it('should render fetched team members', () => {
-            setTimeout(() => {
-                expect($output.has('#team-members-static.w-section.section')).toEqual(true);
-                expect($output.find('.team-member').length).toEqual(TeamMembersMockery(10).length);
-            }, 200)
+            expect($output.has('#team-members-static.w-section.section')).toEqual(true);
+            expect($output.find('.team-member').length).toEqual(TeamMembersMockery(10).length);
         });
     });
 });

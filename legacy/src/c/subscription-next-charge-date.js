@@ -15,10 +15,8 @@ const subscriptionNextChargeDate = {
             next_charge_at
         } = subscription;
 
-        const {
-            payment_method,
-            payment_method_details
-        } = last_payment;
+        const payment_method = last_payment ? last_payment.payment_method : '';
+        const payment_method_details = last_payment ? last_payment.payment_method_details : '';
 
         if ((status === 'active' || status === 'started') && !!next_charge_at) {
             return m('div.card-secondary.fontsize-smaller.u-marginbottom-20', [
