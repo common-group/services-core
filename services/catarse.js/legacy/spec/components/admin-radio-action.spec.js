@@ -74,6 +74,10 @@ describe('AdminRadioAction', () => {
                 const lastRequest = jasmine.Ajax.requests.mostRecent();
                 // Should make a patch request to update item
                 expect(lastRequest.method).toEqual('PATCH');
+
+                setTimeout(() => {
+                    console.log('lastRequest.method', lastRequest.method);
+                }, 1000)
             });
 
             describe('when new value is not valid', () => {

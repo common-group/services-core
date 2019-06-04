@@ -8,7 +8,8 @@ const userHeader = {
         const user = attrs.user,
             hideDetails = attrs.hideDetails,
             profileImage = userVM.displayImage(user),
-            coverImage = userVM.displayCover(user);
+            coverImage = userVM.displayCover(user),
+            userDisplayName = userVM.displayName(user);
 
         return !user.id ? m('') : m(`.hero-${hideDetails ? 'small' : 'half'}`, [
             m('.w-container.content-hero-profile',
@@ -22,7 +23,7 @@ const userHeader = {
                           )
                         )),
                         m('.fontsize-larger.fontweight-semibold.u-marginbottom-20',
-                        userVM.displayName(user)
+                        userDisplayName
                        ),
                       (hideDetails ? '' :
                       [m('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base',
