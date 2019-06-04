@@ -1933,7 +1933,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var adminNotificationHistory = {
     oninit: function oninit(vnode) {
-        var notifications = (0, _stream2.default)([]),
+        var notifications = (0, _stream2.default)(vnode.attrs.notifications || []),
             getNotifications = function getNotifications(user) {
             var notification = _models2.default.notification;
             notification.getPageWithToken(_api.catarse.filtersVM({
@@ -2393,7 +2393,7 @@ var adminRadioAction = {
             newID = (0, _stream2.default)(''),
             getFilter = {},
             setFilter = {},
-            radios = (0, _stream2.default)([]),
+            radios = (0, _stream2.default)(vnode.attrs.radios || []),
             getAttr = builder.radios,
             getKey = builder.getKey,
             getKeyValue = vnode.attrs.getKeyValue,
@@ -2426,6 +2426,7 @@ var adminRadioAction = {
                 });
             }
             complete(true);
+            _mithril2.default.redraw();
         };
 
         var populateRadios = function populateRadios(data) {
@@ -4172,6 +4173,7 @@ var countrySelect = {
             if (vnode.attrs.addVM) {
                 vnode.attrs.addVM.countries(countries());
             }
+            _mithril2.default.redraw();
         });
 
         vnode.state = {
@@ -4778,7 +4780,7 @@ var dashboardSubscriptionCardDetailPaymentHistoryEntry = {
         },
             paymentStatus = attrs.payment.status,
             paymentAmount = attrs.payment.amount,
-            paymentMethod = attrs.payment.payment_method,
+            paymentMethod = attrs.payment ? attrs.payment.payment_method : '',
             paymentDate = attrs.payment.created_at,
             paymentDetails = attrs.payment.payment_method_details,
             paymentMethodText = I18n.t('' + paymentMethod, I18nScopePaymentMethod()),
@@ -5194,7 +5196,7 @@ var dashboardSubscriptionCard = {
         var subscription = vnode.attrs.subscription,
             reward = (0, _stream2.default)(),
             toggleDetails = _h2.default.toggleProp(false, true),
-            user = (0, _stream2.default)();
+            user = (0, _stream2.default)(vnode.attrs.user);
 
         if (subscription.user_external_id) {
             var filterUserVM = _api.catarse.filtersVM({
@@ -9997,7 +9999,9 @@ var projectContributions = {
         filterStats.project_id(vnode.attrs.project().project_id);
 
         if (!listVM.collection().length) {
-            listVM.firstPage(_projectVm2.default.isSubscription(vnode.attrs.project()) ? subFilterVM.parameters() : filterVM.parameters());
+            listVM.firstPage(_projectVm2.default.isSubscription(vnode.attrs.project()) ? subFilterVM.parameters() : filterVM.parameters()).then(function () {
+                return _mithril2.default.redraw();
+            });
         }
         // TODO: Abstract table fetch and contruction logic to contributions-vm to avoid insights.js duplicated code.
         var lContributionsPerDay = _api.catarse.loader(_models2.default.projectContributionsPerDay.getRowOptions(filterStats.parameters()));
@@ -12789,7 +12793,9 @@ var projectPosts = {
         }
 
         if (!listVM.collection().length) {
-            listVM.firstPage(filterVM.parameters());
+            listVM.firstPage(filterVM.parameters()).then(function () {
+                return _mithril2.default.redraw();
+            });
         }
 
         vnode.state = {
@@ -14135,39 +14141,37 @@ var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.pr
 var projectSidebar = {
     oninit: function oninit(vnode) {
         var project = vnode.attrs.project,
-            animateProgress = function animateProgress(el, isInitialized) {
-            if (!isInitialized) {
-                var animation = void 0,
-                    progress = 0,
-                    pledged = 0,
-                    contributors = 0;
-                var pledgedIncrement = project().pledged / project().progress,
-                    contributorsIncrement = project().total_contributors / project().progress;
+            animateProgress = function animateProgress(localVnode) {
+            var animation = void 0,
+                progress = 0,
+                pledged = 0,
+                contributors = 0;
+            var pledgedIncrement = project().pledged / project().progress,
+                contributorsIncrement = project().total_contributors / project().progress;
 
-                var progressBar = document.getElementById('progressBar'),
-                    pledgedEl = document.getElementById('pledged'),
-                    contributorsEl = document.getElementById('contributors'),
-                    incrementProgress = function incrementProgress() {
-                    if (progress <= parseInt(project().progress)) {
-                        progressBar.style.width = progress + '%';
-                        pledgedEl.innerText = 'R$ ' + _h2.default.formatNumber(pledged);
-                        contributorsEl.innerText = parseInt(contributors) + ' pessoas';
-                        el.innerText = progress + '%';
-                        pledged += pledgedIncrement;
-                        contributors += contributorsIncrement;
-                        progress += 1;
-                    } else {
-                        clearInterval(animation);
-                    }
-                },
-                    animate = function animate() {
-                    animation = setInterval(incrementProgress, 28);
-                };
+            var progressBar = document.getElementById('progressBar'),
+                pledgedEl = document.getElementById('pledged'),
+                contributorsEl = document.getElementById('contributors'),
+                incrementProgress = function incrementProgress() {
+                if (progress <= parseInt(project().progress)) {
+                    progressBar.style.width = progress + '%';
+                    pledgedEl.innerText = 'R$ ' + _h2.default.formatNumber(pledged);
+                    contributorsEl.innerText = parseInt(contributors) + ' pessoas';
+                    localVnode.dom.innerText = progress + '%';
+                    pledged += pledgedIncrement;
+                    contributors += contributorsIncrement;
+                    progress += 1;
+                } else {
+                    clearInterval(animation);
+                }
+            },
+                animate = function animate() {
+                animation = setInterval(incrementProgress, 28);
+            };
 
-                setTimeout(function () {
-                    animate();
-                }, 1800);
-            }
+            setTimeout(function () {
+                animate();
+            }, 1800);
         };
 
         var navigate = function navigate() {
@@ -16369,10 +16373,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var subscriptionNextChargeDateMethodInfo = {
     view: function view(_ref) {
         var attrs = _ref.attrs;
-        var payment_method = attrs.payment_method,
-            payment_method_details = attrs.payment_method_details,
-            next_charge_at = attrs.next_charge_at;
 
+        var payment_method = attrs.payment_method;
+        var payment_method_details = attrs.payment_method_details;
+        var next_charge_at = attrs.next_charge_at;
 
         var hasPaymentMethodDetails = payment_method_details && payment_method_details.last_digits && payment_method_details.brand;
 
@@ -16425,9 +16429,10 @@ var subscriptionNextChargeDate = {
             last_payment = attrs.last_payment;
         var status = subscription.status,
             next_charge_at = subscription.next_charge_at;
-        var payment_method = last_payment.payment_method,
-            payment_method_details = last_payment.payment_method_details;
 
+
+        var payment_method = last_payment ? last_payment.payment_method : '';
+        var payment_method_details = last_payment ? last_payment.payment_method_details : '';
 
         if ((status === 'active' || status === 'started') && !!next_charge_at) {
             return (0, _mithril2.default)('div.card-secondary.fontsize-smaller.u-marginbottom-20', [(0, _mithril2.default)('span.fontweight-semibold', 'Próxima cobrança:'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)(_subscriptionNextChargeDateMethodInfo2.default, {
@@ -16812,7 +16817,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var teamMembers = {
     oninit: function oninit(vnode) {
         var vm = {
-            collection: (0, _stream2.default)([])
+            collection: (0, _stream2.default)(vnode.attrs.team_members || [])
         },
             groupCollection = function groupCollection(collection, groupTotal) {
             return _underscore2.default.map(_underscore2.default.range(Math.ceil(collection.length / groupTotal)), function (i) {
@@ -19615,9 +19620,10 @@ var userHeader = {
         var user = attrs.user,
             hideDetails = attrs.hideDetails,
             profileImage = _userVm2.default.displayImage(user),
-            coverImage = _userVm2.default.displayCover(user);
+            coverImage = _userVm2.default.displayCover(user),
+            userDisplayName = _userVm2.default.displayName(user);
 
-        return !user.id ? (0, _mithril2.default)('') : (0, _mithril2.default)('.hero-' + (hideDetails ? 'small' : 'half'), [(0, _mithril2.default)('.w-container.content-hero-profile', (0, _mithril2.default)('.w-row.u-text-center', (0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', [hideDetails ? '' : (0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('.avatar_wrapper', (0, _mithril2.default)('img.thumb.big.u-round[alt=\'User\'][src=\'' + profileImage + '\']'))), (0, _mithril2.default)('.fontsize-larger.fontweight-semibold.u-marginbottom-20', _userVm2.default.displayName(user)), hideDetails ? '' : [(0, _mithril2.default)('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base', ['Chegou junto em ' + _h2.default.momentify(user.created_at, 'MMMM [de] YYYY'), (0, _mithril2.default)('br'), user.total_contributed_projects === 0 ? 'Ainda não apoiou projetos' : 'Apoiou ' + _h2.default.pluralize(user.total_contributed_projects, ' projeto', ' projetos'), user.total_published_projects > 0 ? ' e j\xE1 criou ' + _h2.default.pluralize(user.total_published_projects, ' projeto', ' projetos') : '']), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4'), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)(_userFollowBtn2.default, {
+        return !user.id ? (0, _mithril2.default)('') : (0, _mithril2.default)('.hero-' + (hideDetails ? 'small' : 'half'), [(0, _mithril2.default)('.w-container.content-hero-profile', (0, _mithril2.default)('.w-row.u-text-center', (0, _mithril2.default)('.w-col.w-col-8.w-col-push-2', [hideDetails ? '' : (0, _mithril2.default)('.u-marginbottom-20', (0, _mithril2.default)('.avatar_wrapper', (0, _mithril2.default)('img.thumb.big.u-round[alt=\'User\'][src=\'' + profileImage + '\']'))), (0, _mithril2.default)('.fontsize-larger.fontweight-semibold.u-marginbottom-20', userDisplayName), hideDetails ? '' : [(0, _mithril2.default)('.w-hidden-small.w-hidden-tiny.u-marginbottom-40.fontsize-base', ['Chegou junto em ' + _h2.default.momentify(user.created_at, 'MMMM [de] YYYY'), (0, _mithril2.default)('br'), user.total_contributed_projects === 0 ? 'Ainda não apoiou projetos' : 'Apoiou ' + _h2.default.pluralize(user.total_contributed_projects, ' projeto', ' projetos'), user.total_published_projects > 0 ? ' e j\xE1 criou ' + _h2.default.pluralize(user.total_published_projects, ' projeto', ' projetos') : '']), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4'), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)(_userFollowBtn2.default, {
             disabledClass: '.btn.btn-medium.btn-secondary-dark.w-button',
             following: user.following_this_user,
             follow_id: user.id })), (0, _mithril2.default)('.w-col.w-col-4')])]]))), (0, _mithril2.default)('.hero-profile', { style: 'background-image:url(\'' + coverImage + '\');' })]);
@@ -28331,7 +28337,6 @@ var projectsPayment = {
         var user = state.user(),
             addVM = state.addVM(),
             project = state.project(),
-            isInternational = addVM.international && typeof addVM.international === 'function' && addVM.international(),
             formatedValue = _h2.default.formatNumber(Number(state.value), 2, 3),
             anonymousCheckbox = (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-checkbox.w-clearfix', [(0, _mithril2.default)("input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']", {
             onclick: function onclick() {
@@ -28368,7 +28373,7 @@ var projectsPayment = {
             onchange: _mithril2.default.withAttr('value', state.vm.fields.completeName),
             value: state.vm.fields.completeName(),
             placeholder: 'Nome Completo'
-        }), state.fieldHasError('completeName')]), (0, _mithril2.default)('.w-col.w-col-5', isInternational ? '' : [(0, _mithril2.default)("label.field-label.fontweight-semibold[for='document']", window.I18n.t('fields.owner_document', state.scope())), (0, _mithril2.default)("input.positive.w-input.text-field[id='document']", {
+        }), state.fieldHasError('completeName')]), (0, _mithril2.default)('.w-col.w-col-5', addVM.international() ? '' : [(0, _mithril2.default)("label.field-label.fontweight-semibold[for='document']", window.I18n.t('fields.owner_document', state.scope())), (0, _mithril2.default)("input.positive.w-input.text-field[id='document']", {
             onfocus: state.vm.resetFieldError('ownerDocument'),
             class: state.fieldHasError('ownerDocument') ? 'error' : false,
             type: 'tel',
@@ -31037,7 +31042,7 @@ var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.co
 
 var thankYou = {
     oninit: function oninit(vnode) {
-        var recommendedProjects = _userVm2.default.getUserRecommendedProjects(),
+        var recommendedProjects = vnode.attrs.recommended_projects || _userVm2.default.getUserRecommendedProjects(),
             isSlip = vnode.attrs.contribution && !_underscore2.default.isEmpty(vnode.attrs.contribution.slip_url),
             sendContributionCreationData = function sendContributionCreationData() {
             var analyticsData = {
@@ -31050,6 +31055,8 @@ var thankYou = {
             };
             _h2.default.analytics.event(analyticsData)();
         };
+
+        console.log('vnode.attrs.recommended_projects', vnode.attrs.recommended_projects);
 
         var setEvents = function setEvents() {
             sendContributionCreationData();
@@ -31077,6 +31084,7 @@ var thankYou = {
     view: function view(_ref) {
         var state = _ref.state,
             attrs = _ref.attrs;
+
 
         return (0, _mithril2.default)('#thank-you', { oncreate: state.setEvents }, [(0, _mithril2.default)('.page-header.u-marginbottom-30', (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', (0, _mithril2.default)('.w-col.w-col-10.w-col-push-1', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center', (0, _mithril2.default)('img.big.thumb.u-round[src=\'' + attrs.contribution.project.user_thumb + '\']')), (0, _mithril2.default)('#thank-you.u-text-center', !state.isSlip ? [(0, _mithril2.default)('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20', window.I18n.t('thank_you.thank_you', I18nScope())), (0, _mithril2.default)('.fontsize-base.u-marginbottom-40', _mithril2.default.trust(window.I18n.t('thank_you.thank_you_text_html', I18nScope({
             total: attrs.contribution.project.total_contributions,
@@ -31320,7 +31328,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var usersShow = {
     oninit: function oninit(vnode) {
-        var userDetails = (0, _stream2.default)({}),
+        var userDetails = (0, _stream2.default)(vnode.attrs.user_details || {}),
             user_id = vnode.attrs.user_id.split('-')[0],
             hash = (0, _stream2.default)(window.location.hash),
             displayTabContent = function displayTabContent(user) {
@@ -32898,6 +32906,7 @@ var paymentVM = function paymentVM() {
         fields.ownerDocument(data.owner_document);
 
         creditCardFields.cardOwnerDocument(data.owner_document);
+        _mithril2.default.redraw();
     };
 
     var expMonthOptions = function expMonthOptions() {
