@@ -6,7 +6,7 @@ import models from '../models';
 const teamMembers = {
     oninit: function(vnode) {
         const vm = {
-                collection: prop([])
+                collection: prop(vnode.attrs.team_members || [])
             },
 
             groupCollection = (collection, groupTotal) => _.map(_.range(Math.ceil(collection.length / groupTotal)), i => collection.slice(i * groupTotal, (i + 1) * groupTotal));

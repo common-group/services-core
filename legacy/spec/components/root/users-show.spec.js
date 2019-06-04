@@ -7,7 +7,9 @@ describe('UsersShow', () => {
   beforeAll(() => {
     window.location.hash = '';
     userDetail = UserDetailMockery()[0];
-    $output = mq(m(usersShow, {user_id: '405699'}));
+    userDetail.user_id = `${userDetail.user_id}`;
+    userDetail.user_details = userDetail;
+    $output = mq(m(usersShow, userDetail));
   });
 
   it('should render some user details', () => {
@@ -15,8 +17,6 @@ describe('UsersShow', () => {
     $output.should.have('#created_link');
     $output.should.have('#about_link');
     
-    setTimeout(() => {
-      expect($output.contains(userDetail.name)).toEqual(true);
-    }, 50);
+    expect($output.contains(userDetail.name)).toEqual(true);
   });
 });
