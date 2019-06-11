@@ -7,11 +7,18 @@ const blogVM = {
             const posts = _.first(document.getElementsByTagName('body')).getAttribute('data-blog');
 
             if (posts) {
-               resolve(JSON.parse(posts));
+                resolve(JSON.parse(posts));
+                m.redraw();
             } else {
                 m.request({ method: 'GET', url: '/posts' })
-                    .then(resolve)
-                    .catch(reject);
+                    .then(data => {
+                        resolve(data);
+                        m.redraw();
+                    })
+                    .catch(err => {
+                        reject(err);
+                        m.redraw();
+                    });
             }
         });
 
