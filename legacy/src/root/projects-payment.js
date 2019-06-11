@@ -24,7 +24,7 @@ const projectsPayment = {
         const project = projectVM.currentProject,
             vm = paymentVM(),
             showPaymentForm = prop(false),
-            addVM = prop(vnode.attrs.address || { international: prop(false) }),
+            addVM = prop(vnode.attrs.address || addressVM({ data: vm.fields.address() })),
             contribution = contributionVM.getCurrentContribution(),
             reward = prop(contribution().reward),
             value = contribution().value,
@@ -87,16 +87,16 @@ const projectsPayment = {
             return h.navigateToDevise();
         }
         if (reward() && !_.isNull(reward().id)) {
-            rewardVM.getFees(reward()).then(rewardVM.fees);
-        }
-        vm.fetchUser().then(() => {
-            addVM(
-                addressVM({
-                    data: vm.fields.address(),
+            rewardVM
+                .getFees(reward())
+                .then(fees => {
+                    rewardVM.fees(fees);
+                    m.redraw();
                 })
-            );
-            m.redraw();
-        });
+                .catch(err => m.redraw());
+        }
+
+        vm.fetchUser();
         vm.kondutoExecute();
         projectVM.getCurrentProject();
 
