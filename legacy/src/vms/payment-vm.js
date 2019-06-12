@@ -412,7 +412,11 @@ const paymentVM = () => {
 
     const applyCreditCardMask = _.compose(creditCardFields.number, creditCardMask);
 
-    const fetchUser = () => usersVM.fetchUser(currentUser.user_id, false).then(populateForm);
+    const fetchUser = () => usersVM.fetchUser(currentUser.user_id, false).then(userDetails => {
+        populateForm(userDetails);
+        m.redraw();
+        return userDetails;
+    });
 
     return {
         fetchUser,
