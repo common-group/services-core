@@ -215,22 +215,22 @@ const adminBalanceTranfers = {
                     m.redraw();
                 });
             },
-            processAuthorizedTransfers = () => {
-                processingTranfersLoader(true);
-                m.redraw();
-                m.request({
-                    method: 'POST',
-                    url: '/admin/balance_transfers/process_transfers',
-                    data: {},
-                    config: h.setCsrfToken
-                }).then((data) => {
-                    listVM.firstPage(filterVM.parameters());
-                    loadAuthorizedBalances();
-                    displayProcessTransfer(false);
-                    processingTranfersLoader(false);
-                    m.redraw();
-                });
-            },
+            //processAuthorizedTransfers = () => {
+            //    processingTranfersLoader(true);
+            //    m.redraw();
+            //    m.request({
+            //        method: 'POST',
+            //        url: '/admin/balance_transfers/process_transfers',
+            //        data: {},
+            //        config: h.setCsrfToken
+            //    }).then((data) => {
+            //        listVM.firstPage(filterVM.parameters());
+            //        loadAuthorizedBalances();
+            //        displayProcessTransfer(false);
+            //        processingTranfersLoader(false);
+            //        m.redraw();
+            //    });
+            //},
             rejectSelectedIDs = () => {
                 m.request({
                     method: 'POST',
@@ -284,21 +284,21 @@ const adminBalanceTranfers = {
                                 }, 'Recusada')
                             ]) : '')
                        ]) : ''),
-                      (authorizedCollection().length > 0 ? m('._w-inline-block.u-right', [
-                          m('button.btn.btn-small.btn-inline', {
-                              onclick: displayProcessTransfer.toggle
-                          }, `Repassar saques aprovados (${authorizedCollection().length})`),
-                          (displayProcessTransfer() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
-                              m('.w-form', [
-                                  (processingTranfersLoader() ? h.loader() : m('form', [
-                                      m('label.fontsize-smaller.umarginbottom-20', `Tem certeza que deseja repassar ${authorizedCollection().length} saques aprovados (total de R$ ${authorizedSum}) ?`),
-                                      m('button.btn.btn-small', {
-                                          onclick: processAuthorizedTransfers
-                                      }, 'Repassar saques aprovados')
-                                  ]))
-                              ])
-                          ]) : '')
-                      ]) : '')
+                    //(authorizedCollection().length > 0 ? m('._w-inline-block.u-right', [
+                    //    m('button.btn.btn-small.btn-inline', {
+                    //        onclick: displayProcessTransfer.toggle
+                    //    }, `Repassar saques aprovados (${authorizedCollection().length})`),
+                    //    (displayProcessTransfer() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+                    //        m('.w-form', [
+                    //            (processingTranfersLoader() ? h.loader() : m('form', [
+                    //                m('label.fontsize-smaller.umarginbottom-20', `Tem certeza que deseja repassar ${authorizedCollection().length} saques aprovados (total de R$ ${authorizedSum}) ?`),
+                    //                m('button.btn.btn-small', {
+                    //                    onclick: processAuthorizedTransfers
+                    //                }, 'Repassar saques aprovados')
+                    //            ]))
+                    //        ])
+                    //    ]) : '')
+                    //]) : '')
                 ]);
             };
 
@@ -313,7 +313,7 @@ const adminBalanceTranfers = {
             generateWrapperModal,
             approveSelectedIDs,
             manualTransferSelectedIDs,
-            processAuthorizedTransfers,
+            //processAuthorizedTransfers,
             rejectSelectedIDs,
             filterVM,
             filterBuilder,
