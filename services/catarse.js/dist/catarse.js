@@ -7036,12 +7036,23 @@ var nationalityRadio = {
     oninit: function oninit(vnode) {
         var defaultCountryID = vnode.attrs.defaultCountryID,
             defaultForeignCountryID = vnode.attrs.defaultForeignCountryID,
-            international = vnode.attrs.international;
+            international = vnode.attrs.international,
+            fields = vnode.attrs.fields;
+
+        var setNational = function setNational() {
+            fields.countryID(defaultCountryID);
+            international(false);
+        };
+
+        var setInternational = function setInternational() {
+            fields.countryID(defaultForeignCountryID); // USA
+            international(true);
+        };
 
         vnode.state = {
-            defaultCountryID: defaultCountryID,
-            defaultForeignCountryID: defaultForeignCountryID,
-            international: international
+            international: international,
+            setNational: setNational,
+            setInternational: setInternational
         };
     },
     view: function view(_ref) {
@@ -7049,23 +7060,20 @@ var nationalityRadio = {
             attrs = _ref.attrs;
 
         var international = state.international,
-            fields = attrs.fields;
+            setNational = state.setNational,
+            setInternational = state.setInternational;
 
         return (0, _mithril2.default)('div', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontsize-small.fontweight-semibold', 'Nacionalidade:')), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontsize-small.w-radio', [(0, _mithril2.default)("input.w-radio-input[name='nationality'][type='radio']", {
             checked: !international(),
-            onclick: function onclick() {
-                fields.countryID(state.defaultCountryID);
-                international(false);
-            }
-        }), (0, _mithril2.default)('label.w-form-label', 'Brasileiro (a)')])), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontsize-small.w-radio', [(0, _mithril2.default)("input.w-radio-input[name='nationality'][type='radio']", {
+            onclick: setNational
+        }), (0, _mithril2.default)('label.w-form-label', {
+            onclick: setNational
+        }, 'Brasileiro (a)')])), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('.fontsize-small.w-radio', [(0, _mithril2.default)("input.w-radio-input[name='nationality'][type='radio']", {
             checked: international(),
-            onclick: function onclick() {
-                if (fields.countryID() === state.defaultCountryID) {
-                    fields.countryID(state.defaultForeignCountryID); // USA
-                }
-                international(true);
-            }
-        }), (0, _mithril2.default)('label.w-form-label', 'International')]))]));
+            onclick: setInternational
+        }), (0, _mithril2.default)('label.w-form-label', {
+            onclick: setInternational
+        }, 'International')]))]));
     }
 };
 
@@ -28232,7 +28240,7 @@ var projectsPayment = {
         var project = _projectVm2.default.currentProject,
             vm = (0, _paymentVm2.default)(),
             showPaymentForm = (0, _stream2.default)(false),
-            addVM = (0, _stream2.default)(vnode.attrs.address || { international: (0, _stream2.default)(false) }),
+            addVM = (0, _stream2.default)(vnode.attrs.address || (0, _addressVm2.default)({ data: vm.fields.address() })),
             contribution = _contributionVm2.default.getCurrentContribution(),
             reward = (0, _stream2.default)(contribution().reward),
             value = contribution().value,
@@ -28300,14 +28308,15 @@ var projectsPayment = {
             return _h2.default.navigateToDevise();
         }
         if (reward() && !_underscore2.default.isNull(reward().id)) {
-            _rewardVm2.default.getFees(reward()).then(_rewardVm2.default.fees);
+            _rewardVm2.default.getFees(reward()).then(function (fees) {
+                _rewardVm2.default.fees(fees);
+                _mithril2.default.redraw();
+            }).catch(function (err) {
+                return _mithril2.default.redraw();
+            });
         }
-        vm.fetchUser().then(function () {
-            addVM((0, _addressVm2.default)({
-                data: vm.fields.address()
-            }));
-            _mithril2.default.redraw();
-        });
+
+        vm.fetchUser();
         vm.kondutoExecute();
         _projectVm2.default.getCurrentProject();
 
@@ -31590,8 +31599,15 @@ var blogVM = {
 
             if (posts) {
                 resolve(JSON.parse(posts));
+                _mithril2.default.redraw();
             } else {
-                _mithril2.default.request({ method: 'GET', url: '/posts' }).then(resolve).catch(reject);
+                _mithril2.default.request({ method: 'GET', url: '/posts' }).then(function (data) {
+                    resolve(data);
+                    _mithril2.default.redraw();
+                }).catch(function (err) {
+                    reject(err);
+                    _mithril2.default.redraw();
+                });
             }
         });
 
@@ -33268,7 +33284,11 @@ var paymentVM = function paymentVM() {
     var applyCreditCardMask = _underscore2.default.compose(creditCardFields.number, creditCardMask);
 
     var fetchUser = function fetchUser() {
-        return _userVm2.default.fetchUser(currentUser.user_id, false).then(populateForm);
+        return _userVm2.default.fetchUser(currentUser.user_id, false).then(function (userDetails) {
+            populateForm(userDetails);
+            _mithril2.default.redraw();
+            return userDetails;
+        });
     };
 
     return {
