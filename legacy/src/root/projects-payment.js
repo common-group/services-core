@@ -262,15 +262,15 @@ const projectsPayment = {
                                                     anonymousCheckbox,
                                                 ])
                                               : '',
-                                          m(
-                                              '.card.card-terciary.u-marginbottom-30.u-radius.w-form',
-                                              m(nationalityRadio, {
-                                                  fields: addVM.fields,
-                                                  defaultCountryID: addVM.defaultCountryID,
-                                                  defaultForeignCountryID: addVM.defaultForeignCountryID,
-                                                  international: addVM.international,
-                                              })
-                                          ),
+                                          // m(
+                                          //     '.card.card-terciary.u-marginbottom-30.u-radius.w-form',
+                                          //     m(nationalityRadio, {
+                                          //         fields: addVM.fields,
+                                          //         defaultCountryID: addVM.defaultCountryID,
+                                          //         defaultForeignCountryID: addVM.defaultForeignCountryID,
+                                          //         international: addVM.international,
+                                          //     })
+                                          // ),
 
                                           user.name && user.owner_document
                                               ? ''
