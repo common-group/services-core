@@ -21172,9 +21172,21 @@ var _contributionVm2 = _interopRequireDefault(_contributionVm);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function RedrawScheduler() {
+function getCallStack() {
+    var callStackStr = new Error().stack;
+    var callStackLines = callStackStr.split('\n');
+    var callStackTrimmedLines = callStackLines.map(function (d) {
+        return d.trim();
+    });
+    var realCallStack = callStackTrimmedLines.filter(function (k, i) {
+        return i > 0;
+    });
+    return realCallStack;
+}
 
+function RedrawScheduler() {
     var redrawsRequestCounter = 0;
+    var markedCallStack = {};
     var requestAnimationFramePolyfill = function () {
         if (window.requestAnimationFrame !== undefined) {
             return window.requestAnimationFrame;
@@ -21187,12 +21199,18 @@ function RedrawScheduler() {
 
     RedrawScheduler.schedule = function () {
         redrawsRequestCounter++;
+        /////////////////////
+        markedCallStack[redrawsRequestCounter] = getCallStack();
+        //////////////////
     };
 
     function start() {
-
         if (redrawsRequestCounter > 0) {
-            if (redrawsRequestCounter == 1) {
+            /////////////////////////
+            var callStack = markedCallStack[redrawsRequestCounter];
+            //////////////////////
+
+            if (redrawsRequestCounter === 1) {
                 _mithril2.default.redraw();
             }
 
@@ -21483,7 +21501,6 @@ translatedTime = function translatedTime(time) {
     };
 },
 
-
 // Number formatting helpers
 generateFormatNumber = function generateFormatNumber(s, c) {
     return function (number, n, x) {
@@ -21596,7 +21613,6 @@ generateFormatNumber = function generateFormatNumber(s, c) {
     useAvatarOrDefault = function useAvatarOrDefault(avatarPath) {
     return avatarPath || '/assets/catarse_bootstrap/user.jpg';
 },
-
 
 // Templates
 loader = function loader() {
@@ -21974,7 +21990,6 @@ loader = function loader() {
     };
 },
 
-
 // Adapted from https://github.com/diogob/jquery.fixedmask
 mask = function mask(maskDefinition, value) {
     var maskCharDefinitions = {
@@ -22214,6 +22229,9 @@ mask = function mask(maskDefinition, value) {
 },
     createRequestAutoRedraw = function createRequestAutoRedraw() {
     return createRequestRedrawWithCountdown(arguments.length);
+},
+    redraw = function redraw() {
+    RedrawScheduler.schedule();
 };
 
 setMomentifyLocale();
@@ -22222,6 +22240,8 @@ closeModal();
 checkReminder();
 
 exports.default = {
+    redraw: redraw,
+    getCallStack: getCallStack,
     createRequestRedrawWithCountdown: createRequestRedrawWithCountdown,
     createRequestAutoRedraw: createRequestAutoRedraw,
     autoRedrawProp: autoRedrawProp,
@@ -23180,23 +23200,24 @@ var adminBalanceTranfers = {
                 _mithril2.default.redraw();
             });
         },
-            processAuthorizedTransfers = function processAuthorizedTransfers() {
-            processingTranfersLoader(true);
-            _mithril2.default.redraw();
-            _mithril2.default.request({
-                method: 'POST',
-                url: '/admin/balance_transfers/process_transfers',
-                data: {},
-                config: _h2.default.setCsrfToken
-            }).then(function (data) {
-                listVM.firstPage(filterVM.parameters());
-                loadAuthorizedBalances();
-                displayProcessTransfer(false);
-                processingTranfersLoader(false);
-                _mithril2.default.redraw();
-            });
-        },
-            rejectSelectedIDs = function rejectSelectedIDs() {
+
+        //processAuthorizedTransfers = () => {
+        //    processingTranfersLoader(true);
+        //    m.redraw();
+        //    m.request({
+        //        method: 'POST',
+        //        url: '/admin/balance_transfers/process_transfers',
+        //        data: {},
+        //        config: h.setCsrfToken
+        //    }).then((data) => {
+        //        listVM.firstPage(filterVM.parameters());
+        //        loadAuthorizedBalances();
+        //        displayProcessTransfer(false);
+        //        processingTranfersLoader(false);
+        //        m.redraw();
+        //    });
+        //},
+        rejectSelectedIDs = function rejectSelectedIDs() {
             _mithril2.default.request({
                 method: 'POST',
                 url: '/admin/balance_transfers/batch_reject',
@@ -23244,11 +23265,23 @@ var adminBalanceTranfers = {
                 onclick: function onclick(event) {
                     return displayRejectModal.toggle();
                 }
-            }, 'Recusada')]) : '']) : '', authorizedCollection().length > 0 ? (0, _mithril2.default)('._w-inline-block.u-right', [(0, _mithril2.default)('button.btn.btn-small.btn-inline', {
-                onclick: displayProcessTransfer.toggle
-            }, 'Repassar saques aprovados (' + authorizedCollection().length + ')'), displayProcessTransfer() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [(0, _mithril2.default)('.w-form', [processingTranfersLoader() ? _h2.default.loader() : (0, _mithril2.default)('form', [(0, _mithril2.default)('label.fontsize-smaller.umarginbottom-20', 'Tem certeza que deseja repassar ' + authorizedCollection().length + ' saques aprovados (total de R$ ' + authorizedSum + ') ?'), (0, _mithril2.default)('button.btn.btn-small', {
-                onclick: processAuthorizedTransfers
-            }, 'Repassar saques aprovados')])])]) : '']) : '']);
+            }, 'Recusada')]) : '']) : '']
+            //(authorizedCollection().length > 0 ? m('._w-inline-block.u-right', [
+            //    m('button.btn.btn-small.btn-inline', {
+            //        onclick: displayProcessTransfer.toggle
+            //    }, `Repassar saques aprovados (${authorizedCollection().length})`),
+            //    (displayProcessTransfer() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+            //        m('.w-form', [
+            //            (processingTranfersLoader() ? h.loader() : m('form', [
+            //                m('label.fontsize-smaller.umarginbottom-20', `Tem certeza que deseja repassar ${authorizedCollection().length} saques aprovados (total de R$ ${authorizedSum}) ?`),
+            //                m('button.btn.btn-small', {
+            //                    onclick: processAuthorizedTransfers
+            //                }, 'Repassar saques aprovados')
+            //            ]))
+            //        ])
+            //    ]) : '')
+            //]) : '')
+            );
         };
 
         loadAuthorizedBalances();
@@ -23262,7 +23295,7 @@ var adminBalanceTranfers = {
             generateWrapperModal: generateWrapperModal,
             approveSelectedIDs: approveSelectedIDs,
             manualTransferSelectedIDs: manualTransferSelectedIDs,
-            processAuthorizedTransfers: processAuthorizedTransfers,
+            //processAuthorizedTransfers,
             rejectSelectedIDs: rejectSelectedIDs,
             filterVM: filterVM,
             filterBuilder: filterBuilder,
@@ -35590,9 +35623,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getUserPrivateSubscriptionsListVM = undefined;
 
-var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
-var _mithril2 = _interopRequireDefault(_mithril);
+var _h2 = _interopRequireDefault(_h);
 
 var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 
@@ -35601,6 +35634,8 @@ var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
 var _models2 = _interopRequireDefault(_models);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 exports.default = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'id.desc', { Prefer: 'count=exact' });
 var getUserPrivateSubscriptionsListVM = exports.getUserPrivateSubscriptionsListVM = function getUserPrivateSubscriptionsListVM(userCommonId) {
@@ -35615,9 +35650,24 @@ var getUserPrivateSubscriptionsListVM = exports.getUserPrivateSubscriptionsListV
 
     var subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'created_at.desc', { Prefer: 'count=exact' });
 
-    subscriptions.firstPage(contextSubVM.parameters()).then(function () {
-        return _mithril2.default.redraw();
-    });
+    _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        _context.next = 2;
+                        return subscriptions.firstPage(contextSubVM.parameters());
+
+                    case 2:
+                        _h2.default.redraw();
+
+                    case 3:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, this);
+    }))();
 
     return {
         isLoading: subscriptions.isLoading,
@@ -35625,7 +35675,7 @@ var getUserPrivateSubscriptionsListVM = exports.getUserPrivateSubscriptionsListV
         isLastPage: subscriptions.isLastPage,
         nextPage: function nextPage() {
             return subscriptions.nextPage().then(function () {
-                return _mithril2.default.redraw();
+                return _h2.default.redraw();
             });
         }
     };
