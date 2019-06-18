@@ -6,25 +6,10 @@ export default commonPayment.paginationVM(models.userSubscription, 'id.desc', { 
 
 export const getUserPrivateSubscriptionsListVM = userCommonId => {
     models.userSubscription.pageSize(9);
-    const contextSubVM = commonPayment.filtersVM({
-        user_id: 'eq',
-        status: 'in',
-    });
-    contextSubVM
-        .user_id(userCommonId)
-        .status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error'])
-        .order({
-            created_at: 'desc',
-        });
-
     const subscriptions = commonPayment.paginationVM(models.userSubscription, 'created_at.desc', { Prefer: 'count=exact' });
 
-    (async function() {
-        await subscriptions.firstPage(contextSubVM.parameters());
-        h.redraw();
-    })();
-
     return {
+        firstPage: params => subscriptions.firstPage(params).then(() => h.redraw()),
         isLoading: subscriptions.isLoading,
         collection: subscriptions.collection,
         isLastPage: subscriptions.isLastPage,
