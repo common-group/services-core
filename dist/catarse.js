@@ -16529,6 +16529,7 @@ var subscriptionStatusIcon = {
             var lRew = _api.commonPayment.loaderWithToken(_models2.default.subscriptionTransition.getRowOptions(filterRowVM.parameters()));
             lRew.load().then(function (data) {
                 vnode.attrs.subscription.transition_date = data && data.length > 0 && _underscore2.default.first(data).created_at ? _underscore2.default.first(data).created_at : vnode.attrs.subscription.created_at;
+                _h2.default.redraw();
             });
         }
 
@@ -19966,7 +19967,7 @@ var userPrivateContributed = {
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
             requestRedraw = function requestRedraw() {
-            _mithril2.default.redraw();
+            _h2.default.redraw();
         },
             handleError = function handleError() {
             error(true);
@@ -19982,6 +19983,18 @@ var userPrivateContributed = {
         _models2.default.userContribution.pageSize(9);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
+
+        var contextSubVM = _api.commonPayment.filtersVM({
+            user_id: 'eq',
+            status: 'in'
+        });
+        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
+            created_at: 'desc'
+        });
+
+        subscriptions.firstPage(contextSubVM.parameters()).then(function () {
+            return loader(false);
+        }).then(requestRedraw).catch(handleError);
 
         contextVM.project_state(['online', 'waiting_funds']);
         onlinePages.firstPage(contextVM.parameters()).then(function () {
@@ -20017,7 +20030,7 @@ var userPrivateContributed = {
             successfulCollection = state.successfulPages.collection(),
             failedCollection = state.failedPages.collection();
 
-        return (0, _mithril2.default)('.content[id=\'private-contributed-tab\']', state.error() ? (0, _mithril2.default)(_inlineError2.default, {
+        return (0, _mithril2.default)(".content[id='private-contributed-tab']", state.error() ? (0, _mithril2.default)(_inlineError2.default, {
             message: 'Erro ao carregar os projetos.'
         }) : state.loader() ? _h2.default.loader() : _underscore2.default.isEmpty(subsCollection) && _underscore2.default.isEmpty(onlineCollection) && _underscore2.default.isEmpty(successfulCollection) && _underscore2.default.isEmpty(failedCollection) ? (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row.u-margintop-30.u-text-center', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', ['Você ainda não apoiou nenhum projeto no', _mithril2.default.trust('&nbsp;'), 'Catarse...']), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.btn.btn-large[href=\'/' + window.I18n.locale + '/explore\']', {
             oncreate: _mithril2.default.route.link,
@@ -20644,6 +20657,8 @@ var userSubscriptionBox = {
                 name: subscription.project.owner_name,
                 project_id: subscription.project.project_id
             });
+
+            _h2.default.redraw();
         });
 
         if (subscription.payment_method === 'boleto' && subscription.last_payment_id) {
@@ -20651,6 +20666,7 @@ var userSubscriptionBox = {
                 subscription.boleto_url = info.boleto_url;
                 subscription.boleto_expiration_date = info.boleto_expiration_date;
                 subscription.payment_status = info.status;
+                _h2.default.redraw();
             });
         }
 
@@ -20662,6 +20678,7 @@ var userSubscriptionBox = {
 
             lRew.load().then(function (arr) {
                 subscription.reward = arr[0];
+                _h2.default.redraw();
             });
         }
 
@@ -20673,7 +20690,7 @@ var userSubscriptionBox = {
                 subscription.boleto_expiration_date = info.boleto_expiration_date;
                 subscription.payment_status = info.status;
                 isGeneratingSecondSlip.toggle();
-                _mithril2.default.redraw();
+                _h2.default.redraw();
             }).catch(function (e) {
                 window.location.reload();
             });
@@ -20801,7 +20818,11 @@ var userSubscriptionBox = {
         })]), (0, _mithril2.default)('.u-marginbottom-20.w-col.w-col-3', state.showLastSubscriptionVersionRewardTitleIfHasOne()), (0, _mithril2.default)('.u-marginbottom-10.u-text-center.w-col.w-col-3', subscription.status === 'started' ? subscription.last_payment_data.status === 'refused' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
             disabled: state.isGeneratingSecondSlip(),
             onclick: state.generateSecondSlip
-        }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Aguardando confirmação do pagamento'])] : '' : subscription.status === 'inactive' ? [subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Sua assinatura está inativa por falta de pagamento']), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status + ']', 'Assinar novamente')]] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [(0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status }, 'Reativar assinatura'), (0, _mithril2.default)('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), ' Você cancelou sua assinatura'])] : subscription.status === 'canceling' ? (0, _mithril2.default)('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', ' '), ' Sua assinatura ser\xE1 cancelada no dia ' + _h2.default.momentify(subscription.next_charge_at, 'DD/MM/YYYY') + '. At\xE9 l\xE1, ela ainda ser\xE1 considerada ativa.'])) : subscription.status === 'active' ? subscription.last_payment_data.status == 'refused' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : [state.showLastSubscriptionVersionEditionNextCharge(), subscription.payment_status !== 'pending' ? (0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?' + (subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : '') + '&subscription_id=' + subscription.id + '&subscription_status=' + subscription.status }, 'Editar assinatura') : '', subscription.payment_status === 'pending' && !!subscription.boleto_url && !!subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
+        }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Aguardando confirmação do pagamento'])] : '' : subscription.status === 'inactive' ? [subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Sua assinatura está inativa por falta de pagamento']), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status + ']', 'Assinar novamente')]] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [(0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', {
+            href: '/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status
+        }, 'Reativar assinatura'), (0, _mithril2.default)('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), ' Você cancelou sua assinatura'])] : subscription.status === 'canceling' ? (0, _mithril2.default)('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', ' '), ' Sua assinatura ser\xE1 cancelada no dia ' + _h2.default.momentify(subscription.next_charge_at, 'DD/MM/YYYY') + '. At\xE9 l\xE1, ela ainda ser\xE1 considerada ativa.'])) : subscription.status === 'active' ? subscription.last_payment_data.status == 'refused' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : [state.showLastSubscriptionVersionEditionNextCharge(), subscription.payment_status !== 'pending' ? (0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', {
+            href: '/projects/' + subscription.project_external_id + '/subscriptions/start?' + (subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : '') + '&subscription_id=' + subscription.id + '&subscription_status=' + subscription.status
+        }, 'Editar assinatura') : '', subscription.payment_status === 'pending' && !!subscription.boleto_url && !!subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
             disabled: state.isGeneratingSecondSlip(),
             onclick: state.generateSecondSlip
         }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : '', (0, _mithril2.default)('button.btn-link.fontsize-smallest.link-hidden-light', {
@@ -35635,41 +35656,17 @@ var _models2 = _interopRequireDefault(_models);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
-
 exports.default = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'id.desc', { Prefer: 'count=exact' });
 var getUserPrivateSubscriptionsListVM = exports.getUserPrivateSubscriptionsListVM = function getUserPrivateSubscriptionsListVM(userCommonId) {
     _models2.default.userSubscription.pageSize(9);
-    var contextSubVM = _api.commonPayment.filtersVM({
-        user_id: 'eq',
-        status: 'in'
-    });
-    contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
-        created_at: 'desc'
-    });
-
     var subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'created_at.desc', { Prefer: 'count=exact' });
 
-    _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-                switch (_context.prev = _context.next) {
-                    case 0:
-                        _context.next = 2;
-                        return subscriptions.firstPage(contextSubVM.parameters());
-
-                    case 2:
-                        _h2.default.redraw();
-
-                    case 3:
-                    case 'end':
-                        return _context.stop();
-                }
-            }
-        }, _callee, this);
-    }))();
-
     return {
+        firstPage: function firstPage(params) {
+            return subscriptions.firstPage(params).then(function () {
+                return _h2.default.redraw();
+            });
+        },
         isLoading: subscriptions.isLoading,
         collection: subscriptions.collection,
         isLastPage: subscriptions.isLastPage,
