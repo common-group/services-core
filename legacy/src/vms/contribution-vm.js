@@ -72,7 +72,20 @@ const getUserContributionsListWithFilter = () => {
     };
 };
 
+const getUserContributedProjectsWithFilter = () => {
+    const contributions = catarse.paginationVM(models.project, 'created_at.desc', { Prefer: 'count=exact' });
+
+    return {
+        firstPage: params => contributions.firstPage(params).then(() => h.redraw()),
+        isLoading: contributions.isLoading,
+        collection: contributions.collection,
+        isLastPage: contributions.isLastPage,
+        nextPage: () => contributions.nextPage().then(() => h.redraw()),
+    };
+};
+
 const contributionVM = {
+    getUserContributedProjectsWithFilter,
     getCurrentContribution,
     canShowReceipt,
     canGenerateSlip,
