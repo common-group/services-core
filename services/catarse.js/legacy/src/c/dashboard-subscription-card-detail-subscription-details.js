@@ -26,7 +26,7 @@ const dashboardSubscriptionCardDetailSubscriptionDetails = {
                 ]),
                 m('div', [
                     m('span.fontcolor-secondary',
-                        'Valor da assinatura: '
+                        'Valor do pagamento mensal: '
                     ),
                     `R$${subscription.amount / 100}`
                 ]),
@@ -43,13 +43,13 @@ const dashboardSubscriptionCardDetailSubscriptionDetails = {
                 ]),
                 m('div', [
                     m('span.fontcolor-secondary',
-                        'Qtde. de apoios confirmados: '
+                        'Qtde. de pagamentos confirmados: '
                     ),
                     `${subscription.paid_count} meses`
                 ]),
                 m('.fontsize-base.u-margintop-10', [
                     m('span.fontcolor-secondary',
-                        'Total apoiado: '
+                        'Total pago: '
                     ),
                     m.trust('&nbsp;'),
                     m('span.fontweight-semibold.text-success',
