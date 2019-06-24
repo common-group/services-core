@@ -18,7 +18,7 @@ const subscriptionsPerMonthTable = {
     view: function({state, attrs}) {
         return m('div', [
             m(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']",
-                'Crescimento mensal das assinaturas'
+                'Pagamentos confirmados por mês'
             ),
             m('.table-outer.u-marginbottom-60', [
                 m('.table-row.fontweight-semibold.fontsize-smaller.header.lineheight-tighter.w-row', [
@@ -29,23 +29,23 @@ const subscriptionsPerMonthTable = {
                     ),
                     m('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                         m('div', [
-                            'Novos assinantes',
+                            'Pagamentos confirmados de Novas Assinaturas',
                             m.trust('&nbsp;')
                         ])
                     ),
                     m('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                         m('div',
-                            'Receita com novos assinantes'
+                            'Arrecadação com Novas Assinaturas'
                         )
                     ),
                     m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                         m('div',
-                            'Assinantes totais'
+                            'Pagamentos confirmados totais'
                         )
                     ),
                     m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                         m('div',
-                            'Receita total'
+                            'Arrecadação total'
                         )
                     )
                 ]),
