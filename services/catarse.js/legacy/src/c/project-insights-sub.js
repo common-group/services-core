@@ -238,7 +238,7 @@ const projectInsightsSub = {
                     }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: state.subscriptionsPerDay,
                         label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
-                        subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
                         dataKey: 'total_amount',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope()))
@@ -250,7 +250,7 @@ const projectInsightsSub = {
                     }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: state.subscriptionsPerDay,
                         label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
-                        subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
                         dataKey: 'total',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
