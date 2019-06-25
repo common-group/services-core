@@ -997,6 +997,55 @@ const _dataCache = {},
     },
     redraw = function() {
         RedrawScheduler.schedule();
+    },
+    createBasicPaginationVMWithAutoRedraw = vmInstance => {
+        const error = prop(false);
+        const errorMessage = prop('');
+
+        return {
+            isLastPage: vmInstance.isLastPage,
+            isLoading: vmInstance.isLoading,
+            collection: vmInstance.collection,
+            total: vmInstance.total,
+            error,
+            errorMessage,
+            firstPage: params => {
+                return new Promise((resolve, reject) => {
+                    vmInstance
+                        .firstPage(params)
+                        .then(data => {
+                            error(false);
+                            errorMessage('');
+                            resolve(data);
+                            redraw();
+                        })
+                        .catch(errorString => {
+                            error(true);
+                            errorMessage(errorString);
+                            reject(errorString);
+                            redraw();
+                        });
+                });
+            },
+            nextPage: () => {
+                return new Promise((resolve, reject) => {
+                    vmInstance
+                        .nextPage()
+                        .then(data => {
+                            error(false);
+                            errorMessage('');
+                            resolve(data);
+                            redraw();
+                        })
+                        .catch(errorString => {
+                            error(true);
+                            errorMessage(errorString);
+                            reject(errorString);
+                            redraw();
+                        });
+                });
+            },
+        };
     };
 
 setMomentifyLocale();
@@ -1008,6 +1057,7 @@ export default {
     redraw,
     getCallStack,
     createRequestRedrawWithCountdown,
+    createBasicPaginationVMWithAutoRedraw,
     createRequestAutoRedraw,
     autoRedrawProp,
     sleep,
