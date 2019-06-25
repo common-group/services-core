@@ -14,17 +14,17 @@ import models from '../models';
 
 const UserFollowBtn = {
     oninit: function(vnode) {
-        const following = prop((vnode.attrs.following || false)),
+        const following = prop(vnode.attrs.following || false),
             followVM = catarse.filtersVM({ follow_id: 'eq' }),
             loading = prop(false),
             hover = prop(false),
             userFollowInsert = models.userFollow.postOptions({
-                follow_id: vnode.attrs.follow_id }),
+                follow_id: vnode.attrs.follow_id,
+            }),
             userFollowDelete = (() => {
                 followVM.follow_id(vnode.attrs.follow_id);
 
-                return models.userFollow.deleteOptions(
-                      followVM.parameters());
+                return models.userFollow.deleteOptions(followVM.parameters());
             })(),
             follow = () => {
                 const l = catarse.loaderWithToken(userFollowInsert);
@@ -33,6 +33,7 @@ const UserFollowBtn = {
                 l.load().then(() => {
                     following(true);
                     loading(false);
+                    h.redraw();
                 });
             },
             unfollow = () => {
@@ -42,6 +43,7 @@ const UserFollowBtn = {
                 l.load().then(() => {
                     following(false);
                     loading(false);
+                    h.redraw();
                 });
             };
 
@@ -50,29 +52,31 @@ const UserFollowBtn = {
             follow,
             unfollow,
             loading,
-            hover
+            hover,
         };
     },
-    view: function({state, attrs}) {
+    view: function({ state, attrs }) {
         if (h.userSignedIn() && h.getUserID() != attrs.follow_id) {
             let disableClass = attrs.disabledClass || '.w-button.btn.btn-medium.btn-terciary.u-margintop-20',
                 enabledClass = attrs.enabledClass || '.w-button.btn.btn-medium.u-margintop-20';
-            if (state.loading()) { return h.loader(); }
+            if (state.loading()) {
+                return h.loader();
+            }
             if (state.following()) {
-                return m(`a${enabledClass}`,
+                return m(
+                    `a${enabledClass}`,
                     {
                         onclick: state.unfollow,
                         onmouseover: () => state.hover(true),
-                        onmouseout: () => state.hover(false)
+                        onmouseout: () => state.hover(false),
                     },
-                         (state.hover() ? 'Deixar de seguir' : 'Seguindo'));
+                    state.hover() ? 'Deixar de seguir' : 'Seguindo'
+                );
             }
-            return m(`a${disableClass}`,
-                         { onclick: state.follow },
-                         'Seguir');
+            return m(`a${disableClass}`, { onclick: state.follow }, 'Seguir');
         }
         return m('');
-    }
+    },
 };
 
 export default UserFollowBtn;
