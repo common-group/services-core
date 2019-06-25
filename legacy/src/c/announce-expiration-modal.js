@@ -12,7 +12,7 @@ const announceExpirationModal = {
                     m('span.expire-date',
                         attrs.expirationDate
                     ),
-                    ', as 23h59. Até lá, você pode captar recursos e seguir firme na sua campanha! Assim que o seu prazo chegar ao fim, você deverá confirmar os seus dados bancários. A partir de então, depositaremos o dinheiro na sua conta em até 10 dias úteis.'
+                    ', as 23h59. Até lá, você pode captar recursos e seguir firme na sua campanha! Assim que o seu prazo chegar ao fim, você deverá confirmar os seus dados bancários. A partir de então, depositaremos o dinheiro na sua conta em 10 dias úteis.'
                 ])
             ]),
             m('.modal-dialog-nav-bottom',
