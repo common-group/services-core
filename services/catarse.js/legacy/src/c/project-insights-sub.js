@@ -152,7 +152,7 @@ const projectInsightsSub = {
                         }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
-                                'Assinantes ativos'
+                                'Assinaturas ativas'
                             ),
                             m('.fontsize-largest.fontweight-semibold',
                                 subscribersDetails.total_subscriptions
@@ -162,8 +162,11 @@ const projectInsightsSub = {
                             m('.fontsize-small.u-marginbottom-10',
                                 'Receita Mensal'
                             ),
-                            m('.fontsize-largest.fontweight-semibold',
+                            m('.fontsize-largest.fontweight-semibold.u-marginbottom-10',
                                 `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
+                            ),
+                            m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
+                                'Caso não haja variação no número de assinaturas e todos os pagamentos sejam confirmados no período, essa é a sua receita mensal, já com taxas descontadas.'
                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [
@@ -191,7 +194,7 @@ const projectInsightsSub = {
                         m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                             m('.flex-column.card.u-radius.u-marginbottom-10', [
                                 m('div',
-                                    'Receita média por assinante'
+                                    'Receita média por assinatura'
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter',
                                     `em ${moment().format('DD/MM/YYYY')}`
@@ -202,13 +205,13 @@ const projectInsightsSub = {
 
                             ]),
                             m(insightsInfoBox, {
-                                label: 'Novos Assinantes',
+                                label: 'Novas Assinaturas',
                                 info: state.weekSubscriptions().length,
                                 newCount: state.weekSubscriptions().length,
                                 oldCount: state.lastWeekSubscriptions().length
                             }),
                             m(insightsInfoBox, {
-                                label: 'Nova receita',
+                                label: 'Novas assinaturas (R$)',
                                 info: `R$${weekSum}`,
                                 newCount: weekSum,
                                 oldCount: lastWeekSum
@@ -235,7 +238,7 @@ const projectInsightsSub = {
                     }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: state.subscriptionsPerDay,
                         label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
-                        subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
                         dataKey: 'total_amount',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope()))
@@ -247,7 +250,7 @@ const projectInsightsSub = {
                     }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: state.subscriptionsPerDay,
                         label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
-                        subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
                         dataKey: 'total',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
