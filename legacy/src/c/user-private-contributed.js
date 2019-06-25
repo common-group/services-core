@@ -14,9 +14,9 @@ const userPrivateContributed = {
         const user_id = vnode.attrs.userId,
             userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
             subscriptions = getUserPrivateSubscriptionsListVM(userCommonId),
-            onlinePages = catarse.paginationVM(models.userContribution),
-            successfulPages = catarse.paginationVM(models.userContribution),
-            failedPages = catarse.paginationVM(models.userContribution),
+            onlinePages = contributionVM.getUserContributionsListWithFilter(),
+            successfulPages = contributionVM.getUserContributionsListWithFilter(),
+            failedPages = contributionVM.getUserContributionsListWithFilter(),
             error = prop(false),
             loader = prop(true),
             requestRedraw = () => {
