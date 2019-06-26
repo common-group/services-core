@@ -22,7 +22,7 @@ const userContributedBox = {
                 });
             },
             installmentTotalAmount = prop(h.formatNumber(vnode.attrs.contribution.installments_total_amount, 2));
-
+        
         vnode.state = {
             toggleAnonymous: userVM.toggleAnonymous,
             displayModal,
@@ -33,16 +33,16 @@ const userContributedBox = {
     },
     view: function({state}) {
         const contribution = state.contribution,
-            contactModalC = [ownerMessageContent, prop({
+            contactModalC = [ownerMessageContent, {
                 id: contribution.project_user_id,
                 name: contribution.project_owner_name,
                 project_id: contribution.project_id
-            })],
+            }],
             finishedAt = contribution.survey && contribution.survey.finished_at,
             answeredAt = contribution.survey_answered_at;
 
         return (!_.isEmpty(contribution) ? m('div',
-            (state.displayModal() ? m.component(modalBox, {
+            (state.displayModal() ? m(modalBox, {
                 displayModal: state.displayModal,
                 content: contactModalC
             }) : ''), [
