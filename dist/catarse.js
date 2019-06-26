@@ -3633,7 +3633,7 @@ var announceExpirationModal = {
     view: function view(_ref) {
         var attrs = _ref.attrs;
 
-        return (0, _mithril2.default)('div', [(0, _mithril2.default)('.modal-dialog-content', [(0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30.fontweight-semibold', 'Você confirma?'), (0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30', ['Sua arrecadação irá terminar no dia  ', (0, _mithril2.default)('span.expire-date', attrs.expirationDate), ', as 23h59. Até lá, você pode captar recursos e seguir firme na sua campanha! Assim que o seu prazo chegar ao fim, você deverá confirmar os seus dados bancários. A partir de então, depositaremos o dinheiro na sua conta em até 10 dias úteis.'])]), (0, _mithril2.default)('.modal-dialog-nav-bottom', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)("input[id='anchor'][name='anchor'][type='hidden'][value='announce_expiration']"), (0, _mithril2.default)("input.btn.btn.btn-large[id='budget-save'][name='commit'][type='submit'][value='Sim']")]), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('button.btn.btn-large.btn-terciary', {
+        return (0, _mithril2.default)('div', [(0, _mithril2.default)('.modal-dialog-content', [(0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30.fontweight-semibold', 'Você confirma?'), (0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30', ['Sua arrecadação irá terminar no dia  ', (0, _mithril2.default)('span.expire-date', attrs.expirationDate), ', as 23h59. Até lá, você pode captar recursos e seguir firme na sua campanha! Assim que o seu prazo chegar ao fim, você deverá confirmar os seus dados bancários. A partir de então, depositaremos o dinheiro na sua conta em 10 dias úteis.'])]), (0, _mithril2.default)('.modal-dialog-nav-bottom', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)("input[id='anchor'][name='anchor'][type='hidden'][value='announce_expiration']"), (0, _mithril2.default)("input.btn.btn.btn-large[id='budget-save'][name='commit'][type='submit'][value='Sim']")]), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('button.btn.btn-large.btn-terciary', {
             onclick: attrs.displayModal.toggle
         }, ' Não')), (0, _mithril2.default)('.w-col.w-col-2')]))]);
     }
@@ -4945,7 +4945,7 @@ var dashboardSubscriptionCardDetailSubscriptionDetails = {
 
         return (0, _mithril2.default)('.u-marginbottom-20.card.u-radius', [(0, _mithril2.default)('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'Detalhes da assinatura'), (0, _mithril2.default)('.fontsize-smaller.u-marginbottom-20', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Status: '), (0, _mithril2.default)(_subscriptionStatusIcon2.default, {
             subscription: subscription
-        })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Valor da assinatura: '), 'R$' + subscription.amount / 100]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Recompensa: '), !_underscore2.default.isEmpty(reward) ? 'R$' + reward.minimum_value + ' - ' + reward.title + ' - ' + reward.description.substring(0, 90) + '(...)' : 'Sem recompensa']), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Meio de pagamento: '), (0, _mithril2.default)(_paymentMethodIcon2.default, { subscription: subscription })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Qtde. de apoios confirmados: '), subscription.paid_count + ' meses']), (0, _mithril2.default)('.fontsize-base.u-margintop-10', [(0, _mithril2.default)('span.fontcolor-secondary', 'Total apoiado: '), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold.text-success', 'R$' + subscription.total_paid / 100)])]), (0, _mithril2.default)(".divider.u-marginbottom-20"), (0, _mithril2.default)("div", [(0, _mithril2.default)(".fontsize-small.fontweight-semibold.u-marginbottom-10", "Histórico de pagamentos"), (0, _mithril2.default)(_dashboardSubscriptionCardDetailPaymentHistory2.default, { user: user, subscription: subscription })])]);
+        })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Valor do pagamento mensal: '), 'R$' + subscription.amount / 100]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Recompensa: '), !_underscore2.default.isEmpty(reward) ? 'R$' + reward.minimum_value + ' - ' + reward.title + ' - ' + reward.description.substring(0, 90) + '(...)' : 'Sem recompensa']), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Meio de pagamento: '), (0, _mithril2.default)(_paymentMethodIcon2.default, { subscription: subscription })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Qtde. de pagamentos confirmados: '), subscription.paid_count + ' meses']), (0, _mithril2.default)('.fontsize-base.u-margintop-10', [(0, _mithril2.default)('span.fontcolor-secondary', 'Total pago: '), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold.text-success', 'R$' + subscription.total_paid / 100)])]), (0, _mithril2.default)(".divider.u-marginbottom-20"), (0, _mithril2.default)("div", [(0, _mithril2.default)(".fontsize-small.fontweight-semibold.u-marginbottom-10", "Histórico de pagamentos"), (0, _mithril2.default)(_dashboardSubscriptionCardDetailPaymentHistory2.default, { user: user, subscription: subscription })])]);
     }
 };
 
@@ -12199,15 +12199,15 @@ var projectInsightsSub = {
         }) : '', (0, _mithril2.default)('.dashboard-header.section-one-column', [(0, _mithril2.default)('.u-marginbottom-30.u-text-center', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', 'Ol\xE1, ' + (project.user.public_name || project.user.name) + '!'), (0, _mithril2.default)('.fontsize-smaller', 'Este \xE9 o retrato de sua campanha hoje, ' + (0, _moment2.default)().format('DD [de] MMMM [de] YYYY'))]), (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [subscribersDetails && !_underscore2.default.isEmpty(state.projectGoalsVM.goals()) ? (0, _mithril2.default)(_projectGoalsBoxDashboard2.default, {
             goalDetails: state.projectGoalsVM.goals,
             amount: subscribersDetails.amount_paid_for_valid_period
-        }) : '', (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Assinantes ativos'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + _h2.default.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3))]), (0, _mithril2.default)('.card.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', ['Saldo', _mithril2.default.trust('&nbsp;'), ' ', (0, _mithril2.default)('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\'][target=\'_self\']', 'Sacar')]), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + _h2.default.formatNumber(balanceData.amount, 2, 3) : ''), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? (0, _mithril2.default)('.w-container.u-marginbottom-60', (0, _mithril2.default)(_projectInviteCard2.default, {
+        }) : '', (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Assinaturas ativas'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.u-marginbottom-10', 'R$' + _h2.default.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'Caso não haja variação no número de assinaturas e todos os pagamentos sejam confirmados no período, essa é a sua receita mensal, já com taxas descontadas.')]), (0, _mithril2.default)('.card.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', ['Saldo', _mithril2.default.trust('&nbsp;'), ' ', (0, _mithril2.default)('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\'][target=\'_self\']', 'Sacar')]), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + _h2.default.formatNumber(balanceData.amount, 2, 3) : ''), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? (0, _mithril2.default)('.w-container.u-marginbottom-60', (0, _mithril2.default)(_projectInviteCard2.default, {
             project: project
-        })) : '', (0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('.flex-column.card.u-radius.u-marginbottom-10', [(0, _mithril2.default)('div', 'Receita média por assinante'), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + (0, _moment2.default)().format('DD/MM/YYYY')), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + (averageRevenue ? '' + _h2.default.formatNumber(averageRevenue, 2, 3) : '--'))]), (0, _mithril2.default)(_insightsInfoBox2.default, {
-            label: 'Novos Assinantes',
+        })) : '', (0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('.flex-column.card.u-radius.u-marginbottom-10', [(0, _mithril2.default)('div', 'Receita média por assinatura'), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + (0, _moment2.default)().format('DD/MM/YYYY')), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + (averageRevenue ? '' + _h2.default.formatNumber(averageRevenue, 2, 3) : '--'))]), (0, _mithril2.default)(_insightsInfoBox2.default, {
+            label: 'Novas Assinaturas',
             info: state.weekSubscriptions().length,
             newCount: state.weekSubscriptions().length,
             oldCount: state.lastWeekSubscriptions().length
         }), (0, _mithril2.default)(_insightsInfoBox2.default, {
-            label: 'Nova receita',
+            label: 'Novas assinaturas (R$)',
             info: 'R$' + weekSum,
             newCount: weekSum,
             oldCount: lastWeekSum
@@ -12226,7 +12226,7 @@ var projectInsightsSub = {
         }, [!state.lSubscriptionsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
             collection: state.subscriptionsPerDay,
             label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
-            subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+            subLabel: window.I18n.t('paid_date_indication', I18nScope()),
             dataKey: 'total_amount',
             xAxis: function xAxis(item) {
                 return _h2.default.momentify(item.paid_at);
@@ -12239,7 +12239,7 @@ var projectInsightsSub = {
         }, [!state.lSubscriptionsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
             collection: state.subscriptionsPerDay,
             label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
-            subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+            subLabel: window.I18n.t('paid_date_indication', I18nScope()),
             dataKey: 'total',
             xAxis: function xAxis(item) {
                 return _h2.default.momentify(item.paid_at);
@@ -16603,7 +16603,7 @@ var subscriptionsPerMonthTable = {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        return (0, _mithril2.default)('div', [(0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']", 'Crescimento mensal das assinaturas'), (0, _mithril2.default)('.table-outer.u-marginbottom-60', [(0, _mithril2.default)('.table-row.fontweight-semibold.fontsize-smaller.header.lineheight-tighter.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-4.w-col-small-4.w-col-tiny-4', (0, _mithril2.default)('div', 'Mês')), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', ['Novos assinantes', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Receita com novos assinantes')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Assinantes totais')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Receita total'))]), (0, _mithril2.default)('.table-inner.fontsize-small', [!attrs.data ? '' : _underscore2.default.map(_underscore2.default.groupBy(attrs.data, 'month'), function (subscription) {
+        return (0, _mithril2.default)('div', [(0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']", 'Pagamentos confirmados por mês'), (0, _mithril2.default)('.table-outer.u-marginbottom-60', [(0, _mithril2.default)('.table-row.fontweight-semibold.fontsize-smaller.header.lineheight-tighter.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-4.w-col-small-4.w-col-tiny-4', (0, _mithril2.default)('div', 'Mês')), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', ['Pagamentos confirmados de Novas Assinaturas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Arrecadação com Novas Assinaturas')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Pagamentos confirmados totais')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Arrecadação total'))]), (0, _mithril2.default)('.table-inner.fontsize-small', [!attrs.data ? '' : _underscore2.default.map(_underscore2.default.groupBy(attrs.data, 'month'), function (subscription) {
             var slip = _underscore2.default.filter(subscription, function (sub) {
                 return sub.payment_method === 'boleto';
             })[0] || state.emptyRow;
@@ -17481,6 +17481,10 @@ var _stream = __webpack_require__(/*! mithril/stream */ "./node_modules/mithril/
 
 var _stream2 = _interopRequireDefault(_stream);
 
+var _underscore = __webpack_require__(/*! underscore */ "./node_modules/underscore/underscore.js");
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
 var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
 var _h2 = _interopRequireDefault(_h);
@@ -17506,12 +17510,14 @@ var userAbout = {
             error = (0, _stream2.default)(false),
             user_id = vnode.attrs.userId;
 
-        _userVm2.default.fetchUser(user_id, true, userDetails).then(function () {
+        _userVm2.default.fetchUser(user_id, false).then(function (userDetailsData) {
+            userDetails(_underscore2.default.first(userDetailsData));
             loader(false);
+            _h2.default.redraw();
         }).catch(function (err) {
             error(true);
             loader(false);
-            _mithril2.default.redraw();
+            _h2.default.redraw();
         });
 
         vnode.state = {
@@ -17524,7 +17530,7 @@ var userAbout = {
         var state = _ref.state;
 
         var user = state.userDetails();
-        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar dados.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)('.content[id=\'about-tab\']', (0, _mithril2.default)('.w-container[id=\'about-content\']', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-base', user.about_html ? _mithril2.default.trust(user.about_html) : '')), (0, _mithril2.default)('.w-col.w-col-4', user.id ? (0, _mithril2.default)(_userCard2.default, { userId: user.id }) : _h2.default.loader)])));
+        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar dados.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)(".content[id='about-tab']", (0, _mithril2.default)(".w-container[id='about-content']", (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-base', user.about_html ? _mithril2.default.trust(user.about_html) : '')), (0, _mithril2.default)('.w-col.w-col-4', user.id ? (0, _mithril2.default)(_userCard2.default, { userId: user.id }) : _h2.default.loader())])));
     }
 };
 
@@ -18797,6 +18803,10 @@ var _userVm = __webpack_require__(/*! ../vms/user-vm */ "./legacy/src/vms/user-v
 
 var _userVm2 = _interopRequireDefault(_userVm);
 
+var _contributionVm = __webpack_require__(/*! ../vms/contribution-vm */ "./legacy/src/vms/contribution-vm.js");
+
+var _contributionVm2 = _interopRequireDefault(_contributionVm);
+
 var _projectCard = __webpack_require__(/*! ./project-card */ "./legacy/src/c/project-card.js");
 
 var _projectCard2 = _interopRequireDefault(_projectCard);
@@ -18815,7 +18825,7 @@ var userContributed = {
     oninit: function oninit(vnode) {
         var contributedProjects = (0, _stream2.default)(),
             user_id = vnode.attrs.userId,
-            pages = _api.catarse.paginationVM(_models2.default.project),
+            pages = _contributionVm2.default.getUserContributedProjectsWithFilter(),
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
             contextVM = _api.catarse.filtersVM({
@@ -18832,14 +18842,17 @@ var userContributed = {
                 _models2.default.project.pageSize(9);
                 pages.firstPage(contextVM.parameters()).then(function () {
                     loader(false);
+                    _h2.default.redraw();
                 });
             } else {
                 loader(false);
             }
+
+            _h2.default.redraw();
         }).catch(function (err) {
             error(true);
             loader(false);
-            _mithril2.default.redraw();
+            _h2.default.redraw();
         });
 
         vnode.state = {
@@ -18853,13 +18866,13 @@ var userContributed = {
             attrs = _ref.attrs;
 
         var projects_collection = state.projects.collection();
-        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)('.content[id=\'contributed-tab\']', [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
+        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)(".content[id='contributed-tab']", [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
             return (0, _mithril2.default)(_projectCard2.default, {
                 project: project,
                 ref: 'user_contributed',
                 showFriends: false
             });
-        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'Ora, ora... você ainda não apoiou nenhum projeto no Catarse!'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.btn.btn-large[href=\'/explore\']', 'Que tal apoiar agora?')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])), !_underscore2.default.isEmpty(projects_collection) ? (0, _mithril2.default)('.w-row.u-marginbottom-40.u-margintop-30', [(0, _mithril2.default)(_loadMoreBtn2.default, { collection: state.projects, cssClass: '.w-col-push-4' })]) : '']);
+        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'Ora, ora... você ainda não apoiou nenhum projeto no Catarse!'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)("a.btn.btn-large[href='/explore']", 'Que tal apoiar agora?')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])), !_underscore2.default.isEmpty(projects_collection) ? (0, _mithril2.default)('.w-row.u-marginbottom-40.u-margintop-30', [(0, _mithril2.default)(_loadMoreBtn2.default, { collection: state.projects, cssClass: '.w-col-push-4' })]) : '']);
     }
 };
 
@@ -18983,18 +18996,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var userCreated = {
     oninit: function oninit(vnode) {
         var user_id = vnode.attrs.userId,
-            showDraft = vnode.attrs.showDraft || false;
+            showDraft = vnode.attrs.showDraft || false,
+            error = (0, _stream2.default)(false);
 
         var states = ['online', 'waiting_funds', 'successful', 'failed'];
         if (showDraft) {
             states.push('draft');
         }
+        var contextVM = _api.catarse.filtersVM({ project_user_id: 'eq', state: 'in' });
+        contextVM.state(states).project_user_id(user_id).order({ updated_at: 'desc' });
 
-        var projects = _userCreatedProjectsVm2.default.getCreatedProjects(user_id, states);
-        projects.firstPage();
+        var projects = _userCreatedProjectsVm2.default.getCreatedProjects();
+        projects.firstPage(contextVM.parameters()).then(function () {
+            error(false);
+            _h2.default.redraw();
+        }).catch(function () {
+            error(true);
+            _h2.default.redraw();
+        });
 
         vnode.state = {
-            projects: projects
+            projects: projects,
+            error: error
         };
     },
     view: function view(_ref) {
@@ -19003,16 +19026,16 @@ var userCreated = {
 
         var projects_collection = state.projects.collection();
         var isLoadingProjects = state.projects.isLoading();
-        var hasError = state.projects.error();
+        var hasError = state.error();
 
-        return (0, _mithril2.default)('.content[id=\'created-tab\']', hasError ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : !isLoadingProjects ? [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
+        return (0, _mithril2.default)(".content[id='created-tab']", hasError ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : !isLoadingProjects ? [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
             return (0, _mithril2.default)(_projectCard2.default, {
                 project: project,
                 ref: 'user_contributed',
                 showFriends: false
             });
-        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'O que você está esperando para tirar seu projeto do papel aqui no Catarse?'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.btn.btn-large[href=\'/start\']', 'Comece agora!')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])),
-        // Load more button        
+        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'O que você está esperando para tirar seu projeto do papel aqui no Catarse?'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)("a.btn.btn-large[href='/start']", 'Comece agora!')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])),
+        // Load more button
         !_underscore2.default.isEmpty(projects_collection) ? (0, _mithril2.default)('.w-row.u-marginbottom-40.u-margintop-30', [(0, _mithril2.default)(_loadMoreBtn2.default, {
             collection: state.projects,
             cssClass: '.w-col-push-5'
@@ -19170,7 +19193,8 @@ var UserFollowBtn = {
             loading = (0, _stream2.default)(false),
             hover = (0, _stream2.default)(false),
             userFollowInsert = _models2.default.userFollow.postOptions({
-            follow_id: vnode.attrs.follow_id }),
+            follow_id: vnode.attrs.follow_id
+        }),
             userFollowDelete = function () {
             followVM.follow_id(vnode.attrs.follow_id);
 
@@ -19183,6 +19207,7 @@ var UserFollowBtn = {
             l.load().then(function () {
                 following(true);
                 loading(false);
+                _h2.default.redraw();
             });
         },
             unfollow = function unfollow() {
@@ -19192,6 +19217,7 @@ var UserFollowBtn = {
             l.load().then(function () {
                 following(false);
                 loading(false);
+                _h2.default.redraw();
             });
         };
 
@@ -19961,9 +19987,9 @@ var userPrivateContributed = {
         var user_id = vnode.attrs.userId,
             userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
             subscriptions = (0, _subscriptionListVm.getUserPrivateSubscriptionsListVM)(userCommonId),
-            onlinePages = _api.catarse.paginationVM(_models2.default.userContribution),
-            successfulPages = _api.catarse.paginationVM(_models2.default.userContribution),
-            failedPages = _api.catarse.paginationVM(_models2.default.userContribution),
+            onlinePages = _contributionVm2.default.getUserContributionsListWithFilter(),
+            successfulPages = _contributionVm2.default.getUserContributionsListWithFilter(),
+            failedPages = _contributionVm2.default.getUserContributionsListWithFilter(),
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
             requestRedraw = function requestRedraw() {
@@ -29527,7 +29553,7 @@ var projectSubscriptionReport = {
             data: {
                 index: 1,
                 selectable: dropdownNumber,
-                label: 'Total apoiado',
+                label: 'Total pago',
                 name: 'total_paid',
                 onapply: submit,
                 vm: filterVM.total_paid,
@@ -29547,7 +29573,7 @@ var projectSubscriptionReport = {
             data: {
                 index: 2,
                 selectable: dropdownNumber,
-                label: 'Qtde. de apoios',
+                label: 'Meses pagos',
                 name: 'paid_count',
                 onapply: submit,
                 vm: filterVM.paid_count,
@@ -29669,9 +29695,9 @@ var projectSubscriptionReport = {
                 project: (0, _stream2.default)(_underscore2.default.first(state.project()))
             }), (0, _mithril2.default)('.dashboard-header', [(0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('.fontsize-larger.fontweight-semibold.lineheight-looser.u-marginbottom-30.u-text-center', 'Base de assinantes')), (0, _mithril2.default)('.w-col.w-col-3')])), (0, _mithril2.default)('.u-marginbottom-30.w-container', (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('form', {
                 onsubmit: state.submit
-            }, (0, _mithril2.default)('w-row', [(0, _mithril2.default)(textFilter.component, textFilter.data), (0, _mithril2.default)('.w-col.w-col-9', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(statusFilter.component, statusFilter.data), (0, _mithril2.default)(rewardFilter.component, rewardFilter.data), (0, _mithril2.default)(paymentFilter.component, paymentFilter.data), (0, _mithril2.default)(totalPaidFilter.component, totalPaidFilter.data), (0, _mithril2.default)(paidCountFilter.component, paidCountFilter.data)]))]))]))]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.before-footer.bg-gray.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('div', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', (0, _mithril2.default)('.w-inline-block.fontsize-base.u-marginright-10', [(0, _mithril2.default)('span.fontweight-semibold', state.subscriptions.total()), ' pessoas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.alt-link.fontsize-small.u-right[href=\'/projects/' + attrs.project_id + '/subscriptions_report_download\']', {
+            }, (0, _mithril2.default)('w-row', [(0, _mithril2.default)(textFilter.component, textFilter.data), (0, _mithril2.default)('.w-col.w-col-9', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(statusFilter.component, statusFilter.data), (0, _mithril2.default)(rewardFilter.component, rewardFilter.data), (0, _mithril2.default)(paymentFilter.component, paymentFilter.data), (0, _mithril2.default)(totalPaidFilter.component, totalPaidFilter.data), (0, _mithril2.default)(paidCountFilter.component, paidCountFilter.data)]))]))]))]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.before-footer.bg-gray.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('div', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', (0, _mithril2.default)('.w-inline-block.fontsize-base.u-marginright-10', [(0, _mithril2.default)('span.fontweight-semibold', state.subscriptions.total()), ' assinaturas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.alt-link.fontsize-small.u-right[href=\'/projects/' + attrs.project_id + '/subscriptions_report_download\']', {
                 oncreate: _mithril2.default.route.link
-            }, [(0, _mithril2.default)('span.fa.fa-download', _mithril2.default.trust('&nbsp;')), 'Baixar relatórios']))])), (0, _mithril2.default)('.u-marginbottom-60', [(0, _mithril2.default)('.card.card-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', (0, _mithril2.default)('div', 'Assinante')), (0, _mithril2.default)('.table-col.w-col.w-col-2', (0, _mithril2.default)('div', 'Recompensa')), (0, _mithril2.default)('.table-col.w-col.w-col-1.u-text-center', (0, _mithril2.default)('div', 'Apoio mensal')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Total apoiado')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Última cobrança')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Status da Assinatura'))])), (0, _mithril2.default)('.fontsize-small', [_underscore2.default.map(subsCollection, function (subscription) {
+            }, [(0, _mithril2.default)('span.fa.fa-download', _mithril2.default.trust('&nbsp;')), 'Baixar relatórios']))])), (0, _mithril2.default)('.u-marginbottom-60', [(0, _mithril2.default)('.card.card-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', (0, _mithril2.default)('div', 'Assinante')), (0, _mithril2.default)('.table-col.w-col.w-col-2', (0, _mithril2.default)('div', 'Recompensa')), (0, _mithril2.default)('.table-col.w-col.w-col-1.u-text-center', (0, _mithril2.default)('div', 'Pagamento mensal')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Total pago')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Última cobrança')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Status da Assinatura'))])), (0, _mithril2.default)('.fontsize-small', [_underscore2.default.map(subsCollection, function (subscription) {
                 return (0, _mithril2.default)(_dashboardSubscriptionCard2.default, {
                     subscription: subscription
                 });
@@ -32211,6 +32237,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
+
 var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
 
 var _mithril2 = _interopRequireDefault(_mithril);
@@ -32285,13 +32315,55 @@ var canBeDelivered = function canBeDelivered(contribution) {
     return contribution.state === 'paid' && contribution.reward_id && contribution.project_state !== 'failed';
 };
 
+var getUserContributionsListWithFilter = function getUserContributionsListWithFilter() {
+    var contributions = _api.catarse.paginationVM(_models2.default.userContribution, 'created_at.desc', { Prefer: 'count=exact' });
+
+    return {
+        firstPage: function firstPage(params) {
+            return contributions.firstPage(params).then(function () {
+                return _h2.default.redraw();
+            });
+        },
+        isLoading: contributions.isLoading,
+        collection: contributions.collection,
+        isLastPage: contributions.isLastPage,
+        nextPage: function nextPage() {
+            return contributions.nextPage().then(function () {
+                return _h2.default.redraw();
+            });
+        }
+    };
+};
+
+var getUserContributedProjectsWithFilter = function getUserContributedProjectsWithFilter() {
+    var contributions = _api.catarse.paginationVM(_models2.default.project, 'created_at.desc', { Prefer: 'count=exact' });
+
+    return {
+        firstPage: function firstPage(params) {
+            return contributions.firstPage(params).then(function () {
+                return _h2.default.redraw();
+            });
+        },
+        isLoading: contributions.isLoading,
+        collection: contributions.collection,
+        isLastPage: contributions.isLastPage,
+        nextPage: function nextPage() {
+            return contributions.nextPage().then(function () {
+                return _h2.default.redraw();
+            });
+        }
+    };
+};
+
 var contributionVM = {
+    getUserContributedProjectsWithFilter: getUserContributedProjectsWithFilter,
     getCurrentContribution: getCurrentContribution,
     canShowReceipt: canShowReceipt,
     canGenerateSlip: canGenerateSlip,
     canShowSlip: canShowSlip,
     getUserProjectContributions: getUserProjectContributions,
-    canBeDelivered: canBeDelivered
+    canBeDelivered: canBeDelivered,
+    getUserContributionsListWithFilter: getUserContributionsListWithFilter
 };
 
 exports.default = contributionVM;
@@ -35044,7 +35116,7 @@ var aonTerms = function aonTerms(project, expiresAt) {
 };
 
 var flexTerms = function flexTerms(project) {
-    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '1/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar'), ': a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria do projeto, a meta de arrecadação,  o prazo (caso já tenha definido), e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar'), ': o vídeo principal da campanha, o conteúdo da descrição, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '2/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade FLEX')]), (0, _mithril2.default)('div', 'Você escolheu a campanha flexível. Dessa maneira, você irá receber todos os recursos arrecadados junto aos apoiadores ao final do prazo da campanha (descontando a taxa do Catarse) e deverá cumprir com a execução do projeto e com a entrega das recompensas oferecidas independente do quanto arrecadar.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '3/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Meta de arrecadação')]), (0, _mithril2.default)('div', 'A meta não poderá ser alterada após o publicação do projeto.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '4/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Ao final da campanha, cobraremos 13% sobre o ', (0, _mithril2.default)('span.fontweight-semibold', 'valor total arrecadado.')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '5/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'Uma vez definido, o prazo de encerramento não poderá ser alterado. Caso você tenha iniciado a campanha com o prazo em aberto, deverá defini-lo durante a campanha, podendo deixar a campanha aberta por no máximo 12 meses.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '6/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo para repasse')]), (0, _mithril2.default)('div', _mithril2.default.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em até 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', (0, _mithril2.default)('span', {
+    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '1/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar'), ': a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria do projeto, a meta de arrecadação,  o prazo (caso já tenha definido), e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar'), ': o vídeo principal da campanha, o conteúdo da descrição, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '2/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade FLEX')]), (0, _mithril2.default)('div', 'Você escolheu a campanha flexível. Dessa maneira, você irá receber todos os recursos arrecadados junto aos apoiadores ao final do prazo da campanha (descontando a taxa do Catarse) e deverá cumprir com a execução do projeto e com a entrega das recompensas oferecidas independente do quanto arrecadar.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '3/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Meta de arrecadação')]), (0, _mithril2.default)('div', 'A meta não poderá ser alterada após o publicação do projeto.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '4/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Ao final da campanha, cobraremos 13% sobre o ', (0, _mithril2.default)('span.fontweight-semibold', 'valor total arrecadado.')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '5/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'Uma vez definido, o prazo de encerramento não poderá ser alterado. Caso você tenha iniciado a campanha com o prazo em aberto, deverá defini-lo durante a campanha, podendo deixar a campanha aberta por no máximo 12 meses.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '6/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo para repasse')]), (0, _mithril2.default)('div', _mithril2.default.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', (0, _mithril2.default)('span', {
         style: {
             'font-weight': ' 600'
         }
@@ -35052,7 +35124,7 @@ var flexTerms = function flexTerms(project) {
 };
 
 var subTerms = function subTerms(project) {
-    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '1/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar:'), ' a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria escolhida e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar: '), 'o conteúdo da descrição do projeto, o vídeo principal da campanha, as imagens do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas e novas metas durante a arrecadação.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '2/9'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade Assinatura')]), (0, _mithril2.default)('div', 'Você escolheu a modalidade Assinatura. Dessa maneira, você irá receber em tempo real, no saldo de sua conta no Catarse, os recursos arrecadados pelos seus assinantes. Você é o responsável por entregar as recompensas oferecidas aos seus assinantes.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '3/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Metas de arrecadação')]), (0, _mithril2.default)('div', 'Você poderá alterar, durante a campanha no ar, as suas metas de arrecadação em qualquer momento, independente de já tê-las atingido ou não. A única restrição imposta é que o seu projeto tenha sempre ao menos uma meta definida.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '4/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Cobramos 13% sobre todos os valores arrecadados em sua campanha de assinatura. ', (0, _mithril2.default)('span.fontweight-semibold')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '5/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'No Catarse Assinaturas você pode manter sua campanha no ar por quanto tempo você quiser.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '6/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da transferência de dinheiro')]), (0, _mithril2.default)('div', ['Você poderá realizar 01 saque mensal (que é como chamamos a transferência do seu saldo no Catarse para sua conta bancária cadastrada). Assim que você solicitar o saque, o Catarse depositará o valor, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis.', _mithril2.default.trust('&nbsp;')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '7/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '8/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold'), 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '9/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Retiradas de projetos no ar')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', (0, _mithril2.default)("a.alt-link[href='http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos'][target='_blank']", 'Regras do Jogo'), ' e ', (0, _mithril2.default)("a.alt-link[href='http://www.catarse.me/terms-of-use'][target='_blank']", 'Termos de Uso'), '.'])])];
+    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '1/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar:'), ' a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria escolhida e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar: '), 'o conteúdo da descrição do projeto, o vídeo principal da campanha, as imagens do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas e novas metas durante a arrecadação.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '2/9'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade Assinatura')]), (0, _mithril2.default)('div', 'Você escolheu a modalidade Assinatura. Dessa maneira, você irá receber em tempo real, no saldo de sua conta no Catarse, os recursos arrecadados pelos seus assinantes. Você é o responsável por entregar as recompensas oferecidas aos seus assinantes.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '3/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Metas de arrecadação')]), (0, _mithril2.default)('div', 'Você poderá alterar, durante a campanha no ar, as suas metas de arrecadação em qualquer momento, independente de já tê-las atingido ou não. A única restrição imposta é que o seu projeto tenha sempre ao menos uma meta definida.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '4/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Cobramos 13% sobre todos os valores arrecadados em sua campanha de assinatura. ', (0, _mithril2.default)('span.fontweight-semibold')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '5/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'No Catarse Assinaturas você pode manter sua campanha no ar por quanto tempo você quiser.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '6/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da transferência de dinheiro')]), (0, _mithril2.default)('div', ['Você poderá realizar 01 saque mensal (que é como chamamos a transferência do seu saldo no Catarse para sua conta bancária cadastrada). Assim que você solicitar o saque, o Catarse depositará o valor, já com o desconto da taxa, na sua conta corrente em 10 dias úteis.', _mithril2.default.trust('&nbsp;')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '7/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '8/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold'), 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '9/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Retiradas de projetos no ar')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', (0, _mithril2.default)("a.alt-link[href='http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos'][target='_blank']", 'Regras do Jogo'), ' e ', (0, _mithril2.default)("a.alt-link[href='http://www.catarse.me/terms-of-use'][target='_blank']", 'Termos de Uso'), '.'])])];
 };
 
 var publishVM = {
@@ -36186,54 +36258,34 @@ var _stream2 = _interopRequireDefault(_stream);
 
 var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 
-var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
-var _mithril2 = _interopRequireDefault(_mithril);
+var _h2 = _interopRequireDefault(_h);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createdProjects = _api.catarse.paginationVM(_models2.default.project);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var getCreatedProjects = function getCreatedProjects(user_id, states) {
-
-    var error = (0, _stream2.default)(false);
-    var isLoading = (0, _stream2.default)(false);
-    var contextVM = _api.catarse.filtersVM({ project_user_id: 'eq', state: 'in' });
-    contextVM.state(states).project_user_id(user_id).order({ updated_at: 'desc' });
+var getCreatedProjects = function getCreatedProjects() {
     _models2.default.project.pageSize(9);
+    var error = (0, _stream2.default)(false);
+    var createdProjects = _api.catarse.paginationVM(_models2.default.project, 'created_at.desc', { Prefer: 'count=exact' });
 
-    return {
-        error: error,
-        isLoading: isLoading,
-        firstPage: function firstPage() {
-            error(false);
-            isLoading(true);
-
-            return createdProjects.firstPage(contextVM.parameters()).then(function (_) {
-                isLoading(false);
-                _mithril2.default.redraw();
-            }).catch(function (err) {
-                error(true);
-                isLoading(false);
-                _mithril2.default.redraw();
+    return _defineProperty({
+        firstPage: function firstPage(params) {
+            return createdProjects.firstPage(params).then(function () {
+                return _h2.default.redraw();
             });
         },
-        nextPage: function nextPage() {
-            error(false);
-            isLoading(true);
-
-            return createdProjects.nextPage().then(function (_) {
-                isLoading(false);
-                _mithril2.default.redraw();
-            }).catch(function (err) {
-                error(true);
-                isLoading(false);
-                _mithril2.default.redraw();
-            });
-        },
+        isLoading: createdProjects.isLoading,
+        collection: createdProjects.collection,
         isLastPage: createdProjects.isLastPage,
-        collection: createdProjects.collection
-    };
+        nextPage: function nextPage() {
+            return createdProjects.nextPage().then(function () {
+                return _h2.default.redraw();
+            });
+        }
+    }, 'collection', createdProjects.collection);
 };
 
 exports.default = {
