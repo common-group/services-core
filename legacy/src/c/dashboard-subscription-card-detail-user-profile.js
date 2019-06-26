@@ -8,7 +8,7 @@ import modalBox from './modal-box';
 const dashboardSubscriptionCardDetailUserProfile = {
     view: function({attrs})
     {
-        const contactModalC = [ownerMessageContent, prop(attrs.user)];
+        const contactModalC = [ownerMessageContent, attrs.user];
 
         return m('.u-marginbottom-20.card.card-secondary.u-radius', [
             m('.fontsize-small.fontweight-semibold.u-marginbottom-10',
