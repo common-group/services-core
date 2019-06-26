@@ -8,13 +8,14 @@ import projectDataTable from './project-data-table';
 import projectDataChart from './project-data-chart';
 import projectContributorCard from './project-contributor-card';
 import projectVM from '../vms/project-vm';
+import {getProjectSubscribersListVM, getProjectContributorsListVM} from '../vms/project-list-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectContributions = {
     oninit: function(vnode) {
         const contributionsPerDay = prop([]),
-            listVM = projectVM.isSubscription(vnode.attrs.project()) ? commonProject.paginationVM(models.projectSubscriber) : catarse.paginationVM(models.contributor),
+            listVM = projectVM.isSubscription(vnode.attrs.project()) ? getProjectSubscribersListVM() : getProjectContributorsListVM(),
             filterStats = catarse.filtersVM({
                 project_id: 'eq'
             }),

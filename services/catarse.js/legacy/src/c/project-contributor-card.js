@@ -10,10 +10,12 @@ const projectContributorCard = {
         const userDetails = prop({}),
             user_id = vnode.attrs.contribution.user_external_id;
         if (vnode.attrs.isSubscription) {
-            userVM.fetchUser(user_id, true, userDetails).then(() => {
+            userVM.fetchUser(user_id, false).then(userData => {
+                userDetails(_.first(userData));
                 vnode.attrs.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
                 vnode.attrs.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
                 vnode.attrs.contribution.data.total_published_projects += userDetails().total_published_projects;
+                h.redraw();
             });
         }
         vnode.state = {
