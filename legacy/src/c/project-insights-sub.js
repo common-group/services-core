@@ -162,107 +162,137 @@ const projectInsightsSub = {
         const canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         const project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
-            balanceData = state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null;
-        const averageRevenue =
-            subscribersDetails.total_subscriptions > 0 ? subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions : null;
+            balanceData = (state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null);
+        const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : null;
 
-        return m(
-            '.project-insights',
-            !attrs.l()
-                ? [
-                      m(`.w-section.section-product.${project.mode}`),
-                      project.is_owner_or_admin
-                          ? m(projectDashboardMenu, {
-                                project: prop(project),
+        return m('.project-insights', !attrs.l() ? [
+            m(`.w-section.section-product.${project.mode}`),
+            (project.is_owner_or_admin ? m(projectDashboardMenu, {
+                project: prop(project)
+            }) : ''),
+            m('.dashboard-header.section-one-column', [
+                m('.u-marginbottom-30.u-text-center', [
+                    m('.fontsize-larger.fontweight-semibold',
+                        `Olá, ${project.user.public_name || project.user.name}!`
+                    ),
+                    m('.fontsize-smaller',
+                        `Este é o retrato de sua campanha hoje, ${moment().format('DD [de] MMMM [de] YYYY')}`
+                    )
+                ]),
+                m('.w-container', [
+                    m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
+                        subscribersDetails && !_.isEmpty(state.projectGoalsVM.goals()) ?
+                        m(projectGoalsBoxDashboard, {
+                            goalDetails: state.projectGoalsVM.goals,
+                            amount: subscribersDetails.amount_paid_for_valid_period
+                        }) : '',
+                        m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
+                            m('.fontsize-small.u-marginbottom-10',
+                                'Assinaturas ativas'
+                            ),
+                            m('.fontsize-largest.fontweight-semibold',
+                                subscribersDetails.total_subscriptions
+                            )
+                        ]),
+                        m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
+                            m('.fontsize-small.u-marginbottom-10',
+                                'Receita Mensal'
+                            ),
+                            m('.fontsize-largest.fontweight-semibold.u-marginbottom-10',
+                                `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
+                            ),
+                            m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
+                                'Caso não haja variação no número de assinaturas e todos os pagamentos sejam confirmados no período, essa é a sua receita mensal, já com taxas descontadas.'
+                            )
+                        ]),
+                        m('.card.flex-column.u-marginbottom-10.u-radius', [
+                            m('.fontsize-small.u-marginbottom-10', [
+                                'Saldo',
+                                m.trust('&nbsp;'),
+                                ' ',
+                                m(`a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='/users/${project.user_id}/edit#balance'][target='_self']`,
+                                    'Sacar'
+                                )
+                            ]),
+                            m('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10',
+                                (balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : '')
+                            ),
+                            m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
+                                'O saldo demora até 20 mins após o pagamento para ser atualizado.'
+                            )
+                        ])
+                    ]),
+                    (project.state === 'online' && !project.has_cancelation_request ? m('.w-container.u-marginbottom-60', m(projectInviteCard, {
+                        project
+                    })) : ''),
+
+                    m('.u-marginbottom-30', [
+                        m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
+                            m('.flex-column.card.u-radius.u-marginbottom-10', [
+                                m('div',
+                                    'Receita média por assinatura'
+                                ),
+                                m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter',
+                                    `em ${moment().format('DD/MM/YYYY')}`
+                                ),
+                                m('.fontsize-largest.fontweight-semibold',
+                                    `R$${averageRevenue ? `${h.formatNumber(averageRevenue, 2, 3)}` : '--'}`
+                                )
+
+                            ]),
+                            m(insightsInfoBox, {
+                                label: 'Novas Assinaturas',
+                                info: state.weekSubscriptions().length,
+                                newCount: state.weekSubscriptions().length,
+                                oldCount: state.lastWeekSubscriptions().length
+                            }),
+                            m(insightsInfoBox, {
+                                label: 'Novas assinaturas (R$)',
+                                info: `R$${weekSum}`,
+                                newCount: weekSum,
+                                oldCount: lastWeekSum
                             })
-                          : '',
-                      m('.dashboard-header.section-one-column', [
-                          m('.u-marginbottom-30.u-text-center', [
-                              m('.fontsize-larger.fontweight-semibold', `Olá, ${project.user.public_name || project.user.name}!`),
-                              m('.fontsize-smaller', `Este é o retrato de sua campanha hoje, ${moment().format('DD [de] MMMM [de] YYYY')}`),
-                          ]),
-                          m('.w-container', [
-                              m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                                  subscribersDetails && !_.isEmpty(state.projectGoalsVM.goals())
-                                      ? m(projectGoalsBoxDashboard, {
-                                            goalDetails: state.projectGoalsVM.goals,
-                                            amount: subscribersDetails.amount_paid_for_valid_period,
-                                        })
-                                      : '',
-                                  m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
-                                      m('.fontsize-small.u-marginbottom-10', 'Assinantes ativos'),
-                                      m('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions),
-                                  ]),
-                                  m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
-                                      m('.fontsize-small.u-marginbottom-10', 'Receita Mensal'),
-                                      m('.fontsize-largest.fontweight-semibold', `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`),
-                                  ]),
-                                  m('.card.flex-column.u-marginbottom-10.u-radius', [
-                                      m('.fontsize-small.u-marginbottom-10', [
-                                          'Saldo',
-                                          m.trust('&nbsp;'),
-                                          ' ',
-                                          m(
-                                              `a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href='/users/${
-                                                  project.user_id
-                                              }/edit#balance'][target='_self']`,
-                                              'Sacar'
-                                          ),
-                                      ]),
-                                      m(
-                                          '.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10',
-                                          balanceData && balanceData.amount ? `R$${h.formatNumber(balanceData.amount, 2, 3)}` : ''
-                                      ),
-                                      m(
-                                          '.fontsize-mini.fontcolor-secondary.lineheight-tighter',
-                                          'O saldo demora até 20 mins após o pagamento para ser atualizado.'
-                                      ),
-                                  ]),
-                              ]),
-                              project.state === 'online' && !project.has_cancelation_request
-                                  ? m(
-                                        '.w-container.u-marginbottom-60',
-                                        m(projectInviteCard, {
-                                            project,
-                                        })
-                                    )
-                                  : '',
-                              m('.u-marginbottom-30', [
-                                  m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                                      m('.flex-column.card.u-radius.u-marginbottom-10', [
-                                          m('div', 'Receita média por assinante'),
-                                          m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', `em ${moment().format('DD/MM/YYYY')}`),
-                                          m('.fontsize-largest.fontweight-semibold', `R$${averageRevenue ? `${h.formatNumber(averageRevenue, 2, 3)}` : '--'}`),
-                                      ]),
-                                      m(insightsInfoBox, {
-                                          label: 'Novos Assinantes',
-                                          info: state.weekSubscriptions().length,
-                                          newCount: state.weekSubscriptions().length,
-                                          oldCount: state.lastWeekSubscriptions().length,
-                                      }),
-                                      m(insightsInfoBox, {
-                                          label: 'Nova receita',
-                                          info: `R$${weekSum}`,
-                                          newCount: weekSum,
-                                          oldCount: lastWeekSum,
-                                      }),
-                                  ]),
-                                  m(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [
-                                      window.I18n.t('visitors_per_day_label', I18nScope()),
-                                  ]),
-                                  m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [
-                                      window.I18n.t('last_30_days_indication', I18nScope()),
-                                  ]),
-                              ]),
-                              !state.lVisitorsPerDay()
-                                  ? m(projectDataChart, {
-                                        collection: state.visitorsPerDay,
-                                        dataKey: 'visitors',
-                                        limitDataset: 30,
-                                        xAxis: item => h.momentify(item.day),
-                                        emptyState: window.I18n.t('visitors_per_day_empty', I18nScope()),
-                                    })
-                                  : h.loader(),
+                        ]),
+                        m(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [
+                            window.I18n.t('visitors_per_day_label', I18nScope())
+                        ]),
+                        m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [
+                            window.I18n.t('last_30_days_indication', I18nScope())
+                        ])
+                    ]), !state.lVisitorsPerDay() ? m(projectDataChart, {
+                        collection: state.visitorsPerDay,
+                        dataKey: 'visitors',
+                        limitDataset: 30,
+                        xAxis: item => h.momentify(item.day),
+                        emptyState: window.I18n.t('visitors_per_day_empty', I18nScope())
+                    }) : h.loader(),
+
+                    m('.u-text-center', {
+                        style: {
+                            'min-height': '300px'
+                        }
+                    }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
+                        collection: state.subscriptionsPerDay,
+                        label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
+                        dataKey: 'total_amount',
+                        xAxis: item => h.momentify(item.paid_at),
+                        emptyState: m.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope()))
+                    }) : h.loader()]),
+                    m('.u-text-center', {
+                        style: {
+                            'min-height': '300px'
+                        }
+                    }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
+                        collection: state.subscriptionsPerDay,
+                        label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
+                        dataKey: 'total',
+                        xAxis: item => h.momentify(item.paid_at),
+                        emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
+                    }) : h.loader()]),
+                    (state.isSubscriptionsPerMonthLoaded() ?
+                        m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader())
 
                               m(
                                   '.u-text-center',
