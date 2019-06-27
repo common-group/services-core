@@ -1,58 +1,23 @@
 import models from '../models';
 import prop from 'mithril/stream';
 import { catarse } from '../api';
-import m from 'mithril';
+import h from '../h';
 
-const createdProjects = catarse.paginationVM(models.project);
-
-const getCreatedProjects = (user_id, states) => {
-    
-    const error = prop(false);
-    const isLoading = prop(false);
-    const contextVM = catarse.filtersVM({ project_user_id: 'eq', state: 'in' });
-    contextVM.state(states).project_user_id(user_id).order({ updated_at: 'desc' });
+const getCreatedProjects = () => {
     models.project.pageSize(9);
+    const error = prop(false);
+    const createdProjects = catarse.paginationVM(models.project, 'created_at.desc', { Prefer: 'count=exact' });
 
     return {
-        error,
-        isLoading,
-        firstPage : () => {
-            error(false);
-            isLoading(true);
-
-            return createdProjects
-                .firstPage(contextVM.parameters())
-                .then(_ => {
-                    isLoading(false);
-                    m.redraw();
-                })
-                .catch(err => {
-                    error(true);
-                    isLoading(false);
-                    m.redraw();
-                });
-        },
-        nextPage : () => {
-            error(false);
-            isLoading(true);
-
-            return createdProjects
-                .nextPage()
-                .then(_ => {
-                    isLoading(false);
-                    m.redraw();
-                })
-                .catch(err => {
-                    error(true);
-                    isLoading(false);
-                    m.redraw();
-                });
-        },
-        isLastPage : createdProjects.isLastPage,
-        collection : createdProjects.collection
-    }
+        firstPage: params => createdProjects.firstPage(params).then(() => h.redraw()),
+        isLoading: createdProjects.isLoading,
+        collection: createdProjects.collection,
+        isLastPage: createdProjects.isLastPage,
+        nextPage: () => createdProjects.nextPage().then(() => h.redraw()),
+        collection: createdProjects.collection,
+    };
 };
 
 export default {
-    getCreatedProjects
-}
+    getCreatedProjects,
+};
