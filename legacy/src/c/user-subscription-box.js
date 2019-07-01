@@ -239,7 +239,7 @@ const userSubscriptionBox = {
                   state.displayModal() && !_.isEmpty(state.contactModalInfo())
                       ? m(modalBox, {
                             displayModal: state.displayModal,
-                            content: [ownerMessageContent, state.contactModalInfo],
+                            content: [ownerMessageContent, state.contactModalInfo()],
                         })
                       : '',
                   state.displayPaymentHistoryModal()
