@@ -2,11 +2,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import moment from 'moment';
 import _ from 'underscore';
-import {
-    catarse,
-    catarseMoments,
-    commonAnalytics
-} from '../api';
+import { catarse, catarseMoments, commonAnalytics } from '../api';
 import models from '../models';
 import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
@@ -37,9 +33,9 @@ const projectInsightsSub = {
         const isSubscriptionsPerMonthLoaded = prop(false);
         const balanceData = prop(null);
         const subVM = commonAnalytics.filtersVM({
-            project_id: 'eq'
+            project_id: 'eq',
         });
-        const processVisitors = (data) => {
+        const processVisitors = data => {
             if (!_.isEmpty(data)) {
                 visitorsPerDay(data);
                 visitorsTotal(_.first(data).total);
@@ -70,32 +66,72 @@ const projectInsightsSub = {
             .then(requestRedraw);
 
         subscriptionVM
-            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+            .getNewSubscriptions(
+                vnode.attrs.project.common_id,
+                moment()
+                    .utc()
+                    .subtract(1, 'weeks')
+                    .format(),
+                moment()
+                    .utc()
+                    .format()
+            )
             .then(weekSubscriptions)
             .then(requestRedraw);
 
         subscriptionVM
-            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .getNewSubscriptions(
+                vnode.attrs.project.common_id,
+                moment()
+                    .utc()
+                    .subtract(2, 'weeks')
+                    .format(),
+                moment()
+                    .utc()
+                    .subtract(1, 'weeks')
+                    .format()
+            )
             .then(lastWeekSubscriptions)
             .then(requestRedraw);
 
         subscriptionVM
-            .getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
+            .getSubscriptionTransitions(
+                vnode.attrs.project.common_id,
+                ['inactive', 'canceled'],
+                'active',
+                moment()
+                    .utc()
+                    .subtract(1, 'weeks')
+                    .format(),
+                moment()
+                    .utc()
+                    .format()
+            )
             .then(weekTransitions)
             .then(requestRedraw);
 
         subscriptionVM
-            .getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .getSubscriptionTransitions(
+                vnode.attrs.project.common_id,
+                ['inactive', 'canceled'],
+                'active',
+                moment()
+                    .utc()
+                    .subtract(2, 'weeks')
+                    .format(),
+                moment()
+                    .utc()
+                    .subtract(1, 'weeks')
+                    .format()
+            )
             .then(lastWeekTransitions)
             .then(requestRedraw);
 
-        subscriptionVM
-            .getSubscriptionsPerMonth(vnode.attrs.project.common_id)
-            .then((subscriptions) => {
-                subscriptionsPerMonth(subscriptions);
-                isSubscriptionsPerMonthLoaded(true);
-                requestRedraw();
-            });
+        subscriptionVM.getSubscriptionsPerMonth(vnode.attrs.project.common_id).then(subscriptions => {
+            subscriptionsPerMonth(subscriptions);
+            isSubscriptionsPerMonthLoaded(true);
+            requestRedraw();
+        });
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
         const balanceLoader = userVM.getUserBalance(vnode.attrs.project.user_id);
@@ -115,11 +151,11 @@ const projectInsightsSub = {
             visitorsPerDay,
             balanceLoader,
             balanceData,
-            isSubscriptionsPerMonthLoaded
+            isSubscriptionsPerMonthLoaded,
         };
     },
-    view: function({state, attrs}) {
-        const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
+    view: function({ state, attrs }) {
+        const sumAmount = list => _.reduce(list, (memo, sub) => memo + sub.amount / 100, 0);
         const weekSum = sumAmount(state.weekSubscriptions());
         const lastWeekSum = sumAmount(state.lastWeekSubscriptions());
         const canceledWeekSum = sumAmount(state.weekTransitions());
@@ -258,10 +294,53 @@ const projectInsightsSub = {
                     (state.isSubscriptionsPerMonthLoaded() ?
                         m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader())
 
-                ])
-            ])
-        ] : h.loader());
-    }
+                              m(
+                                  '.u-text-center',
+                                  {
+                                      style: {
+                                          'min-height': '300px',
+                                      },
+                                  },
+                                  [
+                                      !state.lSubscriptionsPerDay()
+                                          ? m(projectDataChart, {
+                                                collection: state.subscriptionsPerDay,
+                                                label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
+                                                subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                                                dataKey: 'total_amount',
+                                                xAxis: item => h.momentify(item.paid_at),
+                                                emptyState: m.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope())),
+                                            })
+                                          : h.loader(),
+                                  ]
+                              ),
+                              m(
+                                  '.u-text-center',
+                                  {
+                                      style: {
+                                          'min-height': '300px',
+                                      },
+                                  },
+                                  [
+                                      !state.lSubscriptionsPerDay()
+                                          ? m(projectDataChart, {
+                                                collection: state.subscriptionsPerDay,
+                                                label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
+                                                subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                                                dataKey: 'total',
+                                                xAxis: item => h.momentify(item.paid_at),
+                                                emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope())),
+                                            })
+                                          : h.loader(),
+                                  ]
+                              ),
+                              state.isSubscriptionsPerMonthLoaded() ? m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader(),
+                          ]),
+                      ]),
+                  ]
+                : h.loader()
+        );
+    },
 };
 
 export default projectInsightsSub;
