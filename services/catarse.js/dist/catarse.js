@@ -233,7 +233,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 }
             };
         };
-        _mithril2.default.route.prefix("#");
+        _mithril2.default.route.prefix('#');
 
         _mithril2.default.route(adminRoot, '/', {
             '/': adminWrap(_c2.default.root.AdminContributions, { root: adminRoot, menuTransparency: false, hideFooter: true }),
@@ -340,7 +340,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         var rootEl = app,
             isUserProfile = body.getAttribute('data-controller-name') == 'users' && body.getAttribute('data-action') == 'show' && app.getAttribute('data-hassubdomain') == 'true';
 
-        _mithril2.default.route.prefix("");
+        _mithril2.default.route.prefix('');
 
         _mithril2.default.route(rootEl, '/', (_m$route = {
             '/': wrap(isUserProfile ? _c2.default.root.UsersShow : _c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true, absoluteHome: isUserProfile }),
@@ -353,7 +353,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             '/projects/:project_id/subscriptions/start': wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
             '/projects/:project_id/subscriptions/checkout': wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
             '/projects/:project_id/subscriptions/thank_you': wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })
-        }, _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/new'), wrap(_c2.default.root.ProjectsContribution)), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit'), wrap(_c2.default.root.ProjectsPayment, { menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/start'), wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/checkout'), wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/subscriptions/thank_you'), wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })), _defineProperty(_m$route, '/en', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/pt', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/flexible_projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/projects', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/explore'), wrap(_c2.default.root.ProjectsExplore, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/start'), wrap(_c2.default.root.Start, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id'), wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions/:contribution_id', wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/:project'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/insights', wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/insights'), wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions_report', wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions_report'), wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report', wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report'), wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report_download', wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report_download'), wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/surveys', wrap(_c2.default.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/fiscal', wrap(_c2.default.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/posts', wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/posts/:post_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts'), wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts/:post_id'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, '/projects/:project_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id', wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id'), wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/contributions/:contribution_id/surveys/:survey_id', wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/contributions/:contribution_id/surveys/:survey_id'), wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id/edit', wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id/edit'), wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/edit', wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/edit'), wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/rewards/:reward_id/surveys/new', wrap(_c2.default.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/:project', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/follow-fb-friends'), wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/follow-fb-friends', wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/team'), wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/team', wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/jobs'), wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/jobs', wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/press', wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/press'), wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/publish'), wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/publish', wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _m$route));
+        }, _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/new'), wrap(_c2.default.root.ProjectsContribution)), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit'), wrap(_c2.default.root.ProjectsPayment, { menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/start'), wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/checkout'), wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/subscriptions/thank_you'), wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })), _defineProperty(_m$route, '/en', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/pt', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/flexible_projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/projects', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/explore'), wrap(_c2.default.root.ProjectsExplore, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/start'), wrap(_c2.default.root.Start, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id'), wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions/:contribution_id', wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/:project'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/insights', wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/insights'), wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions_report', wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions_report'), wrap(_c2.default.root.ProjectsContributionReport, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report', wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report'), wrap(_c2.default.root.ProjectsSubscriptionReport, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report_download', wrap(_c2.default.root.ProjectsSubscriptionReportDownload, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report_download'), wrap(_c2.default.root.ProjectsSubscriptionReportDownload, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, '/projects/:project_id/surveys', wrap(_c2.default.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/fiscal', wrap(_c2.default.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/posts', wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/posts/:post_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts'), wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts/:post_id'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, '/projects/:project_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id', wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id'), wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/contributions/:contribution_id/surveys/:survey_id', wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/contributions/:contribution_id/surveys/:survey_id'), wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id/edit', wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id/edit'), wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/edit', wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/edit'), wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/rewards/:reward_id/surveys/new', wrap(_c2.default.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/follow-fb-friends'), wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/follow-fb-friends', wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/:project', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/team'), wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/team', wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/jobs'), wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/jobs', wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/press', wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/press'), wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/publish'), wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/publish', wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _m$route));
     }
 })();
 
@@ -5029,7 +5041,7 @@ var dashboardSubscriptionCardDetailUserProfile = {
     view: function view(_ref) {
         var attrs = _ref.attrs;
 
-        var contactModalC = [_ownerMessageContent2.default, (0, _stream2.default)(attrs.user)];
+        var contactModalC = [_ownerMessageContent2.default, attrs.user];
 
         return (0, _mithril2.default)('.u-marginbottom-20.card.card-secondary.u-radius', [(0, _mithril2.default)('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'Perfil'), (0, _mithril2.default)('.fontsize-smaller', [(0, _mithril2.default)('div', attrs.subscription.user_email), (0, _mithril2.default)('div', 'Conta no Catarse desde ' + (0, _moment2.default)(attrs.user.created_at).format('MMMM YYYY')), (0, _mithril2.default)('.u-marginbottom-10', ['Apoiou ' + attrs.user.total_contributed_projects + ' projetos ', _mithril2.default.trust('&nbsp;'), '| ', _mithril2.default.trust('&nbsp;'), 'Criou ' + attrs.user.total_published_projects + ' projetos']), attrs.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: attrs.displayModal,
@@ -9961,6 +9973,8 @@ var _projectVm = __webpack_require__(/*! ../vms/project-vm */ "./legacy/src/vms/
 
 var _projectVm2 = _interopRequireDefault(_projectVm);
 
+var _projectListVm = __webpack_require__(/*! ../vms/project-list-vm */ "./legacy/src/vms/project-list-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.contributions');
@@ -9968,7 +9982,7 @@ var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.co
 var projectContributions = {
     oninit: function oninit(vnode) {
         var contributionsPerDay = (0, _stream2.default)([]),
-            listVM = _projectVm2.default.isSubscription(vnode.attrs.project()) ? _api.commonProject.paginationVM(_models2.default.projectSubscriber) : _api.catarse.paginationVM(_models2.default.contributor),
+            listVM = _projectVm2.default.isSubscription(vnode.attrs.project()) ? (0, _projectListVm.getProjectSubscribersListVM)() : (0, _projectListVm.getProjectContributorsListVM)(),
             filterStats = _api.catarse.filtersVM({
             project_id: 'eq'
         }),
@@ -10130,10 +10144,12 @@ var projectContributorCard = {
         var userDetails = (0, _stream2.default)({}),
             user_id = vnode.attrs.contribution.user_external_id;
         if (vnode.attrs.isSubscription) {
-            _userVm2.default.fetchUser(user_id, true, userDetails).then(function () {
+            _userVm2.default.fetchUser(user_id, false).then(function (userData) {
+                userDetails(_underscore2.default.first(userData));
                 vnode.attrs.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
                 vnode.attrs.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
                 vnode.attrs.contribution.data.total_published_projects += userDetails().total_published_projects;
+                _h2.default.redraw();
             });
         }
         vnode.state = {
@@ -12240,6 +12256,32 @@ var projectInsightsSub = {
             collection: state.subscriptionsPerDay,
             label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
             subLabel: window.I18n.t('paid_date_indication', I18nScope()),
+            dataKey: 'total',
+            xAxis: function xAxis(item) {
+                return _h2.default.momentify(item.paid_at);
+            },
+            emptyState: _mithril2.default.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
+        }) : _h2.default.loader()]), state.isSubscriptionsPerMonthLoaded() ? (0, _mithril2.default)(_subscriptionsPerMonthTable2.default, { data: state.subscriptionsPerMonth() }) : _h2.default.loader(), (0, _mithril2.default)('.u-text-center', {
+            style: {
+                'min-height': '300px'
+            }
+        }, [!state.lSubscriptionsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
+            collection: state.subscriptionsPerDay,
+            label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
+            subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+            dataKey: 'total_amount',
+            xAxis: function xAxis(item) {
+                return _h2.default.momentify(item.paid_at);
+            },
+            emptyState: _mithril2.default.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope()))
+        }) : _h2.default.loader()]), (0, _mithril2.default)('.u-text-center', {
+            style: {
+                'min-height': '300px'
+            }
+        }, [!state.lSubscriptionsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
+            collection: state.subscriptionsPerDay,
+            label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
+            subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
             dataKey: 'total',
             xAxis: function xAxis(item) {
                 return _h2.default.momentify(item.paid_at);
@@ -18649,15 +18691,15 @@ var userContributedBox = {
         var state = _ref.state;
 
         var contribution = state.contribution,
-            contactModalC = [_ownerMessageContent2.default, (0, _stream2.default)({
+            contactModalC = [_ownerMessageContent2.default, {
             id: contribution.project_user_id,
             name: contribution.project_owner_name,
             project_id: contribution.project_id
-        })],
+        }],
             finishedAt = contribution.survey && contribution.survey.finished_at,
             answeredAt = contribution.survey_answered_at;
 
-        return !_underscore2.default.isEmpty(contribution) ? (0, _mithril2.default)('div', state.displayModal() ? _mithril2.default.component(_modalBox2.default, {
+        return !_underscore2.default.isEmpty(contribution) ? (0, _mithril2.default)('div', state.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayModal,
             content: contactModalC
         }) : '', [(0, _mithril2.default)('.card.w-row', [(0, _mithril2.default)('.u-marginbottom-20.w-col.w-col-3', [(0, _mithril2.default)('.u-marginbottom-10.w-row', [(0, _mithril2.default)('.u-marginbottom-10.w-col.w-col-4', (0, _mithril2.default)('a.w-inline-block[href=\'/' + contribution.permalink + '\']', (0, _mithril2.default)('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-small.fontweight-semibold.lineheight-tight', (0, _mithril2.default)('a.link-hidden[href=\'/' + contribution.permalink + '\']', contribution.project_name)))]), (0, _mithril2.default)("a.btn.btn-edit.btn-inline.btn-small.w-button[href='javascript:void(0);']", {
@@ -19091,25 +19133,13 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * window.c.userCreators component
- * Shows all user creators suggestions cards
- *
- * Example of use:
- * view: () => {
- *   ...
- *   m.component(c.userCreators, {user: user})
- *   ...
- * }
- */
 var userCreators = {
     oninit: function oninit(vnode) {
-        _models2.default.creatorSuggestion.pageSize(9);
-        var creatorsListVM = _api.catarse.paginationVM(_models2.default.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
-            Prefer: 'count=exact'
-        });
+        var creatorsListVM = (0, _friendsVm.getCreatorsListVM)();
         var allLoading = (0, _stream2.default)(false);
         var followAll = function followAll() {
             allLoading(true);
@@ -19118,6 +19148,10 @@ var userCreators = {
             l.load().then(function () {
                 creatorsListVM.firstPage();
                 allLoading(false);
+                _h2.default.redraw();
+            }).catch(function (error) {
+                allLoading(false);
+                _h2.default.redraw();
             });
         };
 
@@ -19146,8 +19180,17 @@ var userCreators = {
             });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: creatorsVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-};
-
+}; /**
+    * window.c.userCreators component
+    * Shows all user creators suggestions cards
+    *
+    * Example of use:
+    * view: () => {
+    *   ...
+    *   m.component(c.userCreators, {user: user})
+    *   ...
+    * }
+    */
 exports.default = userCreators;
 
 /***/ }),
@@ -19375,14 +19418,24 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * window.c.userFollowers component
+ * Shows all user followers cards
+ *
+ * Example of use:
+ * view: () => {
+ *   ...
+ *   m.component(c.userFollowers, {user: user})
+ *   ...
+ * }
+ */
 var userFollowers = {
     oninit: function oninit(vnode) {
-        _models2.default.userFollower.pageSize(9);
-        var followersListVM = _api.catarse.paginationVM(_models2.default.userFollower, 'following.asc,created_at.desc', {
-            Prefer: 'count=exact'
-        }),
+        var followersListVM = (0, _friendsVm.getUserFollowersListVM)(),
             user = vnode.attrs.user,
             userIdVM = _api.catarse.filtersVM({ follow_id: 'eq' });
 
@@ -19404,17 +19457,8 @@ var userFollowers = {
             return (0, _mithril2.default)(_userFollowCard2.default, { friend: _underscore2.default.extend({}, { friend_id: friend.user_id }, friend.source) });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: followersVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-}; /**
-    * window.c.userFollowers component
-    * Shows all user followers cards
-    *
-    * Example of use:
-    * view: () => {
-    *   ...
-    *   m.component(c.userFollowers, {user: user})
-    *   ...
-    * }
-    */
+};
+
 exports.default = userFollowers;
 
 /***/ }),
@@ -19463,29 +19507,16 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * window.c.userFollows component
- * Shows all user follows cards
- *
- * Example of use:
- * view: () => {
- *   ...
- *   m.component(c.userFollows, {user: user})
- *   ...
- * }
- */
 var userFollows = {
     oninit: function oninit(vnode) {
-        _models2.default.userFollow.pageSize(9);
         var userFriendVM = _api.catarse.filtersVM({ user_id: 'eq' }),
             user = vnode.attrs.user,
             hash = (0, _stream2.default)(window.location.hash),
-            followsListVM = _api.catarse.paginationVM(_models2.default.userFollow, 'created_at.desc', {
-            Prefer: 'count=exact'
-        });
-
+            followsListVM = (0, _friendsVm.getUserFollowsListVM)();
         userFriendVM.user_id(user.user_id);
         if (!followsListVM.collection().length) {
             followsListVM.firstPage(userFriendVM.parameters());
@@ -19504,8 +19535,17 @@ var userFollows = {
             return (0, _mithril2.default)(_userFollowCard2.default, { friend: _underscore2.default.extend({}, { following: true, friend_id: friend.follow_id }, friend.source) });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: followsVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-};
-
+}; /**
+    * window.c.userFollows component
+    * Shows all user follows cards
+    *
+    * Example of use:
+    * view: () => {
+    *   ...
+    *   m.component(c.userFollows, {user: user})
+    *   ...
+    * }
+    */
 exports.default = userFollows;
 
 /***/ }),
@@ -19554,28 +19594,15 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * window.c.userFriends component
- * Shows all friends cards and a follow-all button
- *
- * Example of use:
- * view: () => {
- *   ...
- *   m.component(c.userFriends, {user: user})
- *   ...
- * }
- */
 var userFriends = {
     oninit: function oninit(vnode) {
-        _models2.default.userFriend.pageSize(9);
-
         var userFriendVM = _api.catarse.filtersVM({ user_id: 'eq' }),
             user = vnode.attrs.user,
-            friendListVM = _api.catarse.paginationVM(_models2.default.userFriend, 'following.asc,total_contributed_projects.desc', {
-            Prefer: 'count=exact'
-        }),
+            friendListVM = (0, _friendsVm.getFriendsListVM)(),
             allLoading = (0, _stream2.default)(false),
             followAll = function followAll() {
             allLoading(true);
@@ -19584,6 +19611,10 @@ var userFriends = {
             l.load().then(function () {
                 friendListVM.firstPage(userFriendVM.parameters());
                 allLoading(false);
+                _h2.default.redraw();
+            }).catch(function (error) {
+                allLoading(false);
+                _h2.default.redraw();
             });
         };
 
@@ -19610,8 +19641,17 @@ var userFriends = {
             return (0, _mithril2.default)(_userFollowCard2.default, { friend: friend });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: listVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-};
-
+}; /**
+    * window.c.userFriends component
+    * Shows all friends cards and a follow-all button
+    *
+    * Example of use:
+    * view: () => {
+    *   ...
+    *   m.component(c.userFriends, {user: user})
+    *   ...
+    * }
+    */
 exports.default = userFriends;
 
 /***/ }),
@@ -20823,7 +20863,7 @@ var userSubscriptionBox = {
             }]
         }) : '', state.displayModal() && !_underscore2.default.isEmpty(state.contactModalInfo()) ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayModal,
-            content: [_ownerMessageContent2.default, state.contactModalInfo]
+            content: [_ownerMessageContent2.default, state.contactModalInfo()]
         }) : '', state.displayPaymentHistoryModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayPaymentHistoryModal,
             content: [_userSubscriptionPaymentHistoryModal2.default, { subscription: subscription, project: project }]
@@ -22279,6 +22319,49 @@ mask = function mask(maskDefinition, value) {
 },
     redraw = function redraw() {
     RedrawScheduler.schedule();
+},
+    createBasicPaginationVMWithAutoRedraw = function createBasicPaginationVMWithAutoRedraw(vmInstance) {
+    var error = (0, _stream2.default)(false);
+    var errorMessage = (0, _stream2.default)('');
+
+    return {
+        isLastPage: vmInstance.isLastPage,
+        isLoading: vmInstance.isLoading,
+        collection: vmInstance.collection,
+        total: vmInstance.total,
+        error: error,
+        errorMessage: errorMessage,
+        firstPage: function firstPage(params) {
+            return new Promise(function (resolve, reject) {
+                vmInstance.firstPage(params).then(function (data) {
+                    error(false);
+                    errorMessage('');
+                    resolve(data);
+                    redraw();
+                }).catch(function (errorString) {
+                    error(true);
+                    errorMessage(errorString);
+                    reject(errorString);
+                    redraw();
+                });
+            });
+        },
+        nextPage: function nextPage() {
+            return new Promise(function (resolve, reject) {
+                vmInstance.nextPage().then(function (data) {
+                    error(false);
+                    errorMessage('');
+                    resolve(data);
+                    redraw();
+                }).catch(function (errorString) {
+                    error(true);
+                    errorMessage(errorString);
+                    reject(errorString);
+                    redraw();
+                });
+            });
+        }
+    };
 };
 
 setMomentifyLocale();
@@ -22290,6 +22373,7 @@ exports.default = {
     redraw: redraw,
     getCallStack: getCallStack,
     createRequestRedrawWithCountdown: createRequestRedrawWithCountdown,
+    createBasicPaginationVMWithAutoRedraw: createBasicPaginationVMWithAutoRedraw,
     createRequestAutoRedraw: createRequestAutoRedraw,
     autoRedrawProp: autoRedrawProp,
     sleep: sleep,
@@ -32885,6 +32969,80 @@ exports.default = creditCardVM;
 
 /***/ }),
 
+/***/ "./legacy/src/vms/friends-vm.js":
+/*!**************************************!*\
+  !*** ./legacy/src/vms/friends-vm.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.getUserFollowersListVM = exports.getUserFollowsListVM = exports.getCreatorsListVM = exports.getFriendsListVM = undefined;
+
+var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _stream = __webpack_require__(/*! mithril/stream */ "./node_modules/mithril/stream.js");
+
+var _stream2 = _interopRequireDefault(_stream);
+
+var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
+
+var _underscore = __webpack_require__(/*! underscore */ "./node_modules/underscore/underscore.js");
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
+
+var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
+
+var _models2 = _interopRequireDefault(_models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var getFriendsListVM = function getFriendsListVM() {
+    _models2.default.userFriend.pageSize(9);
+    var friendListVM = _api.catarse.paginationVM(_models2.default.userFriend, 'following.asc,total_contributed_projects.desc', { Prefer: 'count=exact' });
+
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(friendListVM);
+};
+
+var getCreatorsListVM = function getCreatorsListVM() {
+    _models2.default.creatorSuggestion.pageSize(9);
+    var creatorsListVM = _api.catarse.paginationVM(_models2.default.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
+        Prefer: 'count=exact'
+    });
+
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(creatorsListVM);
+};
+
+var getUserFollowsListVM = function getUserFollowsListVM() {
+    _models2.default.userFollow.pageSize(9);
+    var userFollowsListVM = _api.catarse.paginationVM(_models2.default.userFollow, 'created_at.desc', { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(userFollowsListVM);
+};
+
+var getUserFollowersListVM = function getUserFollowersListVM() {
+    _models2.default.userFollower.pageSize(9);
+    var userFollowersListVM = _api.catarse.paginationVM(_models2.default.userFollower, 'following.asc,created_at.desc', { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(userFollowersListVM);
+};
+
+exports.getFriendsListVM = getFriendsListVM;
+exports.getCreatorsListVM = getCreatorsListVM;
+exports.getUserFollowsListVM = getUserFollowsListVM;
+exports.getUserFollowersListVM = getUserFollowersListVM;
+
+/***/ }),
+
 /***/ "./legacy/src/vms/home-vm.js":
 /*!***********************************!*\
   !*** ./legacy/src/vms/home-vm.js ***!
@@ -34487,12 +34645,17 @@ exports.default = projectGoalsVM;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
+exports.getProjectContributorsListVM = exports.getProjectSubscribersListVM = undefined;
 
 var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
 
 var _mithril2 = _interopRequireDefault(_mithril);
+
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
 
 var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
 
@@ -34504,6 +34667,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _models2.default.adminProject.pageSize(9);
 exports.default = _api.catarse.paginationVM(_models2.default.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
+
+
+var getProjectSubscribersListVM = function getProjectSubscribersListVM() {
+    _models2.default.projectSubscriber.pageSize(15);
+    var projectSubscribersListVM = _api.commonProject.paginationVM(_models2.default.projectSubscriber, null, { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(projectSubscribersListVM);
+};
+
+var getProjectContributorsListVM = function getProjectContributorsListVM() {
+    _models2.default.contributor.pageSize(15);
+    var projectContributorsListVM = _api.catarse.paginationVM(_models2.default.contributor, null, { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(projectContributorsListVM);
+};
+
+exports.getProjectSubscribersListVM = getProjectSubscribersListVM;
+exports.getProjectContributorsListVM = getProjectContributorsListVM;
 
 /***/ }),
 
