@@ -18,6 +18,7 @@ BEGIN;
         _payment_jan_1 payment_service.catalog_payments;
         _payment_jan_2 payment_service.catalog_payments;
         _payment_feb payment_service.catalog_payments;
+        _payment_jan_1_recurring payment_service.catalog_payments;
     begin
 
         -- generate subscriptions in january
@@ -42,20 +43,41 @@ BEGIN;
         values ('paid', '2018/01/01'::timestamp, 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription_jan_1.id)
         returning * into _payment_jan_1;
 
+        -- generate payment status transition to jan 1
+        insert into payment_service.payment_status_transitions
+        (catalog_payment_id, from_status, to_status, created_at) 
+        values (_payment_jan_1.id, 'pending', 'paid', '2018/01/01'::timestamp);
+
         insert into payment_service.catalog_payments
         (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
         values ('paid', '2018/01/01'::timestamp, 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription_jan_2.id)
         returning * into _payment_jan_2;
+
+        -- generate payment status transition to jan 2
+        insert into payment_service.payment_status_transitions
+        (catalog_payment_id, from_status, to_status, created_at) 
+        values (_payment_jan_2.id, 'pending', 'paid', '2018/01/01'::timestamp);
 
         insert into payment_service.catalog_payments
         (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
         values ('paid', '2018/02/01'::timestamp, 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription_feb.id)
         returning * into _payment_feb;
 
+        -- generate payment status transition to feb
+        insert into payment_service.payment_status_transitions
+        (catalog_payment_id, from_status, to_status, created_at) 
+        values (_payment_feb.id, 'pending', 'paid', '2018/02/01'::timestamp);        
+
         -- recurring payment, should not count as new subscriber
         insert into payment_service.catalog_payments
         (status, created_at, gateway, platform_id, user_id, project_id, data, subscription_id) 
-        values ('paid', '2018/02/01'::timestamp, 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription_jan_1.id);
+        values ('paid', '2018/02/01'::timestamp, 'pagarme', __seed_platform_id(), __seed_first_user_id(), __seed_project_id(), json_build_object('payment_method', 'boleto'), _subscription_jan_1.id)
+        returning * into _payment_jan_1_recurring;
+
+        -- generate payment status transition to jan 1 recurring
+        insert into payment_service.payment_status_transitions
+        (catalog_payment_id, from_status, to_status, created_at) 
+        values (_payment_jan_1_recurring.id, 'pending', 'paid', '2018/02/01'::timestamp);
 
         EXECUTE 'set local "request.jwt.claim.platform_token" to '''||__seed_platform_token()||'''';
         -- test with anoymous role
