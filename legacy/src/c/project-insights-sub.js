@@ -292,7 +292,7 @@ const projectInsightsSub = {
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
                     }) : h.loader()]),
                     (state.isSubscriptionsPerMonthLoaded() ?
-                        m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader())
+                        m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader()),
 
                               m(
                                   '.u-text-center',
