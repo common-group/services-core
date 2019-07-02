@@ -292,49 +292,7 @@ const projectInsightsSub = {
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
                     }) : h.loader()]),
                     (state.isSubscriptionsPerMonthLoaded() ?
-                        m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader()),
-
-                              m(
-                                  '.u-text-center',
-                                  {
-                                      style: {
-                                          'min-height': '300px',
-                                      },
-                                  },
-                                  [
-                                      !state.lSubscriptionsPerDay()
-                                          ? m(projectDataChart, {
-                                                collection: state.subscriptionsPerDay,
-                                                label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
-                                                subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
-                                                dataKey: 'total_amount',
-                                                xAxis: item => h.momentify(item.paid_at),
-                                                emptyState: m.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope())),
-                                            })
-                                          : h.loader(),
-                                  ]
-                              ),
-                              m(
-                                  '.u-text-center',
-                                  {
-                                      style: {
-                                          'min-height': '300px',
-                                      },
-                                  },
-                                  [
-                                      !state.lSubscriptionsPerDay()
-                                          ? m(projectDataChart, {
-                                                collection: state.subscriptionsPerDay,
-                                                label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
-                                                subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
-                                                dataKey: 'total',
-                                                xAxis: item => h.momentify(item.paid_at),
-                                                emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope())),
-                                            })
-                                          : h.loader(),
-                                  ]
-                              ),
-                              state.isSubscriptionsPerMonthLoaded() ? m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader(),
+                        m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader())
                           ]),
                       ]),
                   ]
