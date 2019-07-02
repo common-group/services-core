@@ -5,7 +5,7 @@ import c from './c';
 import Chart from 'chart.js';
 import { isNumber } from 'util';
 
-(function() {
+(function () {
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.responsive = false;
     Chart.defaults.global.scaleFontFamily = 'proxima-nova';
@@ -17,16 +17,16 @@ import { isNumber } from 'util';
     const adminRoot = document.getElementById('new-admin');
 
     if (adminRoot) {
-        const adminWrap = function(component, customAttr) {
+        const adminWrap = function (component, customAttr) {
             return {
-                oninit: function(vnode) {
+                oninit: function (vnode) {
                     const attr = customAttr;
 
                     vnode.state = {
                         attr,
                     };
                 },
-                view: function({ state }) {
+                view: function ({ state }) {
                     const { attr } = state;
                     return m('#app', [m(c.root.Menu, attr), m(component, attr), attr.hideFooter ? '' : m(c.root.Footer, attr)]);
                 },
@@ -48,9 +48,9 @@ import { isNumber } from 'util';
         body = document.getElementsByTagName('body')[0];
 
     let firstRun = true; // Indica se é a primeira vez q executa um controller.
-    const wrap = function(component, customAttr) {
+    const wrap = function (component, customAttr) {
         return {
-            oninit: function(vnode) {
+            oninit: function (vnode) {
                 if (firstRun) {
                     firstRun = false;
                 } else {
@@ -73,7 +73,7 @@ import { isNumber } from 'util';
                     filterParam = m.route.param('filter'),
                     thankYouParam = app && JSON.parse(app.getAttribute('data-contribution'));
 
-                const addToAttr = function(newAttr) {
+                const addToAttr = function (newAttr) {
                     attr = _.extend({}, newAttr, attr);
                 };
 
@@ -121,7 +121,7 @@ import { isNumber } from 'util';
 
                 vnode.state.attr = attr;
             },
-            view: function({ state }) {
+            view: function ({ state }) {
                 return m('#app', [
                     m(c.root.Menu, state.attr),
                     h.getUserID() ? m(c.root.CheckEmail, state.attr) : '',
@@ -132,7 +132,7 @@ import { isNumber } from 'util';
         };
     };
 
-    const urlWithLocale = function(url) {
+    const urlWithLocale = function (url) {
         return `/${window.I18n.locale}${url}`;
     };
 
@@ -170,7 +170,6 @@ import { isNumber } from 'util';
             [urlWithLocale('/start')]: wrap(c.root.Start, { menuTransparency: true, footerBig: true }),
             [urlWithLocale('/projects/:project_id/contributions/:contribution_id')]: wrap(c.root.ThankYou, { menuTransparency: false, footerBig: false }),
             '/projects/:project_id/contributions/:contribution_id': wrap(c.root.ThankYou, { menuTransparency: false, footerBig: false }),
-            [urlWithLocale('/:project')]: wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
             '/projects/:project_id/insights': wrap(c.root.Insights, { menuTransparency: false, footerBig: false }),
             [urlWithLocale('/projects/:project_id/insights')]: wrap(c.root.Insights, { menuTransparency: false, footerBig: false }),
             '/projects/:project_id/contributions_report': wrap(c.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false }),
@@ -209,6 +208,7 @@ import { isNumber } from 'util';
             '/projects/:project_id/rewards/:reward_id/surveys/new': wrap(c.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true }),
             [urlWithLocale('/follow-fb-friends')]: wrap(c.root.FollowFoundFriends, { menuTransparency: false, footerBig: false }),
             '/follow-fb-friends': wrap(c.root.FollowFoundFriends, { menuTransparency: false, footerBig: false }),
+            [urlWithLocale('/:project')]: wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
             '/:project': wrap(c.root.ProjectsShow, { menuTransparency: false, footerBig: false }),
             [urlWithLocale('/team')]: wrap(c.root.Team, { menuTransparency: true, footerBig: true }),
             '/team': wrap(c.root.Team, { menuTransparency: true, footerBig: true }),
