@@ -155,7 +155,7 @@ const projectSubscriptionReport = {
                 data: {
                     index: 1,
                     selectable: dropdownNumber,
-                    label: 'Total apoiado',
+                    label: 'Total pago',
                     name: 'total_paid',
                     onapply: submit,
                     vm: filterVM.total_paid,
@@ -176,7 +176,7 @@ const projectSubscriptionReport = {
                 data: {
                     index: 2,
                     selectable: dropdownNumber,
-                    label: 'Qtde. de apoios',
+                    label: 'Meses pagos',
                     name: 'paid_count',
                     onapply: submit,
                     vm: filterVM.paid_count,
@@ -338,7 +338,7 @@ const projectSubscriptionReport = {
                                         m('span.fontweight-semibold',
                                             state.subscriptions.total()
                                         ),
-                                        ' pessoas',
+                                        ' assinaturas',
                                         m.trust('&nbsp;')
                                     ])
                                 ),
@@ -369,12 +369,12 @@ const projectSubscriptionReport = {
                                     ),
                                     m('.table-col.w-col.w-col-1.u-text-center',
                                         m('div',
-                                            'Apoio mensal'
+                                            'Pagamento mensal'
                                         )
                                     ),
                                     m('.table-col.w-col.w-col-2.u-text-center',
                                         m('div',
-                                            'Total apoiado'
+                                            'Total pago'
                                         )
                                     ),
                                     m('.table-col.w-col.w-col-2.u-text-center',
