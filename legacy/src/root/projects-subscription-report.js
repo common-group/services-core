@@ -369,7 +369,7 @@ const projectSubscriptionReport = {
                                     ),
                                     m('.table-col.w-col.w-col-1.u-text-center',
                                         m('div',
-                                            'Pagamento mensal'
+                                            'Pgto. mensal'
                                         )
                                     ),
                                     m('.table-col.w-col.w-col-2.u-text-center',
