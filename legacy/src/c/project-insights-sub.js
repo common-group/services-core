@@ -202,7 +202,7 @@ const projectInsightsSub = {
                                 `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
                             ),
                             m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
-                                'Caso não haja variação no número de assinaturas e todos os pagamentos sejam confirmados no período, essa é a sua receita mensal, já com taxas descontadas.'
+                                'Calculada com base nas assinaturas ativas que você possui hoje (taxas já descontadas).'
                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [
