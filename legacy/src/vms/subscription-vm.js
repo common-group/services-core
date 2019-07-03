@@ -1,11 +1,13 @@
 import {
     commonPayment,
-    commonProxy
+    commonProxy,
+    commonAnalytics
 } from '../api';
 import m from 'mithril';
 import h from '../h';
 import _ from 'underscore';
 import models from '../models';
+import moment from 'moment';
 
 const getSubscriptionTransitions = (projectId, toStatus, fromStatus, startAt, endAt) => {
     const vm = commonPayment.filtersVM({
@@ -106,13 +108,50 @@ const toogleAnonymous = (subscription) => {
         });
 };
 
+const getNewSubscriptionsInsightsFromPeriod = (project_id, startDate, endDate) => {
+
+    const start_date = moment(startDate).format('YYYY-MM-DDTHH:mm:ss.000');
+    const end_date = moment(endDate).format('YYYY-MM-DDTHH:mm:ss.000');
+
+    return commonAnalytics
+        .loaderWithToken(models.newSubscribersFromPeriod.getRowOptions({project_id, start_date, end_date}))
+        .load()
+        .then(insightData => {
+            h.redraw();
+            return insightData;
+        })
+        .catch(error => {
+            console.log('Error getting insights resume:', error);
+            h.redraw();
+        })
+};
+
+const getNewSubscriptionsInsightsFromLastWeek = project_id => {
+    const _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
+    const today = new Date();
+    const todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus7Days, today);
+};
+
+const getNewSubscriptionsInsightsFromLast2Week = project_id => {
+    const _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
+    const _14_DAYS_IN_MS = 3600 * 24 * 14 * 1000;
+    const today = new Date();
+    const todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    const todayMinus14Days = new Date(today.getTime() - _14_DAYS_IN_MS);
+    return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus14Days, todayMinus7Days);
+};
+
 const subscriptionVM = {
     getNewSubscriptions,
     getSubscriptionsPerMonth,
     getSubscriptionTransitions,
     getUserProjectSubscriptions,
     getSubscription,
-    toogleAnonymous
+    toogleAnonymous,
+    getNewSubscriptionsInsightsFromPeriod,
+    getNewSubscriptionsInsightsFromLastWeek,
+    getNewSubscriptionsInsightsFromLast2Week
 };
 
 export default subscriptionVM;

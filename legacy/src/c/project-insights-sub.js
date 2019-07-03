@@ -28,9 +28,17 @@ const projectInsightsSub = {
             visitorLoader = catarseMoments.loaderWithToken,
             loader = commonAnalytics.loaderWithToken,
             visitorsPerDay = prop([]);
-        const weekSubscriptions = prop([]);
+        const insightResumeDataLastWeek = prop({
+            mean_amount : 0, 
+            subscriptions_count : 0, 
+            total_amount : 0
+        });
+        const insightResumeDataLast2Week = prop({
+            mean_amount : 0, 
+            subscriptions_count : 0, 
+            total_amount : 0
+        });
         const subscriptionsPerDay = prop([]);
-        const lastWeekSubscriptions = prop([]);
         const weekTransitions = prop([]);
         const lastWeekTransitions = prop([]);
         const subscriptionsPerMonth = prop([]);
@@ -46,15 +54,27 @@ const projectInsightsSub = {
             }
         };
         const requestRedraw = h.createRequestAutoRedraw(
-            weekSubscriptions,
             subscriptionsPerDay,
-            lastWeekSubscriptions,
             weekTransitions,
             lastWeekTransitions,
             subscriptionsPerMonth,
             isSubscriptionsPerMonthLoaded,
             balanceData
         );
+
+        subscriptionVM
+            .getNewSubscriptionsInsightsFromLastWeek(vnode.attrs.project.common_id)
+            .then(insights => {
+                insightResumeDataLastWeek(insights);
+                h.redraw();
+            });
+
+        subscriptionVM
+            .getNewSubscriptionsInsightsFromLast2Week(vnode.attrs.project.common_id)
+            .then(insightsLast2Weeks => {
+                insightResumeDataLast2Week(insightsLast2Weeks);
+                h.redraw();
+            });
 
         subVM.project_id(vnode.attrs.project.common_id);
         const lVisitorsPerDay = visitorLoader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
@@ -67,16 +87,6 @@ const projectInsightsSub = {
         lSubscriptionsPerDay
             .load()
             .then(subscriptionsPerDay)
-            .then(requestRedraw);
-
-        subscriptionVM
-            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
-            .then(weekSubscriptions)
-            .then(requestRedraw);
-
-        subscriptionVM
-            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
-            .then(lastWeekSubscriptions)
             .then(requestRedraw);
 
         subscriptionVM
@@ -102,9 +112,7 @@ const projectInsightsSub = {
         balanceLoader.then(balanceData).then(requestRedraw);
 
         vnode.state = {
-            weekSubscriptions,
             subscriptionsPerMonth,
-            lastWeekSubscriptions,
             weekTransitions,
             lastWeekTransitions,
             projectGoalsVM,
@@ -115,19 +123,19 @@ const projectInsightsSub = {
             visitorsPerDay,
             balanceLoader,
             balanceData,
-            isSubscriptionsPerMonthLoaded
+            isSubscriptionsPerMonthLoaded,
+            insightResumeDataLastWeek,
+            insightResumeDataLast2Week
         };
     },
     view: function({state, attrs}) {
-        const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
-        const weekSum = sumAmount(state.weekSubscriptions());
-        const lastWeekSum = sumAmount(state.lastWeekSubscriptions());
-        const canceledWeekSum = sumAmount(state.weekTransitions());
-        const canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         const project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
             balanceData = (state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null);
-        const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : null;
+        
+        const averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
+        const totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
+        const totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
 
         return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -197,21 +205,21 @@ const projectInsightsSub = {
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                    `R$${averageRevenue ? `${h.formatNumber(averageRevenue, 2, 3)}` : '--'}`
+                                    `R$${averageAmount ? `${h.formatNumber(averageAmount, 2, 3)}` : '--'}`
                                 )
 
                             ]),
                             m(insightsInfoBox, {
                                 label: 'Novos Assinantes',
-                                info: state.weekSubscriptions().length,
-                                newCount: state.weekSubscriptions().length,
-                                oldCount: state.lastWeekSubscriptions().length
+                                info: state.insightResumeDataLastWeek().subscriptions_count,
+                                newCount: state.insightResumeDataLastWeek().subscriptions_count,
+                                oldCount: state.insightResumeDataLast2Week().subscriptions_count
                             }),
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
-                                info: `R$${weekSum}`,
-                                newCount: weekSum,
-                                oldCount: lastWeekSum
+                                info: `R$${totalAmountFromLastWeek ? `${h.formatNumber(totalAmountFromLastWeek, 2, 3)}` : '--'}`,
+                                newCount: totalAmountFromLastWeek,
+                                oldCount: totalAmountFromLast2Week
                             })
                         ]),
                         m(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [
