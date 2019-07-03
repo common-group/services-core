@@ -12131,9 +12131,17 @@ var projectInsightsSub = {
             visitorLoader = _api.catarseMoments.loaderWithToken,
             loader = _api.commonAnalytics.loaderWithToken,
             visitorsPerDay = (0, _stream2.default)([]);
-        var weekSubscriptions = (0, _stream2.default)([]);
+        var insightResumeDataLastWeek = (0, _stream2.default)({
+            mean_amount: 0,
+            subscriptions_count: 0,
+            total_amount: 0
+        });
+        var insightResumeDataLast2Week = (0, _stream2.default)({
+            mean_amount: 0,
+            subscriptions_count: 0,
+            total_amount: 0
+        });
         var subscriptionsPerDay = (0, _stream2.default)([]);
-        var lastWeekSubscriptions = (0, _stream2.default)([]);
         var weekTransitions = (0, _stream2.default)([]);
         var lastWeekTransitions = (0, _stream2.default)([]);
         var subscriptionsPerMonth = (0, _stream2.default)([]);
@@ -12148,7 +12156,17 @@ var projectInsightsSub = {
                 visitorsTotal(_underscore2.default.first(data).total);
             }
         };
-        var requestRedraw = _h2.default.createRequestAutoRedraw(weekSubscriptions, subscriptionsPerDay, lastWeekSubscriptions, weekTransitions, lastWeekTransitions, subscriptionsPerMonth, isSubscriptionsPerMonthLoaded, balanceData);
+        var requestRedraw = _h2.default.createRequestAutoRedraw(subscriptionsPerDay, weekTransitions, lastWeekTransitions, subscriptionsPerMonth, isSubscriptionsPerMonthLoaded, balanceData);
+
+        _subscriptionVm2.default.getNewSubscriptionsInsightsFromLastWeek(vnode.attrs.project.common_id).then(function (insights) {
+            insightResumeDataLastWeek(insights);
+            _h2.default.redraw();
+        });
+
+        _subscriptionVm2.default.getNewSubscriptionsInsightsFromLast2Week(vnode.attrs.project.common_id).then(function (insightsLast2Weeks) {
+            insightResumeDataLast2Week(insightsLast2Weeks);
+            _h2.default.redraw();
+        });
 
         subVM.project_id(vnode.attrs.project.common_id);
         var lVisitorsPerDay = visitorLoader(_models2.default.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
@@ -12156,10 +12174,6 @@ var projectInsightsSub = {
 
         var lSubscriptionsPerDay = loader(_models2.default.projectSubscriptionsPerDay.getRowOptions(subVM.parameters()));
         lSubscriptionsPerDay.load().then(subscriptionsPerDay).then(requestRedraw);
-
-        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekSubscriptions).then(requestRedraw);
-
-        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(2, 'weeks').format(), (0, _moment2.default)().utc().subtract(1, 'weeks').format()).then(lastWeekSubscriptions).then(requestRedraw);
 
         _subscriptionVm2.default.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekTransitions).then(requestRedraw);
 
@@ -12176,9 +12190,7 @@ var projectInsightsSub = {
         balanceLoader.then(balanceData).then(requestRedraw);
 
         vnode.state = {
-            weekSubscriptions: weekSubscriptions,
             subscriptionsPerMonth: subscriptionsPerMonth,
-            lastWeekSubscriptions: lastWeekSubscriptions,
             weekTransitions: weekTransitions,
             lastWeekTransitions: lastWeekTransitions,
             projectGoalsVM: _projectGoalsVm2.default,
@@ -12189,44 +12201,40 @@ var projectInsightsSub = {
             visitorsPerDay: visitorsPerDay,
             balanceLoader: balanceLoader,
             balanceData: balanceData,
-            isSubscriptionsPerMonthLoaded: isSubscriptionsPerMonthLoaded
+            isSubscriptionsPerMonthLoaded: isSubscriptionsPerMonthLoaded,
+            insightResumeDataLastWeek: insightResumeDataLastWeek,
+            insightResumeDataLast2Week: insightResumeDataLast2Week
         };
     },
     view: function view(_ref) {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        var sumAmount = function sumAmount(list) {
-            return _underscore2.default.reduce(list, function (memo, sub) {
-                return memo + sub.amount / 100;
-            }, 0);
-        };
-        var weekSum = sumAmount(state.weekSubscriptions());
-        var lastWeekSum = sumAmount(state.lastWeekSubscriptions());
-        var canceledWeekSum = sumAmount(state.weekTransitions());
-        var canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         var project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
             balanceData = state.balanceData() && !_underscore2.default.isNull(_underscore2.default.first(state.balanceData())) ? _underscore2.default.first(state.balanceData()) : null;
-        var averageRevenue = subscribersDetails.total_subscriptions > 0 ? subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions : null;
+
+        var averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
+        var totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
+        var totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
 
         return (0, _mithril2.default)('.project-insights', !attrs.l() ? [(0, _mithril2.default)('.w-section.section-product.' + project.mode), project.is_owner_or_admin ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
             project: (0, _stream2.default)(project)
         }) : '', (0, _mithril2.default)('.dashboard-header.section-one-column', [(0, _mithril2.default)('.u-marginbottom-30.u-text-center', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', 'Ol\xE1, ' + (project.user.public_name || project.user.name) + '!'), (0, _mithril2.default)('.fontsize-smaller', 'Este \xE9 o retrato de sua campanha hoje, ' + (0, _moment2.default)().format('DD [de] MMMM [de] YYYY'))]), (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [subscribersDetails && !_underscore2.default.isEmpty(state.projectGoalsVM.goals()) ? (0, _mithril2.default)(_projectGoalsBoxDashboard2.default, {
             goalDetails: state.projectGoalsVM.goals,
             amount: subscribersDetails.amount_paid_for_valid_period
-        }) : '', (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Assinaturas ativas'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.u-marginbottom-10', 'R$' + _h2.default.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'Caso não haja variação no número de assinaturas e todos os pagamentos sejam confirmados no período, essa é a sua receita mensal, já com taxas descontadas.')]), (0, _mithril2.default)('.card.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', ['Saldo', _mithril2.default.trust('&nbsp;'), ' ', (0, _mithril2.default)('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\'][target=\'_self\']', 'Sacar')]), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + _h2.default.formatNumber(balanceData.amount, 2, 3) : ''), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? (0, _mithril2.default)('.w-container.u-marginbottom-60', (0, _mithril2.default)(_projectInviteCard2.default, {
+        }) : '', (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Assinaturas ativas'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.u-marginbottom-10', 'R$' + _h2.default.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'Calculada com base nas assinaturas ativas que você possui hoje (taxas já descontadas).')]), (0, _mithril2.default)('.card.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', ['Saldo', _mithril2.default.trust('&nbsp;'), ' ', (0, _mithril2.default)('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\'][target=\'_self\']', 'Sacar')]), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + _h2.default.formatNumber(balanceData.amount, 2, 3) : ''), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? (0, _mithril2.default)('.w-container.u-marginbottom-60', (0, _mithril2.default)(_projectInviteCard2.default, {
             project: project
-        })) : '', (0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('.flex-column.card.u-radius.u-marginbottom-10', [(0, _mithril2.default)('div', 'Receita média por assinatura'), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + (0, _moment2.default)().format('DD/MM/YYYY')), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + (averageRevenue ? '' + _h2.default.formatNumber(averageRevenue, 2, 3) : '--'))]), (0, _mithril2.default)(_insightsInfoBox2.default, {
-            label: 'Novas Assinaturas',
-            info: state.weekSubscriptions().length,
-            newCount: state.weekSubscriptions().length,
-            oldCount: state.lastWeekSubscriptions().length
+        })) : '', (0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('.flex-column.card.u-radius.u-marginbottom-10', [(0, _mithril2.default)('div', 'Receita média por assinatura'), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + (0, _moment2.default)().format('DD/MM/YYYY')), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + (averageAmount ? '' + _h2.default.formatNumber(averageAmount, 2, 3) : '--'))]), (0, _mithril2.default)(_insightsInfoBox2.default, {
+            label: 'Novos Assinantes',
+            info: state.insightResumeDataLastWeek().subscriptions_count,
+            newCount: state.insightResumeDataLastWeek().subscriptions_count,
+            oldCount: state.insightResumeDataLast2Week().subscriptions_count
         }), (0, _mithril2.default)(_insightsInfoBox2.default, {
-            label: 'Novas assinaturas (R$)',
-            info: 'R$' + weekSum,
-            newCount: weekSum,
-            oldCount: lastWeekSum
+            label: 'Nova receita',
+            info: 'R$' + (totalAmountFromLastWeek ? '' + _h2.default.formatNumber(totalAmountFromLastWeek, 2, 3) : '--'),
+            newCount: totalAmountFromLastWeek,
+            oldCount: totalAmountFromLast2Week
         })]), (0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [window.I18n.t('visitors_per_day_label', I18nScope())]), (0, _mithril2.default)('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [window.I18n.t('last_30_days_indication', I18nScope())])]), !state.lVisitorsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
             collection: state.visitorsPerDay,
             dataKey: 'visitors',
@@ -22536,7 +22544,8 @@ var models = {
     mailMarketingList: _api.catarse.model('mail_marketing_lists'),
     commonUserDetails: _api.commonCommunity.model('rpc/user_details'),
     rechargeSubscription: _api.commonPayment.model('rpc/recharge_subscription'),
-    unsubscribes: _api.catarse.model('unsubscribes')
+    unsubscribes: _api.catarse.model('unsubscribes'),
+    newSubscribersFromPeriod: _api.commonAnalytics.model('rpc/new_subscribers_from_period')
 };
 
 models.teamMember.pageSize(40);
@@ -29755,7 +29764,7 @@ var projectSubscriptionReport = {
                 onsubmit: state.submit
             }, (0, _mithril2.default)('w-row', [(0, _mithril2.default)(textFilter.component, textFilter.data), (0, _mithril2.default)('.w-col.w-col-9', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(statusFilter.component, statusFilter.data), (0, _mithril2.default)(rewardFilter.component, rewardFilter.data), (0, _mithril2.default)(paymentFilter.component, paymentFilter.data), (0, _mithril2.default)(totalPaidFilter.component, totalPaidFilter.data), (0, _mithril2.default)(paidCountFilter.component, paidCountFilter.data)]))]))]))]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.before-footer.bg-gray.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('div', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', (0, _mithril2.default)('.w-inline-block.fontsize-base.u-marginright-10', [(0, _mithril2.default)('span.fontweight-semibold', state.subscriptions.total()), ' assinaturas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.alt-link.fontsize-small.u-right[href=\'/projects/' + attrs.project_id + '/subscriptions_report_download\']', {
                 oncreate: _mithril2.default.route.link
-            }, [(0, _mithril2.default)('span.fa.fa-download', _mithril2.default.trust('&nbsp;')), 'Baixar relatórios']))])), (0, _mithril2.default)('.u-marginbottom-60', [(0, _mithril2.default)('.card.card-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', (0, _mithril2.default)('div', 'Assinante')), (0, _mithril2.default)('.table-col.w-col.w-col-2', (0, _mithril2.default)('div', 'Recompensa')), (0, _mithril2.default)('.table-col.w-col.w-col-1.u-text-center', (0, _mithril2.default)('div', 'Pagamento mensal')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Total pago')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Última cobrança')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Status da Assinatura'))])), (0, _mithril2.default)('.fontsize-small', [_underscore2.default.map(subsCollection, function (subscription) {
+            }, [(0, _mithril2.default)('span.fa.fa-download', _mithril2.default.trust('&nbsp;')), 'Baixar relatórios']))])), (0, _mithril2.default)('.u-marginbottom-60', [(0, _mithril2.default)('.card.card-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', (0, _mithril2.default)('div', 'Assinante')), (0, _mithril2.default)('.table-col.w-col.w-col-2', (0, _mithril2.default)('div', 'Recompensa')), (0, _mithril2.default)('.table-col.w-col.w-col-1.u-text-center', (0, _mithril2.default)('div', 'Pgto. mensal')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Total pago')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Última cobrança')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Status da Assinatura'))])), (0, _mithril2.default)('.fontsize-small', [_underscore2.default.map(subsCollection, function (subscription) {
                 return (0, _mithril2.default)(_dashboardSubscriptionCard2.default, {
                     subscription: subscription
                 });
@@ -35937,6 +35946,10 @@ var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
 
 var _models2 = _interopRequireDefault(_models);
 
+var _moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+
+var _moment2 = _interopRequireDefault(_moment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var getSubscriptionTransitions = function getSubscriptionTransitions(projectId, toStatus, fromStatus, startAt, endAt) {
@@ -36034,13 +36047,46 @@ var toogleAnonymous = function toogleAnonymous(subscription) {
     });
 };
 
+var getNewSubscriptionsInsightsFromPeriod = function getNewSubscriptionsInsightsFromPeriod(project_id, startDate, endDate) {
+
+    var start_date = (0, _moment2.default)(startDate).format('YYYY-MM-DDTHH:mm:ss.000');
+    var end_date = (0, _moment2.default)(endDate).format('YYYY-MM-DDTHH:mm:ss.000');
+
+    return _api.commonAnalytics.loaderWithToken(_models2.default.newSubscribersFromPeriod.getRowOptions({ project_id: project_id, start_date: start_date, end_date: end_date })).load().then(function (insightData) {
+        _h2.default.redraw();
+        return insightData;
+    }).catch(function (error) {
+        console.log('Error getting insights resume:', error);
+        _h2.default.redraw();
+    });
+};
+
+var getNewSubscriptionsInsightsFromLastWeek = function getNewSubscriptionsInsightsFromLastWeek(project_id) {
+    var _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
+    var today = new Date();
+    var todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus7Days, today);
+};
+
+var getNewSubscriptionsInsightsFromLast2Week = function getNewSubscriptionsInsightsFromLast2Week(project_id) {
+    var _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
+    var _14_DAYS_IN_MS = 3600 * 24 * 14 * 1000;
+    var today = new Date();
+    var todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    var todayMinus14Days = new Date(today.getTime() - _14_DAYS_IN_MS);
+    return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus14Days, todayMinus7Days);
+};
+
 var subscriptionVM = {
     getNewSubscriptions: getNewSubscriptions,
     getSubscriptionsPerMonth: getSubscriptionsPerMonth,
     getSubscriptionTransitions: getSubscriptionTransitions,
     getUserProjectSubscriptions: getUserProjectSubscriptions,
     getSubscription: getSubscription,
-    toogleAnonymous: toogleAnonymous
+    toogleAnonymous: toogleAnonymous,
+    getNewSubscriptionsInsightsFromPeriod: getNewSubscriptionsInsightsFromPeriod,
+    getNewSubscriptionsInsightsFromLastWeek: getNewSubscriptionsInsightsFromLastWeek,
+    getNewSubscriptionsInsightsFromLast2Week: getNewSubscriptionsInsightsFromLast2Week
 };
 
 exports.default = subscriptionVM;
