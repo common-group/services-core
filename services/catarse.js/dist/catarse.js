@@ -233,7 +233,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 }
             };
         };
-        _mithril2.default.route.prefix("#");
+        _mithril2.default.route.prefix('#');
 
         _mithril2.default.route(adminRoot, '/', {
             '/': adminWrap(_c2.default.root.AdminContributions, { root: adminRoot, menuTransparency: false, hideFooter: true }),
@@ -340,7 +340,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         var rootEl = app,
             isUserProfile = body.getAttribute('data-controller-name') == 'users' && body.getAttribute('data-action') == 'show' && app.getAttribute('data-hassubdomain') == 'true';
 
-        _mithril2.default.route.prefix("");
+        _mithril2.default.route.prefix('');
 
         _mithril2.default.route(rootEl, '/', (_m$route = {
             '/': wrap(isUserProfile ? _c2.default.root.UsersShow : _c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true, absoluteHome: isUserProfile }),
@@ -353,7 +353,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             '/projects/:project_id/subscriptions/start': wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false }),
             '/projects/:project_id/subscriptions/checkout': wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false }),
             '/projects/:project_id/subscriptions/thank_you': wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })
-        }, _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/new'), wrap(_c2.default.root.ProjectsContribution)), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit'), wrap(_c2.default.root.ProjectsPayment, { menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/start'), wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/checkout'), wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/subscriptions/thank_you'), wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })), _defineProperty(_m$route, '/en', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/pt', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/flexible_projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/projects', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/explore'), wrap(_c2.default.root.ProjectsExplore, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/start'), wrap(_c2.default.root.Start, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id'), wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions/:contribution_id', wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/:project'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/insights', wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/insights'), wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions_report', wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions_report'), wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report', wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report'), wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report_download', wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report_download'), wrap(_c2.default.root.ProjectsSubscriptionReportDownload, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/surveys', wrap(_c2.default.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/fiscal', wrap(_c2.default.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/posts', wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/posts/:post_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts'), wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts/:post_id'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, '/projects/:project_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id', wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id'), wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/contributions/:contribution_id/surveys/:survey_id', wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/contributions/:contribution_id/surveys/:survey_id'), wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id/edit', wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id/edit'), wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/edit', wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/edit'), wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/rewards/:reward_id/surveys/new', wrap(_c2.default.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/:project', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/follow-fb-friends'), wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/follow-fb-friends', wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/team'), wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/team', wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/jobs'), wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/jobs', wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/press', wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/press'), wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/publish'), wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/publish', wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _m$route));
+        }, _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/new'), wrap(_c2.default.root.ProjectsContribution)), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id/edit'), wrap(_c2.default.root.ProjectsPayment, { menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/start'), wrap(_c2.default.root.ProjectsSubscriptionContribution, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions/checkout'), wrap(_c2.default.root.ProjectsSubscriptionCheckout, { menuShort: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/subscriptions/thank_you'), wrap(_c2.default.root.ProjectsSubscriptionThankYou, { menuShort: true, footerBig: false })), _defineProperty(_m$route, '/en', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/pt', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/flexible_projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects'), wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/projects', wrap(_c2.default.root.ProjectsHome, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/explore'), wrap(_c2.default.root.ProjectsExplore, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/start'), wrap(_c2.default.root.Start, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions/:contribution_id'), wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions/:contribution_id', wrap(_c2.default.root.ThankYou, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/insights', wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/insights'), wrap(_c2.default.root.Insights, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/contributions_report', wrap(_c2.default.root.ProjectsContributionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/contributions_report'), wrap(_c2.default.root.ProjectsContributionReport, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report', wrap(_c2.default.root.ProjectsSubscriptionReport, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report'), wrap(_c2.default.root.ProjectsSubscriptionReport, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, '/projects/:project_id/subscriptions_report_download', wrap(_c2.default.root.ProjectsSubscriptionReportDownload, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/subscriptions_report_download'), wrap(_c2.default.root.ProjectsSubscriptionReportDownload, {
+            menuTransparency: false,
+            footerBig: false
+        })), _defineProperty(_m$route, '/projects/:project_id/surveys', wrap(_c2.default.root.Surveys, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/fiscal', wrap(_c2.default.root.ProjectsFiscal, { menuTransparency: false, footerBig: false, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/posts', wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/posts/:post_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts'), wrap(_c2.default.root.Posts, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/posts/:post_id'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: true })), _defineProperty(_m$route, '/projects/:project_id', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id', wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id'), wrap(_c2.default.root.UsersShow, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/contributions/:contribution_id/surveys/:survey_id', wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/contributions/:contribution_id/surveys/:survey_id'), wrap(_c2.default.root.SurveysShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/users/:user_id/edit', wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/users/:user_id/edit'), wrap(_c2.default.root.UsersEdit, { menuTransparency: true, footerBig: false })), _defineProperty(_m$route, '/projects/:project_id/edit', wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/edit'), wrap(_c2.default.root.ProjectEdit, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/rewards/:reward_id/surveys/new', wrap(_c2.default.root.SurveyCreate, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, urlWithLocale('/follow-fb-friends'), wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/follow-fb-friends', wrap(_c2.default.root.FollowFoundFriends, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/:project'), wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, '/:project', wrap(_c2.default.root.ProjectsShow, { menuTransparency: false, footerBig: false })), _defineProperty(_m$route, urlWithLocale('/team'), wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/team', wrap(_c2.default.root.Team, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/jobs'), wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/jobs', wrap(_c2.default.root.Jobs, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, '/press', wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/press'), wrap(_c2.default.root.Press, { menuTransparency: true, footerBig: true })), _defineProperty(_m$route, urlWithLocale('/projects/:project_id/publish'), wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _defineProperty(_m$route, '/projects/:project_id/publish', wrap(_c2.default.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true })), _m$route));
     }
 })();
 
@@ -3633,7 +3645,7 @@ var announceExpirationModal = {
     view: function view(_ref) {
         var attrs = _ref.attrs;
 
-        return (0, _mithril2.default)('div', [(0, _mithril2.default)('.modal-dialog-content', [(0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30.fontweight-semibold', 'Você confirma?'), (0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30', ['Sua arrecadação irá terminar no dia  ', (0, _mithril2.default)('span.expire-date', attrs.expirationDate), ', as 23h59. Até lá, você pode captar recursos e seguir firme na sua campanha! Assim que o seu prazo chegar ao fim, você deverá confirmar os seus dados bancários. A partir de então, depositaremos o dinheiro na sua conta em até 10 dias úteis.'])]), (0, _mithril2.default)('.modal-dialog-nav-bottom', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)("input[id='anchor'][name='anchor'][type='hidden'][value='announce_expiration']"), (0, _mithril2.default)("input.btn.btn.btn-large[id='budget-save'][name='commit'][type='submit'][value='Sim']")]), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('button.btn.btn-large.btn-terciary', {
+        return (0, _mithril2.default)('div', [(0, _mithril2.default)('.modal-dialog-content', [(0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30.fontweight-semibold', 'Você confirma?'), (0, _mithril2.default)('.fontsize-large.u-text-center.u-marginbottom-30', ['Sua arrecadação irá terminar no dia  ', (0, _mithril2.default)('span.expire-date', attrs.expirationDate), ', as 23h59. Até lá, você pode captar recursos e seguir firme na sua campanha! Assim que o seu prazo chegar ao fim, você deverá confirmar os seus dados bancários. A partir de então, depositaremos o dinheiro na sua conta em 10 dias úteis.'])]), (0, _mithril2.default)('.modal-dialog-nav-bottom', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-2'), (0, _mithril2.default)('.w-col.w-col-4', [(0, _mithril2.default)("input[id='anchor'][name='anchor'][type='hidden'][value='announce_expiration']"), (0, _mithril2.default)("input.btn.btn.btn-large[id='budget-save'][name='commit'][type='submit'][value='Sim']")]), (0, _mithril2.default)('.w-col.w-col-4', (0, _mithril2.default)('button.btn.btn-large.btn-terciary', {
             onclick: attrs.displayModal.toggle
         }, ' Não')), (0, _mithril2.default)('.w-col.w-col-2')]))]);
     }
@@ -4945,7 +4957,7 @@ var dashboardSubscriptionCardDetailSubscriptionDetails = {
 
         return (0, _mithril2.default)('.u-marginbottom-20.card.u-radius', [(0, _mithril2.default)('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'Detalhes da assinatura'), (0, _mithril2.default)('.fontsize-smaller.u-marginbottom-20', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Status: '), (0, _mithril2.default)(_subscriptionStatusIcon2.default, {
             subscription: subscription
-        })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Valor da assinatura: '), 'R$' + subscription.amount / 100]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Recompensa: '), !_underscore2.default.isEmpty(reward) ? 'R$' + reward.minimum_value + ' - ' + reward.title + ' - ' + reward.description.substring(0, 90) + '(...)' : 'Sem recompensa']), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Meio de pagamento: '), (0, _mithril2.default)(_paymentMethodIcon2.default, { subscription: subscription })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Qtde. de apoios confirmados: '), subscription.paid_count + ' meses']), (0, _mithril2.default)('.fontsize-base.u-margintop-10', [(0, _mithril2.default)('span.fontcolor-secondary', 'Total apoiado: '), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold.text-success', 'R$' + subscription.total_paid / 100)])]), (0, _mithril2.default)(".divider.u-marginbottom-20"), (0, _mithril2.default)("div", [(0, _mithril2.default)(".fontsize-small.fontweight-semibold.u-marginbottom-10", "Histórico de pagamentos"), (0, _mithril2.default)(_dashboardSubscriptionCardDetailPaymentHistory2.default, { user: user, subscription: subscription })])]);
+        })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Valor do pagamento mensal: '), 'R$' + subscription.amount / 100]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Recompensa: '), !_underscore2.default.isEmpty(reward) ? 'R$' + reward.minimum_value + ' - ' + reward.title + ' - ' + reward.description.substring(0, 90) + '(...)' : 'Sem recompensa']), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Meio de pagamento: '), (0, _mithril2.default)(_paymentMethodIcon2.default, { subscription: subscription })]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary', 'Qtde. de pagamentos confirmados: '), subscription.paid_count + ' meses']), (0, _mithril2.default)('.fontsize-base.u-margintop-10', [(0, _mithril2.default)('span.fontcolor-secondary', 'Total pago: '), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold.text-success', 'R$' + subscription.total_paid / 100)])]), (0, _mithril2.default)(".divider.u-marginbottom-20"), (0, _mithril2.default)("div", [(0, _mithril2.default)(".fontsize-small.fontweight-semibold.u-marginbottom-10", "Histórico de pagamentos"), (0, _mithril2.default)(_dashboardSubscriptionCardDetailPaymentHistory2.default, { user: user, subscription: subscription })])]);
     }
 };
 
@@ -5029,7 +5041,7 @@ var dashboardSubscriptionCardDetailUserProfile = {
     view: function view(_ref) {
         var attrs = _ref.attrs;
 
-        var contactModalC = [_ownerMessageContent2.default, (0, _stream2.default)(attrs.user)];
+        var contactModalC = [_ownerMessageContent2.default, attrs.user];
 
         return (0, _mithril2.default)('.u-marginbottom-20.card.card-secondary.u-radius', [(0, _mithril2.default)('.fontsize-small.fontweight-semibold.u-marginbottom-10', 'Perfil'), (0, _mithril2.default)('.fontsize-smaller', [(0, _mithril2.default)('div', attrs.subscription.user_email), (0, _mithril2.default)('div', 'Conta no Catarse desde ' + (0, _moment2.default)(attrs.user.created_at).format('MMMM YYYY')), (0, _mithril2.default)('.u-marginbottom-10', ['Apoiou ' + attrs.user.total_contributed_projects + ' projetos ', _mithril2.default.trust('&nbsp;'), '| ', _mithril2.default.trust('&nbsp;'), 'Criou ' + attrs.user.total_published_projects + ' projetos']), attrs.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: attrs.displayModal,
@@ -9961,6 +9973,8 @@ var _projectVm = __webpack_require__(/*! ../vms/project-vm */ "./legacy/src/vms/
 
 var _projectVm2 = _interopRequireDefault(_projectVm);
 
+var _projectListVm = __webpack_require__(/*! ../vms/project-list-vm */ "./legacy/src/vms/project-list-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.contributions');
@@ -9968,7 +9982,7 @@ var I18nScope = _underscore2.default.partial(_h2.default.i18nScope, 'projects.co
 var projectContributions = {
     oninit: function oninit(vnode) {
         var contributionsPerDay = (0, _stream2.default)([]),
-            listVM = _projectVm2.default.isSubscription(vnode.attrs.project()) ? _api.commonProject.paginationVM(_models2.default.projectSubscriber) : _api.catarse.paginationVM(_models2.default.contributor),
+            listVM = _projectVm2.default.isSubscription(vnode.attrs.project()) ? (0, _projectListVm.getProjectSubscribersListVM)() : (0, _projectListVm.getProjectContributorsListVM)(),
             filterStats = _api.catarse.filtersVM({
             project_id: 'eq'
         }),
@@ -10130,10 +10144,12 @@ var projectContributorCard = {
         var userDetails = (0, _stream2.default)({}),
             user_id = vnode.attrs.contribution.user_external_id;
         if (vnode.attrs.isSubscription) {
-            _userVm2.default.fetchUser(user_id, true, userDetails).then(function () {
+            _userVm2.default.fetchUser(user_id, false).then(function (userData) {
+                userDetails(_underscore2.default.first(userData));
                 vnode.attrs.contribution.data.profile_img_thumbnail = userDetails().profile_img_thumbnail;
                 vnode.attrs.contribution.data.total_contributed_projects += userDetails().total_contributed_projects;
                 vnode.attrs.contribution.data.total_published_projects += userDetails().total_published_projects;
+                _h2.default.redraw();
             });
         }
         vnode.state = {
@@ -12115,9 +12131,17 @@ var projectInsightsSub = {
             visitorLoader = _api.catarseMoments.loaderWithToken,
             loader = _api.commonAnalytics.loaderWithToken,
             visitorsPerDay = (0, _stream2.default)([]);
-        var weekSubscriptions = (0, _stream2.default)([]);
+        var insightResumeDataLastWeek = (0, _stream2.default)({
+            mean_amount: 0,
+            subscriptions_count: 0,
+            total_amount: 0
+        });
+        var insightResumeDataLast2Week = (0, _stream2.default)({
+            mean_amount: 0,
+            subscriptions_count: 0,
+            total_amount: 0
+        });
         var subscriptionsPerDay = (0, _stream2.default)([]);
-        var lastWeekSubscriptions = (0, _stream2.default)([]);
         var weekTransitions = (0, _stream2.default)([]);
         var lastWeekTransitions = (0, _stream2.default)([]);
         var subscriptionsPerMonth = (0, _stream2.default)([]);
@@ -12132,7 +12156,17 @@ var projectInsightsSub = {
                 visitorsTotal(_underscore2.default.first(data).total);
             }
         };
-        var requestRedraw = _h2.default.createRequestAutoRedraw(weekSubscriptions, subscriptionsPerDay, lastWeekSubscriptions, weekTransitions, lastWeekTransitions, subscriptionsPerMonth, isSubscriptionsPerMonthLoaded, balanceData);
+        var requestRedraw = _h2.default.createRequestAutoRedraw(subscriptionsPerDay, weekTransitions, lastWeekTransitions, subscriptionsPerMonth, isSubscriptionsPerMonthLoaded, balanceData);
+
+        _subscriptionVm2.default.getNewSubscriptionsInsightsFromLastWeek(vnode.attrs.project.common_id).then(function (insights) {
+            insightResumeDataLastWeek(insights);
+            _h2.default.redraw();
+        });
+
+        _subscriptionVm2.default.getNewSubscriptionsInsightsFromLast2Week(vnode.attrs.project.common_id).then(function (insightsLast2Weeks) {
+            insightResumeDataLast2Week(insightsLast2Weeks);
+            _h2.default.redraw();
+        });
 
         subVM.project_id(vnode.attrs.project.common_id);
         var lVisitorsPerDay = visitorLoader(_models2.default.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
@@ -12140,10 +12174,6 @@ var projectInsightsSub = {
 
         var lSubscriptionsPerDay = loader(_models2.default.projectSubscriptionsPerDay.getRowOptions(subVM.parameters()));
         lSubscriptionsPerDay.load().then(subscriptionsPerDay).then(requestRedraw);
-
-        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekSubscriptions).then(requestRedraw);
-
-        _subscriptionVm2.default.getNewSubscriptions(vnode.attrs.project.common_id, (0, _moment2.default)().utc().subtract(2, 'weeks').format(), (0, _moment2.default)().utc().subtract(1, 'weeks').format()).then(lastWeekSubscriptions).then(requestRedraw);
 
         _subscriptionVm2.default.getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', (0, _moment2.default)().utc().subtract(1, 'weeks').format(), (0, _moment2.default)().utc().format()).then(weekTransitions).then(requestRedraw);
 
@@ -12160,9 +12190,7 @@ var projectInsightsSub = {
         balanceLoader.then(balanceData).then(requestRedraw);
 
         vnode.state = {
-            weekSubscriptions: weekSubscriptions,
             subscriptionsPerMonth: subscriptionsPerMonth,
-            lastWeekSubscriptions: lastWeekSubscriptions,
             weekTransitions: weekTransitions,
             lastWeekTransitions: lastWeekTransitions,
             projectGoalsVM: _projectGoalsVm2.default,
@@ -12173,44 +12201,40 @@ var projectInsightsSub = {
             visitorsPerDay: visitorsPerDay,
             balanceLoader: balanceLoader,
             balanceData: balanceData,
-            isSubscriptionsPerMonthLoaded: isSubscriptionsPerMonthLoaded
+            isSubscriptionsPerMonthLoaded: isSubscriptionsPerMonthLoaded,
+            insightResumeDataLastWeek: insightResumeDataLastWeek,
+            insightResumeDataLast2Week: insightResumeDataLast2Week
         };
     },
     view: function view(_ref) {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        var sumAmount = function sumAmount(list) {
-            return _underscore2.default.reduce(list, function (memo, sub) {
-                return memo + sub.amount / 100;
-            }, 0);
-        };
-        var weekSum = sumAmount(state.weekSubscriptions());
-        var lastWeekSum = sumAmount(state.lastWeekSubscriptions());
-        var canceledWeekSum = sumAmount(state.weekTransitions());
-        var canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         var project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
             balanceData = state.balanceData() && !_underscore2.default.isNull(_underscore2.default.first(state.balanceData())) ? _underscore2.default.first(state.balanceData()) : null;
-        var averageRevenue = subscribersDetails.total_subscriptions > 0 ? subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions : null;
+
+        var averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
+        var totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
+        var totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
 
         return (0, _mithril2.default)('.project-insights', !attrs.l() ? [(0, _mithril2.default)('.w-section.section-product.' + project.mode), project.is_owner_or_admin ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
             project: (0, _stream2.default)(project)
         }) : '', (0, _mithril2.default)('.dashboard-header.section-one-column', [(0, _mithril2.default)('.u-marginbottom-30.u-text-center', [(0, _mithril2.default)('.fontsize-larger.fontweight-semibold', 'Ol\xE1, ' + (project.user.public_name || project.user.name) + '!'), (0, _mithril2.default)('.fontsize-smaller', 'Este \xE9 o retrato de sua campanha hoje, ' + (0, _moment2.default)().format('DD [de] MMMM [de] YYYY'))]), (0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [subscribersDetails && !_underscore2.default.isEmpty(state.projectGoalsVM.goals()) ? (0, _mithril2.default)(_projectGoalsBoxDashboard2.default, {
             goalDetails: state.projectGoalsVM.goals,
             amount: subscribersDetails.amount_paid_for_valid_period
-        }) : '', (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Assinantes ativos'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + _h2.default.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3))]), (0, _mithril2.default)('.card.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', ['Saldo', _mithril2.default.trust('&nbsp;'), ' ', (0, _mithril2.default)('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\'][target=\'_self\']', 'Sacar')]), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + _h2.default.formatNumber(balanceData.amount, 2, 3) : ''), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? (0, _mithril2.default)('.w-container.u-marginbottom-60', (0, _mithril2.default)(_projectInviteCard2.default, {
+        }) : '', (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Assinaturas ativas'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', subscribersDetails.total_subscriptions)]), (0, _mithril2.default)('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', 'Receita Mensal'), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.u-marginbottom-10', 'R$' + _h2.default.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'Calculada com base nas assinaturas ativas que você possui hoje (taxas já descontadas).')]), (0, _mithril2.default)('.card.flex-column.u-marginbottom-10.u-radius', [(0, _mithril2.default)('.fontsize-small.u-marginbottom-10', ['Saldo', _mithril2.default.trust('&nbsp;'), ' ', (0, _mithril2.default)('a.btn-inline.btn-terciary.fontsize-smallest.u-radius[href=\'/users/' + project.user_id + '/edit#balance\'][target=\'_self\']', 'Sacar')]), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold.text-success.u-marginbottom-10', balanceData && balanceData.amount ? 'R$' + _h2.default.formatNumber(balanceData.amount, 2, 3) : ''), (0, _mithril2.default)('.fontsize-mini.fontcolor-secondary.lineheight-tighter', 'O saldo demora até 20 mins após o pagamento para ser atualizado.')])]), project.state === 'online' && !project.has_cancelation_request ? (0, _mithril2.default)('.w-container.u-marginbottom-60', (0, _mithril2.default)(_projectInviteCard2.default, {
             project: project
-        })) : '', (0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('.flex-column.card.u-radius.u-marginbottom-10', [(0, _mithril2.default)('div', 'Receita média por assinante'), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + (0, _moment2.default)().format('DD/MM/YYYY')), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + (averageRevenue ? '' + _h2.default.formatNumber(averageRevenue, 2, 3) : '--'))]), (0, _mithril2.default)(_insightsInfoBox2.default, {
+        })) : '', (0, _mithril2.default)('.u-marginbottom-30', [(0, _mithril2.default)('.flex-row.u-marginbottom-40.u-text-center-small-only', [(0, _mithril2.default)('.flex-column.card.u-radius.u-marginbottom-10', [(0, _mithril2.default)('div', 'Receita média por assinatura'), (0, _mithril2.default)('.fontsize-smallest.fontcolor-secondary.lineheight-tighter', 'em ' + (0, _moment2.default)().format('DD/MM/YYYY')), (0, _mithril2.default)('.fontsize-largest.fontweight-semibold', 'R$' + (averageAmount ? '' + _h2.default.formatNumber(averageAmount, 2, 3) : '--'))]), (0, _mithril2.default)(_insightsInfoBox2.default, {
             label: 'Novos Assinantes',
-            info: state.weekSubscriptions().length,
-            newCount: state.weekSubscriptions().length,
-            oldCount: state.lastWeekSubscriptions().length
+            info: state.insightResumeDataLastWeek().subscriptions_count,
+            newCount: state.insightResumeDataLastWeek().subscriptions_count,
+            oldCount: state.insightResumeDataLast2Week().subscriptions_count
         }), (0, _mithril2.default)(_insightsInfoBox2.default, {
             label: 'Nova receita',
-            info: 'R$' + weekSum,
-            newCount: weekSum,
-            oldCount: lastWeekSum
+            info: 'R$' + (totalAmountFromLastWeek ? '' + _h2.default.formatNumber(totalAmountFromLastWeek, 2, 3) : '--'),
+            newCount: totalAmountFromLastWeek,
+            oldCount: totalAmountFromLast2Week
         })]), (0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [window.I18n.t('visitors_per_day_label', I18nScope())]), (0, _mithril2.default)('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [window.I18n.t('last_30_days_indication', I18nScope())])]), !state.lVisitorsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
             collection: state.visitorsPerDay,
             dataKey: 'visitors',
@@ -12226,7 +12250,7 @@ var projectInsightsSub = {
         }, [!state.lSubscriptionsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
             collection: state.subscriptionsPerDay,
             label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
-            subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+            subLabel: window.I18n.t('paid_date_indication', I18nScope()),
             dataKey: 'total_amount',
             xAxis: function xAxis(item) {
                 return _h2.default.momentify(item.paid_at);
@@ -12239,7 +12263,7 @@ var projectInsightsSub = {
         }, [!state.lSubscriptionsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
             collection: state.subscriptionsPerDay,
             label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
-            subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+            subLabel: window.I18n.t('paid_date_indication', I18nScope()),
             dataKey: 'total',
             xAxis: function xAxis(item) {
                 return _h2.default.momentify(item.paid_at);
@@ -16529,6 +16553,7 @@ var subscriptionStatusIcon = {
             var lRew = _api.commonPayment.loaderWithToken(_models2.default.subscriptionTransition.getRowOptions(filterRowVM.parameters()));
             lRew.load().then(function (data) {
                 vnode.attrs.subscription.transition_date = data && data.length > 0 && _underscore2.default.first(data).created_at ? _underscore2.default.first(data).created_at : vnode.attrs.subscription.created_at;
+                _h2.default.redraw();
             });
         }
 
@@ -16602,7 +16627,7 @@ var subscriptionsPerMonthTable = {
         var state = _ref.state,
             attrs = _ref.attrs;
 
-        return (0, _mithril2.default)('div', [(0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']", 'Crescimento mensal das assinaturas'), (0, _mithril2.default)('.table-outer.u-marginbottom-60', [(0, _mithril2.default)('.table-row.fontweight-semibold.fontsize-smaller.header.lineheight-tighter.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-4.w-col-small-4.w-col-tiny-4', (0, _mithril2.default)('div', 'Mês')), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', ['Novos assinantes', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Receita com novos assinantes')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Assinantes totais')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Receita total'))]), (0, _mithril2.default)('.table-inner.fontsize-small', [!attrs.data ? '' : _underscore2.default.map(_underscore2.default.groupBy(attrs.data, 'month'), function (subscription) {
+        return (0, _mithril2.default)('div', [(0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-text-center.u-marginbottom-30[id='origem']", 'Pagamentos confirmados por mês'), (0, _mithril2.default)('.table-outer.u-marginbottom-60', [(0, _mithril2.default)('.table-row.fontweight-semibold.fontsize-smaller.header.lineheight-tighter.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-4.w-col-small-4.w-col-tiny-4', (0, _mithril2.default)('div', 'Mês')), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', ['Pagamentos confirmados de Novas Assinaturas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.table-col.w-hidden-small.w-hidden-tiny.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Arrecadação com Novas Assinaturas')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Pagamentos confirmados totais')), (0, _mithril2.default)('.w-col.w-col-2.w-col-small-2.w-col-tiny-2', (0, _mithril2.default)('div', 'Arrecadação total'))]), (0, _mithril2.default)('.table-inner.fontsize-small', [!attrs.data ? '' : _underscore2.default.map(_underscore2.default.groupBy(attrs.data, 'month'), function (subscription) {
             var slip = _underscore2.default.filter(subscription, function (sub) {
                 return sub.payment_method === 'boleto';
             })[0] || state.emptyRow;
@@ -17480,6 +17505,10 @@ var _stream = __webpack_require__(/*! mithril/stream */ "./node_modules/mithril/
 
 var _stream2 = _interopRequireDefault(_stream);
 
+var _underscore = __webpack_require__(/*! underscore */ "./node_modules/underscore/underscore.js");
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
 var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
 var _h2 = _interopRequireDefault(_h);
@@ -17505,12 +17534,14 @@ var userAbout = {
             error = (0, _stream2.default)(false),
             user_id = vnode.attrs.userId;
 
-        _userVm2.default.fetchUser(user_id, true, userDetails).then(function () {
+        _userVm2.default.fetchUser(user_id, false).then(function (userDetailsData) {
+            userDetails(_underscore2.default.first(userDetailsData));
             loader(false);
+            _h2.default.redraw();
         }).catch(function (err) {
             error(true);
             loader(false);
-            _mithril2.default.redraw();
+            _h2.default.redraw();
         });
 
         vnode.state = {
@@ -17523,7 +17554,7 @@ var userAbout = {
         var state = _ref.state;
 
         var user = state.userDetails();
-        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar dados.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)('.content[id=\'about-tab\']', (0, _mithril2.default)('.w-container[id=\'about-content\']', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-base', user.about_html ? _mithril2.default.trust(user.about_html) : '')), (0, _mithril2.default)('.w-col.w-col-4', user.id ? (0, _mithril2.default)(_userCard2.default, { userId: user.id }) : _h2.default.loader)])));
+        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar dados.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)(".content[id='about-tab']", (0, _mithril2.default)(".w-container[id='about-content']", (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-base', user.about_html ? _mithril2.default.trust(user.about_html) : '')), (0, _mithril2.default)('.w-col.w-col-4', user.id ? (0, _mithril2.default)(_userCard2.default, { userId: user.id }) : _h2.default.loader())])));
     }
 };
 
@@ -18642,15 +18673,15 @@ var userContributedBox = {
         var state = _ref.state;
 
         var contribution = state.contribution,
-            contactModalC = [_ownerMessageContent2.default, (0, _stream2.default)({
+            contactModalC = [_ownerMessageContent2.default, {
             id: contribution.project_user_id,
             name: contribution.project_owner_name,
             project_id: contribution.project_id
-        })],
+        }],
             finishedAt = contribution.survey && contribution.survey.finished_at,
             answeredAt = contribution.survey_answered_at;
 
-        return !_underscore2.default.isEmpty(contribution) ? (0, _mithril2.default)('div', state.displayModal() ? _mithril2.default.component(_modalBox2.default, {
+        return !_underscore2.default.isEmpty(contribution) ? (0, _mithril2.default)('div', state.displayModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayModal,
             content: contactModalC
         }) : '', [(0, _mithril2.default)('.card.w-row', [(0, _mithril2.default)('.u-marginbottom-20.w-col.w-col-3', [(0, _mithril2.default)('.u-marginbottom-10.w-row', [(0, _mithril2.default)('.u-marginbottom-10.w-col.w-col-4', (0, _mithril2.default)('a.w-inline-block[href=\'/' + contribution.permalink + '\']', (0, _mithril2.default)('img.thumb-project.u-radius[alt=\'' + contribution.project_name + '\'][src=\'' + contribution.project_image + '\'][width=\'50\']'))), (0, _mithril2.default)('.w-col.w-col-8', (0, _mithril2.default)('.fontsize-small.fontweight-semibold.lineheight-tight', (0, _mithril2.default)('a.link-hidden[href=\'/' + contribution.permalink + '\']', contribution.project_name)))]), (0, _mithril2.default)("a.btn.btn-edit.btn-inline.btn-small.w-button[href='javascript:void(0);']", {
@@ -18796,6 +18827,10 @@ var _userVm = __webpack_require__(/*! ../vms/user-vm */ "./legacy/src/vms/user-v
 
 var _userVm2 = _interopRequireDefault(_userVm);
 
+var _contributionVm = __webpack_require__(/*! ../vms/contribution-vm */ "./legacy/src/vms/contribution-vm.js");
+
+var _contributionVm2 = _interopRequireDefault(_contributionVm);
+
 var _projectCard = __webpack_require__(/*! ./project-card */ "./legacy/src/c/project-card.js");
 
 var _projectCard2 = _interopRequireDefault(_projectCard);
@@ -18814,7 +18849,7 @@ var userContributed = {
     oninit: function oninit(vnode) {
         var contributedProjects = (0, _stream2.default)(),
             user_id = vnode.attrs.userId,
-            pages = _api.catarse.paginationVM(_models2.default.project),
+            pages = _contributionVm2.default.getUserContributedProjectsWithFilter(),
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
             contextVM = _api.catarse.filtersVM({
@@ -18831,14 +18866,17 @@ var userContributed = {
                 _models2.default.project.pageSize(9);
                 pages.firstPage(contextVM.parameters()).then(function () {
                     loader(false);
+                    _h2.default.redraw();
                 });
             } else {
                 loader(false);
             }
+
+            _h2.default.redraw();
         }).catch(function (err) {
             error(true);
             loader(false);
-            _mithril2.default.redraw();
+            _h2.default.redraw();
         });
 
         vnode.state = {
@@ -18852,13 +18890,13 @@ var userContributed = {
             attrs = _ref.attrs;
 
         var projects_collection = state.projects.collection();
-        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)('.content[id=\'contributed-tab\']', [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
+        return state.error() ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : state.loader() ? _h2.default.loader() : (0, _mithril2.default)(".content[id='contributed-tab']", [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
             return (0, _mithril2.default)(_projectCard2.default, {
                 project: project,
                 ref: 'user_contributed',
                 showFriends: false
             });
-        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'Ora, ora... você ainda não apoiou nenhum projeto no Catarse!'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.btn.btn-large[href=\'/explore\']', 'Que tal apoiar agora?')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])), !_underscore2.default.isEmpty(projects_collection) ? (0, _mithril2.default)('.w-row.u-marginbottom-40.u-margintop-30', [(0, _mithril2.default)(_loadMoreBtn2.default, { collection: state.projects, cssClass: '.w-col-push-4' })]) : '']);
+        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'Ora, ora... você ainda não apoiou nenhum projeto no Catarse!'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)("a.btn.btn-large[href='/explore']", 'Que tal apoiar agora?')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])), !_underscore2.default.isEmpty(projects_collection) ? (0, _mithril2.default)('.w-row.u-marginbottom-40.u-margintop-30', [(0, _mithril2.default)(_loadMoreBtn2.default, { collection: state.projects, cssClass: '.w-col-push-4' })]) : '']);
     }
 };
 
@@ -18982,18 +19020,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var userCreated = {
     oninit: function oninit(vnode) {
         var user_id = vnode.attrs.userId,
-            showDraft = vnode.attrs.showDraft || false;
+            showDraft = vnode.attrs.showDraft || false,
+            error = (0, _stream2.default)(false);
 
         var states = ['online', 'waiting_funds', 'successful', 'failed'];
         if (showDraft) {
             states.push('draft');
         }
+        var contextVM = _api.catarse.filtersVM({ project_user_id: 'eq', state: 'in' });
+        contextVM.state(states).project_user_id(user_id).order({ updated_at: 'desc' });
 
-        var projects = _userCreatedProjectsVm2.default.getCreatedProjects(user_id, states);
-        projects.firstPage();
+        var projects = _userCreatedProjectsVm2.default.getCreatedProjects();
+        projects.firstPage(contextVM.parameters()).then(function () {
+            error(false);
+            _h2.default.redraw();
+        }).catch(function () {
+            error(true);
+            _h2.default.redraw();
+        });
 
         vnode.state = {
-            projects: projects
+            projects: projects,
+            error: error
         };
     },
     view: function view(_ref) {
@@ -19002,16 +19050,16 @@ var userCreated = {
 
         var projects_collection = state.projects.collection();
         var isLoadingProjects = state.projects.isLoading();
-        var hasError = state.projects.error();
+        var hasError = state.error();
 
-        return (0, _mithril2.default)('.content[id=\'created-tab\']', hasError ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : !isLoadingProjects ? [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
+        return (0, _mithril2.default)(".content[id='created-tab']", hasError ? (0, _mithril2.default)(_inlineError2.default, { message: 'Erro ao carregar os projetos.' }) : !isLoadingProjects ? [!_underscore2.default.isEmpty(projects_collection) ? _underscore2.default.map(projects_collection, function (project) {
             return (0, _mithril2.default)(_projectCard2.default, {
                 project: project,
                 ref: 'user_contributed',
                 showFriends: false
             });
-        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'O que você está esperando para tirar seu projeto do papel aqui no Catarse?'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.btn.btn-large[href=\'/start\']', 'Comece agora!')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])),
-        // Load more button        
+        }) : (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.u-margintop-30.u-text-center.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', 'O que você está esperando para tirar seu projeto do papel aqui no Catarse?'), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)("a.btn.btn-large[href='/start']", 'Comece agora!')), (0, _mithril2.default)('.w-col.w-col-3')])]), (0, _mithril2.default)('.w-col.w-col-3')])),
+        // Load more button
         !_underscore2.default.isEmpty(projects_collection) ? (0, _mithril2.default)('.w-row.u-marginbottom-40.u-margintop-30', [(0, _mithril2.default)(_loadMoreBtn2.default, {
             collection: state.projects,
             cssClass: '.w-col-push-5'
@@ -19067,25 +19115,13 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * window.c.userCreators component
- * Shows all user creators suggestions cards
- *
- * Example of use:
- * view: () => {
- *   ...
- *   m.component(c.userCreators, {user: user})
- *   ...
- * }
- */
 var userCreators = {
     oninit: function oninit(vnode) {
-        _models2.default.creatorSuggestion.pageSize(9);
-        var creatorsListVM = _api.catarse.paginationVM(_models2.default.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
-            Prefer: 'count=exact'
-        });
+        var creatorsListVM = (0, _friendsVm.getCreatorsListVM)();
         var allLoading = (0, _stream2.default)(false);
         var followAll = function followAll() {
             allLoading(true);
@@ -19094,6 +19130,10 @@ var userCreators = {
             l.load().then(function () {
                 creatorsListVM.firstPage();
                 allLoading(false);
+                _h2.default.redraw();
+            }).catch(function (error) {
+                allLoading(false);
+                _h2.default.redraw();
             });
         };
 
@@ -19122,8 +19162,17 @@ var userCreators = {
             });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: creatorsVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-};
-
+}; /**
+    * window.c.userCreators component
+    * Shows all user creators suggestions cards
+    *
+    * Example of use:
+    * view: () => {
+    *   ...
+    *   m.component(c.userCreators, {user: user})
+    *   ...
+    * }
+    */
 exports.default = userCreators;
 
 /***/ }),
@@ -19169,7 +19218,8 @@ var UserFollowBtn = {
             loading = (0, _stream2.default)(false),
             hover = (0, _stream2.default)(false),
             userFollowInsert = _models2.default.userFollow.postOptions({
-            follow_id: vnode.attrs.follow_id }),
+            follow_id: vnode.attrs.follow_id
+        }),
             userFollowDelete = function () {
             followVM.follow_id(vnode.attrs.follow_id);
 
@@ -19182,6 +19232,7 @@ var UserFollowBtn = {
             l.load().then(function () {
                 following(true);
                 loading(false);
+                _h2.default.redraw();
             });
         },
             unfollow = function unfollow() {
@@ -19191,6 +19242,7 @@ var UserFollowBtn = {
             l.load().then(function () {
                 following(false);
                 loading(false);
+                _h2.default.redraw();
             });
         };
 
@@ -19348,14 +19400,24 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * window.c.userFollowers component
+ * Shows all user followers cards
+ *
+ * Example of use:
+ * view: () => {
+ *   ...
+ *   m.component(c.userFollowers, {user: user})
+ *   ...
+ * }
+ */
 var userFollowers = {
     oninit: function oninit(vnode) {
-        _models2.default.userFollower.pageSize(9);
-        var followersListVM = _api.catarse.paginationVM(_models2.default.userFollower, 'following.asc,created_at.desc', {
-            Prefer: 'count=exact'
-        }),
+        var followersListVM = (0, _friendsVm.getUserFollowersListVM)(),
             user = vnode.attrs.user,
             userIdVM = _api.catarse.filtersVM({ follow_id: 'eq' });
 
@@ -19377,17 +19439,8 @@ var userFollowers = {
             return (0, _mithril2.default)(_userFollowCard2.default, { friend: _underscore2.default.extend({}, { friend_id: friend.user_id }, friend.source) });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: followersVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-}; /**
-    * window.c.userFollowers component
-    * Shows all user followers cards
-    *
-    * Example of use:
-    * view: () => {
-    *   ...
-    *   m.component(c.userFollowers, {user: user})
-    *   ...
-    * }
-    */
+};
+
 exports.default = userFollowers;
 
 /***/ }),
@@ -19436,29 +19489,16 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * window.c.userFollows component
- * Shows all user follows cards
- *
- * Example of use:
- * view: () => {
- *   ...
- *   m.component(c.userFollows, {user: user})
- *   ...
- * }
- */
 var userFollows = {
     oninit: function oninit(vnode) {
-        _models2.default.userFollow.pageSize(9);
         var userFriendVM = _api.catarse.filtersVM({ user_id: 'eq' }),
             user = vnode.attrs.user,
             hash = (0, _stream2.default)(window.location.hash),
-            followsListVM = _api.catarse.paginationVM(_models2.default.userFollow, 'created_at.desc', {
-            Prefer: 'count=exact'
-        });
-
+            followsListVM = (0, _friendsVm.getUserFollowsListVM)();
         userFriendVM.user_id(user.user_id);
         if (!followsListVM.collection().length) {
             followsListVM.firstPage(userFriendVM.parameters());
@@ -19477,8 +19517,17 @@ var userFollows = {
             return (0, _mithril2.default)(_userFollowCard2.default, { friend: _underscore2.default.extend({}, { following: true, friend_id: friend.follow_id }, friend.source) });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: followsVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-};
-
+}; /**
+    * window.c.userFollows component
+    * Shows all user follows cards
+    *
+    * Example of use:
+    * view: () => {
+    *   ...
+    *   m.component(c.userFollows, {user: user})
+    *   ...
+    * }
+    */
 exports.default = userFollows;
 
 /***/ }),
@@ -19527,28 +19576,15 @@ var _loadMoreBtn = __webpack_require__(/*! ../c/load-more-btn */ "./legacy/src/c
 
 var _loadMoreBtn2 = _interopRequireDefault(_loadMoreBtn);
 
+var _friendsVm = __webpack_require__(/*! ../vms/friends-vm */ "./legacy/src/vms/friends-vm.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * window.c.userFriends component
- * Shows all friends cards and a follow-all button
- *
- * Example of use:
- * view: () => {
- *   ...
- *   m.component(c.userFriends, {user: user})
- *   ...
- * }
- */
 var userFriends = {
     oninit: function oninit(vnode) {
-        _models2.default.userFriend.pageSize(9);
-
         var userFriendVM = _api.catarse.filtersVM({ user_id: 'eq' }),
             user = vnode.attrs.user,
-            friendListVM = _api.catarse.paginationVM(_models2.default.userFriend, 'following.asc,total_contributed_projects.desc', {
-            Prefer: 'count=exact'
-        }),
+            friendListVM = (0, _friendsVm.getFriendsListVM)(),
             allLoading = (0, _stream2.default)(false),
             followAll = function followAll() {
             allLoading(true);
@@ -19557,6 +19593,10 @@ var userFriends = {
             l.load().then(function () {
                 friendListVM.firstPage(userFriendVM.parameters());
                 allLoading(false);
+                _h2.default.redraw();
+            }).catch(function (error) {
+                allLoading(false);
+                _h2.default.redraw();
             });
         };
 
@@ -19583,8 +19623,17 @@ var userFriends = {
             return (0, _mithril2.default)(_userFollowCard2.default, { friend: friend });
         })]), (0, _mithril2.default)('.w-section.section.bg-gray', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('.w-row.u-marginbottom-60', [(0, _mithril2.default)('.w-col.w-col-5', [(0, _mithril2.default)('.u-marginright-20')]), (0, _mithril2.default)(_loadMoreBtn2.default, { collection: listVM }), (0, _mithril2.default)('.w-col.w-col-5')])])])])]);
     }
-};
-
+}; /**
+    * window.c.userFriends component
+    * Shows all friends cards and a follow-all button
+    *
+    * Example of use:
+    * view: () => {
+    *   ...
+    *   m.component(c.userFriends, {user: user})
+    *   ...
+    * }
+    */
 exports.default = userFriends;
 
 /***/ }),
@@ -19960,13 +20009,13 @@ var userPrivateContributed = {
         var user_id = vnode.attrs.userId,
             userCommonId = vnode.attrs.user && vnode.attrs.user.common_id,
             subscriptions = (0, _subscriptionListVm.getUserPrivateSubscriptionsListVM)(userCommonId),
-            onlinePages = _api.catarse.paginationVM(_models2.default.userContribution),
-            successfulPages = _api.catarse.paginationVM(_models2.default.userContribution),
-            failedPages = _api.catarse.paginationVM(_models2.default.userContribution),
+            onlinePages = _contributionVm2.default.getUserContributionsListWithFilter(),
+            successfulPages = _contributionVm2.default.getUserContributionsListWithFilter(),
+            failedPages = _contributionVm2.default.getUserContributionsListWithFilter(),
             error = (0, _stream2.default)(false),
             loader = (0, _stream2.default)(true),
             requestRedraw = function requestRedraw() {
-            _mithril2.default.redraw();
+            _h2.default.redraw();
         },
             handleError = function handleError() {
             error(true);
@@ -19982,6 +20031,18 @@ var userPrivateContributed = {
         _models2.default.userContribution.pageSize(9);
 
         contextVM.order({ created_at: 'desc' }).user_id(user_id).state(['refunded', 'pending_refund', 'paid', 'refused', 'pending']);
+
+        var contextSubVM = _api.commonPayment.filtersVM({
+            user_id: 'eq',
+            status: 'in'
+        });
+        contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
+            created_at: 'desc'
+        });
+
+        subscriptions.firstPage(contextSubVM.parameters()).then(function () {
+            return loader(false);
+        }).then(requestRedraw).catch(handleError);
 
         contextVM.project_state(['online', 'waiting_funds']);
         onlinePages.firstPage(contextVM.parameters()).then(function () {
@@ -20017,7 +20078,7 @@ var userPrivateContributed = {
             successfulCollection = state.successfulPages.collection(),
             failedCollection = state.failedPages.collection();
 
-        return (0, _mithril2.default)('.content[id=\'private-contributed-tab\']', state.error() ? (0, _mithril2.default)(_inlineError2.default, {
+        return (0, _mithril2.default)(".content[id='private-contributed-tab']", state.error() ? (0, _mithril2.default)(_inlineError2.default, {
             message: 'Erro ao carregar os projetos.'
         }) : state.loader() ? _h2.default.loader() : _underscore2.default.isEmpty(subsCollection) && _underscore2.default.isEmpty(onlineCollection) && _underscore2.default.isEmpty(successfulCollection) && _underscore2.default.isEmpty(failedCollection) ? (0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row.u-margintop-30.u-text-center', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', [(0, _mithril2.default)('.fontsize-large.u-marginbottom-30', ['Você ainda não apoiou nenhum projeto no', _mithril2.default.trust('&nbsp;'), 'Catarse...']), (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.btn.btn-large[href=\'/' + window.I18n.locale + '/explore\']', {
             oncreate: _mithril2.default.route.link,
@@ -20644,6 +20705,8 @@ var userSubscriptionBox = {
                 name: subscription.project.owner_name,
                 project_id: subscription.project.project_id
             });
+
+            _h2.default.redraw();
         });
 
         if (subscription.payment_method === 'boleto' && subscription.last_payment_id) {
@@ -20651,6 +20714,7 @@ var userSubscriptionBox = {
                 subscription.boleto_url = info.boleto_url;
                 subscription.boleto_expiration_date = info.boleto_expiration_date;
                 subscription.payment_status = info.status;
+                _h2.default.redraw();
             });
         }
 
@@ -20662,6 +20726,7 @@ var userSubscriptionBox = {
 
             lRew.load().then(function (arr) {
                 subscription.reward = arr[0];
+                _h2.default.redraw();
             });
         }
 
@@ -20673,7 +20738,7 @@ var userSubscriptionBox = {
                 subscription.boleto_expiration_date = info.boleto_expiration_date;
                 subscription.payment_status = info.status;
                 isGeneratingSecondSlip.toggle();
-                _mithril2.default.redraw();
+                _h2.default.redraw();
             }).catch(function (e) {
                 window.location.reload();
             });
@@ -20780,7 +20845,7 @@ var userSubscriptionBox = {
             }]
         }) : '', state.displayModal() && !_underscore2.default.isEmpty(state.contactModalInfo()) ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayModal,
-            content: [_ownerMessageContent2.default, state.contactModalInfo]
+            content: [_ownerMessageContent2.default, state.contactModalInfo()]
         }) : '', state.displayPaymentHistoryModal() ? (0, _mithril2.default)(_modalBox2.default, {
             displayModal: state.displayPaymentHistoryModal,
             content: [_userSubscriptionPaymentHistoryModal2.default, { subscription: subscription, project: project }]
@@ -20801,7 +20866,11 @@ var userSubscriptionBox = {
         })]), (0, _mithril2.default)('.u-marginbottom-20.w-col.w-col-3', state.showLastSubscriptionVersionRewardTitleIfHasOne()), (0, _mithril2.default)('.u-marginbottom-10.u-text-center.w-col.w-col-3', subscription.status === 'started' ? subscription.last_payment_data.status === 'refused' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
             disabled: state.isGeneratingSecondSlip(),
             onclick: state.generateSecondSlip
-        }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Aguardando confirmação do pagamento'])] : '' : subscription.status === 'inactive' ? [subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Sua assinatura está inativa por falta de pagamento']), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status + ']', 'Assinar novamente')]] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [(0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status }, 'Reativar assinatura'), (0, _mithril2.default)('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), ' Você cancelou sua assinatura'])] : subscription.status === 'canceling' ? (0, _mithril2.default)('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', ' '), ' Sua assinatura ser\xE1 cancelada no dia ' + _h2.default.momentify(subscription.next_charge_at, 'DD/MM/YYYY') + '. At\xE9 l\xE1, ela ainda ser\xE1 considerada ativa.'])) : subscription.status === 'active' ? subscription.last_payment_data.status == 'refused' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : [state.showLastSubscriptionVersionEditionNextCharge(), subscription.payment_status !== 'pending' ? (0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', { href: '/projects/' + subscription.project_external_id + '/subscriptions/start?' + (subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : '') + '&subscription_id=' + subscription.id + '&subscription_status=' + subscription.status }, 'Editar assinatura') : '', subscription.payment_status === 'pending' && !!subscription.boleto_url && !!subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
+        }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : subscription.payment_status === 'pending' && subscription.payment_method != 'boleto' ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Aguardando confirmação do pagamento'])] : '' : subscription.status === 'inactive' ? [subscription.payment_status === 'pending' && subscription.boleto_url && subscription.boleto_expiration_date ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), 'Sua assinatura está inativa por falta de pagamento']), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[target=_blank][href=/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status + ']', 'Assinar novamente')]] : subscription.status === 'canceled' && subscription.project.state == 'online' ? [(0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', {
+            href: '/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=' + subscription.status
+        }, 'Reativar assinatura'), (0, _mithril2.default)('.card-error.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), _mithril2.default.trust('&nbsp;'), ' Você cancelou sua assinatura'])] : subscription.status === 'canceling' ? (0, _mithril2.default)('.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold.card-error', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', ' '), ' Sua assinatura ser\xE1 cancelada no dia ' + _h2.default.momentify(subscription.next_charge_at, 'DD/MM/YYYY') + '. At\xE9 l\xE1, ela ainda ser\xE1 considerada ativa.'])) : subscription.status === 'active' ? subscription.last_payment_data.status == 'refused' ? [(0, _mithril2.default)('.card-alert.u-radius.fontsize-smaller.u-marginbottom-10.fontweight-semibold', (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle', '.'), 'Seu pagamento foi recusado em ' + _h2.default.momentify(subscription.last_payment_data.refused_at) + '. Vamos tentar uma nova cobran\xE7a em ' + _h2.default.momentify(subscription.last_payment_data.next_retry_at)])), (0, _mithril2.default)('a.btn.btn-inline.btn-small.w-button[href=\'/projects/' + subscription.project_external_id + '/subscriptions/start?subscription_id=' + subscription.id + (subscription.reward_external_id ? '&reward_id=' + subscription.reward_external_id : '') + '&subscription_status=inactive\']', 'Refazer pagamento')] : [state.showLastSubscriptionVersionEditionNextCharge(), subscription.payment_status !== 'pending' ? (0, _mithril2.default)('a.btn.btn-terciary.u-marginbottom-20.btn-inline.w-button', {
+            href: '/projects/' + subscription.project_external_id + '/subscriptions/start?' + (subscription.reward_external_id ? 'reward_id=' + subscription.reward_external_id : '') + '&subscription_id=' + subscription.id + '&subscription_status=' + subscription.status
+        }, 'Editar assinatura') : '', subscription.payment_status === 'pending' && !!subscription.boleto_url && !!subscription.boleto_expiration_date ? [(0, _moment2.default)(subscription.boleto_expiration_date).add(1, 'days').endOf('day').isBefore(Date.now()) ? [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura venceu dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), state.isGeneratingSecondSlip() ? _h2.default.loader() : (0, _mithril2.default)('button.btn.btn-inline.btn-small.u-marginbottom-20.w-button', {
             disabled: state.isGeneratingSecondSlip(),
             onclick: state.generateSecondSlip
         }, 'Gerar segunda via')] : [(0, _mithril2.default)('.card-alert.fontsize-smaller.fontweight-semibold.u-marginbottom-10.u-radius', [(0, _mithril2.default)('span.fa.fa-exclamation-triangle'), ' O boleto de sua assinatura vence dia ' + _h2.default.momentify(subscription.boleto_expiration_date)]), (0, _mithril2.default)('a.btn.btn-inline.btn-small.u-marginbottom-20.w-button[target=_blank][href=' + subscription.boleto_url + ']', 'Imprimir boleto')]] : '', (0, _mithril2.default)('button.btn-link.fontsize-smallest.link-hidden-light', {
@@ -21172,9 +21241,21 @@ var _contributionVm2 = _interopRequireDefault(_contributionVm);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function RedrawScheduler() {
+function getCallStack() {
+    var callStackStr = new Error().stack;
+    var callStackLines = callStackStr.split('\n');
+    var callStackTrimmedLines = callStackLines.map(function (d) {
+        return d.trim();
+    });
+    var realCallStack = callStackTrimmedLines.filter(function (k, i) {
+        return i > 0;
+    });
+    return realCallStack;
+}
 
+function RedrawScheduler() {
     var redrawsRequestCounter = 0;
+    var markedCallStack = {};
     var requestAnimationFramePolyfill = function () {
         if (window.requestAnimationFrame !== undefined) {
             return window.requestAnimationFrame;
@@ -21187,12 +21268,18 @@ function RedrawScheduler() {
 
     RedrawScheduler.schedule = function () {
         redrawsRequestCounter++;
+        /////////////////////
+        markedCallStack[redrawsRequestCounter] = getCallStack();
+        //////////////////
     };
 
     function start() {
-
         if (redrawsRequestCounter > 0) {
-            if (redrawsRequestCounter == 1) {
+            /////////////////////////
+            var callStack = markedCallStack[redrawsRequestCounter];
+            //////////////////////
+
+            if (redrawsRequestCounter === 1) {
                 _mithril2.default.redraw();
             }
 
@@ -21483,7 +21570,6 @@ translatedTime = function translatedTime(time) {
     };
 },
 
-
 // Number formatting helpers
 generateFormatNumber = function generateFormatNumber(s, c) {
     return function (number, n, x) {
@@ -21596,7 +21682,6 @@ generateFormatNumber = function generateFormatNumber(s, c) {
     useAvatarOrDefault = function useAvatarOrDefault(avatarPath) {
     return avatarPath || '/assets/catarse_bootstrap/user.jpg';
 },
-
 
 // Templates
 loader = function loader() {
@@ -21974,7 +22059,6 @@ loader = function loader() {
     };
 },
 
-
 // Adapted from https://github.com/diogob/jquery.fixedmask
 mask = function mask(maskDefinition, value) {
     var maskCharDefinitions = {
@@ -22214,6 +22298,52 @@ mask = function mask(maskDefinition, value) {
 },
     createRequestAutoRedraw = function createRequestAutoRedraw() {
     return createRequestRedrawWithCountdown(arguments.length);
+},
+    redraw = function redraw() {
+    RedrawScheduler.schedule();
+},
+    createBasicPaginationVMWithAutoRedraw = function createBasicPaginationVMWithAutoRedraw(vmInstance) {
+    var error = (0, _stream2.default)(false);
+    var errorMessage = (0, _stream2.default)('');
+
+    return {
+        isLastPage: vmInstance.isLastPage,
+        isLoading: vmInstance.isLoading,
+        collection: vmInstance.collection,
+        total: vmInstance.total,
+        error: error,
+        errorMessage: errorMessage,
+        firstPage: function firstPage(params) {
+            return new Promise(function (resolve, reject) {
+                vmInstance.firstPage(params).then(function (data) {
+                    error(false);
+                    errorMessage('');
+                    resolve(data);
+                    redraw();
+                }).catch(function (errorString) {
+                    error(true);
+                    errorMessage(errorString);
+                    reject(errorString);
+                    redraw();
+                });
+            });
+        },
+        nextPage: function nextPage() {
+            return new Promise(function (resolve, reject) {
+                vmInstance.nextPage().then(function (data) {
+                    error(false);
+                    errorMessage('');
+                    resolve(data);
+                    redraw();
+                }).catch(function (errorString) {
+                    error(true);
+                    errorMessage(errorString);
+                    reject(errorString);
+                    redraw();
+                });
+            });
+        }
+    };
 };
 
 setMomentifyLocale();
@@ -22222,7 +22352,10 @@ closeModal();
 checkReminder();
 
 exports.default = {
+    redraw: redraw,
+    getCallStack: getCallStack,
     createRequestRedrawWithCountdown: createRequestRedrawWithCountdown,
+    createBasicPaginationVMWithAutoRedraw: createBasicPaginationVMWithAutoRedraw,
     createRequestAutoRedraw: createRequestAutoRedraw,
     autoRedrawProp: autoRedrawProp,
     sleep: sleep,
@@ -22411,7 +22544,8 @@ var models = {
     mailMarketingList: _api.catarse.model('mail_marketing_lists'),
     commonUserDetails: _api.commonCommunity.model('rpc/user_details'),
     rechargeSubscription: _api.commonPayment.model('rpc/recharge_subscription'),
-    unsubscribes: _api.catarse.model('unsubscribes')
+    unsubscribes: _api.catarse.model('unsubscribes'),
+    newSubscribersFromPeriod: _api.commonAnalytics.model('rpc/new_subscribers_from_period')
 };
 
 models.teamMember.pageSize(40);
@@ -23180,23 +23314,24 @@ var adminBalanceTranfers = {
                 _mithril2.default.redraw();
             });
         },
-            processAuthorizedTransfers = function processAuthorizedTransfers() {
-            processingTranfersLoader(true);
-            _mithril2.default.redraw();
-            _mithril2.default.request({
-                method: 'POST',
-                url: '/admin/balance_transfers/process_transfers',
-                data: {},
-                config: _h2.default.setCsrfToken
-            }).then(function (data) {
-                listVM.firstPage(filterVM.parameters());
-                loadAuthorizedBalances();
-                displayProcessTransfer(false);
-                processingTranfersLoader(false);
-                _mithril2.default.redraw();
-            });
-        },
-            rejectSelectedIDs = function rejectSelectedIDs() {
+
+        //processAuthorizedTransfers = () => {
+        //    processingTranfersLoader(true);
+        //    m.redraw();
+        //    m.request({
+        //        method: 'POST',
+        //        url: '/admin/balance_transfers/process_transfers',
+        //        data: {},
+        //        config: h.setCsrfToken
+        //    }).then((data) => {
+        //        listVM.firstPage(filterVM.parameters());
+        //        loadAuthorizedBalances();
+        //        displayProcessTransfer(false);
+        //        processingTranfersLoader(false);
+        //        m.redraw();
+        //    });
+        //},
+        rejectSelectedIDs = function rejectSelectedIDs() {
             _mithril2.default.request({
                 method: 'POST',
                 url: '/admin/balance_transfers/batch_reject',
@@ -23244,11 +23379,23 @@ var adminBalanceTranfers = {
                 onclick: function onclick(event) {
                     return displayRejectModal.toggle();
                 }
-            }, 'Recusada')]) : '']) : '', authorizedCollection().length > 0 ? (0, _mithril2.default)('._w-inline-block.u-right', [(0, _mithril2.default)('button.btn.btn-small.btn-inline', {
-                onclick: displayProcessTransfer.toggle
-            }, 'Repassar saques aprovados (' + authorizedCollection().length + ')'), displayProcessTransfer() ? (0, _mithril2.default)('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [(0, _mithril2.default)('.w-form', [processingTranfersLoader() ? _h2.default.loader() : (0, _mithril2.default)('form', [(0, _mithril2.default)('label.fontsize-smaller.umarginbottom-20', 'Tem certeza que deseja repassar ' + authorizedCollection().length + ' saques aprovados (total de R$ ' + authorizedSum + ') ?'), (0, _mithril2.default)('button.btn.btn-small', {
-                onclick: processAuthorizedTransfers
-            }, 'Repassar saques aprovados')])])]) : '']) : '']);
+            }, 'Recusada')]) : '']) : '']
+            //(authorizedCollection().length > 0 ? m('._w-inline-block.u-right', [
+            //    m('button.btn.btn-small.btn-inline', {
+            //        onclick: displayProcessTransfer.toggle
+            //    }, `Repassar saques aprovados (${authorizedCollection().length})`),
+            //    (displayProcessTransfer() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
+            //        m('.w-form', [
+            //            (processingTranfersLoader() ? h.loader() : m('form', [
+            //                m('label.fontsize-smaller.umarginbottom-20', `Tem certeza que deseja repassar ${authorizedCollection().length} saques aprovados (total de R$ ${authorizedSum}) ?`),
+            //                m('button.btn.btn-small', {
+            //                    onclick: processAuthorizedTransfers
+            //                }, 'Repassar saques aprovados')
+            //            ]))
+            //        ])
+            //    ]) : '')
+            //]) : '')
+            );
         };
 
         loadAuthorizedBalances();
@@ -23262,7 +23409,7 @@ var adminBalanceTranfers = {
             generateWrapperModal: generateWrapperModal,
             approveSelectedIDs: approveSelectedIDs,
             manualTransferSelectedIDs: manualTransferSelectedIDs,
-            processAuthorizedTransfers: processAuthorizedTransfers,
+            //processAuthorizedTransfers,
             rejectSelectedIDs: rejectSelectedIDs,
             filterVM: filterVM,
             filterBuilder: filterBuilder,
@@ -29473,7 +29620,7 @@ var projectSubscriptionReport = {
             data: {
                 index: 1,
                 selectable: dropdownNumber,
-                label: 'Total apoiado',
+                label: 'Total pago',
                 name: 'total_paid',
                 onapply: submit,
                 vm: filterVM.total_paid,
@@ -29493,7 +29640,7 @@ var projectSubscriptionReport = {
             data: {
                 index: 2,
                 selectable: dropdownNumber,
-                label: 'Qtde. de apoios',
+                label: 'Meses pagos',
                 name: 'paid_count',
                 onapply: submit,
                 vm: filterVM.paid_count,
@@ -29615,9 +29762,9 @@ var projectSubscriptionReport = {
                 project: (0, _stream2.default)(_underscore2.default.first(state.project()))
             }), (0, _mithril2.default)('.dashboard-header', [(0, _mithril2.default)('.w-container', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.w-col.w-col-3'), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('.fontsize-larger.fontweight-semibold.lineheight-looser.u-marginbottom-30.u-text-center', 'Base de assinantes')), (0, _mithril2.default)('.w-col.w-col-3')])), (0, _mithril2.default)('.u-marginbottom-30.w-container', (0, _mithril2.default)('.w-form', [(0, _mithril2.default)('form', {
                 onsubmit: state.submit
-            }, (0, _mithril2.default)('w-row', [(0, _mithril2.default)(textFilter.component, textFilter.data), (0, _mithril2.default)('.w-col.w-col-9', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(statusFilter.component, statusFilter.data), (0, _mithril2.default)(rewardFilter.component, rewardFilter.data), (0, _mithril2.default)(paymentFilter.component, paymentFilter.data), (0, _mithril2.default)(totalPaidFilter.component, totalPaidFilter.data), (0, _mithril2.default)(paidCountFilter.component, paidCountFilter.data)]))]))]))]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.before-footer.bg-gray.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('div', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', (0, _mithril2.default)('.w-inline-block.fontsize-base.u-marginright-10', [(0, _mithril2.default)('span.fontweight-semibold', state.subscriptions.total()), ' pessoas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.alt-link.fontsize-small.u-right[href=\'/projects/' + attrs.project_id + '/subscriptions_report_download\']', {
+            }, (0, _mithril2.default)('w-row', [(0, _mithril2.default)(textFilter.component, textFilter.data), (0, _mithril2.default)('.w-col.w-col-9', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)(statusFilter.component, statusFilter.data), (0, _mithril2.default)(rewardFilter.component, rewardFilter.data), (0, _mithril2.default)(paymentFilter.component, paymentFilter.data), (0, _mithril2.default)(totalPaidFilter.component, totalPaidFilter.data), (0, _mithril2.default)(paidCountFilter.component, paidCountFilter.data)]))]))]))]), (0, _mithril2.default)('.divider'), (0, _mithril2.default)('.before-footer.bg-gray.section', [(0, _mithril2.default)('.w-container', [(0, _mithril2.default)('div', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6', (0, _mithril2.default)('.w-inline-block.fontsize-base.u-marginright-10', [(0, _mithril2.default)('span.fontweight-semibold', state.subscriptions.total()), ' assinaturas', _mithril2.default.trust('&nbsp;')])), (0, _mithril2.default)('.w-col.w-col-6', (0, _mithril2.default)('a.alt-link.fontsize-small.u-right[href=\'/projects/' + attrs.project_id + '/subscriptions_report_download\']', {
                 oncreate: _mithril2.default.route.link
-            }, [(0, _mithril2.default)('span.fa.fa-download', _mithril2.default.trust('&nbsp;')), 'Baixar relatórios']))])), (0, _mithril2.default)('.u-marginbottom-60', [(0, _mithril2.default)('.card.card-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', (0, _mithril2.default)('div', 'Assinante')), (0, _mithril2.default)('.table-col.w-col.w-col-2', (0, _mithril2.default)('div', 'Recompensa')), (0, _mithril2.default)('.table-col.w-col.w-col-1.u-text-center', (0, _mithril2.default)('div', 'Apoio mensal')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Total apoiado')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Última cobrança')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Status da Assinatura'))])), (0, _mithril2.default)('.fontsize-small', [_underscore2.default.map(subsCollection, function (subscription) {
+            }, [(0, _mithril2.default)('span.fa.fa-download', _mithril2.default.trust('&nbsp;')), 'Baixar relatórios']))])), (0, _mithril2.default)('.u-marginbottom-60', [(0, _mithril2.default)('.card.card-secondary.fontsize-smallest.fontweight-semibold.lineheight-tighter.u-marginbottom-10', (0, _mithril2.default)('.w-row', [(0, _mithril2.default)('.table-col.w-col.w-col-3', (0, _mithril2.default)('div', 'Assinante')), (0, _mithril2.default)('.table-col.w-col.w-col-2', (0, _mithril2.default)('div', 'Recompensa')), (0, _mithril2.default)('.table-col.w-col.w-col-1.u-text-center', (0, _mithril2.default)('div', 'Pgto. mensal')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Total pago')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Última cobrança')), (0, _mithril2.default)('.table-col.w-col.w-col-2.u-text-center', (0, _mithril2.default)('div', 'Status da Assinatura'))])), (0, _mithril2.default)('.fontsize-small', [_underscore2.default.map(subsCollection, function (subscription) {
                 return (0, _mithril2.default)(_dashboardSubscriptionCard2.default, {
                     subscription: subscription
                 });
@@ -32157,6 +32304,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
+
 var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
 
 var _mithril2 = _interopRequireDefault(_mithril);
@@ -32231,13 +32382,55 @@ var canBeDelivered = function canBeDelivered(contribution) {
     return contribution.state === 'paid' && contribution.reward_id && contribution.project_state !== 'failed';
 };
 
+var getUserContributionsListWithFilter = function getUserContributionsListWithFilter() {
+    var contributions = _api.catarse.paginationVM(_models2.default.userContribution, 'created_at.desc', { Prefer: 'count=exact' });
+
+    return {
+        firstPage: function firstPage(params) {
+            return contributions.firstPage(params).then(function () {
+                return _h2.default.redraw();
+            });
+        },
+        isLoading: contributions.isLoading,
+        collection: contributions.collection,
+        isLastPage: contributions.isLastPage,
+        nextPage: function nextPage() {
+            return contributions.nextPage().then(function () {
+                return _h2.default.redraw();
+            });
+        }
+    };
+};
+
+var getUserContributedProjectsWithFilter = function getUserContributedProjectsWithFilter() {
+    var contributions = _api.catarse.paginationVM(_models2.default.project, 'created_at.desc', { Prefer: 'count=exact' });
+
+    return {
+        firstPage: function firstPage(params) {
+            return contributions.firstPage(params).then(function () {
+                return _h2.default.redraw();
+            });
+        },
+        isLoading: contributions.isLoading,
+        collection: contributions.collection,
+        isLastPage: contributions.isLastPage,
+        nextPage: function nextPage() {
+            return contributions.nextPage().then(function () {
+                return _h2.default.redraw();
+            });
+        }
+    };
+};
+
 var contributionVM = {
+    getUserContributedProjectsWithFilter: getUserContributedProjectsWithFilter,
     getCurrentContribution: getCurrentContribution,
     canShowReceipt: canShowReceipt,
     canGenerateSlip: canGenerateSlip,
     canShowSlip: canShowSlip,
     getUserProjectContributions: getUserProjectContributions,
-    canBeDelivered: canBeDelivered
+    canBeDelivered: canBeDelivered,
+    getUserContributionsListWithFilter: getUserContributionsListWithFilter
 };
 
 exports.default = contributionVM;
@@ -32756,6 +32949,80 @@ var creditCardVM = {
 };
 
 exports.default = creditCardVM;
+
+/***/ }),
+
+/***/ "./legacy/src/vms/friends-vm.js":
+/*!**************************************!*\
+  !*** ./legacy/src/vms/friends-vm.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.getUserFollowersListVM = exports.getUserFollowsListVM = exports.getCreatorsListVM = exports.getFriendsListVM = undefined;
+
+var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _stream = __webpack_require__(/*! mithril/stream */ "./node_modules/mithril/stream.js");
+
+var _stream2 = _interopRequireDefault(_stream);
+
+var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
+
+var _underscore = __webpack_require__(/*! underscore */ "./node_modules/underscore/underscore.js");
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
+
+var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
+
+var _models2 = _interopRequireDefault(_models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var getFriendsListVM = function getFriendsListVM() {
+    _models2.default.userFriend.pageSize(9);
+    var friendListVM = _api.catarse.paginationVM(_models2.default.userFriend, 'following.asc,total_contributed_projects.desc', { Prefer: 'count=exact' });
+
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(friendListVM);
+};
+
+var getCreatorsListVM = function getCreatorsListVM() {
+    _models2.default.creatorSuggestion.pageSize(9);
+    var creatorsListVM = _api.catarse.paginationVM(_models2.default.creatorSuggestion, 'following.asc, total_published_projects.desc, total_contributed_projects.desc', {
+        Prefer: 'count=exact'
+    });
+
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(creatorsListVM);
+};
+
+var getUserFollowsListVM = function getUserFollowsListVM() {
+    _models2.default.userFollow.pageSize(9);
+    var userFollowsListVM = _api.catarse.paginationVM(_models2.default.userFollow, 'created_at.desc', { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(userFollowsListVM);
+};
+
+var getUserFollowersListVM = function getUserFollowersListVM() {
+    _models2.default.userFollower.pageSize(9);
+    var userFollowersListVM = _api.catarse.paginationVM(_models2.default.userFollower, 'following.asc,created_at.desc', { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(userFollowersListVM);
+};
+
+exports.getFriendsListVM = getFriendsListVM;
+exports.getCreatorsListVM = getCreatorsListVM;
+exports.getUserFollowsListVM = getUserFollowsListVM;
+exports.getUserFollowersListVM = getUserFollowersListVM;
 
 /***/ }),
 
@@ -34361,12 +34628,17 @@ exports.default = projectGoalsVM;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
+exports.getProjectContributorsListVM = exports.getProjectSubscribersListVM = undefined;
 
 var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
 
 var _mithril2 = _interopRequireDefault(_mithril);
+
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
+
+var _h2 = _interopRequireDefault(_h);
 
 var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
 
@@ -34378,6 +34650,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _models2.default.adminProject.pageSize(9);
 exports.default = _api.catarse.paginationVM(_models2.default.adminProject, 'pledged.desc', { Prefer: 'count=exact' });
+
+
+var getProjectSubscribersListVM = function getProjectSubscribersListVM() {
+    _models2.default.projectSubscriber.pageSize(15);
+    var projectSubscribersListVM = _api.commonProject.paginationVM(_models2.default.projectSubscriber, null, { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(projectSubscribersListVM);
+};
+
+var getProjectContributorsListVM = function getProjectContributorsListVM() {
+    _models2.default.contributor.pageSize(15);
+    var projectContributorsListVM = _api.catarse.paginationVM(_models2.default.contributor, null, { Prefer: 'count=exact' });
+    return _h2.default.createBasicPaginationVMWithAutoRedraw(projectContributorsListVM);
+};
+
+exports.getProjectSubscribersListVM = getProjectSubscribersListVM;
+exports.getProjectContributorsListVM = getProjectContributorsListVM;
 
 /***/ }),
 
@@ -34990,7 +35278,7 @@ var aonTerms = function aonTerms(project, expiresAt) {
 };
 
 var flexTerms = function flexTerms(project) {
-    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '1/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar'), ': a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria do projeto, a meta de arrecadação,  o prazo (caso já tenha definido), e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar'), ': o vídeo principal da campanha, o conteúdo da descrição, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '2/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade FLEX')]), (0, _mithril2.default)('div', 'Você escolheu a campanha flexível. Dessa maneira, você irá receber todos os recursos arrecadados junto aos apoiadores ao final do prazo da campanha (descontando a taxa do Catarse) e deverá cumprir com a execução do projeto e com a entrega das recompensas oferecidas independente do quanto arrecadar.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '3/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Meta de arrecadação')]), (0, _mithril2.default)('div', 'A meta não poderá ser alterada após o publicação do projeto.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '4/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Ao final da campanha, cobraremos 13% sobre o ', (0, _mithril2.default)('span.fontweight-semibold', 'valor total arrecadado.')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '5/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'Uma vez definido, o prazo de encerramento não poderá ser alterado. Caso você tenha iniciado a campanha com o prazo em aberto, deverá defini-lo durante a campanha, podendo deixar a campanha aberta por no máximo 12 meses.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '6/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo para repasse')]), (0, _mithril2.default)('div', _mithril2.default.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em até 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', (0, _mithril2.default)('span', {
+    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '1/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar'), ': a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria do projeto, a meta de arrecadação,  o prazo (caso já tenha definido), e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar'), ': o vídeo principal da campanha, o conteúdo da descrição, a imagem do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas durante a arrecadação'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '2/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade FLEX')]), (0, _mithril2.default)('div', 'Você escolheu a campanha flexível. Dessa maneira, você irá receber todos os recursos arrecadados junto aos apoiadores ao final do prazo da campanha (descontando a taxa do Catarse) e deverá cumprir com a execução do projeto e com a entrega das recompensas oferecidas independente do quanto arrecadar.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '3/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Meta de arrecadação')]), (0, _mithril2.default)('div', 'A meta não poderá ser alterada após o publicação do projeto.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '4/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Ao final da campanha, cobraremos 13% sobre o ', (0, _mithril2.default)('span.fontweight-semibold', 'valor total arrecadado.')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '5/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'Uma vez definido, o prazo de encerramento não poderá ser alterado. Caso você tenha iniciado a campanha com o prazo em aberto, deverá defini-lo durante a campanha, podendo deixar a campanha aberta por no máximo 12 meses.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '6/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Prazo para repasse')]), (0, _mithril2.default)('div', _mithril2.default.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '7/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), ' pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.\ ', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), ' pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '8/9'), ' ', (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontsize-smallest.fontcolor-secondary', '9/9'), ' ', (0, _mithril2.default)('span', {
         style: {
             'font-weight': ' 600'
         }
@@ -34998,7 +35286,7 @@ var flexTerms = function flexTerms(project) {
 };
 
 var subTerms = function subTerms(project) {
-    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '1/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar:'), ' a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria escolhida e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar: '), 'o conteúdo da descrição do projeto, o vídeo principal da campanha, as imagens do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas e novas metas durante a arrecadação.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '2/9'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade Assinatura')]), (0, _mithril2.default)('div', 'Você escolheu a modalidade Assinatura. Dessa maneira, você irá receber em tempo real, no saldo de sua conta no Catarse, os recursos arrecadados pelos seus assinantes. Você é o responsável por entregar as recompensas oferecidas aos seus assinantes.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '3/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Metas de arrecadação')]), (0, _mithril2.default)('div', 'Você poderá alterar, durante a campanha no ar, as suas metas de arrecadação em qualquer momento, independente de já tê-las atingido ou não. A única restrição imposta é que o seu projeto tenha sempre ao menos uma meta definida.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '4/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Cobramos 13% sobre todos os valores arrecadados em sua campanha de assinatura. ', (0, _mithril2.default)('span.fontweight-semibold')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '5/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'No Catarse Assinaturas você pode manter sua campanha no ar por quanto tempo você quiser.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '6/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da transferência de dinheiro')]), (0, _mithril2.default)('div', ['Você poderá realizar 01 saque mensal (que é como chamamos a transferência do seu saldo no Catarse para sua conta bancária cadastrada). Assim que você solicitar o saque, o Catarse depositará o valor, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis.', _mithril2.default.trust('&nbsp;')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '7/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '8/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold'), 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '9/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Retiradas de projetos no ar')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', (0, _mithril2.default)("a.alt-link[href='http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos'][target='_blank']", 'Regras do Jogo'), ' e ', (0, _mithril2.default)("a.alt-link[href='http://www.catarse.me/terms-of-use'][target='_blank']", 'Termos de Uso'), '.'])])];
+    return [(0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '1/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'O que pode e não pode alterar na página do projeto a partir da publicação?')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold', 'Você não poderá alterar:'), ' a identidade do responsável pelo projeto (Nome / CPF ou Razão Social / CNPJ), a Modalidade de financiamento, o título do projeto, a URL (link) do projeto, a categoria escolhida e as recompensas onde existirem apoios já efetuados.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'Você poderá alterar: '), 'o conteúdo da descrição do projeto, o vídeo principal da campanha, as imagens do projeto, a frase de efeito, as recompensas onde não existirem apoios efetuados, além de adicionar novas recompensas e novas metas durante a arrecadação.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '2/9'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da modalidade Assinatura')]), (0, _mithril2.default)('div', 'Você escolheu a modalidade Assinatura. Dessa maneira, você irá receber em tempo real, no saldo de sua conta no Catarse, os recursos arrecadados pelos seus assinantes. Você é o responsável por entregar as recompensas oferecidas aos seus assinantes.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '3/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Metas de arrecadação')]), (0, _mithril2.default)('div', 'Você poderá alterar, durante a campanha no ar, as suas metas de arrecadação em qualquer momento, independente de já tê-las atingido ou não. A única restrição imposta é que o seu projeto tenha sempre ao menos uma meta definida.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '4/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Taxas')]), (0, _mithril2.default)('div', ['Cobramos 13% sobre todos os valores arrecadados em sua campanha de assinatura. ', (0, _mithril2.default)('span.fontweight-semibold')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '5/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Prazo da campanha')]), (0, _mithril2.default)('div', 'No Catarse Assinaturas você pode manter sua campanha no ar por quanto tempo você quiser.')]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '6/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Regras da transferência de dinheiro')]), (0, _mithril2.default)('div', ['Você poderá realizar 01 saque mensal (que é como chamamos a transferência do seu saldo no Catarse para sua conta bancária cadastrada). Assim que você solicitar o saque, o Catarse depositará o valor, já com o desconto da taxa, na sua conta corrente em 10 dias úteis.', _mithril2.default.trust('&nbsp;')])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '7/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Responsabilidade do Catarse')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo desenvolvimento tecnológico da plataforma, atendimento de dúvidas e problemas (tanto de apoiadores quanto de realizadores), por hospedar o projeto na plataforma e por garantir a segurança das transações financeiras.', (0, _mithril2.default)('br'), (0, _mithril2.default)('br'), (0, _mithril2.default)('span.fontweight-semibold', 'O Catarse não é responsável:'), _mithril2.default.trust('&nbsp;'), 'pelo financiamento, divulgação e execução, nem pela entrega de recompensas dos projetos inscritos.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '8/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Suas responsabilidades')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), (0, _mithril2.default)('span.fontweight-semibold'), 'É sua responsabilidade o recebimento do dinheiro da campanha e tudo aquilo que diz respeito a formatação do projeto, planejamento e divulgação da campanha de arrecadação, mobilização de apoiadores, execução do projeto, comunicação com apoiadores e produção e entrega de recompensas dentro do prazo estimado.'])]), (0, _mithril2.default)('.w-col.w-col-11', [(0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontcolor-secondary.fontsize-smallest', '9/9'), _mithril2.default.trust('&nbsp;'), (0, _mithril2.default)('span.fontweight-semibold', 'Retiradas de projetos no ar')]), (0, _mithril2.default)('div', [(0, _mithril2.default)('span.fontweight-semibold'), 'O CATARSE reserva-se o direito de, a seu exclusivo critério e uma vez notificado a respeito, cancelar projetos e encerrar as contas de CRIADORES DE PROJETOS que violem nossas ', (0, _mithril2.default)("a.alt-link[href='http://suporte.catarse.me/hc/pt-br/articles/202387638-Diretrizes-para-cria%C3%A7%C3%A3o-de-projetos'][target='_blank']", 'Regras do Jogo'), ' e ', (0, _mithril2.default)("a.alt-link[href='http://www.catarse.me/terms-of-use'][target='_blank']", 'Termos de Uso'), '.'])])];
 };
 
 var publishVM = {
@@ -35590,9 +35878,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getUserPrivateSubscriptionsListVM = undefined;
 
-var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
-var _mithril2 = _interopRequireDefault(_mithril);
+var _h2 = _interopRequireDefault(_h);
 
 var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 
@@ -35605,27 +35893,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'id.desc', { Prefer: 'count=exact' });
 var getUserPrivateSubscriptionsListVM = exports.getUserPrivateSubscriptionsListVM = function getUserPrivateSubscriptionsListVM(userCommonId) {
     _models2.default.userSubscription.pageSize(9);
-    var contextSubVM = _api.commonPayment.filtersVM({
-        user_id: 'eq',
-        status: 'in'
-    });
-    contextSubVM.user_id(userCommonId).status(['started', 'active', 'inactive', 'canceled', 'canceling', 'error']).order({
-        created_at: 'desc'
-    });
-
     var subscriptions = _api.commonPayment.paginationVM(_models2.default.userSubscription, 'created_at.desc', { Prefer: 'count=exact' });
 
-    subscriptions.firstPage(contextSubVM.parameters()).then(function () {
-        return _mithril2.default.redraw();
-    });
-
     return {
+        firstPage: function firstPage(params) {
+            return subscriptions.firstPage(params).then(function () {
+                return _h2.default.redraw();
+            });
+        },
         isLoading: subscriptions.isLoading,
         collection: subscriptions.collection,
         isLastPage: subscriptions.isLastPage,
         nextPage: function nextPage() {
             return subscriptions.nextPage().then(function () {
-                return _mithril2.default.redraw();
+                return _h2.default.redraw();
             });
         }
     };
@@ -35664,6 +35945,10 @@ var _underscore2 = _interopRequireDefault(_underscore);
 var _models = __webpack_require__(/*! ../models */ "./legacy/src/models.js");
 
 var _models2 = _interopRequireDefault(_models);
+
+var _moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+
+var _moment2 = _interopRequireDefault(_moment);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35762,13 +36047,46 @@ var toogleAnonymous = function toogleAnonymous(subscription) {
     });
 };
 
+var getNewSubscriptionsInsightsFromPeriod = function getNewSubscriptionsInsightsFromPeriod(project_id, startDate, endDate) {
+
+    var start_date = (0, _moment2.default)(startDate).format('YYYY-MM-DDTHH:mm:ss.000');
+    var end_date = (0, _moment2.default)(endDate).format('YYYY-MM-DDTHH:mm:ss.000');
+
+    return _api.commonAnalytics.loaderWithToken(_models2.default.newSubscribersFromPeriod.getRowOptions({ project_id: project_id, start_date: start_date, end_date: end_date })).load().then(function (insightData) {
+        _h2.default.redraw();
+        return insightData;
+    }).catch(function (error) {
+        console.log('Error getting insights resume:', error);
+        _h2.default.redraw();
+    });
+};
+
+var getNewSubscriptionsInsightsFromLastWeek = function getNewSubscriptionsInsightsFromLastWeek(project_id) {
+    var _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
+    var today = new Date();
+    var todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus7Days, today);
+};
+
+var getNewSubscriptionsInsightsFromLast2Week = function getNewSubscriptionsInsightsFromLast2Week(project_id) {
+    var _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
+    var _14_DAYS_IN_MS = 3600 * 24 * 14 * 1000;
+    var today = new Date();
+    var todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    var todayMinus14Days = new Date(today.getTime() - _14_DAYS_IN_MS);
+    return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus14Days, todayMinus7Days);
+};
+
 var subscriptionVM = {
     getNewSubscriptions: getNewSubscriptions,
     getSubscriptionsPerMonth: getSubscriptionsPerMonth,
     getSubscriptionTransitions: getSubscriptionTransitions,
     getUserProjectSubscriptions: getUserProjectSubscriptions,
     getSubscription: getSubscription,
-    toogleAnonymous: toogleAnonymous
+    toogleAnonymous: toogleAnonymous,
+    getNewSubscriptionsInsightsFromPeriod: getNewSubscriptionsInsightsFromPeriod,
+    getNewSubscriptionsInsightsFromLastWeek: getNewSubscriptionsInsightsFromLastWeek,
+    getNewSubscriptionsInsightsFromLast2Week: getNewSubscriptionsInsightsFromLast2Week
 };
 
 exports.default = subscriptionVM;
@@ -36139,54 +36457,34 @@ var _stream2 = _interopRequireDefault(_stream);
 
 var _api = __webpack_require__(/*! ../api */ "./legacy/src/api.js");
 
-var _mithril = __webpack_require__(/*! mithril */ "./node_modules/mithril/mithril.js");
+var _h = __webpack_require__(/*! ../h */ "./legacy/src/h.js");
 
-var _mithril2 = _interopRequireDefault(_mithril);
+var _h2 = _interopRequireDefault(_h);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createdProjects = _api.catarse.paginationVM(_models2.default.project);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var getCreatedProjects = function getCreatedProjects(user_id, states) {
-
-    var error = (0, _stream2.default)(false);
-    var isLoading = (0, _stream2.default)(false);
-    var contextVM = _api.catarse.filtersVM({ project_user_id: 'eq', state: 'in' });
-    contextVM.state(states).project_user_id(user_id).order({ updated_at: 'desc' });
+var getCreatedProjects = function getCreatedProjects() {
     _models2.default.project.pageSize(9);
+    var error = (0, _stream2.default)(false);
+    var createdProjects = _api.catarse.paginationVM(_models2.default.project, 'created_at.desc', { Prefer: 'count=exact' });
 
-    return {
-        error: error,
-        isLoading: isLoading,
-        firstPage: function firstPage() {
-            error(false);
-            isLoading(true);
-
-            return createdProjects.firstPage(contextVM.parameters()).then(function (_) {
-                isLoading(false);
-                _mithril2.default.redraw();
-            }).catch(function (err) {
-                error(true);
-                isLoading(false);
-                _mithril2.default.redraw();
+    return _defineProperty({
+        firstPage: function firstPage(params) {
+            return createdProjects.firstPage(params).then(function () {
+                return _h2.default.redraw();
             });
         },
-        nextPage: function nextPage() {
-            error(false);
-            isLoading(true);
-
-            return createdProjects.nextPage().then(function (_) {
-                isLoading(false);
-                _mithril2.default.redraw();
-            }).catch(function (err) {
-                error(true);
-                isLoading(false);
-                _mithril2.default.redraw();
-            });
-        },
+        isLoading: createdProjects.isLoading,
+        collection: createdProjects.collection,
         isLastPage: createdProjects.isLastPage,
-        collection: createdProjects.collection
-    };
+        nextPage: function nextPage() {
+            return createdProjects.nextPage().then(function () {
+                return _h2.default.redraw();
+            });
+        }
+    }, 'collection', createdProjects.collection);
 };
 
 exports.default = {

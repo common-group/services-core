@@ -2,11 +2,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import moment from 'moment';
 import _ from 'underscore';
-import {
-    catarse,
-    catarseMoments,
-    commonAnalytics
-} from '../api';
+import { catarse, catarseMoments, commonAnalytics } from '../api';
 import models from '../models';
 import h from '../h';
 import projectDashboardMenu from '../c/project-dashboard-menu';
@@ -28,33 +24,53 @@ const projectInsightsSub = {
             visitorLoader = catarseMoments.loaderWithToken,
             loader = commonAnalytics.loaderWithToken,
             visitorsPerDay = prop([]);
-        const weekSubscriptions = prop([]);
+        const insightResumeDataLastWeek = prop({
+            mean_amount : 0, 
+            subscriptions_count : 0, 
+            total_amount : 0
+        });
+        const insightResumeDataLast2Week = prop({
+            mean_amount : 0, 
+            subscriptions_count : 0, 
+            total_amount : 0
+        });
         const subscriptionsPerDay = prop([]);
-        const lastWeekSubscriptions = prop([]);
         const weekTransitions = prop([]);
         const lastWeekTransitions = prop([]);
         const subscriptionsPerMonth = prop([]);
         const isSubscriptionsPerMonthLoaded = prop(false);
         const balanceData = prop(null);
         const subVM = commonAnalytics.filtersVM({
-            project_id: 'eq'
+            project_id: 'eq',
         });
-        const processVisitors = (data) => {
+        const processVisitors = data => {
             if (!_.isEmpty(data)) {
                 visitorsPerDay(data);
                 visitorsTotal(_.first(data).total);
             }
         };
         const requestRedraw = h.createRequestAutoRedraw(
-            weekSubscriptions,
             subscriptionsPerDay,
-            lastWeekSubscriptions,
             weekTransitions,
             lastWeekTransitions,
             subscriptionsPerMonth,
             isSubscriptionsPerMonthLoaded,
             balanceData
         );
+
+        subscriptionVM
+            .getNewSubscriptionsInsightsFromLastWeek(vnode.attrs.project.common_id)
+            .then(insights => {
+                insightResumeDataLastWeek(insights);
+                h.redraw();
+            });
+
+        subscriptionVM
+            .getNewSubscriptionsInsightsFromLast2Week(vnode.attrs.project.common_id)
+            .then(insightsLast2Weeks => {
+                insightResumeDataLast2Week(insightsLast2Weeks);
+                h.redraw();
+            });
 
         subVM.project_id(vnode.attrs.project.common_id);
         const lVisitorsPerDay = visitorLoader(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
@@ -70,41 +86,39 @@ const projectInsightsSub = {
             .then(requestRedraw);
 
         subscriptionVM
-            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
-            .then(weekSubscriptions)
-            .then(requestRedraw);
-
-        subscriptionVM
-            .getNewSubscriptions(vnode.attrs.project.common_id, moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
-            .then(lastWeekSubscriptions)
-            .then(requestRedraw);
-
-        subscriptionVM
             .getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(1, 'weeks').format(), moment().utc().format())
             .then(weekTransitions)
             .then(requestRedraw);
 
         subscriptionVM
-            .getSubscriptionTransitions(vnode.attrs.project.common_id, ['inactive', 'canceled'], 'active', moment().utc().subtract(2, 'weeks').format(), moment().utc().subtract(1, 'weeks').format())
+            .getSubscriptionTransitions(
+                vnode.attrs.project.common_id,
+                ['inactive', 'canceled'],
+                'active',
+                moment()
+                    .utc()
+                    .subtract(2, 'weeks')
+                    .format(),
+                moment()
+                    .utc()
+                    .subtract(1, 'weeks')
+                    .format()
+            )
             .then(lastWeekTransitions)
             .then(requestRedraw);
 
-        subscriptionVM
-            .getSubscriptionsPerMonth(vnode.attrs.project.common_id)
-            .then((subscriptions) => {
-                subscriptionsPerMonth(subscriptions);
-                isSubscriptionsPerMonthLoaded(true);
-                requestRedraw();
-            });
+        subscriptionVM.getSubscriptionsPerMonth(vnode.attrs.project.common_id).then(subscriptions => {
+            subscriptionsPerMonth(subscriptions);
+            isSubscriptionsPerMonthLoaded(true);
+            requestRedraw();
+        });
 
         projectGoalsVM.fetchGoals(filtersVM.project_id());
         const balanceLoader = userVM.getUserBalance(vnode.attrs.project.user_id);
         balanceLoader.then(balanceData).then(requestRedraw);
 
         vnode.state = {
-            weekSubscriptions,
             subscriptionsPerMonth,
-            lastWeekSubscriptions,
             weekTransitions,
             lastWeekTransitions,
             projectGoalsVM,
@@ -115,19 +129,19 @@ const projectInsightsSub = {
             visitorsPerDay,
             balanceLoader,
             balanceData,
-            isSubscriptionsPerMonthLoaded
+            isSubscriptionsPerMonthLoaded,
+            insightResumeDataLastWeek,
+            insightResumeDataLast2Week
         };
     },
     view: function({state, attrs}) {
-        const sumAmount = list => _.reduce(list, (memo, sub) => memo + (sub.amount / 100), 0);
-        const weekSum = sumAmount(state.weekSubscriptions());
-        const lastWeekSum = sumAmount(state.lastWeekSubscriptions());
-        const canceledWeekSum = sumAmount(state.weekTransitions());
-        const canceledLastWeekSum = sumAmount(state.lastWeekTransitions());
         const project = attrs.project,
             subscribersDetails = attrs.subscribersDetails,
             balanceData = (state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null);
-        const averageRevenue = subscribersDetails.total_subscriptions > 0 ? (subscribersDetails.amount_paid_for_valid_period / subscribersDetails.total_subscriptions) : null;
+        
+        const averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
+        const totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
+        const totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
 
         return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -152,7 +166,7 @@ const projectInsightsSub = {
                         }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
                             m('.fontsize-small.u-marginbottom-10',
-                                'Assinantes ativos'
+                                'Assinaturas ativas'
                             ),
                             m('.fontsize-largest.fontweight-semibold',
                                 subscribersDetails.total_subscriptions
@@ -162,8 +176,11 @@ const projectInsightsSub = {
                             m('.fontsize-small.u-marginbottom-10',
                                 'Receita Mensal'
                             ),
-                            m('.fontsize-largest.fontweight-semibold',
+                            m('.fontsize-largest.fontweight-semibold.u-marginbottom-10',
                                 `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
+                            ),
+                            m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
+                                'Calculada com base nas assinaturas ativas que você possui hoje (taxas já descontadas).'
                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [
@@ -191,27 +208,27 @@ const projectInsightsSub = {
                         m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
                             m('.flex-column.card.u-radius.u-marginbottom-10', [
                                 m('div',
-                                    'Receita média por assinante'
+                                    'Receita média por assinatura'
                                 ),
                                 m('.fontsize-smallest.fontcolor-secondary.lineheight-tighter',
                                     `em ${moment().format('DD/MM/YYYY')}`
                                 ),
                                 m('.fontsize-largest.fontweight-semibold',
-                                    `R$${averageRevenue ? `${h.formatNumber(averageRevenue, 2, 3)}` : '--'}`
+                                    `R$${averageAmount ? `${h.formatNumber(averageAmount, 2, 3)}` : '--'}`
                                 )
 
                             ]),
                             m(insightsInfoBox, {
                                 label: 'Novos Assinantes',
-                                info: state.weekSubscriptions().length,
-                                newCount: state.weekSubscriptions().length,
-                                oldCount: state.lastWeekSubscriptions().length
+                                info: state.insightResumeDataLastWeek().subscriptions_count,
+                                newCount: state.insightResumeDataLastWeek().subscriptions_count,
+                                oldCount: state.insightResumeDataLast2Week().subscriptions_count
                             }),
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
-                                info: `R$${weekSum}`,
-                                newCount: weekSum,
-                                oldCount: lastWeekSum
+                                info: `R$${totalAmountFromLastWeek ? `${h.formatNumber(totalAmountFromLastWeek, 2, 3)}` : '--'}`,
+                                newCount: totalAmountFromLastWeek,
+                                oldCount: totalAmountFromLast2Week
                             })
                         ]),
                         m(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [
@@ -235,7 +252,7 @@ const projectInsightsSub = {
                     }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: state.subscriptionsPerDay,
                         label: window.I18n.t('amount_per_day_label_sub', I18nScope()),
-                        subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
                         dataKey: 'total_amount',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('amount_per_day_empty_sub', I18nScope()))
@@ -247,18 +264,19 @@ const projectInsightsSub = {
                     }, [!state.lSubscriptionsPerDay() ? m(projectDataChart, {
                         collection: state.subscriptionsPerDay,
                         label: window.I18n.t('contributions_per_day_label_sub', I18nScope()),
-                        subLabel: window.I18n.t('last_30_days_indication', I18nScope()),
+                        subLabel: window.I18n.t('paid_date_indication', I18nScope()),
                         dataKey: 'total',
                         xAxis: item => h.momentify(item.paid_at),
                         emptyState: m.trust(window.I18n.t('contributions_per_day_empty_sub', I18nScope()))
                     }) : h.loader()]),
                     (state.isSubscriptionsPerMonthLoaded() ?
                         m(subscriptionsPerMonthTable, { data: state.subscriptionsPerMonth() }) : h.loader())
-
-                ])
-            ])
-        ] : h.loader());
-    }
+                          ]),
+                      ]),
+                  ]
+                : h.loader()
+        );
+    },
 };
 
 export default projectInsightsSub;
