@@ -186,7 +186,7 @@ const flexTerms = project => [
             ' ',
             m('span.fontweight-semibold', 'Prazo para repasse')
         ]),
-        m('div', m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em até 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))
+        m('div', m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))
     ]),
     m('.w-col.w-col-11', [
         m('div', [
@@ -312,7 +312,7 @@ const subTerms = project => [
             )
         ]),
         m('div', [
-            'Você poderá realizar 01 saque mensal (que é como chamamos a transferência do seu saldo no Catarse para sua conta bancária cadastrada). Assim que você solicitar o saque, o Catarse depositará o valor, já com o desconto da taxa, na sua conta corrente em até 10 dias úteis.',
+            'Você poderá realizar 01 saque mensal (que é como chamamos a transferência do seu saldo no Catarse para sua conta bancária cadastrada). Assim que você solicitar o saque, o Catarse depositará o valor, já com o desconto da taxa, na sua conta corrente em 10 dias úteis.',
             m.trust('&nbsp;')
         ])
     ]),
