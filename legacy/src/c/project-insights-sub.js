@@ -1,6 +1,6 @@
 import m from 'mithril';
 import prop from 'mithril/stream';
-import moment from 'moment';
+import moment, { min } from 'moment';
 import _ from 'underscore';
 import { catarse, catarseMoments, commonAnalytics } from '../api';
 import models from '../models';
@@ -139,9 +139,10 @@ const projectInsightsSub = {
             subscribersDetails = attrs.subscribersDetails,
             balanceData = (state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null);
         
-        const averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
-        const totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
-        const totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
+        const atLeastZero = num => (num === null || isNaN(num)) ? 0 : Math.max(0, num);
+        const averageAmount = atLeastZero(state.insightResumeDataLastWeek().mean_amount) / 100.0;
+        const totalAmountFromLastWeek = atLeastZero(state.insightResumeDataLastWeek().total_amount) / 100.0;
+        const totalAmountFromLast2Week = atLeastZero(state.insightResumeDataLast2Week().total_amount) / 100.0;
 
         return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -226,7 +227,7 @@ const projectInsightsSub = {
                             }),
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
-                                info: `R$${totalAmountFromLastWeek ? `${h.formatNumber(totalAmountFromLastWeek, 2, 3)}` : '--'}`,
+                                info: `R$${h.formatNumber(totalAmountFromLastWeek, 2, 3)}`,
                                 newCount: totalAmountFromLastWeek,
                                 oldCount: totalAmountFromLast2Week
                             })
