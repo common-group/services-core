@@ -12214,9 +12214,12 @@ var projectInsightsSub = {
             subscribersDetails = attrs.subscribersDetails,
             balanceData = state.balanceData() && !_underscore2.default.isNull(_underscore2.default.first(state.balanceData())) ? _underscore2.default.first(state.balanceData()) : null;
 
-        var averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
-        var totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
-        var totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
+        var atLeastZero = function atLeastZero(num) {
+            return num === null || isNaN(num) ? 0 : Math.max(0, num);
+        };
+        var averageAmount = atLeastZero(state.insightResumeDataLastWeek().mean_amount) / 100.0;
+        var totalAmountFromLastWeek = atLeastZero(state.insightResumeDataLastWeek().total_amount) / 100.0;
+        var totalAmountFromLast2Week = atLeastZero(state.insightResumeDataLast2Week().total_amount) / 100.0;
 
         return (0, _mithril2.default)('.project-insights', !attrs.l() ? [(0, _mithril2.default)('.w-section.section-product.' + project.mode), project.is_owner_or_admin ? (0, _mithril2.default)(_projectDashboardMenu2.default, {
             project: (0, _stream2.default)(project)
@@ -12232,7 +12235,7 @@ var projectInsightsSub = {
             oldCount: state.insightResumeDataLast2Week().subscriptions_count
         }), (0, _mithril2.default)(_insightsInfoBox2.default, {
             label: 'Nova receita',
-            info: 'R$' + (totalAmountFromLastWeek ? '' + _h2.default.formatNumber(totalAmountFromLastWeek, 2, 3) : '--'),
+            info: 'R$' + _h2.default.formatNumber(totalAmountFromLastWeek, 2, 3),
             newCount: totalAmountFromLastWeek,
             oldCount: totalAmountFromLast2Week
         })]), (0, _mithril2.default)(".fontsize-large.fontweight-semibold.u-marginbottom-10.u-text-center[id='origem']", [window.I18n.t('visitors_per_day_label', I18nScope())]), (0, _mithril2.default)('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', [window.I18n.t('last_30_days_indication', I18nScope())])]), !state.lVisitorsPerDay() ? (0, _mithril2.default)(_projectDataChart2.default, {
