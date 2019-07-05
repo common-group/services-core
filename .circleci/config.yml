@@ -91,6 +91,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
+      - run: sudo apt update
       - run: sudo apt install postgresql-client
       - run:
           name: Run catarse installs
