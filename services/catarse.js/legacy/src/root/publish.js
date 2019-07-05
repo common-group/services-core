@@ -82,7 +82,7 @@ const publish = {
                         m('.divider'),
                         m('.w-section.section-one-column.bg-gray.section.before-footer', [
                             m('.w-container', [
-                                m('.card.medium.u-marginbottom-60.card-terciary', [
+                                m('.card.medium.u-marginbottom-60.card-secondary', [
                                     m('.w-row', [
                                         m('.w-col.w-col-6.w-clearfix', [
                                             m(`img.card-project-thumb.u-right[src=${project.large_image}]`)
@@ -105,7 +105,7 @@ const publish = {
                                         m('.w-row', [
                                             m('.w-col.w-col-1'),
                                             m('.w-col.w-col-10', [
-                                                m('.divider.u-marginbottom-10'),
+                                                m('.divider.u-marginbottom-20.u-margintop-20'),
                                                 m('.fontsize-small.fontcolor-secondary', 'Os dados acima não podem ser alterados após o projeto entrar no ar. Se você precisa fazer mudanças, navegue na barra lateral e volte aqui quando estiver tudo pronto!')
                                             ]),
                                             m('.w-col.w-col-1')
