@@ -246,6 +246,7 @@ const subTerms = project => [
             m('span.fontcolor-secondary.fontsize-smallest',
                 '2/9'
             ),
+            m.trust('&nbsp;'),
             m('span.fontweight-semibold',
                 'Regras da modalidade Assinatura'
             )
