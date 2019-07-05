@@ -110,6 +110,8 @@ const editRewardCard = {
                 isSavingReward(true);
                 validate();
                 if (vnode.attrs.error()) {
+                    isSavingReward(false);
+                    h.redraw();
                     return false;
                 }
                 const data = {
@@ -134,7 +136,7 @@ const editRewardCard = {
                 if (reward.newReward) {
                     isUploadingImage(true);
                     isSavingReward(false);
-                    m.redraw();
+                    h.redraw();
 
                     rewardVM.createReward(vnode.attrs.project_id, data).then((r) => {
                             vnode.attrs.showSuccess(true);
@@ -147,17 +149,22 @@ const editRewardCard = {
                                 .then(r_with_image => {
                                     vnode.attrs.showSuccess(true);
                                     isUploadingImage(false);
-                                    m.redraw();
+                                    h.redraw();
                                 })
                                 .catch(error => {
                                     vnode.attrs.showSuccess(false);
                                     isUploadingImage(false);
-                                    m.redraw();
+                                    h.redraw();
                                 });
+                            
+                            isSavingReward(false);
+                            h.redraw();
                         })
                         .catch(err => {
                             vnode.attrs.error(true);
                             vnode.attrs.errors('Erro ao salvar recompensa.');
+                            isSavingReward(false);
+                            h.redraw();
                         });
                 } else {
                     isUploadingImage(true);
@@ -172,13 +179,21 @@ const editRewardCard = {
                             .then(r_with_image => {
                                 vnode.attrs.showSuccess(true);
                                 isUploadingImage(false);
-                                m.redraw();
+                                h.redraw();
                             })
                             .catch(error => {
                                 vnode.attrs.showSuccess(false);
                                 isUploadingImage(false);
-                                m.redraw();
+                                h.redraw();
                             });
+                        isSavingReward(false);
+                        h.redraw();
+                    })
+                    .catch(err => {
+                        vnode.attrs.error(true);
+                        vnode.attrs.errors('Erro ao salvar recompensa.');
+                        isSavingReward(false);
+                        h.redraw();
                     });
                 }
                 return false;

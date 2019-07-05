@@ -62,10 +62,11 @@ const dashboardRewardCard = {
                         editables.toggle();
                         reward.limited(reward.maximum_contributions() !== null);
                         isSaving(false);
-                        m.redraw();
+                        h.redraw();
                     })
                     .catch(err => {
                         isSaving(false);
+                        h.redraw();
                     });
                 return false;
             },
