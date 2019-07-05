@@ -9,9 +9,9 @@ const shippingFeeInput = {
         const fee = vnode.attrs.fee,
             fees = vnode.attrs.fees,
             deleted = h.toggleProp(false, true),
-            stateInUse = (state) => {
+            stateInUse = stateData => {
                 const destinations = _.map(fees(), fee => fee.destination());
-                return state.acronym !== fee.destination() && _.contains(destinations, state.acronym);
+                return stateData.acronym !== fee.destination() && _.contains(destinations, stateData.acronym);
             },
             applyMask = _.compose(fee.value, h.applyMonetaryMask);
 
@@ -63,12 +63,12 @@ const shippingFeeInput = {
                             value: state.fee.destination(),
                             onchange: m.withAttr('value', state.fee.destination)
                         }, [
-                            (_.map(states(), state =>
+                            (_.map(states(), stateData =>
                                 m('option', {
-                                    value: state.acronym,
-                                    disabled: state.stateInUse(state)
+                                    value: stateData.acronym,
+                                    disabled: state.stateInUse(stateData)
                                 },
-                                    state.name
+                                    stateData.name
                                 )))
                         ]))
                 ),
