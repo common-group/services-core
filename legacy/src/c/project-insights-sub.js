@@ -181,7 +181,7 @@ const projectInsightsSub = {
                                 `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
                             ),
                             m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
-                                'Calculada com base nas assinaturas ativas que você possui hoje (taxas já descontadas).'
+                                'Com base nas assinaturas ativas que você possui hoje (taxas já descontadas).'
                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [
