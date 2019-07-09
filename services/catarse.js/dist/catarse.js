@@ -672,7 +672,7 @@ var addressForm = {
             defaultForeignCountryID = vm.defaultForeignCountryID,
             states = (0, _stream2.default)([]),
             zipCodeErrorMessage = (0, _stream2.default)(''),
-            fields = vnode.attrs.addressFields || vm.fields,
+            fields = vm.fields || vnode.attrs.addressFields,
             errors = {
             countryID: (0, _stream2.default)(parsedErrors ? parsedErrors.hasError('country_id') : false),
             stateID: (0, _stream2.default)(parsedErrors ? parsedErrors.hasError('state') : false),
@@ -31235,8 +31235,6 @@ var thankYou = {
             };
             _h2.default.analytics.event(analyticsData)();
         };
-
-        console.log('vnode.attrs.recommended_projects', vnode.attrs.recommended_projects);
 
         var setEvents = function setEvents() {
             sendContributionCreationData();
