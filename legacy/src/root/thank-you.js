@@ -27,8 +27,6 @@ const thankYou = {
                 h.analytics.event(analyticsData)();
             };
 
-        console.log('vnode.attrs.recommended_projects', vnode.attrs.recommended_projects);
-
         const setEvents = () => {
             sendContributionCreationData();
 
