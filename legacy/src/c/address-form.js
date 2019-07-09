@@ -21,7 +21,7 @@ const addressForm = {
             defaultForeignCountryID = vm.defaultForeignCountryID,
             states = prop([]),
             zipCodeErrorMessage = prop(''),
-            fields = vnode.attrs.addressFields || vm.fields,
+            fields = vm.fields || vnode.attrs.addressFields,
             errors = {
                 countryID: prop(parsedErrors ? parsedErrors.hasError('country_id') : false),
                 stateID: prop(parsedErrors ? parsedErrors.hasError('state') : false),
