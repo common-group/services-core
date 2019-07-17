@@ -87,7 +87,7 @@ const userSettings = {
                     if (parsedErrors) {
                         parsedErrors.resetFieldErrors();
                     }
-                    //parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
+                    parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
                     error('Erro ao atualizar informações.');
                     loading(false);
                     if (showSuccess()) {
@@ -144,7 +144,6 @@ const userSettings = {
             parsedErrors
         };
     },
-    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const user = state.user,
             fields = state.fields,
@@ -173,7 +172,7 @@ const userSettings = {
             (
                 state.showError() ? 
                     m(popNotification, {
-                        message: m.trust(state.error()),
+                        message: state.error(),
                         toggleOpt: state.showError,
                         error: true
                     }) 
