@@ -263,7 +263,6 @@ const editRewardCard = {
             isSavingReward
         };
     },
-    onbeforeupdate: _ => {},
     view: function({
         state,
         attrs

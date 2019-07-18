@@ -7,7 +7,6 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressFormNational = {
-    onbeforeupdate: function(vnode) {},
     view: function({ state, attrs }) {
         const disableInternational = attrs.disableInternational;
         const countryName = attrs.countryName;
