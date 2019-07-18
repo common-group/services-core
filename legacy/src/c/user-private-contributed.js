@@ -87,7 +87,6 @@ const userPrivateContributed = {
             loader,
         };
     },
-    onbeforeupdate: function(vnode) {},
     view: function({ state, attrs }) {
         const subsCollection = state.subscriptions.collection(),
             onlineCollection = state.onlinePages.collection(),

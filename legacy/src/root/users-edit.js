@@ -64,7 +64,6 @@ const usersEdit = {
             userDetails
         };
     },
-    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const user = state.userDetails();
 

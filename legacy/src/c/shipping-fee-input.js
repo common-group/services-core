@@ -16,7 +16,9 @@ const shippingFeeInput = {
             applyMask = _.compose(fee.value, h.applyMonetaryMask);
 
         _.extend(fee, { deleted });
-        fee.value(fee.value() ? `${h.formatNumber(fee.value(), 2, 3)}` : '0,00');
+        const onlyNumbersForFee = `${fee.value()}`.replace(/\D+/g, '');
+        const feeNumberValue = Number(onlyNumbersForFee);
+        fee.value(feeNumberValue ? `${h.formatNumber(feeNumberValue, 2, 3)}` : '0,00');
         vnode.state = {
             fee,
             applyMask,

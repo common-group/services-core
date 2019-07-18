@@ -174,7 +174,7 @@ const projectVM = {
     projectContributions,
     currentProject,
     rewardDetails: rewardVM.rewards,
-    goalDetails: projectGoalsVM.goals,
+    goalDetails: projectGoalsVM.goalsData,
     routeToProject,
     setProjectPageTitle,
     init,
