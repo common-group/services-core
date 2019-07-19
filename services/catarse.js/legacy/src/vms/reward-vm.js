@@ -1,7 +1,4 @@
-import {
-    catarse,
-    commonProject
-} from '../api';
+import { catarse, commonProject } from '../api';
 import _ from 'underscore';
 import m from 'mithril';
 import prop from 'mithril/stream';
@@ -16,40 +13,49 @@ const error = prop(''),
         id: null,
         description: '',
         shipping_options: null,
-        minimum_value: 10
+        minimum_value: 10,
     },
     contributionValue = prop(noReward.minimum_value),
     selectedReward = prop(),
     vm = catarse.filtersVM({
-        project_id: 'eq'
+        project_id: 'eq',
     });
 
-const rewardsLoader = (projectId) => {
+const rewardsLoader = projectId => {
     vm.project_id(projectId);
 
     return catarse.loaderWithToken(models.rewardDetail.getPageOptions(vm.parameters()));
 };
 
-const rewardLoader = (rewardId) => {
+const rewardLoader = rewardId => {
     const rewardvm = catarse.filtersVM({
-        id: 'eq'
+        id: 'eq',
     });
     rewardvm.id(rewardId);
 
     return catarse.loaderWithToken(models.rewardDetail.getPageOptions(rewardvm.parameters()));
 };
 
-const fetchRewards = projectId => rewardsLoader(projectId).load().then(rewards);
+const fetchRewards = projectId =>
+    rewardsLoader(projectId)
+        .load()
+        .then(rewardsData => {
+            rewards(rewardsData);
+            h.redraw();
+        });
 
-const fetchCommonRewards = (projectId) => {
+const fetchCommonRewards = projectId => {
     vm.project_id(projectId);
     const l = commonProject.loaderWithToken(models.projectReward.getPageOptions(vm.parameters()));
-    return l.load().then(rewards);
+    return l.load().then(rewardsData => {
+        rewards(rewardsData);
+        h.redraw();
+    });
 };
 
-const getFees = (reward) => {
+const getFees = reward => {
     const feesFilter = catarse.filtersVM({
-        reward_id: 'eq'
+        reward_id: 'eq',
     });
 
     feesFilter.reward_id(reward.id);
@@ -65,7 +71,7 @@ const getSelectedReward = () => {
         const contribution = JSON.parse(data);
 
         selectedReward(contribution.reward);
-        m.redraw(true);
+        h.redraw(true);
 
         return selectedReward;
     }
@@ -79,18 +85,24 @@ const selectReward = reward => () => {
         selectedReward(reward);
         if (reward.id) {
             contributionValue(h.applyMonetaryMask(`${reward.minimum_value},00`));
-        } else { // no reward
-            if (contributionValue() === '10,00' || !contributionValue())
-                contributionValue(h.applyMonetaryMask('$10,00'));
+        } else {
+            // no reward
+            if (contributionValue() === '10,00' || !contributionValue()) contributionValue(h.applyMonetaryMask('$10,00'));
         }
 
         if (reward.id) {
-            getFees(reward).then(fees);
+            getFees(reward).then(feesData => {
+                fees(feesData);
+                h.redraw();
+            });
         }
     }
 };
 
-const applyMask = _.compose(contributionValue, h.applyMonetaryMask);
+const applyMask = _.compose(
+    contributionValue,
+    h.applyMonetaryMask
+);
 
 const statesLoader = catarse.loader(models.state.getPageOptions());
 const getStates = () => {
@@ -100,13 +112,13 @@ const getStates = () => {
 
 const locationOptions = (reward, destination) => {
     const options = prop([]),
-        mapStates = _.map(states(), (state) => {
+        mapStates = _.map(states(), state => {
             let fee;
             const feeState = _.findWhere(fees(), {
-                destination: state.acronym
+                destination: state.acronym,
             });
             const feeOthers = _.findWhere(fees(), {
-                destination: 'others'
+                destination: 'others',
             });
             if (feeState) {
                 fee = feeState.value;
@@ -117,7 +129,7 @@ const locationOptions = (reward, destination) => {
             return {
                 name: state.name,
                 value: state.acronym,
-                fee
+                fee,
             };
         });
     if (reward.shipping_options === 'national') {
@@ -125,25 +137,34 @@ const locationOptions = (reward, destination) => {
     } else if (reward.shipping_options === 'international') {
         let fee;
         const feeInternational = _.findWhere(fees(), {
-            destination: 'international'
+            destination: 'international',
         });
         if (feeInternational) {
             fee = feeInternational.value;
         }
-        options(_.union([{
-            value: 'international',
-            name: 'Outside Brazil',
-            fee
-        }], mapStates));
+        options(
+            _.union(
+                [
+                    {
+                        value: 'international',
+                        name: 'Outside Brazil',
+                        fee,
+                    },
+                ],
+                mapStates
+            )
+        );
     }
 
     options(
         _.union(
-            [{
-                value: '',
-                name: 'Selecione Opção',
-                fee: 0
-            }],
+            [
+                {
+                    value: '',
+                    name: 'Selecione Opção',
+                    fee: 0,
+                },
+            ],
             options()
         )
     );
@@ -151,21 +172,26 @@ const locationOptions = (reward, destination) => {
     return options();
 };
 
-const shippingFeeById = feeId => _.findWhere(fees(), {
-    id: feeId
-});
+const shippingFeeById = feeId =>
+    _.findWhere(fees(), {
+        id: feeId,
+    });
 
-const getOtherNationalStates = () => _.reject(
-    states(),
-    state => !_.isUndefined(_.findWhere(fees(), {
-        destination: state.acronym
-    }))
-);
+const getOtherNationalStates = () =>
+    _.reject(
+        states(),
+        state =>
+            !_.isUndefined(
+                _.findWhere(fees(), {
+                    destination: state.acronym,
+                })
+            )
+    );
 
 const feeDestination = (reward, feeId) => {
     const fee = shippingFeeById(feeId) || {};
     const feeState = _.findWhere(states(), {
-        acronym: fee.destination
+        acronym: fee.destination,
     });
 
     if (feeState) {
@@ -177,39 +203,44 @@ const feeDestination = (reward, feeId) => {
     return fee.destination;
 };
 
-const shippingFeeForCurrentReward = (selectedDestination) => {
+const shippingFeeForCurrentReward = selectedDestination => {
     let currentFee = _.findWhere(fees(), {
-        destination: selectedDestination()
+        destination: selectedDestination(),
     });
 
-    if (!currentFee && _.findWhere(states(), {
-        acronym: selectedDestination()
-    })) {
+    if (
+        !currentFee &&
+        _.findWhere(states(), {
+            acronym: selectedDestination(),
+        })
+    ) {
         currentFee = _.findWhere(fees(), {
-            destination: 'others'
+            destination: 'others',
         });
     }
 
     return currentFee;
 };
 
-const createReward = (projectId, rewardData) => m.request({
-    method: 'POST',
-    url: `/projects/${projectId}/rewards.json`,
-    data: {
-        reward: rewardData
-    },
-    config: h.setCsrfToken
-});
+const createReward = (projectId, rewardData) =>
+    m.request({
+        method: 'POST',
+        url: `/projects/${projectId}/rewards.json`,
+        data: {
+            reward: rewardData,
+        },
+        config: h.setCsrfToken,
+    });
 
-const updateReward = (projectId, rewardId, rewardData) => m.request({
-    method: 'PATCH',
-    url: `/projects/${projectId}/rewards/${rewardId}.json`,
-    data: {
-        reward: rewardData
-    },
-    config: h.setCsrfToken
-});
+const updateReward = (projectId, rewardId, rewardData) =>
+    m.request({
+        method: 'PATCH',
+        url: `/projects/${projectId}/rewards/${rewardId}.json`,
+        data: {
+            reward: rewardData,
+        },
+        config: h.setCsrfToken,
+    });
 
 const uploadImage = (projectId, rewardId, rewardImageFile) => {
     const formData = new FormData();
@@ -221,19 +252,22 @@ const uploadImage = (projectId, rewardId, rewardImageFile) => {
         config: h.setCsrfToken,
         serialize(data) {
             return data;
-        }
+        },
     });
-}
+};
 
 const deleteImage = (projectId, rewardId) => {
     return m.request({
         method: 'DELETE',
         url: `/projects/${projectId}/rewards/${rewardId}/delete_image`,
-        config: h.setCsrfToken
+        config: h.setCsrfToken,
     });
-}
+};
 
-const canEdit = (reward, projectState, user) => (user || {}).is_admin || (projectState === 'draft' || (projectState === 'online' && reward.paid_count() <= 0 && (_.isFunction(reward.waiting_payment_count) ? reward.waiting_payment_count() <= 0 : true)));
+const canEdit = (reward, projectState, user) =>
+    (user || {}).is_admin ||
+    (projectState === 'draft' ||
+        (projectState === 'online' && reward.paid_count() <= 0 && (_.isFunction(reward.waiting_payment_count) ? reward.waiting_payment_count() <= 0 : true)));
 
 const canAdd = (projectState, user) => (user || {}).is_admin || projectState === 'draft' || projectState === 'online';
 
@@ -268,7 +302,7 @@ const rewardVM = {
     setValue: contributionValue,
     hasShippingOptions,
     uploadImage,
-    deleteImage
+    deleteImage,
 };
 
 export default rewardVM;
