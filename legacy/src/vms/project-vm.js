@@ -27,21 +27,23 @@ const isSubscription = (project = currentProject) => {
     return project ? project.mode === 'sub' : false;
 };
 
-const fetchSubData = (projectUuid) => {
+const fetchSubData = projectUuid => {
     const lproject = commonAnalytics.loaderWithToken(models.projectSubscribersInfo.postOptions({ id: projectUuid }));
 
-    lproject.load().then((data) => {
-        subscriptionData(data || {
-            amount_paid_for_valid_period: 0,
-            total_subscriptions: 0,
-            total_subscribers: 0,
-            new_percent: 0,
-            returning_percent: 0
-        });
+    lproject.load().then(data => {
+        subscriptionData(
+            data || {
+                amount_paid_for_valid_period: 0,
+                total_subscriptions: 0,
+                total_subscribers: 0,
+                new_percent: 0,
+                returning_percent: 0,
+            }
+        );
     });
 };
 
-const setProject = project_user_id => (data) => {
+const setProject = project_user_id => data => {
     currentProject(_.first(data));
     if (isSubscription(currentProject())) {
         fetchSubData(currentProject().common_id);
@@ -64,7 +66,7 @@ const init = (project_id, project_user_id) => {
     return lProject
         .load()
         .then(setProject(project_user_id))
-        .then(_ => m.redraw());
+        .then(() => h.redraw());
 };
 
 const resetData = () => {
@@ -89,13 +91,13 @@ const getCurrentProject = () => {
 
     if (data) {
         const jsonData = JSON.parse(data);
-            
+
         const { projectId, projectUserId } = jsonData; // legacy
         const { project_id, project_user_id } = jsonData;
 
         const project_data = {
-            project_id : (project_id || projectId),
-            project_user_id : (project_user_id || projectUserId)
+            project_id: project_id || projectId,
+            project_user_id: project_user_id || projectUserId,
         };
 
         // fill currentProject when jsonData has id and mode (legacy code)
@@ -105,7 +107,7 @@ const getCurrentProject = () => {
 
         init(project_data.project_id, project_data.project_user_id);
 
-        m.redraw();
+        h.redraw();
 
         return currentProject();
     }
@@ -141,22 +143,27 @@ const fetchProject = (projectId, handlePromise = true, customProp = currentProje
     } else {
         lproject
             .load()
-            .then(_.compose(customProp, _.first))
+            .then(
+                _.compose(
+                    customProp,
+                    _.first
+                )
+            )
             .then(_ => m.redraw());
         return customProp;
     }
 };
 
-
-const updateProject = (projectId, projectData) => m.request({
-    method: 'PUT',
-    url: `/projects/${projectId}.json`,
-    data: { project: projectData },
-    config: h.setCsrfToken
-});
+const updateProject = (projectId, projectData) =>
+    m.request({
+        method: 'PUT',
+        url: `/projects/${projectId}.json`,
+        data: { project: projectData },
+        config: h.setCsrfToken,
+    });
 
 const subscribeActionKey = 'subscribeProject';
-const storeSubscribeAction = (route) => {
+const storeSubscribeAction = route => {
     h.storeAction(subscribeActionKey, route);
 };
 
@@ -166,7 +173,6 @@ const checkSubscribeAction = () => {
         m.route.set(actionRoute);
     }
 };
-
 
 const projectVM = {
     userDetails,
@@ -184,7 +190,7 @@ const projectVM = {
     updateProject,
     isSubscription,
     storeSubscribeAction,
-    checkSubscribeAction
+    checkSubscribeAction,
 };
 
 export default projectVM;
