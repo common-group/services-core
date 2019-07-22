@@ -6,6 +6,7 @@ import models from '../models';
 import h from '../h';
 
 const goals = prop([]),
+    goalsData = prop([]),
     vm = catarse.filtersVM({
         project_id: 'eq'
     });
@@ -30,10 +31,10 @@ const addGoal = (projectId) => {
     }));
 };
 
-const fetchGoals = projectId => goalsLoader(projectId).load().then(goalsData => {
-    goals(goalsData);
+const fetchGoals = projectId => goalsLoader(projectId).load().then(goalsRawData => {
+    goalsData(goalsRawData);
     setTimeout(_ => {
-        m.redraw();
+        h.redraw();
     }, 1000);
 });
 
@@ -74,6 +75,7 @@ const updateGoal = (projectId, goalId, goalData) => m.request({
 
 const projectGoalsVM = {
     goals,
+    goalsData,
     fetchGoals,
     fetchGoalsEdit,
     addGoal,

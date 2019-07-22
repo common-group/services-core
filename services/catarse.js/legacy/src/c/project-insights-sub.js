@@ -160,9 +160,9 @@ const projectInsightsSub = {
                 ]),
                 m('.w-container', [
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        subscribersDetails && !_.isEmpty(state.projectGoalsVM.goals()) ?
+                        subscribersDetails && !_.isEmpty(state.projectGoalsVM.goalsData()) ?
                         m(projectGoalsBoxDashboard, {
-                            goalDetails: state.projectGoalsVM.goals,
+                            goalDetails: state.projectGoalsVM.goalsData,
                             amount: subscribersDetails.amount_paid_for_valid_period
                         }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
