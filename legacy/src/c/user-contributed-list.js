@@ -16,7 +16,6 @@ const userContributedList = {
             title
         };
     },
-    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const collection = attrs.collection,
             isSubscription = attrs.isSubscription,

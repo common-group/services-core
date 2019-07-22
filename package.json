@@ -37,6 +37,7 @@
     "scripts": {
         "test": "gulp test",
         "start": "webpack -d --watch",
+        "start-dev" : "NODE_OPTIONS=\"--max-old-space-size=512\" webpack -d --watch",
         "build": "./node_modules/.bin/webpack",
         "build:prod": "NODE_ENV=production ./node_modules/.bin/webpack --mode production",
         "build:dev": "./node_modules/.bin/webpack-dev-server"
