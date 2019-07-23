@@ -16,7 +16,7 @@ const currentProject = prop(),
     idVM = h.idVM;
 
 prop.merge([currentProject, userDetails, subscriptionData, projectContributions]).map(() => {
-    m.redraw();
+    h.redraw();
 });
 
 const isSubscription = (project = currentProject) => {
