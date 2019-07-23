@@ -173,7 +173,7 @@ const posts = {
             return rewards;
         };
 
-        const addDataFieldToNoCommonRewards = (rewards) => rewards.map(r => _.extend(r, { data: r }));
+        const addDataFieldToNoCommonRewards = (rewards) => rewards ? rewards.map(r => _.extend(r, { data: r })) : [];
         const remapMinimumValue = (rewards) => rewards.map(r => {
             r.data.minimum_value = parseInt(r.data.minimum_value) / 100; 
             return r;
