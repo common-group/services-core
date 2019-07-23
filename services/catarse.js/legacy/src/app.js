@@ -7,6 +7,13 @@ import { isNumber } from 'util';
 import { wrap } from './wrap';
 
 (function () {
+    /// Setup an AUTO-SCROLL TOP when change route
+    const pushState = history.pushState;
+    history.pushState = function () {
+        pushState.apply(history, arguments);
+        h.scrollTop();
+    };
+    
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.responsive = false;
     Chart.defaults.global.scaleFontFamily = 'proxima-nova';
