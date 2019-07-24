@@ -557,10 +557,14 @@ const _dataCache = {},
     redrawHashChange = before => {
         const callback = _.isFunction(before)
             ? () => {
-                  before();
-                  m.redraw();
+                    before();
+                    scrollTop();
+                    redraw();
               }
-            : m.redraw;
+            : () => {
+                scrollTop();
+                redraw();
+            }
 
         window.addEventListener('hashchange', callback, false);
     },
