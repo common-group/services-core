@@ -120,7 +120,7 @@ const routeToProject = (project, ref) => () => {
 
     resetData();
 
-    m.route(h.buildLink(project.permalink, ref), { project_id: project.project_id, project_user_id: project.project_user_id });
+    m.route.set(h.buildLink(project.permalink, ref), { project_id: project.project_id, project_user_id: project.project_user_id });
 
     return false;
 };
