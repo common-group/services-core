@@ -42,6 +42,7 @@ const fetchRewards = projectId =>
         .then(rewardsData => {
             rewards(rewardsData);
             h.redraw();
+            return rewardsData;
         });
 
 const fetchCommonRewards = projectId => {
@@ -50,6 +51,7 @@ const fetchCommonRewards = projectId => {
     return l.load().then(rewardsData => {
         rewards(rewardsData);
         h.redraw();
+        return rewardsData;
     });
 };
 

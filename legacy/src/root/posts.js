@@ -148,7 +148,7 @@ const posts = {
         listVM.load().then((posts) => {
             projectPosts(posts);
             isProjectPostsLoaded(true);
-            m.redraw();
+            h.redraw();
         });
 
         const filterOnlyPaidRewards = (r) => {
@@ -167,14 +167,14 @@ const posts = {
                     reward: pr
                 };
             });
-
-            m.redraw();
+            
             fields.paid_rewards(checkboxesArray);
+            h.redraw();
             return rewards;
         };
 
         const addDataFieldToNoCommonRewards = (rewards) => rewards ? rewards.map(r => _.extend(r, { data: r })) : [];
-        const remapMinimumValue = (rewards) => rewards.map(r => {
+        const remapMinimumValue = (rewards) => rewards.map(r => {            
             r.data.minimum_value = parseInt(r.data.minimum_value) / 100; 
             return r;
         });
@@ -185,12 +185,15 @@ const posts = {
                 rewardVM
                     .fetchCommonRewards(_.first(projectDetails()).common_id)
                     .then(remapMinimumValue)
-                    .then(createCheckboxesControlForRewardSelected);
+                    .then(createCheckboxesControlForRewardSelected)
+                    .then(() => h.redraw());
+                    
             } else {
                 rewardVM
                     .fetchRewards(project_id)
                     .then(addDataFieldToNoCommonRewards)
-                    .then(createCheckboxesControlForRewardSelected);
+                    .then(createCheckboxesControlForRewardSelected)
+                    .then(() => h.redraw());
             }
 
             isProjectLoaded(true);
