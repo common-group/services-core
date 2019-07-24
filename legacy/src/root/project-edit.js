@@ -34,7 +34,6 @@ const projectEdit = {
         const displayTabContent = () => {
 
             hash(window.location.hash);
-            h.scrollTop();
             const isUnpublishedAdmin = !project().is_published || project().is_admin_role;
             const isEmptyHash = _.isEmpty(hash()) || hash() === '#_=_';
 
