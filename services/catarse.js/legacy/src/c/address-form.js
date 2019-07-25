@@ -179,7 +179,7 @@ const addressForm = {
             applyPhoneMask = state.applyPhoneMask;
 
         attrs.fields().address(address);
-        if (attrs.stateName()) {
+        if (attrs.stateName && attrs.stateName()) {
             const stateData = _.find(state.states(), stateData => stateData.id === parseInt(fields.stateID()));
             attrs.stateName(state.states() && fields.stateID() ? stateData.name : '');
         }
