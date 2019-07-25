@@ -179,8 +179,9 @@ const addressForm = {
             applyPhoneMask = state.applyPhoneMask;
 
         attrs.fields().address(address);
-        if (attrs.stateName) {
-            attrs.stateName(state.states() && fields.stateID() ? _.find(state.states(), state => state.id === parseInt(fields.stateID())).name : '');
+        if (attrs.stateName()) {
+            const stateData = _.find(state.states(), stateData => stateData.id === parseInt(fields.stateID()));
+            attrs.stateName(state.states() && fields.stateID() ? stateData.name : '');
         }
 
         return m('#address-form.u-marginbottom-30.w-form', [
