@@ -27,20 +27,19 @@ const projectsSubscriptionCheckout = {
     oninit: function(vnode) {
         projectVM.getCurrentProject();
 
-        const project = projectVM.currentProject,
-            project_id = m.route.param('project_id'),
-            vm = paymentVM(),
-            showPaymentForm = prop(false),
-            addVM = prop(),
-            documentMask = _.partial(h.mask, '999.999.999-99'),
-            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            isCnpj = prop(false),
-            currentUserID = h.getUserID(),
-            user = usersVM.getCurrentUser(),
-            oldSubscription = prop({}),
-            countriesLoader = catarse.loader(models.country.getPageOptions()),
-            error = prop();
-
+        const project = projectVM.currentProject;
+        const project_id = m.route.param('project_id');
+        const vm = paymentVM();
+        const showPaymentForm = prop(false);
+        const documentMask = _.partial(h.mask, '999.999.999-99');
+        const documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
+        const isCnpj = prop(false);
+        const currentUserID = h.getUserID();
+        const user = usersVM.getCurrentUser();
+        const oldSubscription = prop({});
+        const countriesLoader = catarse.loader(models.country.getPageOptions());
+        const error = prop();
+        
         const subscriptionId = prop(m.route.param('subscription_id'));
         const isEdit = prop(Boolean(subscriptionId()));
         const subscriptionStatus = m.route.param('subscription_status');
@@ -127,14 +126,14 @@ const projectsSubscriptionCheckout = {
         const isLongDescription = reward => reward.description && reward.description.length > 110;
 
         vm.fetchUser().then(() => {
-            addVM(addressVM({
-                data: vm.fields.address()
-            }));
+
             countriesLoader
                 .load()
                 .then((countryData) => {
-                    addVM().countries(_.sortBy(countryData, 'name_en'));
+                    vm.fields.address().countries(_.sortBy(countryData, 'name_en'));
+                    h.redraw();
                 });
+            h.redraw();
         });
 
         vnode.state = {
@@ -146,7 +145,6 @@ const projectsSubscriptionCheckout = {
             showPaymentForm,
             reward,
             value,
-            addVM,
             scope,
             isCnpj,
             isEdit,
@@ -164,7 +162,6 @@ const projectsSubscriptionCheckout = {
     view: function({state}) {
         const user = state.user(),
             project_id = state.project_id,
-            addVM = state.addVM(),
             project = state.project(),
             formatedValue = h.formatNumber(state.value, 2, 3),
             anonymousCheckbox = m('.w-row', [
@@ -195,7 +192,7 @@ const projectsSubscriptionCheckout = {
                 ) : '')
             ]);
 
-        return m('#project-payment', (addVM && user && !_.isEmpty(project)) ? [
+        return m('#project-payment', (state.vm.fields.address() && user && !_.isEmpty(project)) ? [
             m(`.w-section.section-product.${projectVM.currentProject().mode}`),
             m('.w-section.w-clearfix.section', [
                 m('.w-col',
@@ -313,7 +310,7 @@ const projectsSubscriptionCheckout = {
                                             }),
                                             state.fieldHasError('completeName')
                                         ]),
-                                        m('.w-col.w-col-5', addVM.international() ? '' : [
+                                        m('.w-col.w-col-5', state.vm.isInternational() ? '' : [
                                             m('label.field-label.fontweight-semibold[for=\'document\']',
                                                 window.I18n.t('fields.owner_document', state.scope())
                                             ),
@@ -332,10 +329,9 @@ const projectsSubscriptionCheckout = {
 
                                 m('.card.card-terciary.u-radius.u-marginbottom-40',
                                     m(addressForm, {
-                                        addVM,
-                                        addressFields: addVM.fields,
-                                        fields: prop(state.vm.fields),
-                                        international: addVM.international,
+                                        addVM: state.vm.fields.address(),
+                                        addressFields: state.vm.fields.address().fields,
+                                        international: state.vm.isInternational,
                                         hideNationality: true
                                     })
                                 )
@@ -352,7 +348,7 @@ const projectsSubscriptionCheckout = {
                             )
                         ) : ''),
                         state.showPaymentForm() ? m(paymentForm, {
-                            addressVM: addVM,
+                            addressVM: state.vm.fields.address(),
                             vm: state.vm,
                             project_id,
                             isSubscriptionEdit: state.isEdit,

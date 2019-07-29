@@ -154,6 +154,7 @@ const processCreditCard = (cardHash, fields) => {
 };
 
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) => {
+
     if (!fields) {
         return false;
     }
@@ -167,7 +168,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
     const card = setNewCreditCard(fields.creditCardFields);
 
     const customer = fields.fields;
-    const address = customer.address();
+    const address = customer.address().getFields();
     const phoneDdd = address.phone_number ? address.phone_number.match(/\(([^)]*)\)/)[1] : null;
     const phoneNumber = address.phone_number ? address.phone_number.substr(5, address.phone_number.length) : null;
     const addressState = address.state_id ? _.findWhere(addVM.states(), { id: address.state_id }) : address.address_state;
@@ -244,7 +245,7 @@ const sendSlipPayment = (fields, commonData) => {
     m.redraw();
 
     const customer = fields.fields;
-    const address = customer.address();
+    const address = customer.address().getFields();
     const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
     const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
     const addressState = _.findWhere(addressVM.states(), { id: address.state_id });
