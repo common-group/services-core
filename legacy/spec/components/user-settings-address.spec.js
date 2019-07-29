@@ -3,6 +3,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../../src/h';
+import addressVM from '../../src/vms/address-vm';
 import userSettingsAddress from '../../src/c/user-settings-address';
 
 describe('UserSettingsAddress', () => {
@@ -40,7 +41,10 @@ describe('UserSettingsAddress', () => {
     describe('view', () => {
 
         beforeAll(() => {
-            $output = mq(m(userSettingsAddress, { fields, parsedErrors }));
+            $output = mq(m(userSettingsAddress, { 
+                addVM: prop(addressVM({ data: fields() })), 
+                parsedErrors 
+            }));
         });
 
         it('should contains zip code entry', () => {
