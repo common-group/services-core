@@ -11,6 +11,7 @@ import rewardCardBig from '../c/reward-card-big';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
 import rewardVM from '../vms/reward-vm';
+import addressVM from '../vms/address-vm';
 import addressForm from '../c/address-form';
 
 const addressScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
@@ -30,7 +31,7 @@ const surveysShow = {
             countryName = prop(''),
             stateName = prop(''),
             answeredAt = prop(''),
-            fields = prop({}),
+            addVM = prop(addressVM({ data: {} })),
             openQuestions = prop([]),
             multipleChoiceQuestions = prop([]),
             user = prop({}),
@@ -49,7 +50,7 @@ const surveysShow = {
             preview = () => {
                 if (survey().confirm_address) {
                     window.location.hash = '#address-form';
-                    if (fields().validate()) {
+                    if (addVM().fields.validate()) {
                         scroll(0, 0);
                         showPreview.toggle();
                     }
@@ -61,7 +62,7 @@ const surveysShow = {
                 const data = {};
                 _.extend(data, {
                     survey_address_answers_attributes: {
-                        addresses_attributes: fields().address()
+                        addresses_attributes: addVM().getFields()
                     }
                 });
                 _.extend(data, {
@@ -114,9 +115,8 @@ const surveysShow = {
 
                 lUser.load().then((userData) => {
                     user(_.first(userData));
-                    fields({
-                        address: prop(surveyData.address || _.omit(user().address, 'id') || {})
-                    });
+                    addVM().setFields(surveyData.address || _.omit(user().address, 'id') || {});
+                    h.redraw();
                 });
 
                 _.map(surveyData.open_questions, (question) => {
@@ -142,7 +142,7 @@ const surveysShow = {
             user,
             preview,
             finished,
-            fields,
+            addVM,
             reward,
             sendMessage,
             displayModal,
@@ -217,7 +217,7 @@ const surveysShow = {
                         confirmAddress: survey.confirm_address,
                         countryName: countryName(),
                         stateName: stateName(),
-                        fields: state.fields().address(),
+                        fields: state.addVM().getFields(),
                         openQuestions,
                         multipleChoiceQuestions
                     })
@@ -245,7 +245,7 @@ const surveysShow = {
                         confirmAddress: survey.confirm_address,
                         countryName: countryName(),
                         stateName: stateName(),
-                        fields: state.fields().address(),
+                        fields: state.addVM().getFields(),
                         openQuestions,
                         multipleChoiceQuestions
                     }),
@@ -338,7 +338,7 @@ const surveysShow = {
                                                 confirmAddress: survey.confirm_address,
                                                 countryName: countryName(),
                                                 stateName: stateName(),
-                                                fields: state.fields().address(),
+                                                fields: state.addVM().getFields(),
                                                 openQuestions,
                                                 multipleChoiceQuestions
                                             }) : ''),
@@ -369,7 +369,7 @@ const surveysShow = {
                                                     m(addressForm, {
                                                         countryName,
                                                         stateName,
-                                                        fields: state.fields
+                                                        addressFields: state.addVM().fields
                                                     })
                                                 ] :
                                                     ''),

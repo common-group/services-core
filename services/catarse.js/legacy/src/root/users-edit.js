@@ -33,7 +33,7 @@ const usersEdit = {
                     }),
                     '#settings': m(userSettings, {
                         userId,
-                        user
+                        user: userDetails
                     }),
                     '#notifications': m(userNotifications, {
                         userId,

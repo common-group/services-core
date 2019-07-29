@@ -12,6 +12,7 @@ import userSettingsResponsible from './user-settings-responsible';
 import userSettingsAddress from './user-settings-address';
 import userSettingsSavedCreditCards from './user-settings-saved-credit-cards';
 import userSettingsHelp from './user-settings-help';
+import addressVM from '../vms/address-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
@@ -19,27 +20,29 @@ const userSettings = {
     oninit: function(vnode) {
         let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
-        const user = vnode.attrs.user,
-            fields = prop({
-                owner_document: prop(user.owner_document || ''),
-                name: prop(user.name || ''),
-                state_inscription: prop(user.state_inscription || ''),
-                address: prop(user.address || {}),
-                birth_date: prop((user.birth_date ? h.momentify(user.birth_date) : '')),
-                account_type: prop(user.account_type || '')
-            }),
-            loading = prop(false),
-            user_id = vnode.attrs.userId,
-            error = prop(''),
-            loader = prop(true),
-            showSuccess = h.toggleProp(false, true),
-            showError = h.toggleProp(false, true),
-            documentMask = _.partial(h.mask, '999.999.999-99'),
-            documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99'),
-            birthDayMask = _.partial(h.mask, '99/99/9999'),
-            creditCards = prop(),
-            toDeleteCard = prop(-1),
-            requestRedraw = () => {
+        const user = vnode.attrs.user();
+        const userAddress = user.address || {};
+        const addVM = prop(addressVM({ data: userAddress }));
+        const fields = prop({
+            owner_document: prop(user.owner_document || ''),
+            name: prop(user.name || ''),
+            state_inscription: prop(user.state_inscription || ''),
+            address: prop(user.address || {}),
+            birth_date: prop((user.birth_date ? h.momentify(user.birth_date) : '')),
+            account_type: prop(user.account_type || '')
+        });
+        const loading = prop(false);
+        const user_id = vnode.attrs.userId;
+        const error = prop('');
+        const loader = prop(true);
+        const showSuccess = h.toggleProp(false, true);
+        const showError = h.toggleProp(false, true);
+        const documentMask = _.partial(h.mask, '999.999.999-99');
+        const documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99');
+        const birthDayMask = _.partial(h.mask, '99/99/9999');
+        const creditCards = prop();
+        const toDeleteCard = prop(-1);
+        const requestRedraw = () => {
                 m.redraw();
             },
             deleteCard = id => () => {
@@ -56,7 +59,7 @@ const userSettings = {
                 const userData = {
                     cpf: fields().owner_document(),
                     name: fields().name(),
-                    address_attributes: fields().address(),
+                    address_attributes: addVM().getFields(),
                     account_type: fields().account_type(),
                     birth_date: fields().birth_date(),
                     state_inscription: fields().state_inscription
@@ -125,6 +128,16 @@ const userSettings = {
             parsedErrors.inlineError('country_id', false);
         }
 
+        vnode.attrs.user.map((userData) => {
+            fields().owner_document(userData.owner_document || '');
+            fields().name(userData.name || '');
+            fields().state_inscription(userData.state_inscription || '');
+            fields().address(userData.address || {});
+            fields().birth_date((userData.birth_date ? h.momentify(userData.birth_date) : ''));
+            fields().account_type(userData.account_type || '');
+            addVM().setFields(userData.address || {});
+        });
+
         vnode.state = {
             handleError,
             applyDocumentMask,
@@ -132,7 +145,6 @@ const userSettings = {
             loader,
             showSuccess,
             showError,
-            user,
             onSubmit,
             error,
             creditCards,
@@ -141,23 +153,26 @@ const userSettings = {
             setCardDeletionForm,
             applyBirthDateMask,
             loading,
-            parsedErrors
+            parsedErrors,
+            addVM
         };
     },
     view: function({state, attrs}) {
-        const user = state.user,
-            fields = state.fields,
-            hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1),
-            disableFields = (user.is_admin_role ? false : (hasContributedOrPublished && !_.isEmpty(user.name) && !_.isEmpty(user.owner_document))),
-            applyBirthDateMask = state.applyBirthDateMask,
-            applyDocumentMask = state.applyDocumentMask,
-            parsedErrors = state.parsedErrors,
-            creditCards = state.creditCards,
-            toDeleteCard = state.toDeleteCard,
-            deleteCard = state.deleteCard,
-            setCardDeletionForm = state.setCardDeletionForm,
-            shouldHideCreditCards = attrs.hideCreditCards,
-            isProjectUserEdit = !!attrs.isProjectUserEdit;
+        
+        const user = attrs.user();
+        const fields = state.fields;
+        const addVM = state.addVM;
+        const hasContributedOrPublished = (user.total_contributed_projects >= 1 || user.total_published_projects >= 1);
+        const disableFields = (user.is_admin_role ? false : (hasContributedOrPublished && !_.isEmpty(user.name) && !_.isEmpty(user.owner_document)));
+        const applyBirthDateMask = state.applyBirthDateMask;
+        const applyDocumentMask = state.applyDocumentMask;
+        const parsedErrors = state.parsedErrors;
+        const creditCards = state.creditCards;
+        const toDeleteCard = state.toDeleteCard;
+        const deleteCard = state.deleteCard;
+        const setCardDeletionForm = state.setCardDeletionForm;
+        const shouldHideCreditCards = attrs.hideCreditCards;
+        const isProjectUserEdit = !!attrs.isProjectUserEdit;
 
         return m('[id=\'settings-tab\']', [
             (
@@ -187,14 +202,14 @@ const userSettings = {
                                 m('.w-row', [
                                     m(".w-col.w-col-8", [
                                         m(userSettingsResponsible, { parsedErrors, fields, user, disableFields, applyDocumentMask, applyBirthDateMask }),
-                                        m(userSettingsAddress, { fields, parsedErrors })
+                                        m(userSettingsAddress, { addVM, parsedErrors })
                                     ]),
                                     m(userSettingsHelp, {})
                                 ])
                             : 
                                 m('.w-col.w-col-10.w-col-push-1', [
                                     m(userSettingsResponsible, { parsedErrors, fields, user, disableFields, applyDocumentMask, applyBirthDateMask }),
-                                    m(userSettingsAddress, { fields, parsedErrors }),
+                                    m(userSettingsAddress, { addVM, parsedErrors }),
                                     (shouldHideCreditCards ? '' : m(userSettingsSavedCreditCards, { user, creditCards, setCardDeletionForm, deleteCard, toDeleteCard }))
                                 ])
                         )
