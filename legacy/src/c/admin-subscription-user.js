@@ -32,7 +32,8 @@ const adminSubscriptionUser = {
     },
     view: function({state, attrs}) {
         const item = attrs.item,
-            customer = item.checkout_data ? item.checkout_data.customer : {},
+            customerData = item.checkout_data ? item.checkout_data.customer : {},
+            customer = customerData ? customerData : {},
             user = {
                 profile_img_thumbnail: state.user() ? state.user().profile_img_thumbnail : '',
                 id: item.user_external_id,
