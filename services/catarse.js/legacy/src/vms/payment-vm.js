@@ -4,13 +4,14 @@ import _ from 'underscore';
 import moment, { defaultFormat } from 'moment';
 import h from '../h';
 import usersVM from './user-vm';
+import addressVM from './address-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions.edit.errors');
 const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_international.errors');
 
 const paymentVM = () => {
     const pagarme = prop({}),
-        defaultCountryID = 36,
+        defaultCountryID = addressVM.defaultCountryID,
         submissionError = prop(false),
         isLoading = prop(false);
 
@@ -23,7 +24,7 @@ const paymentVM = () => {
     const fields = {
         completeName: prop(''),
         anonymous: h.toggleProp(false, true),
-        address: prop({ country_id: defaultCountryID }),
+        address: prop(addressVM({ data: { country_id: addressVM.defaultCountryID } })),
         ownerDocument: prop(''),
         errors: prop([])
     };
@@ -43,7 +44,7 @@ const paymentVM = () => {
         const data = _.first(fetchedData) || { address: {} };
 
         if (!_.isEmpty(data.address)) {
-            fields.address(_.omit(data.address, 'id'));
+            fields.address().setFields(data.address);
         }
 
         fields.completeName(data.name);
@@ -78,7 +79,13 @@ const paymentVM = () => {
         return yearsOptions;
     };
 
-    const isInternational = () => parseInt(fields.address().country_id) !== defaultCountryID;
+    const isInternational = (value) => {
+        if (value) {
+            fields.address().international(value);
+            return value;
+        }
+        return parseInt(fields.address().fields.countryID()) !== defaultCountryID;
+    }
 
     const scope = data => isInternational() ? I18nIntScope(data) : I18nScope(data);
 
@@ -126,7 +133,7 @@ const paymentVM = () => {
 
     const validate = () => {
         fields.errors([]);
-        if (!fields.validate()) {
+        if (!fields.address().fields.validate()) {
             return false;
         }
 
@@ -319,7 +326,7 @@ const paymentVM = () => {
             anonymous: fields.anonymous(),
             payer_document: fields.ownerDocument(),
             payer_name: fields.completeName(),
-            address_attributes: fields.address(),
+            address_attributes: fields.address().getFields(),
             card_owner_document: creditCardFields.cardOwnerDocument()
         };
 
@@ -371,7 +378,8 @@ const paymentVM = () => {
                 m.redraw();
                 updateContributionData(contribution_id, project_id)
                     .then(checkAndPayCreditCard({resolve, reject}, selectedCreditCard, contribution_id, project_id, selectedInstallment))
-                    .catch(() => {
+                    .catch((errorMessage) => {
+                        console.log('Error sending payment:', errorMessage);
                         isLoading(false);
                         reject();
                     });
@@ -414,7 +422,7 @@ const paymentVM = () => {
 
     const fetchUser = () => usersVM.fetchUser(currentUser.user_id, false).then(userDetails => {
         populateForm(userDetails);
-        m.redraw();
+        h.redraw();
         return userDetails;
     });
 

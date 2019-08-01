@@ -181,7 +181,7 @@ const userBalanceRequestModelContent = {
                     m(UserOwnerBox, { user: attrs.user, hideAvatar: true }),
                     m(userBankForm, { user: attrs.user, parsedErrors: state.parsedErrors, fields: state.fields, bankCode: state.bankCode, bankInput: state.bankInput })
                 ]))),
-            (state.displayConfirmation() ? m('.modal-dialog-nav-bottom', { style: 'position: relative' }, [
+            (state.displayConfirmation() ? m('.modal-dialog-nav-bottom.u-margintop-40', { style: 'position: relative' }, [
                 m('.w-row', [
                     m('.w-col.w-col-1'),
                     m('.w-col.w-col-5',

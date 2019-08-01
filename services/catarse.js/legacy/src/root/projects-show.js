@@ -61,7 +61,7 @@ const projectsShow = {
                     subscriptionVM
                         .getUserProjectSubscriptions(currentUser.common_id, projectVM.currentProject().common_id, statuses)
                         .then(userProjectSubscriptions)
-                        .then(() => m.redraw());
+                        .then(() => h.redraw());
                 }
             }
         };

@@ -1,6 +1,6 @@
 import m from 'mithril';
 import prop from 'mithril/stream';
-import moment from 'moment';
+import moment, { min } from 'moment';
 import _ from 'underscore';
 import { catarse, catarseMoments, commonAnalytics } from '../api';
 import models from '../models';
@@ -139,9 +139,10 @@ const projectInsightsSub = {
             subscribersDetails = attrs.subscribersDetails,
             balanceData = (state.balanceData() && !_.isNull(_.first(state.balanceData())) ? _.first(state.balanceData()) : null);
         
-        const averageAmount = state.insightResumeDataLastWeek().mean_amount / 100.0;
-        const totalAmountFromLastWeek = state.insightResumeDataLastWeek().total_amount / 100.0;
-        const totalAmountFromLast2Week = state.insightResumeDataLast2Week().total_amount / 100.0;
+        const atLeastZero = num => (num === null || isNaN(num)) ? 0 : Math.max(0, num);
+        const averageAmount = atLeastZero(state.insightResumeDataLastWeek().mean_amount) / 100.0;
+        const totalAmountFromLastWeek = atLeastZero(state.insightResumeDataLastWeek().total_amount) / 100.0;
+        const totalAmountFromLast2Week = atLeastZero(state.insightResumeDataLast2Week().total_amount) / 100.0;
 
         return m('.project-insights', !attrs.l() ? [
             m(`.w-section.section-product.${project.mode}`),
@@ -159,9 +160,9 @@ const projectInsightsSub = {
                 ]),
                 m('.w-container', [
                     m('.flex-row.u-marginbottom-40.u-text-center-small-only', [
-                        subscribersDetails && !_.isEmpty(state.projectGoalsVM.goals()) ?
+                        subscribersDetails && !_.isEmpty(state.projectGoalsVM.goalsData()) ?
                         m(projectGoalsBoxDashboard, {
-                            goalDetails: state.projectGoalsVM.goals,
+                            goalDetails: state.projectGoalsVM.goalsData,
                             amount: subscribersDetails.amount_paid_for_valid_period
                         }) : '',
                         m('.card.card-terciary.flex-column.u-marginbottom-10.u-radius', [
@@ -180,7 +181,7 @@ const projectInsightsSub = {
                                 `R$${h.formatNumber(subscribersDetails.amount_paid_for_valid_period, 2, 3)}`
                             ),
                             m('.fontsize-mini.fontcolor-secondary.lineheight-tighter',
-                                'Calculada com base nas assinaturas ativas que você possui hoje (taxas já descontadas).'
+                                'Com base nas assinaturas ativas que você possui hoje (taxas já descontadas).'
                             )
                         ]),
                         m('.card.flex-column.u-marginbottom-10.u-radius', [
@@ -226,7 +227,7 @@ const projectInsightsSub = {
                             }),
                             m(insightsInfoBox, {
                                 label: 'Nova receita',
-                                info: `R$${totalAmountFromLastWeek ? `${h.formatNumber(totalAmountFromLastWeek, 2, 3)}` : '--'}`,
+                                info: `R$${h.formatNumber(totalAmountFromLastWeek, 2, 3)}`,
                                 newCount: totalAmountFromLastWeek,
                                 oldCount: totalAmountFromLast2Week
                             })

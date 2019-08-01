@@ -174,7 +174,7 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
                     _.first
                 )
             )
-            .then(_ => m.redraw());
+            .then(_ => h.redraw());
         return customProp;
     }
 };

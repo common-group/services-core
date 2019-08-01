@@ -11,18 +11,21 @@ import models from '../models';
 
 const adminSubscriptionDetail = {
     oninit: function(vnode) {
-        let l,
-            rL;
         const loadReward = () => {
-            const rewardFilterVM = commonProject.filtersVM({
-                id: 'eq'
-            });
-            rewardFilterVM.id(vnode.attrs.item.reward_id);
-            rL = commonProject.loaderWithToken(models.projectReward.getRowOptions(rewardFilterVM.parameters()));
+            
             const reward = prop({});
-            rL.load().then((data) => {
-                reward(_.first(data));
-            });
+
+            if (vnode.attrs.item.reward_id) {
+                const rewardFilterVM = commonProject.filtersVM({ id: 'eq' });
+                rewardFilterVM.id(vnode.attrs.item.reward_id);
+                const rewardsLoader = commonProject.loaderWithToken(models.projectReward.getRowOptions(rewardFilterVM.parameters()));
+                rewardsLoader
+                    .load()
+                    .then((data) => {
+                        reward(_.first(data));
+                        h.redraw();
+                    });
+            }
 
             return reward;
         };
@@ -56,13 +59,24 @@ const adminSubscriptionDetail = {
                 notificationFilterVM.user_id(vnode.attrs.item.user_id);
                 notificationFilterVM.project_id(vnode.attrs.item.project_id);
     
-                notificationsLoader.firstPage(notificationFilterVM.parameters()).then(addNotificationsToInternal);
+                notificationsLoader
+                    .firstPage(notificationFilterVM.parameters())
+                    .then(addNotificationsToInternalData => {
+                        addNotificationsToInternal(addNotificationsToInternalData);
+                        h.redraw();
+                    });
+
                 isFirstPage = false;
             }
             else
             {
                 // Next pages set the notifications with all notifications got from endpoint
-                notificationsLoader.nextPage().then(addNotificationsToInternal);
+                notificationsLoader
+                    .nextPage()
+                    .then(addNotificationsToInternalData => {
+                        addNotificationsToInternal(addNotificationsToInternalData);
+                        h.redraw();
+                    });
             }
 
             return notificationsInternal;
@@ -74,7 +88,12 @@ const adminSubscriptionDetail = {
             const lPaymentTransitions = commonPayment.loaderWithToken(
                 models.subscriptionTransition.getPageOptions(filterVM.parameters()));
 
-            lPaymentTransitions.load().then(transitions);
+            lPaymentTransitions
+                .load()
+                .then(transitionsData => {
+                    transitions(transitionsData);
+                    h.redraw();
+                });
 
             return transitions;
         };
@@ -94,6 +113,8 @@ const adminSubscriptionDetail = {
                     });
                 });
                 payments(data);
+
+                h.redraw();
             });
 
             return payments;
@@ -113,8 +134,7 @@ const adminSubscriptionDetail = {
             notificationsLoader,
             currentPayment,
             clearSelected,
-            reward: loadReward(),
-            l
+            reward: loadReward()
         };
     },
     view: function({state, attrs}) {
@@ -190,11 +210,7 @@ const adminSubscriptionDetail = {
                         m('br'),
                         `Valor: R$${currentPayment().amount / 100}`,
                         m('br'),
-                        // 'Taxa: R$3,35',
-                        // m('br'),
                         !_.isEmpty(reward) ? `Recompensa: R$${reward.data.minimum_value / 100} - ${reward.data.title} - ${reward.data.description.substring(0, 90)}(...)` : 'Sem recompensa',
-                        // m('br'),
-                        // 'Anônimo: Não',
                         m('br'),
                         `Id pagamento: ${currentPayment().id}`,
                         m('br'),
@@ -203,15 +219,6 @@ const adminSubscriptionDetail = {
                         'Apoio:',
                         m.trust('&nbsp;'),
                         currentPayment().subscription_id,
-                        // m('br'),
-                        // 'Chave:',
-                        // m.trust('&nbsp;'),
-                        // m('br'),
-                        // '7809d09d-6325-442e-876e-b9a0846c526f',
-                        // m('br'),
-                        // 'Meio: Pagarme',
-                        // m('br'),
-                        // `Operadora: STONE`,
                         m('br'),
                         currentPayment().payment_method === 'credit_card' ? [
                             'Cartão ',

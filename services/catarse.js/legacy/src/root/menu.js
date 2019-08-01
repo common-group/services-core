@@ -15,7 +15,8 @@ const menu = {
             homeAttrs = () => {
                 if (vnode.attrs.absoluteHome) {
                     return {
-                        href: h.rootUrl()
+                        href: h.rootUrl(),
+                        oncreate: m.route.link
                     };
                 }
                 return {

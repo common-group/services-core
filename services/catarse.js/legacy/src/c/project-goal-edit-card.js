@@ -47,7 +47,7 @@ const projectGoalEditCard = {
                     config: h.setCsrfToken
                 }).then(() => {
                     destroyed(true);
-                    m.redraw();
+                    h.redraw();
                 }).catch(() =>
                     alert('Erro ao deletar meta.')
                 );
@@ -71,13 +71,14 @@ const projectGoalEditCard = {
                 projectGoalsVM.updateGoal(goal.project_id(), goal.id(), data).then(() => {
                     vnode.attrs.showSuccess(true);
                     goal.editing.toggle();
+                    h.redraw();
                 });
             } else {
                 projectGoalsVM.createGoal(goal.project_id(), data).then((r) => {
                     goal.id(r.goal_id);
                     vnode.attrs.showSuccess(true);
                     goal.editing.toggle();
-                    m.redraw();
+                    h.redraw();
                 });
             }
             return false;

@@ -4,8 +4,16 @@ import _ from 'underscore';
 import c from './c';
 import Chart from 'chart.js';
 import { isNumber } from 'util';
+import { wrap } from './wrap';
 
 (function () {
+    /// Setup an AUTO-SCROLL TOP when change route
+    const pushState = history.pushState;
+    history.pushState = function () {
+        pushState.apply(history, arguments);
+        h.scrollTop();
+    };
+    
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.responsive = false;
     Chart.defaults.global.scaleFontFamily = 'proxima-nova';
@@ -28,7 +36,11 @@ import { isNumber } from 'util';
                 },
                 view: function ({ state }) {
                     const { attr } = state;
-                    return m('#app', [m(c.root.Menu, attr), m(component, attr), attr.hideFooter ? '' : m(c.root.Footer, attr)]);
+                    return m('#app', [
+                        m(c.root.Menu, attr), 
+                        m(component, attr), 
+                        attr.hideFooter ? '' : m(c.root.Footer, attr)
+                    ]);
                 },
             };
         };
@@ -45,92 +57,7 @@ import { isNumber } from 'util';
     }
 
     const app = document.getElementById('application'),
-        body = document.getElementsByTagName('body')[0];
-
-    let firstRun = true; // Indica se é a primeira vez q executa um controller.
-    const wrap = function (component, customAttr) {
-        return {
-            oninit: function (vnode) {
-                if (firstRun) {
-                    firstRun = false;
-                } else {
-                    // só roda se nao for firstRun
-                    try {
-                        CatarseAnalytics.pageView(false);
-                        CatarseAnalytics.origin(); //force update of origin's cookie
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }
-                const parameters = app.getAttribute('data-parameters') ? JSON.parse(app.getAttribute('data-parameters')) : {};
-                let attr = customAttr,
-                    postParam = m.route.param('post_id') || parameters.post_id,
-                    projectParam = m.route.param('project_id') || parameters.project_id,
-                    projectUserIdParam = m.route.param('project_user_id') || parameters.user_id || parameters.project_user_id,
-                    userParam = m.route.param('user_id') || app.getAttribute('data-userid') || parameters.user_id,
-                    rewardIdParam = m.route.param('reward_id'),
-                    surveyIdParam = m.route.param('survey_id'),
-                    filterParam = m.route.param('filter'),
-                    thankYouParam = app && JSON.parse(app.getAttribute('data-contribution'));
-
-                const addToAttr = function (newAttr) {
-                    attr = _.extend({}, newAttr, attr);
-                };
-
-                if (postParam) {
-                    addToAttr({ post_id: postParam });
-                }
-
-                if (projectParam) {
-                    addToAttr({ project_id: projectParam });
-                }
-
-                if (userParam) {
-                    addToAttr({ user_id: userParam });
-                }
-
-                if (projectUserIdParam) {
-                    addToAttr({ project_user_id: projectUserIdParam });
-                }
-
-                if (surveyIdParam) {
-                    addToAttr({ survey_id: surveyIdParam });
-                }
-
-                if (rewardIdParam) {
-                    addToAttr({ reward_id: rewardIdParam });
-                }
-
-                if (filterParam) {
-                    addToAttr({ filter: filterParam });
-                }
-
-                if (thankYouParam) {
-                    addToAttr({ contribution: thankYouParam });
-                }
-
-                if (window.localStorage && window.localStorage.getItem('globalVideoLanding') !== 'true') {
-                    addToAttr({ withAlert: false });
-                }
-
-                if (document.getElementById('fixed-alert')) {
-                    addToAttr({ withFixedAlert: true });
-                }
-
-                body.className = 'body-project closed';
-
-                vnode.state.attr = attr;
-            },
-            view: function ({ state }) {
-                return m('#app', [
-                    m(c.root.Menu, state.attr),
-                    h.getUserID() ? m(c.root.CheckEmail, state.attr) : '',
-                    m(component, state.attr),
-                    state.attr.hideFooter ? '' : m(c.root.Footer, state.attr),
-                ]);
-            },
-        };
-    };
+        body = document.body
 
     const urlWithLocale = function (url) {
         return `/${window.I18n.locale}${url}`;

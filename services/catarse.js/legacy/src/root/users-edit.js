@@ -33,7 +33,7 @@ const usersEdit = {
                     }),
                     '#settings': m(userSettings, {
                         userId,
-                        user
+                        user: userDetails
                     }),
                     '#notifications': m(userNotifications, {
                         userId,
@@ -64,7 +64,6 @@ const usersEdit = {
             userDetails
         };
     },
-    onbeforeupdate: function(vnode) { },
     view: function({state, attrs}) {
         const user = state.userDetails();
 

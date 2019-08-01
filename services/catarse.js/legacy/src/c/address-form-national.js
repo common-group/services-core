@@ -7,7 +7,6 @@ import h from '../h';
 const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressFormNational = {
-    onbeforeupdate: function(vnode) {},
     view: function({ state, attrs }) {
         const disableInternational = attrs.disableInternational;
         const countryName = attrs.countryName;
@@ -46,7 +45,7 @@ const addressFormNational = {
                             m("input.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                 class: errors.addressZipCode() ? 'error' : '',
                                 value: fields.addressZipCode(),
-                                onkeyup: m.withAttr('value', value => applyZipcodeMask(value)),
+                                onkeyup: (event) => applyZipcodeMask(event.target.value),
                                 oninput: e => {
                                     lookupZipCode(e.target.value);
                                 },
@@ -127,7 +126,17 @@ const addressFormNational = {
                                 'select#address-state.positive.text-field.w-select',
                                 {
                                     class: errors.stateID() ? 'error' : '',
-                                    onchange: m.withAttr('value', fields.stateID),
+                                    onchange: (event) => {
+                                        const stateSelectedID = Number(event.target.value);
+                                        fields.stateID(stateSelectedID);
+                                        
+                                        if (_.isEmpty(countryStates())) {
+                                            const countryState = _.first(_.filter(countryStates(), countryState => {
+                                                return stateSelectedID === countryState.id;
+                                            })); 
+                                            fields.addressState(countryState.acronym);
+                                        }
+                                    },
                                 },
                                 [
                                     m('option', { value: '' }),
@@ -156,8 +165,7 @@ const addressFormNational = {
                             m("input#phone.positive.text-field.w-input[placeholder='Digite apenas números'][required='required'][type='text']", {
                                 class: errors.phoneNumber() ? 'error' : '',
                                 value: fields.phoneNumber(),
-                                onkeyup: m.withAttr('value', value => applyPhoneMask(value)),
-                                onchange: m.withAttr('value', fields.phoneNumber),
+                                onkeyup: (event) => applyPhoneMask(event.target.value)
                             }),
                             errors.phoneNumber()
                                 ? m(inlineError, {

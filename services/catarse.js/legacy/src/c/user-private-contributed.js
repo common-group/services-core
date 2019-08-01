@@ -22,7 +22,7 @@ const userPrivateContributed = {
             requestRedraw = () => {
                 h.redraw();
             },
-            handleError = () => {
+            handleError = (errorMessage) => {                
                 error(true);
                 loader(false);
                 requestRedraw();
@@ -51,12 +51,6 @@ const userPrivateContributed = {
                 created_at: 'desc',
             });
 
-        subscriptions
-            .firstPage(contextSubVM.parameters())
-            .then(() => loader(false))
-            .then(requestRedraw)
-            .catch(handleError);
-
         contextVM.project_state(['online', 'waiting_funds']);
         onlinePages
             .firstPage(contextVM.parameters())
@@ -78,6 +72,20 @@ const userPrivateContributed = {
             .then(requestRedraw)
             .catch(handleError);
 
+        subscriptions
+            .firstPage(contextSubVM.parameters())
+            .then(() => loader(false))
+            .then(requestRedraw)
+            .catch(() => {
+                const preventErrorCausedByTokenNotLoadedBeforeMakingThisRequest = setTimeout(() => {
+                    subscriptions
+                        .firstPage(contextSubVM.parameters())
+                        .then(() => loader(false))
+                        .then(requestRedraw)
+                        .catch(handleError);
+                }, 1000);
+            });
+
         vnode.state = {
             subscriptions,
             onlinePages,
@@ -87,7 +95,6 @@ const userPrivateContributed = {
             loader,
         };
     },
-    onbeforeupdate: function(vnode) {},
     view: function({ state, attrs }) {
         const subsCollection = state.subscriptions.collection(),
             onlineCollection = state.onlinePages.collection(),

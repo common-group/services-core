@@ -41,11 +41,13 @@ const projectReminder = {
                         popNotification(true);
                         setTimeout(() => {
                             popNotification(false);
-                            m.redraw();
+                            h.redraw();
                         }, 5000);
                     } else {
                         popNotification(false);
                     }
+                    
+                    h.redraw();
                 });
             };
 
