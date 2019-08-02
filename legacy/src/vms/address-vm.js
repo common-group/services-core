@@ -14,10 +14,6 @@ const addressVM = (args) => {
     const data = args.data;
     const international = prop();
     const statesLoader = catarse.loader(models.state.getPageOptions());
-    statesLoader.load().then(data => {
-        states(data);
-        h.redraw();
-    });
 
     const fields = {
         id: prop(data.id || ''),
@@ -59,6 +55,11 @@ const addressVM = (args) => {
         countries,
         errors
     };
+
+    statesLoader.load().then(data => {
+        states(data);
+        h.redraw();
+    });
 
     const setFields = (data) => {
         exportData.fields.id = prop(data.id || '');
