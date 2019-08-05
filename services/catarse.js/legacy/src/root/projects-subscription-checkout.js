@@ -85,6 +85,7 @@ const projectsSubscriptionCheckout = {
         const validateForm = () => {
             if (vm.validate()) {
                 showPaymentForm(true);
+                h.redraw();
             }
         };
 
