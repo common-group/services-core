@@ -251,7 +251,7 @@ const paymentCreditCard = {
         return m('.w-form.u-marginbottom-40', {
             oncreate: state.loadPagarme
         }, [
-            m('form[name="email-form"]', {
+            m('form[method="post"][name="email-form"]', {
                 onsubmit: state.onSubmit
             }, [
                 (!attrs.hideSave && !state.loadingSavedCreditCards() && (state.savedCreditCards().length > 1)) ?
