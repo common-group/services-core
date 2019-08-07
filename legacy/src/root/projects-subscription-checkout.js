@@ -39,7 +39,7 @@ const projectsSubscriptionCheckout = {
         const oldSubscription = prop({});
         const countriesLoader = catarse.loader(models.country.getPageOptions());
         const error = prop();
-        
+
         const subscriptionId = prop(m.route.param('subscription_id'));
         const isEdit = prop(Boolean(subscriptionId()));
         const subscriptionStatus = m.route.param('subscription_status');
