@@ -35,14 +35,14 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
             isCreditCardWithDetails = (paymentMethod === 'credit_card' && !_.isNull(paymentDetails.brand) && !_.isNull(paymentDetails.last_digits)),
             paymentStatusText = I18n.t(`last_status.${paymentMethod}.${paymentStatus}`, I18nScopePayment()),
             paymentMethodEndText = ( isSlipWithExpiration ?
-                ` com venc. ${moment(paymentDetails.expiration_date).format('DD/MM')}` : 
+                ` com venc. ${h.momentify(paymentDetails.expiration_date, 'DD/MM')}` : 
                 ( isCreditCardWithDetails ?
                     ` ${captalize(paymentDetails.brand)} final ${paymentDetails.last_digits}` :
                     ''));
 
         return m('.fontsize-smallest.w-row',
             [
-                m('.w-col.w-col-3', m('.fontcolor-secondary', moment(paymentDate).format('DD/MM/YYYY'))),
+                m('.w-col.w-col-3', m('.fontcolor-secondary', h.momentify(paymentDate, 'DD/MM/YYYY'))),
                 m('.w-col.w-col-9', 
                     m('div',
                         [

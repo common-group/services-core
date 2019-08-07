@@ -1,4 +1,5 @@
 import m from 'mithril';
+import h from '../h';
 import prop from 'mithril/stream';
 import moment from 'moment';
 import UserFollowBtn from './user-follow-btn';
@@ -19,7 +20,7 @@ const dashboardSubscriptionCardDetailUserProfile = {
                     attrs.subscription.user_email
                 ),
                 m('div',
-                    `Conta no Catarse desde ${moment(attrs.user.created_at).format('MMMM YYYY')}`
+                    `Conta no Catarse desde ${h.momentify(attrs.user.created_at, 'MMMM YYYY')}`
                 ),
                 m('.u-marginbottom-10', [
                     `Apoiou ${attrs.user.total_contributed_projects} projetos `,
