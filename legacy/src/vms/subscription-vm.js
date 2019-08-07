@@ -110,8 +110,8 @@ const toogleAnonymous = (subscription) => {
 
 const getNewSubscriptionsInsightsFromPeriod = (project_id, startDate, endDate) => {
 
-    const start_date = moment(startDate).format('YYYY-MM-DDTHH:mm:ss.000');
-    const end_date = moment(endDate).format('YYYY-MM-DDTHH:mm:ss.000');
+    const start_date = h.momentify(startDate, 'YYYY-MM-DDTHH:mm:ssZ');
+    const end_date = h.momentify(endDate, 'YYYY-MM-DDTHH:mm:ssZ');
 
     return commonAnalytics
         .loaderWithToken(models.newSubscribersFromPeriod.getRowOptions({project_id, start_date, end_date}))
@@ -127,18 +127,14 @@ const getNewSubscriptionsInsightsFromPeriod = (project_id, startDate, endDate) =
 };
 
 const getNewSubscriptionsInsightsFromLastWeek = project_id => {
-    const _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
-    const today = new Date();
-    const todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
+    const today = moment();
+    const todayMinus7Days = moment().subtract(7, 'days');
     return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus7Days, today);
 };
 
 const getNewSubscriptionsInsightsFromLast2Week = project_id => {
-    const _7_DAYS_IN_MS = 3600 * 24 * 7 * 1000;
-    const _14_DAYS_IN_MS = 3600 * 24 * 14 * 1000;
-    const today = new Date();
-    const todayMinus7Days = new Date(today.getTime() - _7_DAYS_IN_MS);
-    const todayMinus14Days = new Date(today.getTime() - _14_DAYS_IN_MS);
+    const todayMinus7Days = moment().subtract(7, 'days');
+    const todayMinus14Days = moment().subtract(14, 'days');
     return getNewSubscriptionsInsightsFromPeriod(project_id, todayMinus14Days, todayMinus7Days);
 };
 
