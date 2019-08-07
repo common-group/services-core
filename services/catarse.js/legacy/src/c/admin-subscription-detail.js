@@ -38,11 +38,10 @@ const adminSubscriptionDetail = {
 
         // Pagination on notifications
         const notificationsLoader = commonNotification.paginationVM(models.userNotification, 'created_at.desc');
-        const notificationsInternal = prop([]);
         let isFirstPage = true;
-
+        
         const loadNotifications = () => {
-            
+            const notificationsInternal = prop([]);            
             const addNotificationsToInternal = (notifications) => notificationsInternal(notifications);
 
             // First loads the first page and configure the next interactions
@@ -84,9 +83,20 @@ const adminSubscriptionDetail = {
 
         const loadTransitions = () => {
             const transitions = prop([]);
+            const paymentTransitionsFilter = commonPayment
+                .filtersVM({
+                    subscription_id: 'eq',
+                    project_id: 'eq'
+                })
+                .order({
+                    created_at: 'desc'
+                });
 
-            const lPaymentTransitions = commonPayment.loaderWithToken(
-                models.subscriptionTransition.getPageOptions(filterVM.parameters()));
+            paymentTransitionsFilter.subscription_id(vnode.attrs.item.id);
+            paymentTransitionsFilter.project_id(vnode.attrs.item.project_id);
+
+            const lPaymentTransitions = commonPayment
+                .loaderWithToken(models.subscriptionTransition.getPageOptions(paymentTransitionsFilter.parameters()));
 
             lPaymentTransitions
                 .load()
@@ -100,10 +110,21 @@ const adminSubscriptionDetail = {
 
         const loadPayments = () => {
             const payments = prop([]);
+            const paymentsFilter = commonPayment
+                .filtersVM({
+                    subscription_id: 'eq',
+                    project_id: 'eq'
+                })
+                .order({
+                    created_at: 'desc'
+                });
+
+            paymentsFilter.subscription_id(vnode.attrs.item.id);
+            paymentsFilter.project_id(vnode.attrs.item.project_id);
 
             models.commonPayments.pageSize(false);
             const lUserPayments = commonPayment.loaderWithToken(
-                models.commonPayments.getPageOptions(filterVM.parameters()));
+                models.commonPayments.getPageOptions(paymentsFilter.parameters()));
 
             lUserPayments.load().then((data) => {
                 currentPayment(_.first(data));
