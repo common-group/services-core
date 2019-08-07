@@ -11,14 +11,14 @@ const subscriptionNextChargeDateMethodInfo = {
         const hasPaymentMethodDetails = payment_method_details && payment_method_details.last_digits && payment_method_details.brand;
 
         if (payment_method === 'boleto') {
-            return `${moment(next_charge_at).format('DD/MM/YYYY')} - Boleto`;
+            return `${h.momentify(next_charge_at, 'DD/MM/YYYY')} - Boleto`;
         } else if (hasPaymentMethodDetails) {
             const {
                 last_digits,
                 brand
             } = payment_method_details;
 
-            return `${moment(next_charge_at).format('DD/MM/YYYY')} - Cartão ${brand} final ${last_digits}`;
+            return `${h.momentify(next_charge_at, 'DD/MM/YYYY')} - Cartão ${brand} final ${last_digits}`;
         } else {
             return h.loader();
         }
