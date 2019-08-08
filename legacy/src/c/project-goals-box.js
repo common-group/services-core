@@ -28,14 +28,14 @@ const projectGoalsBox = {
         vnode.state = { currentGoalIndex, nextGoal, previousGoal, subscriptionData };
     },
     view: function({state, attrs}) {
-        const goals = attrs.goalDetails().length > 0 ? attrs.goalDetails() : [{
-                title: 'N/A',
-                value: '',
-                description: ''
-            }],
-            subscriptionData = state.subscriptionData,
-            currentGoalIndex = state.currentGoalIndex,
-            goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
+        const goals = attrs.goalDetails() && attrs.goalDetails().length > 0 ? attrs.goalDetails() : [{
+            title: 'N/A',
+            value: '',
+            description: ''
+        }];
+        const subscriptionData = state.subscriptionData;
+        const currentGoalIndex = state.currentGoalIndex;
+        const goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
 
         return m('div',
           m(`.card.u-marginbottom-30.u-radius${attrs.style}`, [
