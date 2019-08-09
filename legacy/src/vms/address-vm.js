@@ -62,6 +62,7 @@ const addressVM = (args) => {
     });
 
     const setFields = (data) => {
+        
         exportData.fields.id = prop(data.id || '');
         exportData.fields.countryID = prop(data.country_id || defaultCountryID);
         exportData.fields.stateID = prop(data.state_id || '');
@@ -75,7 +76,8 @@ const addressVM = (args) => {
         exportData.fields.phoneNumber = prop(data.phone_number || '');
         international(Number(data.country_id) !== defaultCountryID);
 
-        if (!_.isEmpty(states())) {
+        
+        if (!_.isEmpty(states()) && !exportData.international()) {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
             })); 
@@ -84,12 +86,14 @@ const addressVM = (args) => {
     };
 
     const getFields = () => {
-        if (!_.isEmpty(states())) {
+        
+        if (!_.isEmpty(states()) && !exportData.international()) {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
             })); 
             exportData.fields.addressState(countryState.acronym);
         }
+        
         const data = {};
         // data.id = exportData.fields.id();
         data.country_id = exportData.fields.countryID();
