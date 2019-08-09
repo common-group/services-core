@@ -56,6 +56,7 @@ const userPayload = (customer, address) => ({
         address_number: address.address_number,
         address_zip_code: address.address_zip_code,
         address_city: address.address_city,
+        address_state: address.address_state,
         address_complement: address.address_complement,
         phone_number: address.phone_number
     }
