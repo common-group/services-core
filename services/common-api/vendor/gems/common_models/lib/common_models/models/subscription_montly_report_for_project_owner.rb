@@ -29,7 +29,8 @@ module CommonModels
         'Bairro',
         'Cidade',
         'Estado',
-        'CEP'
+        'CEP',
+        'País'
       ]
 
       CSV.generate(headers: true) do |csv|
@@ -58,7 +59,8 @@ module CommonModels
             sub.neighborhood,
             sub.city,
             sub.state,
-            sub.zipcode
+            sub.zipcode,
+            sub.country
           ]
         end
       end
