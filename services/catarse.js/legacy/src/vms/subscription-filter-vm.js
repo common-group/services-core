@@ -8,7 +8,7 @@ const { replaceDiacritics } = window;
 
 const vm = commonPayment.filtersVM({
         status: 'eq',
-        search_index: 'fts(portuguese)',
+        search_index: 'plfts(portuguese)',
         payment_method: 'eq'
     }),
 
