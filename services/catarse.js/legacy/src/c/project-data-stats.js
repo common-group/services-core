@@ -20,6 +20,7 @@ const projectDataStats = {
             contributorsByVisitors = project.total_contributors / visitorsTotal,
             contributorsByVisitorsValue = isNaN(contributorsByVisitors) || !isFinite(contributorsByVisitors) ? 0 : contributorsByVisitors * 100;
 
+
         return m('', [
             m('.w-row.u-marginbottom-60.u-margintop-30.u-text-center', [
                 m('.w-col.w-col-2'),
