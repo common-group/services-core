@@ -16,6 +16,7 @@ const dashboardSubscriptionCardDetail = {
 
         userDetailsLoader.then((user_details) => {
             vnode.attrs.user.address = user_details.address;
+            h.redraw();
         });
 
         vnode.state = {
