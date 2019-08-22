@@ -62,7 +62,7 @@ const subscriptionStatusIcon = {
             shouldShowTransitionDate
                 ? m(
                       '.fontcolor-secondary.fontsize-mini.fontweight-semibold.lineheight-tightest',
-                      `em ${moment(subscription.transition_date).format('DD/MM/YYYY')}`
+                      `em ${h.momentify(subscription.transition_date, 'DD/MM/YYYY')}`
                   )
                 : '',
         ]);
