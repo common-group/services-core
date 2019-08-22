@@ -4,7 +4,7 @@ import { catarse } from '../api';
 const { replaceDiacritics } = window;
 
 const vm = catarse.filtersVM({
-        full_text_index: '@@',
+        full_text_index: 'plfts(portuguese)',
         deactivated_at: 'is.null'
     }),
 

@@ -76,36 +76,39 @@ const addressVM = (args) => {
         exportData.fields.phoneNumber = prop(data.phone_number || '');
         international(Number(data.country_id) !== defaultCountryID);
 
-        
         if (!_.isEmpty(states()) && !exportData.international()) {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
-            })); 
+            }));
             exportData.fields.addressState(countryState.acronym);
         }
     };
 
     const getFields = () => {
-        
-        if (!_.isEmpty(states()) && !exportData.international()) {
+        const isInternational = Number(exportData.fields.countryID()) !== defaultCountryID;
+
+        if (!_.isEmpty(states()) && !isInternational) {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
-            })); 
+            }));
             exportData.fields.addressState(countryState.acronym);
         }
-        
         const data = {};
         // data.id = exportData.fields.id();
         data.country_id = exportData.fields.countryID();
-        data.state_id = exportData.fields.stateID();
         data.address_street = exportData.fields.addressStreet();
-        data.address_number = exportData.fields.addressNumber();
-        data.address_complement = exportData.fields.addressComplement();
-        data.address_neighbourhood = exportData.fields.addressNeighbourhood();
+
+        if (!isInternational) {
+            data.state_id = exportData.fields.stateID();
+            data.address_number = exportData.fields.addressNumber();
+            data.address_complement = exportData.fields.addressComplement();
+            data.address_neighbourhood = exportData.fields.addressNeighbourhood();
+            data.phone_number = exportData.fields.phoneNumber();
+        }
+
         data.address_city = exportData.fields.addressCity();
         data.address_state = exportData.fields.addressState();
         data.address_zip_code = exportData.fields.addressZipCode();
-        data.phone_number = exportData.fields.phoneNumber();
         return data;
     };
 

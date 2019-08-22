@@ -18,7 +18,7 @@ const projectDataStats = {
             remainingTextObj = h.translatedTime(project.remaining_time),
             elapsedTextObj = h.translatedTime(project.elapsed_time),
             contributorsByVisitors = project.total_contributors / visitorsTotal,
-            contributorsByVisitorsValue = isNaN(contributorsByVisitors) ? contributorsByVisitors : 0;
+            contributorsByVisitorsValue = isNaN(contributorsByVisitors) || !isFinite(contributorsByVisitors) ? 0 : contributorsByVisitors * 100;
 
         return m('', [
             m('.w-row.u-marginbottom-60.u-margintop-30.u-text-center', [
