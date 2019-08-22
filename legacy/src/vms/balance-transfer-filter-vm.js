@@ -7,7 +7,7 @@ const { replaceDiacritics } = window;
 
 const context = () => {
     const vm = catarse.filtersVM({
-        full_text_index: '@@',
+        full_text_index: 'plfts(portuguese)',
         state: 'eq',
         transfer_id: 'eq',
         created_date: 'between',
