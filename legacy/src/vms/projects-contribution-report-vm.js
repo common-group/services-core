@@ -6,7 +6,7 @@ import models from '../models';
 const { replaceDiacritics } = window;
 
 const vm = catarse.filtersVM({
-        full_text_index: '@@',
+        full_text_index: 'plfts(portuguese)',
         state: 'in',
         reward_id: 'eq',
         delivery_status: 'eq',
@@ -42,7 +42,7 @@ vm.updateStatus = data => m.request({
 
 vm.withNullParameters = () => {
     const withNullVm = catarse.filtersVM({
-        full_text_index: '@@',
+        full_text_index: 'plfts(portuguese)',
         state: 'in',
         reward_id: 'is',
         delivery_status: 'eq',
