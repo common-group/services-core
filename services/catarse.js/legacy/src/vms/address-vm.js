@@ -86,6 +86,7 @@ const addressVM = (args) => {
     };
 
     const getFields = () => {
+        const isInternational = Number(exportData.fields.countryID()) !== defaultCountryID;
 
         if (!_.isEmpty(states()) && !exportData.international()) {
             const countryState = _.first(_.filter(states(), countryState => {
@@ -99,12 +100,8 @@ const addressVM = (args) => {
         data.country_id = exportData.fields.countryID();
         data.state_id = exportData.fields.stateID();
         data.address_street = exportData.fields.addressStreet();
-        if (international()) {
-            data.address_number = null;
-            data.address_complement = null;
-            data.address_neighbourhood = null;
-            data.phone_number = null;
-        } else {
+
+        if (!isInternational) {
             data.address_number = exportData.fields.addressNumber();
             data.address_complement = exportData.fields.addressComplement();
             data.address_neighbourhood = exportData.fields.addressNeighbourhood();
