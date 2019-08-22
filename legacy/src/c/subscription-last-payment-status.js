@@ -27,7 +27,7 @@ const subscriptionLastPaymentStatus = {
     view: function({state, attrs}) {
         return m('span', [
             m(".fontsize-smaller",
-                state.lastPaymentDate ? moment(state.lastPaymentDate).format('DD/MM/YYYY') : ''
+                state.lastPaymentDate ? h.momentify(state.lastPaymentDate, 'DD/MM/YYYY') : ''
             ),
             m(`.fontsize-mini.lineheight-tightest.fontweight-semibold${state.statusClass[state.lastPaymentStatus]}`,
                 I18n.t(`last_status.${state.lastPaymentMethod}.${state.lastPaymentStatus}`, I18nScope())
