@@ -101,7 +101,7 @@ services:
     env_file:
       - ./compose_env/.service_core_migrator.env
     command: ["./scripts/run_migrations.sh"]
-    volumes: 
+    volumes:
       - ./services/service-core-db/migrations:/usr/app/migrations
     links:
         - "service_core_db:service_core_db"
@@ -219,7 +219,7 @@ services:
     volumes:
       # mount volumes for development on catarse / catarse.js
       - ./services/catarse/:/usr/app
-     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
+      # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
     links:
       - service_core_db
       - "catarse_db:localhostcatarse"
@@ -234,7 +234,7 @@ services:
         ipv4_address: 10.0.1.48
 
   catarse_api:
-    image: postgrest/postgrest:v0.4.3.0
+    image: postgrest/postgrest:v0.4.4.0
     env_file:
       - ./compose_env/.catarse_api.env
     depends_on:

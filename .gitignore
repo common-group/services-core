@@ -30,3 +30,4 @@ compose_env/.common_api.env
 compose_env/.common_proxy.env
 local-subtrees-push.sh
 compose_env/.read_api.env
+.DS_Store
