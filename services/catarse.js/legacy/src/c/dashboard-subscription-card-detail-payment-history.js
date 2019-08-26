@@ -13,14 +13,8 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
     oninit: function(vnode) {
         const loadingFirstPage = prop(true);
         const errorOcurred = prop(false);
-
-        const payments = commonPayment.paginationVM(models.commonPayments, 'created_at.desc', {
-            Prefer: 'count=exact'
-        });
-
-        const paymentsFilterVM = commonPayment.filtersVM({
-            subscription_id: 'eq'
-        });
+        const payments = commonPayment.paginationVM(models.commonPayments, 'created_at.desc', { Prefer: 'count=exact' });
+        const paymentsFilterVM = commonPayment.filtersVM({ subscription_id: 'eq' });
 
         paymentsFilterVM.subscription_id(vnode.attrs.subscription.id);
 

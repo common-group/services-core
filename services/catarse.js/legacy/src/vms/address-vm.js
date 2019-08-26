@@ -76,7 +76,6 @@ const addressVM = (args) => {
         exportData.fields.phoneNumber = prop(data.phone_number || '');
         international(Number(data.country_id) !== defaultCountryID);
 
-
         if (!_.isEmpty(states()) && !exportData.international()) {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
@@ -94,7 +93,6 @@ const addressVM = (args) => {
             }));
             exportData.fields.addressState(countryState.acronym);
         }
-
         const data = {};
         // data.id = exportData.fields.id();
         data.country_id = exportData.fields.countryID();

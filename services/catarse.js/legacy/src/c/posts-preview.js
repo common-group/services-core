@@ -102,7 +102,7 @@ const postsPreview = {
                             m('.w-col.w-col-1'),
                             m('.u-marginbottom-30.u-margintop-30.w-col.w-col-10.w-hidden-small.w-hidden-tiny', [
                                 m('.fontcolor-secondary.fontsize-small.u-text-center',
-                                    moment().format('DD/MM/YYYY')
+                                    h.momentify(moment(), 'DD/MM/YYYY')
                                 ),
                                 m('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center',
                                     title
