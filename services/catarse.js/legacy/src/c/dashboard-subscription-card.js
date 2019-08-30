@@ -30,8 +30,8 @@ const dashboardSubscriptionCard = {
 
             lU.load().then((data) => {
                 user(_.first(data));
-                m.redraw();
-            });
+                h.redraw();
+            }).catch(() => h.redraw());
         }
 
         const reward_id_to_search = subscription.current_reward_external_id ? subscription.current_reward_external_id : subscription.reward_external_id;
@@ -44,7 +44,8 @@ const dashboardSubscriptionCard = {
 
             lRew.load().then((data) => {
                 reward(_.first(data));
-            });
+                h.redraw();
+            }).catch(() => h.redraw());
         }
         vnode.state = {
             toggleDetails,
