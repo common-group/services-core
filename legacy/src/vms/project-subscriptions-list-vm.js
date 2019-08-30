@@ -3,9 +3,6 @@ import { commonPayment } from '../api';
 import models from '../models';
 
 const projectSubscriptionsListVM = () => {
-    // const listVM = catarse.paginationVM(models.projectContribution, 'id.desc', {
-    //     Prefer: 'count=exact',
-    // });
 
     const subscriptions = commonPayment.paginationVM(models.userSubscription, 'last_payment_data_created_at.desc', {
         Prefer: 'count=exact'
