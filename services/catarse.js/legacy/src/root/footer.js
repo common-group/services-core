@@ -87,6 +87,9 @@ const footer = {
                                                     m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
                                                       ' Contato'
                                                      ),
+                                                m('a.link-footer[href=\'http://blog.catarse.me/category/atualizacoes\']',
+                                                  ' Atualizações 🌟'
+                                                 ),
                                                 m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
                                                   ' Escola Catarse'
                                                  ),
@@ -122,15 +125,8 @@ const footer = {
                                                     ' Publicações Independentes'
                                                 ),
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/jornalismo?ref=ctrse_footer\']',
-                                                    [
-                                                        'Jornalismo',
-                                                        m.trust('&nbsp;'),
-                                                        m('span.badge.badge-success',
-                                                            'Novidade'
-                                                        )
-                                                    ]
-
-                                                ),
+                                                    ' Jornalismo'
+                                                ),                                            
                                                 m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
                                                     'Catarse Assinaturas'
                                                  ),
