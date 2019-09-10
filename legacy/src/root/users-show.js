@@ -59,10 +59,7 @@ const usersShow = {
                   [
                     (!_.isEmpty(user) ?
                      (user.is_owner_or_admin ?
-                      m(`a.dashboard-nav-link.dashboard[href=\'/${window.I18n.locale}/users/${user.id}/edit\']`, { oncreate: m.route.link,
-                          onclick: () => {
-                              m.route(`/users/edit/${user.id}`, { user_id: user.id });
-                          } },
+                      m(`a.dashboard-nav-link.dashboard[href=\'/${window.I18n.locale}/users/${user.id}/edit\']`,
                           [
                               m('span.fa.fa-cog'),
                               m.trust('&nbsp;'),

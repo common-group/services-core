@@ -6,6 +6,8 @@ import Chart from 'chart.js';
 import { isNumber } from 'util';
 import { wrap } from './wrap';
 
+m.trust = (text) => h.trust(text);
+
 (function () {
     /// Setup an AUTO-SCROLL TOP when change route
     const pushState = history.pushState;
