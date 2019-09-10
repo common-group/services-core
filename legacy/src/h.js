@@ -4,6 +4,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
+import generativeTrust from 'mithril-generative-trust/src/index';
 
 function getCallStack() {
     const callStackStr = new Error().stack;
@@ -1050,7 +1051,8 @@ const _dataCache = {},
                 });
             },
         };
-    };
+    },
+    trust = (text) => generativeTrust(text, { eliminateScriptTags : true });
 
 setMomentifyLocale();
 closeFlash();
@@ -1144,4 +1146,5 @@ export default {
     setCsrfToken,
     userSignedIn,
     isDevEnv,
+    trust,
 };
