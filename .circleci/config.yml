@@ -132,8 +132,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-dep-{{ .Branch }}-
-            - v1-dep-develop-
-            - v1-dep-
       - run: if [ -z "${NODE_ENV:-}" ]; then export NODE_ENV=test; fi
       - run: export PATH="~/project/services/catarse.js/node_modules/.bin:$PATH"
       - run: cd services/catarse.js && npm install
