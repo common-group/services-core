@@ -120,36 +120,34 @@ jobs:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     docker:
-    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
-      command: /sbin/init
+      - image: circleci/node:10.7.0-stretch
     steps:
-    - checkout
-    - run:
-        name: Catarse.js install & artifacts
-        command: |
-          set -ex \
-          && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS \
-          && cd services/catarse.js \
-          && nvm install 8.5.0 && nvm alias default 8.5.0
-    - restore_cache:
-        keys:
-        - v1-dep-{{ .Branch }}-
-        - v1-dep-develop-
-        - v1-dep-
-    - run: if [ -z "${NODE_ENV:-}" ]; then export NODE_ENV=test; fi
-    - run: export PATH="~/project/services/catarse.js/node_modules/.bin:$PATH"
-    - run: cd services/catarse.js && npm install
-    - save_cache:
-        key: v1-dep-{{ .Branch }}-{{ epoch }}
-        paths:
-        - ~/project/services/catarse.js/node_modules
-    - run: cd services/catarse.js && npm test
-    - store_test_results:
-        path: /tmp/circleci-test-results
-    - store_artifacts:
-        path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: /tmp/circleci-test-results
+      - checkout
+      - run:
+          name: Catarse.js install & artifacts
+          command: |
+            set -ex \
+            && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS \
+            && cd services/catarse.js     
+      - restore_cache:
+          keys:
+            - v1-dep-{{ .Branch }}-
+            - v1-dep-develop-
+            - v1-dep-
+      - run: if [ -z "${NODE_ENV:-}" ]; then export NODE_ENV=test; fi
+      - run: export PATH="~/project/services/catarse.js/node_modules/.bin:$PATH"
+      - run: cd services/catarse.js && npm install
+      - save_cache:
+          key: v1-dep-{{ .Branch }}-{{ epoch }}
+          paths:
+            - ~/project/services/catarse.js/node_modules
+      - run: cd services/catarse.js && npm test
+      - store_test_results:
+          path: /tmp/circleci-test-results
+      - store_artifacts:
+          path: /tmp/circleci-artifacts
+      - store_artifacts:
+          path: /tmp/circleci-test-results
 
   test_payment_service_lib:
     docker:
