@@ -14,14 +14,9 @@
         "babel-eslint": "^7.1.1",
         "babel-loader": "^7.1.4",
         "babel-preset-env": "^1.7.0",
-        "elm-webpack-loader": "^4.5.0",
         "eslint": "^3.16.0",
         "eslint-config-airbnb-base": "^11.3.2",
         "eslint-plugin-import": "^2.11.0",
-        "gulp": "^3.9.1",
-        "gulp-jscs": "^2.0.0",
-        "gulp-jshint": "^1.11.2",
-        "gulp-plumber": "^1.2.0",
         "ifdef-loader": "^2.1.1",
         "jasmine-core": "^2.99.1",
         "jshint-stylish": "^2.2.1",
@@ -35,7 +30,7 @@
         "uglifyjs-webpack-plugin": "^1.2.6"
     },
     "scripts": {
-        "test": "gulp test",
+        "test": "./node_modules/karma/bin/karma start",
         "start": "webpack -d --watch",
         "start-dev": "NODE_OPTIONS=\"--max-old-space-size=512\" webpack -d --watch",
         "build": "./node_modules/.bin/webpack",
@@ -59,6 +54,6 @@
         "webpack-cli": "^3.0.4",
         "webpack-dev-server": "^3.1.4",
         "ifdef-loader": "^2.1.1",
-        "mithril-generative-trust": "git+https://github.com/grpse/mithril-generative-trust.git#v1.0.0"
+        "mithril-generative-trust": "https://github.com/grpse/mithril-generative-trust.git#v1.0.1"
     }
 }
