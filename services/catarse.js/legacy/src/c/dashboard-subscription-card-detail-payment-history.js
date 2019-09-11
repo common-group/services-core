@@ -8,6 +8,7 @@ import {
 import loadMoreBtn from './load-more-btn';
 import dashboardSubscriptionCardDetailPaymentHistoryEntry from './dashboard-subscription-card-detail-payment-history-entry';
 import subscriptionNextChargeDate from './subscription-next-charge-date';
+import h from '../h';
 
 const dashboardSubscriptionCardDetailPaymentHistory = {
     oninit: function(vnode) {
@@ -20,11 +21,11 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
 
         payments.firstPage(paymentsFilterVM.parameters()).then(() => {
                 loadingFirstPage(false);
-                m.redraw();
+                h.redraw();
             })
             .catch(() => {
                 errorOcurred(true);
-                m.redraw();
+                h.redraw();
             });
 
         vnode.state = {
