@@ -13,7 +13,6 @@ jobs:
     steps:
       - checkout
       - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
       - run:
           working_directory: ~/catarse/catarse.js
           command: nvm install 10 && nvm alias default 10
