@@ -36,8 +36,8 @@ module.exports = (config) => {
         browsers: ['MyHeadlessChrome'],
         customLaunchers: {
             MyHeadlessChrome: {
-              base: 'ChromeHeadless',
-              flags: ['--headless', '--no-sandbox']
+                base: 'ChromeHeadless',
+                flags: ['--headless', '--no-sandbox']
             }
         },
         singleRun: true
