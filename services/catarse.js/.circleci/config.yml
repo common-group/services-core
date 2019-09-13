@@ -13,10 +13,17 @@ jobs:
     steps:
       - checkout
       - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
       - run:
           working_directory: ~/catarse/catarse.js
-          command: nvm install 10 && nvm alias default 10
+          command: |
+            set -ex \
+            && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS \
+            && cd services/catarse.js \
+            && nvm install 10 && nvm alias default 10 \
+            && sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - \
+            && sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list \
+            && sudo apt-get -y update \
+            && sudo apt-get -y install google-chrome-stable
       - restore_cache:
           keys:
             - v1-dep-{{ .Branch }}-
