@@ -271,7 +271,8 @@ const dashboardRewardCard = {
                                     m("div.w-form", [
                                         m("form",
                                             m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_closed_card_${attrs.index}']`, {
-                                                oninput: () => onSelectImageFile()
+                                                oninput: () => onSelectImageFile(),
+                                                onchange: () => onSelectImageFile(),
                                             })
                                         ),
                                         m("div.w-form-done",
