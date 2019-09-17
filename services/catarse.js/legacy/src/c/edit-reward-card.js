@@ -413,7 +413,8 @@ const editRewardCard = {
                                         ),
                                         m("div.w-col.w-col-7",
                                             m(`input.text-field.w-input[type='file'][placeholder='Choose file'][id='reward_image_file_open_card_${index}']`, {
-                                                oninput: () => state.onSelectImageFile()
+                                                oninput: () => state.onSelectImageFile(),
+                                                onchange: () => state.onSelectImageFile(),
                                             })
                                         )
                                     ])
