@@ -223,19 +223,6 @@ const paymentVM = () => {
         });
     };
 
-    const similityExecute = (contribution_id) => {
-        if (window.SimilityScript && h.getSimilityCustomer()) {
-            const user = h.getUser() || {};
-            const similityContext = {
-                customer_id: h.getSimilityCustomer(),
-                session_id: contribution_id,
-                user_id: user.user_id
-            };
-            const ss = new window.SimilityScript(similityContext);
-            ss.execute();
-        }
-    };
-
     const kondutoExecute = function () {
         const customerID = h.getUserID();
 
@@ -243,7 +230,7 @@ const paymentVM = () => {
             var period = 300;
             var limit = 20 * 1e3;
             var nTry = 0;
-            var intervalID = setInterval(function () {     
+            var intervalID = setInterval(function () {
                 var clear = limit / period <= ++nTry;
                 if ((typeof (Konduto) !== "undefined") && (typeof (Konduto.setCustomerID) !== "undefined")) {
                     window.Konduto.setCustomerID(customerID);
@@ -449,7 +436,6 @@ const paymentVM = () => {
         pagarme,
         locale: getLocale,
         faq,
-        similityExecute,
         kondutoExecute
     };
 };

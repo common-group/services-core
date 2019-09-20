@@ -368,14 +368,6 @@ const _dataCache = {},
         const meta = _.first(document.querySelectorAll('[name=rd-token]'));
         return meta ? (_dataCache.rdToken = meta.getAttribute('content')) : null;
     },
-    getSimilityCustomer = () => {
-        if (_dataCache.similityCustomer) {
-            return _dataCache.similityCustomer;
-        }
-
-        const meta = _.first(document.querySelectorAll('[name=simility-customer]'));
-        return meta ? (_dataCache.similityCustomer = meta.getAttribute('content')) : null;
-    },
     getNewsletterUrl = () => {
         if (_dataCache.newsletterUrl) {
             return _dataCache.newsletterUrl;
@@ -1086,7 +1078,6 @@ export default {
     idVM,
     getUser,
     getUserID,
-    getSimilityCustomer,
     getApiHost,
     getNewsletterUrl,
     getCurrentProject,
