@@ -48,7 +48,7 @@ test('test findPayment', async t => {
     // insert payment into database
     const payment = (await client.query(`
         insert into payment_service.catalog_payments
-        (status, created_at, gateway, platform_id, user_id, project_id, data) 
+        (status, created_at, gateway, platform_id, user_id, project_id, data)
         values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json)
         returning *
     `, [
@@ -109,7 +109,7 @@ test('test loadPaymentContext', async t => {
     // insert payment into database
     const payment = (await client.query(`
         insert into payment_service.catalog_payments
-        (status, created_at, gateway, platform_id, user_id, project_id, data) 
+        (status, created_at, gateway, platform_id, user_id, project_id, data)
         values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json)
         returning *
     `, [
@@ -173,7 +173,7 @@ test('test createCardFromPayment', async t => {
     // insert payment into database
     const payment = (await client.query(`
         insert into payment_service.catalog_payments
-        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data) 
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data)
         values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json)
         returning *`, [
         basicData.platform.id,
@@ -314,7 +314,7 @@ test('test changeSubscriptionCard', async t => {
     // insert payment into database
     const payment = (await client.query(`
         insert into payment_service.catalog_payments
-        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data, subscription_id) 
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data, subscription_id)
         values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json, $6::uuid)
         returning *`, [
             basicData.platform.id,
@@ -374,7 +374,7 @@ test('test paymentTransitionTo', async t => {
     // insert payment into database
     const payment = (await client.query(`
         insert into payment_service.catalog_payments
-        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data) 
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data)
         values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json)
         returning *`, [
         basicData.platform.id,
@@ -420,7 +420,7 @@ test('test subscriptionTransitionTo', async t => {
     ])).rows[0];
     const payment = (await client.query(`
         insert into payment_service.catalog_payments
-        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data, subscription_id) 
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data, subscription_id)
         values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json, $6::uuid)
         returning *`, [
             basicData.platform.id,
@@ -444,3 +444,31 @@ test('test subscriptionTransitionTo', async t => {
     await client.query('rollback;');
     await client.release();
 });
+
+test('test isCardAlreadyAnalyzedOnAntifraud - when card is already analyzed on antifraud', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    await client.query('begin;');
+
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert payment into database
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data)
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json)
+        returning *
+    `, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({}))
+    ])).rows[0];
+
+    const { payables, transaction } = helpers.paymentBasicGatewayCachedData({});
+    const updated_payment = await dalCtx.buildGatewayGeneralDataOnPayment(payment.id, transaction, payables);
+
+    t.is(await dalCtx.isCardAlreadyAnalyzedOnAntifraud(updated_payment.gateway_general_data.card_id), true)
+    t.is(await dalCtx.isCardAlreadyAnalyzedOnAntifraud('some-random-card-id'), false)
+})

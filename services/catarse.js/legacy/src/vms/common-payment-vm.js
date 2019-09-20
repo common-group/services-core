@@ -194,6 +194,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
                     street_number: address.address_number,
                     zipcode: address.address_zip_code,
                     country: addressCountry.name,
+                    country_en: addressCountry.name_en,
                     state: addressState.acronym ? addressState.acronym : addressState,
                     city: address.address_city,
                     complementary: address.address_complement
@@ -268,6 +269,7 @@ const sendSlipPayment = (fields, commonData) => {
                 zipcode: address.address_zip_code,
                 // TOdO: remove hard-coded country when international support is added on the back-end
                 country: 'Brasil',
+                country_en: 'Brazil',
                 state: addressState.acronym,
                 city: address.address_city,
                 complementary: address.address_complement

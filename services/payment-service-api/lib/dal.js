@@ -41,7 +41,7 @@ const generateDalContext = (client) => {
         const payment = (await client.query(`
             select * from payment_service.catalog_payments where id = $1::uuid
         `, [ paymentId ])).rows[0];
-    
+
         return payment;
     };
 
@@ -56,7 +56,7 @@ const generateDalContext = (client) => {
         const subscription = (await client.query(`
             select * from payment_service.subscriptions where id = $1::uuid
         `, [ subscriptionId ])).rows[0];
-    
+
         return subscription;
     };
 
@@ -92,11 +92,11 @@ const generateDalContext = (client) => {
                 left join payment_service.credit_cards pcc on cp.data->>'card_id' is not null and pcc.id = (cp.data->>'card_id')::uuid
                 where cp.id = $1::uuid`
             , [paymentId]);
-    
+
         if(R.isEmpty(res.rows)) {
             throw new Error("Payment not found");
         };
-    
+
         const ctx = new Object({
             payment: res.rows[0].payment_data,
             user: res.rows[0].user_data,
@@ -105,9 +105,25 @@ const generateDalContext = (client) => {
             subscription: res.rows[0].subscription_data,
             payment_card: res.rows[0].payment_card
         });
-    
+
         return ctx;
     };
+
+    const isCardAlreadyAnalyzedOnAntifraud = async (cardId) => {
+        const res = await client.query(`
+            SELECT payment.gateway_general_data->>'card_id'
+            FROM payment_service.catalog_payments payment
+            WHERE payment.gateway_general_data->>'card_id' = $1
+                AND payment.status = 'paid'
+                AND payment.data ->> 'payment_method' = 'credit_card'
+        `, [cardId])
+
+        if(res.rows.length === 0) {
+            return false
+        } else {
+            return true
+        }
+    }
 
     /*
      * updateCardFromGateway(card_id, gateway_card_data)
@@ -157,7 +173,7 @@ const generateDalContext = (client) => {
                 paymentId,
             ]
         )).rows[0];
-    
+
         return card;
     };
 
@@ -178,7 +194,7 @@ const generateDalContext = (client) => {
             returning *`
             , [paymentId, JSON.stringify(data_reason)]
         )).rows[0];
-    
+
         return payment;
     };
 
@@ -204,7 +220,7 @@ const generateDalContext = (client) => {
             returning *`
             , [paymentId, JSON.stringify(dataToDb)]
         )).rows[0];
-    
+
         return payment;
     };
 
@@ -227,7 +243,7 @@ const generateDalContext = (client) => {
                     and s.id = $1::uuid
             returning s.*
         `, [subscriptionId, cardId])).rows[0];
-    
+
         return subscription;
     };
 
@@ -243,7 +259,7 @@ const generateDalContext = (client) => {
         const notification = (await client.query(`
             select * from notification_service.notify($1::text, $2::json)
         `, [ label, JSON.stringify(body_with_relations) ])).rows[0];
-    
+
         return notification;
     };
 
@@ -296,6 +312,7 @@ const generateDalContext = (client) => {
         findPayment,
         findSubscription,
         loadPaymentContext,
+        isCardAlreadyAnalyzedOnAntifraud,
         updateCardFromGateway,
         updateGatewayDataOnPayment,
         buildGatewayGeneralDataOnPayment,

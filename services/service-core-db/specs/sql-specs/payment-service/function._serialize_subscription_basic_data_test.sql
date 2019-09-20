@@ -2,10 +2,10 @@ BEGIN;
     -- import __json_data_payment from helpers
     \i /specs/sql-support/payment_json_build_helpers.sql
 
-    select plan(50);
+    select plan(52);
     -- check function signature
     SELECT function_returns(
-        'payment_service', '_serialize_subscription_basic_data', ARRAY['json'], 'json' 
+        'payment_service', '_serialize_subscription_basic_data', ARRAY['json'], 'json'
     );
 
     prepare generate_data as select * from payment_service._serialize_subscription_basic_data(__json_data_payment($1::json));
@@ -33,7 +33,7 @@ BEGIN;
 
         -- check serialized structure
         _result := payment_service._serialize_payment_basic_data(_expected);
-        
+
         return next is(_result ->> 'amount', _expected ->> 'amount');
         return next is(_result -> 'customer' ->> 'document_number', _expected -> 'customer'->>'document_number');
         end;
@@ -62,6 +62,7 @@ BEGIN;
         return next is(_result -> 'customer' -> 'address' ->> 'neighborhood', _default_data -> 'customer' -> 'address' ->> 'neighborhood');
         return next is(_result -> 'customer' -> 'address' ->> 'zipcode', _default_data -> 'customer' -> 'address' ->> 'zipcode');
         return next is(_result -> 'customer' -> 'address' ->> 'country', _default_data -> 'customer' -> 'address' ->> 'country');
+        return next is(_result -> 'customer' -> 'address' ->> 'country_en', _default_data -> 'customer' -> 'address' ->> 'country_en');
         return next is(_result -> 'customer' -> 'address' ->> 'state', _default_data -> 'customer' -> 'address' ->> 'state');
         return next is(_result -> 'customer' -> 'address' ->> 'city', _default_data -> 'customer' -> 'address' ->> 'city');
         return next is(_result -> 'customer' -> 'address' ->> 'complementary', _default_data -> 'customer' -> 'address' ->> 'complementary');
@@ -95,6 +96,7 @@ BEGIN;
         return next is(_result -> 'customer' -> 'address' ->> 'neighborhood', _expected -> 'customer' -> 'address' ->> 'neighborhood');
         return next is(_result -> 'customer' -> 'address' ->> 'zipcode', _expected -> 'customer' -> 'address' ->> 'zipcode');
         return next is(_result -> 'customer' -> 'address' ->> 'country', _expected -> 'customer' -> 'address' ->> 'country');
+        return next is(_result -> 'customer' -> 'address' ->> 'country_en', _expected -> 'customer' -> 'address' ->> 'country_en');
         return next is(_result -> 'customer' -> 'address' ->> 'state', _expected -> 'customer' -> 'address' ->> 'state');
         return next is(_result -> 'customer' -> 'address' ->> 'city', _expected -> 'customer' -> 'address' ->> 'city');
         return next is(_result -> 'customer' -> 'address' ->> 'complementary', _expected -> 'customer' -> 'address' ->> 'complementary');
