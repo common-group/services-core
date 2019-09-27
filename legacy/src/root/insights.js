@@ -40,11 +40,16 @@ const insights = {
                     subscribersDetails(subData); 
                     load(true); 
                     isProjectNotLoader(false);
-                    m.redraw();
+                    h.redraw();
+                })
+                .catch(() => {
+                    isProjectNotLoader(false);
+                    h.redraw();
                 });
             }
             else {
                 isProjectNotLoader(false);
+                h.redraw();
             }
         });
         vnode.state = {
