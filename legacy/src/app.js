@@ -6,6 +6,7 @@ import Chart from 'chart.js';
 import { isNumber } from 'util';
 import { wrap } from './wrap';
 
+m.originalTrust = m.trust;
 m.trust = (text) => h.trust(text);
 
 (function () {
