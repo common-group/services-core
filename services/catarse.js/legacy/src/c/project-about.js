@@ -60,7 +60,7 @@ const projectAbout = {
                 m('.fontsize-base[itemprop="about"]', m.originalTrust(h.selfOrEmpty(project.about_html, '...'))),
                 project.budget ? [
                     m('p.fontsize-base.fontweight-semibold', 'Orçamento'),
-                    m('p.fontsize-base', m.trust(project.budget))
+                    m('p.fontsize-base', m.originalTrust(project.budget))
                 ] : '',
                 m(projectReport)
             ]),
