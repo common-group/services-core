@@ -40,10 +40,8 @@ const dashboardRewardCard = {
                     reward.maximum_contributions('');
                 }
             },
-            editables = h.toggleProp(false, true),
-            toggleShowLimit = () => {
-                showLimited.toggle();
-            },
+            limitEdit = h.toggleProp(false, true),
+            descriptionEdit = h.toggleProp(false, true),
             validate = () => {
                 limitError(false);
                 vnode.attrs.error(false);
@@ -81,7 +79,8 @@ const dashboardRewardCard = {
                     .updateReward(vnode.attrs.project().project_id, reward.id(), data)
                     .then((data) => {
                         vnode.attrs.showSuccess(true);
-                        editables.toggle();
+                        limitEdit(false);
+                        descriptionEdit(false);
                         isSaving(false);
                         h.redraw();
                     })
@@ -162,7 +161,6 @@ const dashboardRewardCard = {
             editDescription,
             availableCount,
             descriptionError,
-            toggleShowLimit,
             toggleLimit,
             saveReward,
             showLimited,
@@ -172,7 +170,8 @@ const dashboardRewardCard = {
             tryDeleteImage,
             isUploadingRewardImage,
             isDeletingRewardImage,
-            editables,
+            limitEdit,
+            descriptionEdit,
             isSaving
         };
     },
@@ -183,7 +182,8 @@ const dashboardRewardCard = {
         const reward = attrs.reward();
         const project = attrs.project();
 
-        const editables = state.editables;
+        const limitEdit = state.limitEdit;
+        const descriptionEdit = state.descriptionEdit;
         const isSubscription = projectVM.isSubscription(project);
         const isUploadingRewardImage = state.isUploadingRewardImage;
         const isDeletingRewardImage = state.isDeletingRewardImage;
@@ -191,10 +191,10 @@ const dashboardRewardCard = {
         const onSelectImageFile = state.onSelectImageFile;
         const availableCount = state.availableCount;
         const shouldShowLoaderToUploadImage = isUploadingRewardImage() || isDeletingRewardImage();
-        const showLimited = editables();
+        const showLimited = limitEdit();
         const limitError = (state.limitError && state.limitError());
         const descriptionError = state.descriptionError;
-        const isEditingDescription = editables();
+        const isEditingDescription = descriptionEdit();
         const isSaving = state.isSaving();
 
         return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
@@ -240,25 +240,6 @@ const dashboardRewardCard = {
                                 count: reward.waiting_payment_count()
                             })))
                         ]),
-
-                        // REWARD DESCRIPTION
-                        (
-                            (isSubscription && isEditingDescription) ? m(rewardCardEditDescription, {
-                                reward,
-                                descriptionError
-                            }) : null
-                        ),
-                        (
-                            (isSubscription && !isEditingDescription) ?
-                                m('.w-row.u-marginbottom-20', [
-                                    m('.w-col.w-col-4', [
-                                        m('button.btn.btn-small.btn-terciary.w-button', {
-                                            onclick: editables.toggle
-                                        }, 'Editar descrição'),
-                                    ])
-                                ]) : null
-                        ),
-                        // END REWARD DESCRIPTION
 
                         // REWARD IMAGE
                         (
@@ -356,17 +337,16 @@ const dashboardRewardCard = {
                         isSubscription ? null : m('.fontsize-smallest',
                             m('b', `${window.I18n.t('delivery', I18nScope())}: `),
                             window.I18n.t(`shipping_options.${reward.shipping_options()}`, I18nScope())),
-                        m('.u-margintop-40.w-row', [
-                            (showLimited ? '' :
-                                m('.w-col.w-col-4', [
-                                    m('button.btn.btn-small.btn-terciary.w-button', {
-                                        onclick: editables.toggle
-                                    }, 'Editar disponibilidade'),
-
-                                ])),
-                            m('.w-col.w-col-8')
+                        m('.u-margintop-40', [
+                            isSubscription &&
+                                m(`button.btn.btn-small.btn-terciary.btn-inline.u-marginright-20.w-button`, {
+                                    onclick: descriptionEdit.toggle
+                                }, 'Editar descrição'),
+                            m(`button.btn.btn-small.btn-terciary.btn-inline.u-marginright-20.w-button`, {
+                                onclick: limitEdit.toggle
+                            }, 'Editar disponibilidade'),
                         ]),
-                        m(`div${showLimited ? '' : '.w-hidden'}`, [
+                        m(`div${(showLimited || isEditingDescription) ? '' : '.w-hidden'}`, [
                             m('.card.card-terciary.div-display-none.u-radius', {
                                 style: {
                                     display: 'block'
@@ -374,52 +354,68 @@ const dashboardRewardCard = {
                             },
                                 m('.w-form', [
                                     [
-                                        m('div.w-row', [
-                                            m('div.w-col.w-col-6',
-                                                m('div.w-checkbox', [
-                                                    m(`input.w-checkbox-input[type='checkbox']`, {
-                                                        onclick: state.runOutRewardAvailability,
-                                                        checked: reward.run_out()
-                                                    }),
-                                                    m('label.fontsize-smaller.fontweight-semibold.w-form-label',
-                                                        window.I18n.t('run_out_reward', I18nScope())
-                                                    )
+                                        (
+                                            showLimited && [
+                                                m('div.w-row', [
+                                                    m('div.w-col.w-col-6',
+                                                        m('div.w-checkbox', [
+                                                            m(`input.w-checkbox-input[type='checkbox']`, {
+                                                                onclick: state.runOutRewardAvailability,
+                                                                checked: reward.run_out()
+                                                            }),
+                                                            m('label.fontsize-smaller.fontweight-semibold.w-form-label',
+                                                                window.I18n.t('run_out_reward', I18nScope())
+                                                            )
+                                                        ])
+                                                    ),
+                                                    m('div.w-col.w-col-6')
+                                                ]),
+                                                m('.w-row', [
+                                                    m('.w-col.w-col-6',
+                                                        m('.w-checkbox', [
+                                                            m(`input.w-checkbox-input[type='checkbox']`, {
+                                                                onclick: state.toggleLimit,
+                                                                checked: reward.limited()
+                                                            }),
+                                                            m('label.fontsize-smaller.fontweight-semibold.w-form-label',
+                                                                window.I18n.t('reward_limited_input', I18nScope())
+                                                            )
+                                                        ])
+                                                    ),
+                                                    m('.w-col.w-col-6', [
+                                                        m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade disponível\'][type=\'tel\']', {
+                                                            class: limitError ? 'error' : false,
+                                                            value: reward.maximum_contributions(),
+                                                            onchange: m.withAttr('value', reward.maximum_contributions)
+                                                        }),
+                                                        limitError ? m(inlineError, {
+                                                            message: 'Limite deve ser maior que quantidade de apoios.'
+                                                        }) : '',
+                                                    ])
                                                 ])
-                                            ),
-                                            m('div.w-col.w-col-6')
-                                        ]),
+                                            ]
+                                        ),
+                                        (
+                                            // REWARD DESCRIPTION
+                                            (isSubscription && isEditingDescription) &&
+                                                m(rewardCardEditDescription, {
+                                                    reward,
+                                                    descriptionError
+                                                })
+                                            // END REWARD DESCRIPTION
+                                        ),
                                         m('.w-row', [
-                                            m('.w-col.w-col-6',
-                                                m('.w-checkbox', [
-                                                    m(`input.w-checkbox-input[type='checkbox']`, {
-                                                        onclick: state.toggleLimit,
-                                                        checked: reward.limited()
-                                                    }),
-                                                    m('label.fontsize-smaller.fontweight-semibold.w-form-label',
-                                                        window.I18n.t('reward_limited_input', I18nScope())
-                                                    )
-                                                ])
-                                            ),
-                                            m('.w-col.w-col-6', [
-                                                m('input.string.tel.optional.w-input.text-field.u-marginbottom-30.positive[placeholder=\'Quantidade disponível\'][type=\'tel\']', {
-                                                    class: limitError ? 'error' : false,
-                                                    value: reward.maximum_contributions(),
-                                                    onchange: m.withAttr('value', reward.maximum_contributions)
-                                                }),
-                                                limitError ? m(inlineError, {
-                                                    message: 'Limite deve ser maior que quantidade de apoios.'
-                                                }) : '',
-                                            ])
-                                        ]),
-                                        m('.w-row', [
-                                            m('.w-sub-col.w-col.w-col-4',
+                                            m('._w-sub-col.w-col.w-col-4',
                                                 m('button.btn.btn-small.w-button', {
                                                     onclick: state.saveReward
                                                 }, 'Salvar')
                                             ),
-                                            m('.w-sub-col.w-col.w-col-4',
+                                            m('._w-sub-col.w-col.w-col-4',
                                                 m('button.btn.btn-small.btn-terciary.w-button', {
-                                                    onclick: editables.toggle
+                                                    onclick: () => {
+                                                        descriptionEdit(false);
+                                                        limitEdit(false);
+                                                    }
                                                 }, 'Cancelar')
                                             ),
                                             m('.w-clearfix.w-col.w-col-4')
