@@ -347,7 +347,7 @@ const dashboardRewardCard = {
                             }, 'Editar disponibilidade'),
                         ]),
                         m(`div${(showLimited || isEditingDescription) ? '' : '.w-hidden'}`, [
-                            m('.card.card-terciary.div-display-none.u-radius', {
+                            m('.card.card-terciary.div-display-none.u-margintop-10.u-radius', {
                                 style: {
                                     display: 'block'
                                 }
