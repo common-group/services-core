@@ -405,12 +405,12 @@ const dashboardRewardCard = {
                                             // END REWARD DESCRIPTION
                                         ),
                                         m('.w-row', [
-                                            m('._w-sub-col.w-col.w-col-4',
+                                            m('.w-sub-col.w-col.w-col-4',
                                                 m('button.btn.btn-small.w-button', {
                                                     onclick: state.saveReward
                                                 }, 'Salvar')
                                             ),
-                                            m('._w-sub-col.w-col.w-col-4',
+                                            m('.w-sub-col.w-col.w-col-4',
                                                 m('button.btn.btn-small.btn-terciary.w-button', {
                                                     onclick: () => {
                                                         descriptionEdit(false);
