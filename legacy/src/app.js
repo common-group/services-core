@@ -10,6 +10,15 @@ m.originalTrust = m.trust;
 m.trust = (text) => h.trust(text);
 
 (function () {
+
+    h.SentryInitSDK();
+
+    try {
+        functionThatDoesntExist();
+    } catch(e) {
+        h.captureException(e);
+    }
+
     /// Setup an AUTO-SCROLL TOP when change route
     const pushState = history.pushState;
     history.pushState = function () {
