@@ -62,11 +62,12 @@ const userPayload = (customer, address) => ({
     }
 });
 
-const displayError = fields => (data) => {
-    const errorMsg = data.message || window.I18n.t('submission.encryption_error', I18nScope());
+const displayError = fields => (exception) => {
+    const errorMsg = exception.message || window.I18n.t('submission.encryption_error', I18nScope());
     fields.isLoading(false);
     fields.submissionError(window.I18n.t('submission.error', I18nScope({ message: errorMsg })));
     m.redraw();
+    h.captureException(exception);
 };
 
 const paymentInfo = paymentId => commonPaymentInfo.postWithToken({ id: paymentId }, null,

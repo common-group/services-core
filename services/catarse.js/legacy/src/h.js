@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import moment from 'moment';
+import * as Sentry from '@sentry/browser';
 import m from 'mithril';
 import prop from 'mithril/stream';
 import { catarse } from './api';
@@ -1052,7 +1053,19 @@ const _dataCache = {},
             },
         };
     },
-    trust = (text) => generativeTrust(text, { eliminateScriptTags : true });
+    trust = text => generativeTrust(text, { eliminateScriptTags: true }),
+    SentryInitSDK = () => {
+        const metaSentryUrlDSN = document.querySelector('[name="sentry-public-dsn"]');
+
+        if (metaSentryUrlDSN && metaSentryUrlDSN.getAttribute('content')) {
+            Sentry.init({ dsn: metaSentryUrlDSN.getAttribute('content') });
+            if (getUserID()) {
+                Sentry.configureScope(scope => scope.setUser({ id: getUserID() }));
+            }
+        }
+    },
+    captureException = exception => Sentry.captureException(exception),
+    captureMessage = message => Sentry.captureMessage(message);
 
 setMomentifyLocale();
 closeFlash();
@@ -1060,6 +1073,9 @@ closeModal();
 checkReminder();
 
 export default {
+    SentryInitSDK,
+    captureException,
+    captureMessage,
     redraw,
     getCallStack,
     createRequestRedrawWithCountdown,
