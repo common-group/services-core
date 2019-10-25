@@ -1064,8 +1064,20 @@ const _dataCache = {},
             }
         }
     },
-    captureException = exception => Sentry.captureException(exception),
-    captureMessage = message => Sentry.captureMessage(message);
+    captureException = (exception) => {
+        try {
+            Sentry.captureException(exception);
+        } catch (e) {
+            Sentry.captureException(e);
+        }
+    },
+    captureMessage = (message) => {
+        try {
+            Sentry.captureMessage(message);
+        } catch (e) {
+            Sentry.captureException(e);
+        }
+    };
 
 setMomentifyLocale();
 closeFlash();
