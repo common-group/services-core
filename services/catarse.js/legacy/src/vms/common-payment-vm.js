@@ -13,17 +13,28 @@ const sendPaymentRequest = data => commonPayment.postWithToken(
     { data: _.extend({}, data, { payment_id: paymentInfoId() }) },
     null,
     (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {})
-);
+)
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});
 
 const sendSubscriptionUpgrade = data => commonSubscriptionUpgrade.postWithToken(
     { data },
     null,
     (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {})
-);
+)
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});
 
-const saveCreditCard = creditCardHash => commonCreditCard.postWithToken(
-    { data: { card_hash: creditCardHash } }
-);
+const saveCreditCard = creditCardHash => commonCreditCard
+.postWithToken({ data: { card_hash: creditCardHash } })
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});;
 
 const updateUser = user => m.request({
     method: 'PUT',
@@ -32,6 +43,10 @@ const updateUser = user => m.request({
         user
     },
     config: h.setCsrfToken
+})
+.catch((error) => {
+    h.captureException(error);
+    throw error;
 });
 
 const setNewCreditCard = (creditCardFields) => {
@@ -70,10 +85,19 @@ const displayError = fields => (exception) => {
     h.captureException(exception);
 };
 
-const paymentInfo = paymentId => commonPaymentInfo.postWithToken({ id: paymentId }, null,
-    (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {}));
+const paymentInfo = paymentId => commonPaymentInfo
+    .postWithToken({ id: paymentId }, null, (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {}))
+    .catch((error) => {
+        h.captureException(error);
+        throw error;
+    });
 
-const creditCardInfo = creditCard => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
+const creditCardInfo = creditCard => commonCreditCards
+    .getRowWithToken(h.idVM.id(creditCard.id).parameters())
+    .catch((error) => {
+        h.captureException(error);
+        throw error;
+    });
 
 let retries = 10;
 const isReactivation = () => {
@@ -100,7 +124,7 @@ const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
         }
 
         return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentId, isEdit));
-    }).catch(() => promise.reject({}));
+    }).catch(error => promise.reject({}));
 };
 
 const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({ id, catalog_payment_id }) => {
@@ -139,7 +163,7 @@ const waitForSavedCreditCard = promise => (creditCardId) => {
         }
 
         return promise.resolve({ creditCardId });
-    }).catch(err => promise.reject({ message: err.message }));
+    }).catch(error => promise.reject({ message: error.message }));
 
 
     return promise;
@@ -339,7 +363,12 @@ const tryRechargeSubscription = (subscription_id) => {
     const p = new Promise((resolve, reject) => {
         rechargeSubscription
             .postWithToken({ subscription_id })
-            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5)).catch(reject);
+            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5))
+            .catch((error) => {
+                h.captureException(error);
+                throw error;
+            })
+            .catch(reject);
     });
 
     return p;
