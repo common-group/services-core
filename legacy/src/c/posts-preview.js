@@ -107,7 +107,7 @@ const postsPreview = {
                                 m('.fontsize-larger.fontweight-semibold.u-marginbottom-30.u-text-center',
                                     title
                                 ),
-                                m('.fontsize-base', m.trust(comment_html))
+                                m('.fontsize-base', m.originalTrust(comment_html))
                             ]),
                             m('.w-col.w-col-1')
                         ])
