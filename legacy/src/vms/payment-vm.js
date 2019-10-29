@@ -173,11 +173,33 @@ const paymentVM = () => {
             }
             loading(false);
             m.redraw();
-        }).catch((err) => {
+        }).catch((errorCatched) => {
             error(window.I18n.t('submission.slip_submission', scope()));
             loading(false);
             completed(false);
             m.redraw();
+            h.captureException(errorCatched);
+        });
+    };
+
+    const updateContributionData = (contribution_id, project_id) => {
+        const contributionData = {
+            anonymous: fields.anonymous(),
+            payer_document: fields.ownerDocument(),
+            payer_name: fields.completeName(),
+            address_attributes: fields.address().getFields(),
+            card_owner_document: creditCardFields.cardOwnerDocument()
+        };
+
+        return m.request({
+            method: 'PUT',
+            url: `/projects/${project_id}/contributions/${contribution_id}.json`,
+            data: { contribution: contributionData },
+            config: setCsrfToken
+        })
+        .catch((error) => {
+            h.captureException(error);
+            throw error;
         });
     };
 
@@ -263,6 +285,9 @@ const paymentVM = () => {
             url: `/payment/pagarme/${contribution_id}/pay_credit_card`,
             data,
             config: setCsrfToken
+        }).catch((error) => {
+            h.captureException(error);
+            throw error;
         });
     };
 
@@ -310,6 +335,7 @@ const paymentVM = () => {
                     });
                 }
             }).catch((error) => {
+                h.captureException(error);
                 if (!_.isEmpty(error.message)) {
                     reject(error);
                 } else {
@@ -321,23 +347,6 @@ const paymentVM = () => {
         return p;
     };
 
-    const updateContributionData = (contribution_id, project_id) => {
-        const contributionData = {
-            anonymous: fields.anonymous(),
-            payer_document: fields.ownerDocument(),
-            payer_name: fields.completeName(),
-            address_attributes: fields.address().getFields(),
-            card_owner_document: creditCardFields.cardOwnerDocument()
-        };
-
-        return m.request({
-            method: 'PUT',
-            url: `/projects/${project_id}/contributions/${contribution_id}.json`,
-            data: { contribution: contributionData },
-            config: setCsrfToken
-        });
-    };
-
     const creditCardPaymentSuccess = (deferred, project_id, contribution_id) => (data) => {
         if (data.payment_status === 'failed') {
             const errorMsg = data.message || window.I18n.t('submission.payment_failed', scope());
@@ -346,6 +355,7 @@ const paymentVM = () => {
             submissionError(window.I18n.t('submission.error', scope({ message: errorMsg })));
             m.redraw();
             deferred.reject();
+            h.captureMessage(errorMsg);
         } else {
             window.location.href = `/projects/${project_id}/contributions/${contribution_id}`;
         }
@@ -357,6 +367,8 @@ const paymentVM = () => {
         submissionError(window.I18n.t('submission.error', scope({ message: errorMsg })));
         m.redraw();
         deferred.reject();
+        h.captureException(data);
+        h.captureMessage(errorMsg);
     };
 
     const checkAndPayCreditCard = (deferred, selectedCreditCard, contribution_id, project_id, selectedInstallment) => () => {
