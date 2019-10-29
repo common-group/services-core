@@ -16,9 +16,8 @@ const shippingFeeInput = {
             applyMask = _.compose(fee.value, h.applyMonetaryMask);
 
         _.extend(fee, { deleted });
-        const onlyNumbersForFee = `${fee.value()}`.replace(/\D+/g, '');
-        const feeNumberValue = Number(onlyNumbersForFee);
-        fee.value(feeNumberValue ? `${h.formatNumber(feeNumberValue, 2, 3)}` : '0,00');
+        const feeNumberValue = Number(fee.value());
+        fee.value(feeNumberValue ? `${h.formatNumber(feeNumberValue, 2, 2)}` : '0,00');
         vnode.state = {
             fee,
             applyMask,
@@ -84,7 +83,7 @@ const shippingFeeInput = {
                         ),
                         m('.w-col.w-col-9',
                             m('input.positive.postfix.text-field.w-input', {
-                                value: state.feeValue(),
+                                value: state.applyMask(state.feeValue()),
                                 autocomplete: 'off',
                                 type: 'text',
                                 onkeyup: m.withAttr('value', state.applyMask),
