@@ -45,7 +45,7 @@
         "jquery": "^3.3.1",
         "liquidjs": "^5.3.0-0",
         "mithril": "^1.1.6",
-        "mithril-generative-trust": "https://github.com/grpse/mithril-generative-trust.git#v1.0.1",
+        "mithril-generative-trust": "https://github.com/grpse/mithril-generative-trust.git#v1.0.2",
         "mithril-node-render": "^2.3.2",
         "mithril-postgrest": "git://github.com:catarse/mithril-postgrest.git#4.0.0",
         "moment": "~> 2.19.3",
@@ -53,7 +53,6 @@
         "select": "^1.1.2",
         "underscore": "^1.9.1",
         "webpack": "^4.12.0",
-        "webpack-cli": "^3.0.4",
-        "mithril-generative-trust": "https://github.com/grpse/mithril-generative-trust.git#v1.0.2"
+        "webpack-cli": "^3.0.4"
     }
 }
