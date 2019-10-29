@@ -47,6 +47,7 @@ const projectsPayment = {
             if (vm.validate()) {
                 vm.kondutoExecute();
                 showPaymentForm(true);
+                h.redraw();
             }
         };
 
@@ -327,6 +328,7 @@ const projectsPayment = {
 
                                         m('.card.card-terciary.u-radius.u-marginbottom-40',
                                             m(addressForm, {
+                                                addVM: state.vm.fields.address(),
                                                 addressFields: state.vm.fields.address().fields,
                                                 international: state.vm.isInternational,
                                                 hideNationality: true,

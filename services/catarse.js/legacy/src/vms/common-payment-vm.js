@@ -13,17 +13,28 @@ const sendPaymentRequest = data => commonPayment.postWithToken(
     { data: _.extend({}, data, { payment_id: paymentInfoId() }) },
     null,
     (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {})
-);
+)
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});
 
 const sendSubscriptionUpgrade = data => commonSubscriptionUpgrade.postWithToken(
     { data },
     null,
     (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {})
-);
+)
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});
 
-const saveCreditCard = creditCardHash => commonCreditCard.postWithToken(
-    { data: { card_hash: creditCardHash } }
-);
+const saveCreditCard = creditCardHash => commonCreditCard
+.postWithToken({ data: { card_hash: creditCardHash } })
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});;
 
 const updateUser = user => m.request({
     method: 'PUT',
@@ -32,6 +43,10 @@ const updateUser = user => m.request({
         user
     },
     config: h.setCsrfToken
+})
+.catch((error) => {
+    h.captureException(error);
+    throw error;
 });
 
 const setNewCreditCard = (creditCardFields) => {
@@ -56,22 +71,33 @@ const userPayload = (customer, address) => ({
         address_number: address.address_number,
         address_zip_code: address.address_zip_code,
         address_city: address.address_city,
+        address_state: address.address_state,
         address_complement: address.address_complement,
         phone_number: address.phone_number
     }
 });
 
-const displayError = fields => (data) => {
-    const errorMsg = data.message || window.I18n.t('submission.encryption_error', I18nScope());
+const displayError = fields => (exception) => {
+    const errorMsg = exception.message || window.I18n.t('submission.encryption_error', I18nScope());
     fields.isLoading(false);
     fields.submissionError(window.I18n.t('submission.error', I18nScope({ message: errorMsg })));
     m.redraw();
+    h.captureException(exception);
 };
 
-const paymentInfo = paymentId => commonPaymentInfo.postWithToken({ id: paymentId }, null,
-    (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {}));
+const paymentInfo = paymentId => commonPaymentInfo
+    .postWithToken({ id: paymentId }, null, (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {}))
+    .catch((error) => {
+        h.captureException(error);
+        throw error;
+    });
 
-const creditCardInfo = creditCard => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
+const creditCardInfo = creditCard => commonCreditCards
+    .getRowWithToken(h.idVM.id(creditCard.id).parameters())
+    .catch((error) => {
+        h.captureException(error);
+        throw error;
+    });
 
 let retries = 10;
 const isReactivation = () => {
@@ -98,7 +124,7 @@ const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
         }
 
         return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentId, isEdit));
-    }).catch(() => promise.reject({}));
+    }).catch(error => promise.reject({}));
 };
 
 const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({ id, catalog_payment_id }) => {
@@ -137,7 +163,7 @@ const waitForSavedCreditCard = promise => (creditCardId) => {
         }
 
         return promise.resolve({ creditCardId });
-    }).catch(err => promise.reject({ message: err.message }));
+    }).catch(error => promise.reject({ message: error.message }));
 
 
     return promise;
@@ -337,7 +363,12 @@ const tryRechargeSubscription = (subscription_id) => {
     const p = new Promise((resolve, reject) => {
         rechargeSubscription
             .postWithToken({ subscription_id })
-            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5)).catch(reject);
+            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5))
+            .catch((error) => {
+                h.captureException(error);
+                throw error;
+            })
+            .catch(reject);
     });
 
     return p;

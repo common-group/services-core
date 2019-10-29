@@ -6,6 +6,7 @@ import facebookButton from './facebook-button';
 import addressTag from './address-tag';
 import categoryTag from './category-tag';
 import projectVM from '../vms/project-vm';
+import projectVideo from './project-video';
 
 const projectHighlight = {
     oninit: function(vnode) {
@@ -18,13 +19,12 @@ const projectHighlight = {
         const isSub = projectVM.isSubscription(project);
 
         return m('#project-highlight', [
-            (project().video_embed_url ? m('.w-embed.w-video.project-video', {
-                style: 'min-height: 240px;'
-            }, [
-                m(`iframe.embedly-embed[itemprop="video"][src="${project().video_embed_url}"][frameborder="0"][allowFullScreen]`)
-            ]) : m('.project-image', {
-                style: `background-image:url('${project().original_image || project().project_img}');`
-            })),
+            (
+                project().video_embed_url ? 
+                    m(projectVideo, { video_embed_url : project().video_embed_url }) 
+                :
+                    m('.project-image', { style: `background-image:url('${project().original_image || project().project_img}');` })
+            ),
             m('.w-hidden-small.w-hidden-tiny', [
                 m(addressTag, { project, isDark: isSub }),
                 m(categoryTag, { project, isDark: isSub })

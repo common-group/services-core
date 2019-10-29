@@ -8,29 +8,25 @@ import {
 import loadMoreBtn from './load-more-btn';
 import dashboardSubscriptionCardDetailPaymentHistoryEntry from './dashboard-subscription-card-detail-payment-history-entry';
 import subscriptionNextChargeDate from './subscription-next-charge-date';
+import h from '../h';
+import { getPaymentsListVM } from '../vms/payments-list-vm';
 
 const dashboardSubscriptionCardDetailPaymentHistory = {
     oninit: function(vnode) {
         const loadingFirstPage = prop(true);
         const errorOcurred = prop(false);
-
-        const payments = commonPayment.paginationVM(models.commonPayments, 'created_at.desc', {
-            Prefer: 'count=exact'
-        });
-
-        const paymentsFilterVM = commonPayment.filtersVM({
-            subscription_id: 'eq'
-        });
+        const payments = getPaymentsListVM();
+        const paymentsFilterVM = commonPayment.filtersVM({ subscription_id: 'eq' });
 
         paymentsFilterVM.subscription_id(vnode.attrs.subscription.id);
 
         payments.firstPage(paymentsFilterVM.parameters()).then(() => {
                 loadingFirstPage(false);
-                m.redraw();
+                h.redraw();
             })
             .catch(() => {
                 errorOcurred(true);
-                m.redraw();
+                h.redraw();
             });
 
         vnode.state = {
@@ -49,7 +45,7 @@ const dashboardSubscriptionCardDetailPaymentHistory = {
 
         const last_payment = payments.length > 0 ? payments[0] : subscription.last_payment_data;
 
-        return m('div', [
+        return m(`div[m-component-name='dashboardSubscriptionCardDetailPaymentHistory']`, [
             m(subscriptionNextChargeDate, {
                 subscription,
                 last_payment

@@ -102,7 +102,7 @@ const paymentCreditCard = {
 
         const checkCreditCardName = () => {
             const trimmedString = vm.creditCardFields.name().replace(/ /g, '');
-            const charsOnly = /^[a-zA-Z]*$/;
+            const charsOnly = /^[a-zA-ZàèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ]*$/;
             const errorObj = { field: 'name', message: window.I18n.t('errors.inline.creditcard_name', scope()) };
             const isValid = !(_.isEmpty(trimmedString) || !charsOnly.test(trimmedString));
 
@@ -251,7 +251,7 @@ const paymentCreditCard = {
         return m('.w-form.u-marginbottom-40', {
             oncreate: state.loadPagarme
         }, [
-            m('form[name="email-form"]', {
+            m('form[method="post"][name="email-form"]', {
                 onsubmit: state.onSubmit
             }, [
                 (!attrs.hideSave && !state.loadingSavedCreditCards() && (state.savedCreditCards().length > 1)) ?

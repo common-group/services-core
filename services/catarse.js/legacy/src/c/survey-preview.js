@@ -68,7 +68,7 @@ const surveyPreview = {
                                         `${window.I18n.t('address_state', I18nScope())}:`
                                     ),
                                     m.trust('&nbsp;'),
-                                    attrs.stateName,
+                                    state.fields.address_state,
                                     m('br'),
                                     m('span.fontweight-semibold',
                                         `${window.I18n.t('address_zip_code', I18nScope())}:`

@@ -37,6 +37,19 @@ const downloadReports = {
                                                     'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
                                             )                                            
                                         ]),
+                                        m('div.card.card-message.u-radius.u-margintop-20.u-marginbottom-20.fontsize-small', [
+                                            m('span.fa.fa-lightbulb-o'),
+                                            m.trust('&nbsp;'),
+                                            'Saiba como ',
+                                            m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360033009412-Como-gerar-etiquetas-de-impress%C3%A3o-para-envio-de-recompensas"][target="_blank"]', 
+                                              'gerar etiquetas de impressão'
+                                            ),
+                                            ' com essas planilhas e como automatizar o ',
+                                            m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360032844931"][target="_blank"]', 
+                                              'envio de códigos de rastreio'
+                                            ),
+                                            ' para seus apoiadores!'
+                                        ]),                                        
                                         (
                                             isFailed ? '' :
                                             m('ul.w-list-unstyled', [

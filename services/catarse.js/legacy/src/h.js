@@ -1,9 +1,11 @@
 import _ from 'underscore';
 import moment from 'moment';
+import * as Sentry from '@sentry/browser';
 import m from 'mithril';
 import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
+import generativeTrust from 'mithril-generative-trust/src/index';
 
 function getCallStack() {
     const callStackStr = new Error().stack;
@@ -1050,6 +1052,31 @@ const _dataCache = {},
                 });
             },
         };
+    },
+    trust = text => generativeTrust(text, { eliminateScriptTags: true }),
+    SentryInitSDK = () => {
+        const metaSentryUrlDSN = document.querySelector('[name="sentry-public-dsn"]');
+
+        if (metaSentryUrlDSN && metaSentryUrlDSN.getAttribute('content')) {
+            Sentry.init({ dsn: metaSentryUrlDSN.getAttribute('content') });
+            if (getUserID()) {
+                Sentry.configureScope(scope => scope.setUser({ id: getUserID() }));
+            }
+        }
+    },
+    captureException = (exception) => {
+        try {
+            Sentry.captureException(exception);
+        } catch (e) {
+            Sentry.captureException(e);
+        }
+    },
+    captureMessage = (message) => {
+        try {
+            Sentry.captureMessage(message);
+        } catch (e) {
+            Sentry.captureException(e);
+        }
     };
 
 setMomentifyLocale();
@@ -1058,6 +1085,9 @@ closeModal();
 checkReminder();
 
 export default {
+    SentryInitSDK,
+    captureException,
+    captureMessage,
     redraw,
     getCallStack,
     createRequestRedrawWithCountdown,
@@ -1144,4 +1174,5 @@ export default {
     setCsrfToken,
     userSignedIn,
     isDevEnv,
+    trust,
 };

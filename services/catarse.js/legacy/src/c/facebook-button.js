@@ -8,6 +8,7 @@ const facebookButton = {
                     method: vnode.attrs.messenger ? 'send' : 'share',
                     link: vnode.attrs.url,
                     href: vnode.attrs.url,
+                    display: 'popup',
                 });
             }
         };

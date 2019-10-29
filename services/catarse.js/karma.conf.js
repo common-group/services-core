@@ -28,12 +28,22 @@ module.exports = (config) => {
             'legacy/spec/**/*.spec.js': ['webpack'],
             'legacy/spec/index.spec.js': ['webpack']
         },
+        webpack: {
+            // mode: 'development'
+            mode: 'production'
+        },
         exclude: [],
         reporters: ['spec'],
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,
-        browsers: ['ChromeHeadless'],
+        browsers: ['MyHeadlessChrome'],
+        customLaunchers: {
+            MyHeadlessChrome: {
+                base: 'ChromeHeadless',
+                flags: ['--headless', '--no-sandbox']
+            }
+        },
         singleRun: true
     });
 };

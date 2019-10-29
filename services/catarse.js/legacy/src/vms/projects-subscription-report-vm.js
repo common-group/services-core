@@ -6,7 +6,7 @@ const { replaceDiacritics } = window;
 
 const vm = commonPayment.filtersVM({
         status: 'in',
-        search_index: 'fts(portuguese)',
+        search_index: 'plfts(portuguese)',
         reward_external_id: 'eq',
         payment_method: 'eq',
         project_id: 'eq',
@@ -44,7 +44,7 @@ vm.withNullParameters = () => {
     const withNullVm = commonPayment.filtersVM({
         status: 'in',
         reward_external_id: 'is',
-        search_index: 'fts(portuguese)',
+        search_index: 'plfts(portuguese)',
         payment_method: 'eq',
         project_id: 'eq'
     });

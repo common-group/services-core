@@ -130,7 +130,7 @@ const addressFormNational = {
                                         const stateSelectedID = Number(event.target.value);
                                         fields.stateID(stateSelectedID);
                                         
-                                        if (_.isEmpty(countryStates())) {
+                                        if (!_.isEmpty(countryStates())) {
                                             const countryState = _.first(_.filter(countryStates(), countryState => {
                                                 return stateSelectedID === countryState.id;
                                             })); 
