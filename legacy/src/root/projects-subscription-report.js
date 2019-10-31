@@ -10,12 +10,15 @@ import h from '../h';
 import loadMoreBtn from '../c/load-more-btn';
 import filterText from '../c/filter-text';
 import FilterDropdown from '../c/filter-dropdown';
+import dropdownMenu from '../c/dropdown-menu';
 import filterDropdownNumberRange from '../c/filter-dropdown-number-range';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import dashboardSubscriptionCard from '../c/dashboard-subscription-card';
 import projectsSubscriptionReportVM from '../vms/projects-subscription-report-vm';
 import projectsContributionReportVM from '../vms/projects-contribution-report-vm';
 import projectSubscriptionsListVM from '../vms/project-subscriptions-list-vm';
+import { SelectSubscriptionReports } from '../c/select-subscription-reports';
+import modalBox from '../c/modal-box';
 
 const statusCustomFilter = {
     view: () => m('.fontsize-smaller.u-text-center', [
@@ -28,8 +31,7 @@ const statusCustomFilter = {
 };
 
 const dropdownFilterCustomLabel = {
-    view: function({attrs}) 
-    {
+    view: function ({ attrs }) {
         return m('.fontsize-smaller.u-text-center', attrs.label);
     }
 };
@@ -113,7 +115,7 @@ const projectSubscriptionReport = {
                 data: {
                     custom_label: [
                         dropdownFilterCustomLabel,
-                        {label: 'Recompensa'}
+                        { label: 'Recompensa' }
                     ],
                     onchange: submit,
                     name: 'reward_external_id',
@@ -128,7 +130,7 @@ const projectSubscriptionReport = {
                 data: {
                     custom_label: [
                         dropdownFilterCustomLabel,
-                        {label: 'Meio de pgto.'}
+                        { label: 'Meio de pgto.' }
                     ],
                     onchange: submit,
                     name: 'payment_method',
@@ -201,7 +203,9 @@ const projectSubscriptionReport = {
                 isProjectDataLoaded(true);
                 m.redraw();
             },
-            project = prop([{}]);
+            project = prop([{}]),
+            displayDownloadReportDropdownMenu = h.toggleProp(false, true),
+            displayDownloadReportSelectionModal = h.toggleProp(false, true);
 
         catarseVM.project_id(vnode.attrs.project_id);
 
@@ -249,12 +253,25 @@ const projectSubscriptionReport = {
                 isProjectDataLoaded(true);
                 m.redraw();
             }).catch(err => {
-                handleError(err);
+                handleError();
                 m.redraw();
             });
             project(data);
             m.redraw();
         });
+
+        const isSendingReportDownloadRequest = prop(false);
+
+        const sendReportDownloadRequest = async (report_types, report_type_ext) => {
+            isSendingReportDownloadRequest(true);
+            h.redraw();
+            console.log(report_types, report_type_ext);
+
+            setTimeout(() => {
+                isSendingReportDownloadRequest(false);
+                h.redraw();
+            }, 1000);
+        };
 
         vnode.state = {
             filterVM,
@@ -265,33 +282,43 @@ const projectSubscriptionReport = {
             lProject,
             project,
             isProjectDataLoaded,
-            isRewardsDataLoaded
+            isRewardsDataLoaded,
+            displayDownloadReportDropdownMenu,
+            displayDownloadReportSelectionModal,
+            sendReportDownloadRequest,
+            isSendingReportDownloadRequest,
         };
     },
-    view: function ({state, attrs}) {
-        const subsCollection = state.subscriptions.collection(),
-            filterBuilder = state.filterBuilder,
-            statusFilter = _.findWhere(filterBuilder, {
-                label: 'status_filter'
-            }),
-            textFilter = _.findWhere(filterBuilder, {
-                label: 'text_filter'
-            }),
-            rewardFilter = _.findWhere(filterBuilder, {
-                label: 'reward_filter'
-            }),
-            paymentFilter = _.findWhere(filterBuilder, {
-                label: 'payment_filter'
-            }),
-            totalPaidFilter = _.findWhere(filterBuilder, {
-                label: 'total_paid_filter'
-            }),
-            paidCountFilter = _.findWhere(filterBuilder, {
-                label: 'paid_count_filter'
-            });
+    view: function ({ state, attrs }) {
+        const subsCollection = state.subscriptions.collection();
+        const filterBuilder = state.filterBuilder;
+        const statusFilter = _.findWhere(filterBuilder, { label: 'status_filter' });
+        const textFilter = _.findWhere(filterBuilder, { label: 'text_filter' });
+        const rewardFilter = _.findWhere(filterBuilder, { label: 'reward_filter' });
+        const paymentFilter = _.findWhere(filterBuilder, { label: 'payment_filter' });
+        const totalPaidFilter = _.findWhere(filterBuilder, { label: 'total_paid_filter' });
+        const paidCountFilter = _.findWhere(filterBuilder, { label: 'paid_count_filter' });
+        const displayDownloadReportDropdownMenu = state.displayDownloadReportDropdownMenu;
+        const displayDownloadReportSelectionModal = state.displayDownloadReportSelectionModal;
+        const isSendingReportDownloadRequest = state.isSendingReportDownloadRequest;
+        const sendReportDownloadRequest = state.sendReportDownloadRequest;
+
         rewardFilter.data.options = state.mapRewardsToOptions();
+
         if (state.isProjectDataLoaded() && state.isRewardsDataLoaded()) {
             return m('div', [
+                (
+                    displayDownloadReportSelectionModal() && 
+                        m(modalBox, {
+                            hideCloseButton: true,
+                            displayModal: displayDownloadReportSelectionModal,
+                            content: [SelectSubscriptionReports, { 
+                                isSending: isSendingReportDownloadRequest,
+                                onClose: displayDownloadReportSelectionModal.toggle,
+                                onSend: sendReportDownloadRequest,
+                            }],
+                        })
+                ),
                 m(projectDashboardMenu, {
                     project: prop(_.first(state.project()))
                 }),
@@ -331,9 +358,9 @@ const projectSubscriptionReport = {
                 m('.divider'),
                 m('.before-footer.bg-gray.section', [
                     m('.w-container', [
-                        m('div',
+                        m('div.u-marginbottom-20',
                             m('.w-row', [
-                                m('.u-marginbottom-20.u-text-center-small-only.w-col.w-col-6',
+                                m('div.u-text-center-small-only.w-col.w-col-9.w-col-small-9.w-col-tiny-9',
                                     m('.w-inline-block.fontsize-base.u-marginright-10', [
                                         m('span.fontweight-semibold',
                                             state.subscriptions.total()
@@ -342,16 +369,25 @@ const projectSubscriptionReport = {
                                         m.trust('&nbsp;')
                                     ])
                                 ),
-                                m('.w-col.w-col-6',
-                                    m(`a.alt-link.fontsize-small.u-right[href='/projects/${attrs.project_id}/subscriptions_report_download']`, {
-                                        oncreate: m.route.link
+                                m('div.u-text-right.w-col.w-col-3.w-col-small-3.w-col-tiny-3', [
+                                    m(`a.alt-link.fontsize-small[href='#']`, {
+                                        onclick: () => displayDownloadReportDropdownMenu.toggle()
                                     }, [
-                                            m('span.fa.fa-download',
-                                                m.trust('&nbsp;')
-                                            ),
-                                            'Baixar relatórios'
-                                        ])
-                                )
+                                        m('span.fa.fa-download',
+                                            m.trust('&nbsp;')
+                                        ),
+                                        'Baixar relatórios'
+                                    ]),
+                                    m(dropdownMenu, { display: displayDownloadReportDropdownMenu() }, [
+                                        m(`a.btn.btn-terciary.btn-small.u-marginbottom-10[href='#']`, {
+                                            onclick: () => {
+                                                displayDownloadReportDropdownMenu.toggle();
+                                                displayDownloadReportSelectionModal.toggle();
+                                            }
+                                        }, 'Exportar CSV/XLS'),
+                                        m(`a.btn.btn-terciary.btn-small.u-marginbottom-10[href='/projects/${attrs.project_id}/reports-download']`, 'Ver exportações')
+                                    ])
+                                ])
                             ])
                         ),
                         m('.u-marginbottom-60', [
