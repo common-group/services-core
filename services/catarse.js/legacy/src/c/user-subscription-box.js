@@ -312,13 +312,6 @@ const userSubscriptionBox = {
                               generateSecondSlip: state.generateSecondSlip,
                               showLastSubscriptionVersionEditionNextCharge: state.showLastSubscriptionVersionEditionNextCharge,
                           }),
-                        //   m(userSubscriptionBoxControlTernary, {
-                        //     subscription, 
-                        //     displayCancelModal: state.displayCancelModal,
-                        //     isGeneratingSecondSlip: state.isGeneratingSecondSlip,
-                        //     generateSecondSlip: state.generateSecondSlip,
-                        //     showLastSubscriptionVersionEditionNextCharge: state.showLastSubscriptionVersionEditionNextCharge,
-                        // }),
                       ]),
                   ]
               )
