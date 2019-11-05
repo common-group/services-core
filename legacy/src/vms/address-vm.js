@@ -114,8 +114,8 @@ const addressVM = (args) => {
 
     const checkPhone = () => {
         let hasError = false;
-        const phone = fields.phoneNumber(),
-            strippedPhone = String(phone || '').replace(/[\(|\)|\-|\s]*/g, '');
+        const phone = fields.phoneNumber();
+        const strippedPhone = String(phone || '').replace(/\D*/g, '');
 
         if (strippedPhone.length < 10) {
             errors.phoneNumber(true);
