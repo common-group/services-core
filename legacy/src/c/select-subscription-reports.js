@@ -78,13 +78,12 @@ export const SelectSubscriptionReports = {
                                 ),
                                 m('div.w-form', [
                                     m('form',
-                                        m('select.text-field.w-select', [
-                                            m('option[value="csv"]', { 
-                                                onclick: () => reportsExtension('csv') 
-                                            }, 'CSV padrão'),
-                                            m('option[value="xls"]', { 
-                                                onclick: () => reportsExtension('xls') 
-                                            }, 'Excel (XLS)')
+                                        m('select.text-field.w-select', {
+                                            value: reportsExtension(),
+                                            onchange: (event) => reportsExtension(event.target.value),
+                                        }, [
+                                            m('option[value="csv"]', 'CSV padrão'),
+                                            m('option[value="xls"]', 'Excel (XLS)'),
                                         ])
                                     )
                                 ])

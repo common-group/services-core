@@ -19,6 +19,7 @@ import projectsContributionReportVM from '../vms/projects-contribution-report-vm
 import projectSubscriptionsListVM from '../vms/project-subscriptions-list-vm';
 import { SelectSubscriptionReports } from '../c/select-subscription-reports';
 import modalBox from '../c/modal-box';
+import { createProjectReportExports } from '../vms/project-report-exports-vm';
 
 const statusCustomFilter = {
     view: () => m('.fontsize-smaller.u-text-center', [
@@ -262,15 +263,28 @@ const projectSubscriptionReport = {
 
         const isSendingReportDownloadRequest = prop(false);
 
-        const sendReportDownloadRequest = async (report_types, report_type_ext) => {
-            isSendingReportDownloadRequest(true);
-            h.redraw();
-            console.log(report_types, report_type_ext);
-
-            setTimeout(() => {
-                isSendingReportDownloadRequest(false);
+        const sendReportDownloadRequest = async (reportTypes, reportFileExtension) => {
+            const updateLoader = () => {
+                isSendingReportDownloadRequest(true);
                 h.redraw();
-            }, 1000);
+            };
+
+            updateLoader();
+
+            for (const reportType of reportTypes) {
+
+                try {
+                    await createProjectReportExports(vnode.attrs.project_id, reportType, reportFileExtension);
+                } catch(e) {
+                    console.log('Error on creating project report exports:', e);
+                    updateLoader();
+                    throw e;
+                }
+            }
+
+            updateLoader();
+
+            m.route.set(`/projects/${vnode.attrs.project_id}/subscriptions_report_download`);
         };
 
         vnode.state = {
@@ -385,7 +399,7 @@ const projectSubscriptionReport = {
                                                 displayDownloadReportSelectionModal.toggle();
                                             }
                                         }, 'Exportar CSV/XLS'),
-                                        m(`a.btn.btn-terciary.btn-small.u-marginbottom-10[href='/projects/${attrs.project_id}/reports-download']`, 'Ver exportações')
+                                        m(`a.btn.btn-terciary.btn-small.u-marginbottom-10[href='/projects/${attrs.project_id}/subscriptions_report_download']`, 'Ver exportações')
                                     ])
                                 ])
                             ])
