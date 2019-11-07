@@ -1,8 +1,11 @@
 import m from 'mithril';
 import h from '../h';
+import { catarse } from '../api';
+import models from '../models';
 
 /**
  * @typedef {Object} Report
+ * @property {number} project_id
  * @property {string} report_type
  * @property {string} report_type_ext
  * @property {string} state
@@ -22,46 +25,16 @@ export const createProjectReportExports = async (projectId, report_type, report_
     });
 }
 
-export const listProjectReportExports = async (projectId) => {
-    
-    try {
-        const options = {
-            method: 'GET',
-            url: `/projects/${projectId}/project_report_exports/`,
-            config: h.setCsrfToken
-        };
-
-        /** @type {{data:Report[]}} */
-        const response = await m.request(options);
-
-        console.log('response', response);
-
-        return response.data;
-
-        const reportIds = await m.request(options);
-        console.log('reportIds', reportIds);
-
-        return await Promise.all(reportIds.report_ids.map(reportId => getProjectReportExport(projectId, reportId)));
-    } catch(e) {
-        return [];
-    }
-}
-
-export const getProjectReportExport = async (projectId, reportId) => {
-    try {
-        /** @type {m.RequestOptions} */
-        const options = {   
-            method: 'GET',
-            url: `/projects/${projectId}/project_report_exports/${reportId}/`,
-            config: h.setCsrfToken
-        };
-
-        console.log('options', options);
-
-        return await m.request(options);
-    } catch(e) {
-        h.captureException(e);
-        h.captureMessage(`Error loading project ${projectId} report ${reportId}`);
-        throw e;
-    }
+export const listProjectReportExports = (projectId) => {
+    models.projectReportExports.pageSize(9);
+    const projectReportExportsVM = catarse.paginationVM(models.projectReportExports, null, { Prefer: 'count=exact' });
+    const vm = h.createBasicPaginationVMWithAutoRedraw(projectReportExportsVM);
+    const filter = catarse.filtersVM({
+        project_id: projectId
+    })
+    .order({
+        created_at: 'desc'
+    });
+    vm.firstPage(filter.parameters());
+    return vm;
 }

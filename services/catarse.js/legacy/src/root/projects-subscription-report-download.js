@@ -10,6 +10,7 @@ import h from '../h';
 import models from '../models';
 import { projectSubscriptionReportDownloadEntry } from '../c/project-subscription-report-download-entry';
 import { listProjectReportExports, Report } from '../vms/project-report-exports-vm';
+import loadMoreBtn from '../c/load-more-btn';
 
 const projectSubscriptionReportDownload = {
     oninit: function (vnode) {
@@ -26,30 +27,20 @@ const projectSubscriptionReportDownload = {
             project(data);
         });
 
-        listProjectReportExports(vnode.attrs.project_id)
-            .then((r) => {
-                reports(r);
-                loading(false);
-                h.redraw();
-            })
-            .catch((e) => {
-                loading(false);
-                h.redraw();
-            });
+        const listProjectReportExportsVM = listProjectReportExports(vnode.attrs.project_id);
 
         vnode.state = {
             project,
-            loading,
-            reports
+            listProjectReportExportsVM,
         };
     },
     view: function ({ state, attrs }) {
 
         /** @type {Report[]} */
-        const reports = state.reports();
-        /** @type {boolean} */
-        const loading = state.loading();
+        const reports = state.listProjectReportExportsVM.collection();
 
+        /** @type {boolean} */
+        const loading = state.listProjectReportExportsVM.isLoading();
 
         return m('div', [
             m('div.dashboard-header.u-text-center',
@@ -91,7 +82,13 @@ const projectSubscriptionReportDownload = {
                         m("div.w-col.w-col-2")
                     ])
                 )
-            )
+            ),
+            m('.u-marginbottom-30.u-margintop-30.w-row', [
+                m(loadMoreBtn, {
+                    collection: state.listProjectReportExportsVM,
+                    cssClass: '.w-col-push-4'
+                })
+            ])
         ]);
 
     }
