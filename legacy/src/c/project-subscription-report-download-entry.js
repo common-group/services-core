@@ -9,6 +9,8 @@ export const projectSubscriptionReportDownloadEntry = {
 
         /** @type {Report} */
         const {
+            id,
+            project_id,
             report_type,
             report_type_ext,
             state,
@@ -35,7 +37,7 @@ export const projectSubscriptionReportDownloadEntry = {
         const shouldDisplayDownloadButton = state === 'done';
         const isExpired = state === 'expired';
 
-        console.log('Here???')
+        const reportDownloadUrl = () => `/projects/${project_id}/project_report_exports/${id}/`
 
         return m(`div.card.${isExpired ? '.card-terciary' : ''}u-marginbottom-10`, [
             m('div.u-marginbottom-20.w-row', [
@@ -50,7 +52,7 @@ export const projectSubscriptionReportDownloadEntry = {
                             ),
                             m('div.w-col.w-col-3', [
                                 shouldDisplayDownloadButton &&
-                                    m('a.btn.btn-small.btn-dark.w-button[href="#"]', [
+                                    m(`a.btn.btn-small.btn-dark.w-button[href="${reportDownloadUrl()}"]`, [
                                         m('span.fa.fa-download', ' '),
                                         ' Baixar arquivo'
                                     ])
@@ -61,7 +63,7 @@ export const projectSubscriptionReportDownloadEntry = {
             m('div.w-row', [
                 m('div.w-col.w-col-4', [
                     m('div.fontsize-smaller.fontweight-semibold', 'Status:'),
-                    m('div', m('span.fontsize-smaller.badge.btn-messenger.fontcolor-negative', reportStateBadge[state]))
+                    m('div',  reportStateBadge[state])
                 ]),
                 m('div.w-col.w-col-5', [
                     m('div.fontsize-smaller.fontweight-semibold', 'Data da exportação:'),
