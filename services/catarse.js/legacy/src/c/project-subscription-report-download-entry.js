@@ -22,31 +22,36 @@ export const projectSubscriptionReportDownloadEntry = {
             SubscriptionMonthlyReportForProjectOwner: 'Pagamentos confirmados',
         };
 
+        const isExpired = state === 'expired' || moment(created_at).add(7, 'days').isBefore(Date.now());
+
+        const realState = isExpired ? 'expired' : state;
+
         const reportStateBadge = {
-            pending: state === 'pending' && m("span.fontsize-smaller.badge.btn-messenger.fontcolor-negative", "Processando"),
-            expired: state === 'expired' && m("span.fontsize-smaller.badge.badge-gone", "Expirado"),
-            done: state === 'done' && m("span.fontsize-smaller.badge.badge-success", "Finalizado"),
+            pending: realState === 'pending' && m("span.fontsize-smaller.badge.btn-messenger.fontcolor-negative", "Processando"),
+            expired: realState === 'expired' && m("span.fontsize-smaller.badge.badge-gone", "Expirado"),
+            done: realState === 'done' && m("span.fontsize-smaller.badge.badge-success", "Finalizado"),
         };
 
         const reportIconByState = {
-            pending: state === 'pending' && m('div.w-col.w-col-1', h.loaderWithSize(30, 30)),
+            pending: realState === 'pending' && m('div.w-col.w-col-1', h.loaderWithSize(30, 30)),
             expired: null,
-            done: state === 'done' && m("div.fa.fa-check-circle.text-success.fa-2x.w-col.w-col-1"),
+            done: realState === 'done' && m("div.fa.fa-check-circle.text-success.fa-2x.w-col.w-col-1"),
         };
 
-        const shouldDisplayDownloadButton = state === 'done';
-        const isExpired = state === 'expired';
+        const shouldDisplayDownloadButton = realState === 'done';
 
         const reportDownloadUrl = () => `/projects/${project_id}/project_report_exports/${id}/`
 
-        return m(`div.card.${isExpired ? '.card-terciary' : ''}u-marginbottom-10`, [
+        return m(`div.card.u-marginbottom-10`, {
+            class: isExpired ? 'card-terciary' : ''
+        }, [
             m('div.u-marginbottom-20.w-row', [
                 (
                     isExpired ?
                         m('div.fontsize-small.fontweight-semibold.u-marginbottom-20', reportTypeTranslatedName[report_type])
                     :
                         [
-                            reportIconByState[state],
+                            reportIconByState[realState],
                             m('div.w-col.w-col-8',
                                 m('div.fontsize-small.fontweight-semibold.u-marginbottom-20', reportTypeTranslatedName[report_type])
                             ),
@@ -63,7 +68,7 @@ export const projectSubscriptionReportDownloadEntry = {
             m('div.w-row', [
                 m('div.w-col.w-col-4', [
                     m('div.fontsize-smaller.fontweight-semibold', 'Status:'),
-                    m('div',  reportStateBadge[state])
+                    m('div',  reportStateBadge[realState])
                 ]),
                 m('div.w-col.w-col-5', [
                     m('div.fontsize-smaller.fontweight-semibold', 'Data da exportação:'),

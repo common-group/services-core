@@ -30,11 +30,13 @@ export const listProjectReportExports = (projectId) => {
     const projectReportExportsVM = catarse.paginationVM(models.projectReportExports, null, { Prefer: 'count=exact' });
     const vm = h.createBasicPaginationVMWithAutoRedraw(projectReportExportsVM);
     const filter = catarse.filtersVM({
-        project_id: projectId
-    })
-    .order({
+        project_id: 'eq'
+    });
+    filter.order({
         created_at: 'desc'
     });
+    filter.project_id(projectId);
+    
     vm.firstPage(filter.parameters());
     return vm;
 }
