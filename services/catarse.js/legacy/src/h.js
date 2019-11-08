@@ -1080,12 +1080,32 @@ const _dataCache = {},
         }
     };
 
+/**
+ * @param {string} phoneNumberStr
+ * @return {string}
+ */
+const extractPhoneDDD = (phoneNumberStr) => {
+    const extractPhoneFieldsRegex = /\(([^)]*)\)(.*)/;
+    return phoneNumberStr.match(extractPhoneFieldsRegex)[1].replace(/\D/g, '');
+};
+
+/**
+ * @param {string} phoneNumberStr
+ * @return {string}
+ */
+const extractPhoneNumber = (phoneNumberStr) => {
+    const extractPhoneFieldsRegex = /\(([^)]*)\)(.*)/;
+    return phoneNumberStr.match(extractPhoneFieldsRegex)[2].replace(/\D/g, '');
+};
+
 setMomentifyLocale();
 closeFlash();
 closeModal();
 checkReminder();
 
 export default {
+    extractPhoneDDD,
+    extractPhoneNumber,
     SentryInitSDK,
     captureException,
     captureMessage,
