@@ -195,8 +195,8 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
 
     const customer = fields.fields;
     const address = customer.address().getFields();
-    const phoneDdd = address.phone_number ? address.phone_number.match(/\(([^)]*)\)/)[1] : null;
-    const phoneNumber = address.phone_number ? address.phone_number.substr(5, address.phone_number.length) : null;
+    const phoneDdd = address.phone_number ? h.extractPhoneDDD(address.phone_number) : null;
+    const phoneNumber = address.phone_number ? h.extractPhoneNumber(address.phone_number) : null;
     const addressState = address.state_id ? _.findWhere(addVM.states(), { id: address.state_id }) : address.address_state;
     const addressCountry = _.findWhere(addVM.countries(), { id: address.country_id }) || {};
 
@@ -272,8 +272,8 @@ const sendSlipPayment = (fields, commonData) => {
 
     const customer = fields.fields;
     const address = customer.address().getFields();
-    const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
-    const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
+    const phoneDdd = address.phone_number ? h.extractPhoneDDD(address.phone_number) : null;
+    const phoneNumber = address.phone_number ? h.extractPhoneNumber(address.phone_number) : null;
     const addressState = _.findWhere(addressVM.states(), { id: address.state_id });
     const addressCountry = _.findWhere(addressVM.countries(), { id: address.country_id });
     const payload = {
