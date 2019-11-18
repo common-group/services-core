@@ -95,7 +95,8 @@ const models = {
     commonUserDetails: commonCommunity.model('rpc/user_details'),
     rechargeSubscription: commonPayment.model('rpc/recharge_subscription'),
     unsubscribes: catarse.model('unsubscribes'),
-    newSubscribersFromPeriod: commonAnalytics.model('rpc/new_subscribers_from_period')
+    newSubscribersFromPeriod: commonAnalytics.model('rpc/new_subscribers_from_period'),
+    projectReportExports: catarse.model('project_report_exports'),
 };
 
 models.teamMember.pageSize(40);
