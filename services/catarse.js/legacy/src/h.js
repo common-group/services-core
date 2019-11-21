@@ -1173,10 +1173,13 @@ function RedrawStream(data) {
      */
     function streamAccessor(newData) {
         if (newData) {
-            setTimeout(redraw, 1);
-            return _data(newData);
+            console.log('newData', newData);
+            _data(newData);
+            redraw();
+            return newData;
         }
 
+        console.log('access...');
         return _data();
     }
 
