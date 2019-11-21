@@ -54,6 +54,7 @@ m.trust = (text) => h.trust(text);
 
         m.route(adminRoot, '/', {
             '/': adminWrap(c.root.AdminContributions, { root: adminRoot, menuTransparency: false, hideFooter: true }),
+            '/home-banners': adminWrap(c.root.AdminHomeBanners, { menuTransparency: false, hideFooter: true }),
             '/users': adminWrap(c.root.AdminUsers, { menuTransparency: false, hideFooter: true }),
             '/subscriptions': adminWrap(c.root.AdminSubscriptions, { menuTransparency: false, hideFooter: true }),
             '/projects': adminWrap(c.root.AdminProjects, { menuTransparency: false, hideFooter: true }),
