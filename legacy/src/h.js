@@ -1097,12 +1097,114 @@ const extractPhoneNumber = (phoneNumberStr) => {
     return phoneNumberStr.match(extractPhoneFieldsRegex)[2].replace(/\D/g, '');
 };
 
+/**
+ * @param {T} data
+ * @template T
+ */
+function ObservableStream(data) {
+
+    /**
+     * @type {Array<function(T):void>}
+     */
+    const observers = [];
+    const privateData = prop(data);
+
+    /**
+     * @return {T}
+     */
+    function get() {
+        return privateData();
+    }
+
+    /**
+     * @param {T} newData 
+     * @return {T}
+     */
+    function set(newData) {
+        privateData(newData);
+        notifyAll();
+        return newData;
+    }
+
+    /**
+     * @param {function(T):void} observeFunction 
+     */
+    function observe(observeFunction) {
+        observers.push(observeFunction);
+    }
+
+    /**
+     * @param {T} newData
+     */
+    function notifyAll(newData) {
+        for (const observeFunction of observers) {
+            observeFunction(newData);
+        }
+    }
+
+    return {
+        get,
+        set,
+        observe,
+    }
+}
+
+/**
+ * @param {T} data
+ * @template T
+ */
+function ObservableRedrawStream(data) {
+    const observableStream = ObservableStream(data);
+    observableStream.observe(redraw);
+    return observableStream;
+}
+
+/**
+ * @param {T} data
+ * @template T
+ */
+function RedrawStream(data) {
+    
+    const _data = prop(data);
+
+    /**
+     * @param {T} newData
+     * @template T
+     */
+    function streamAccessor(newData) {
+        if (newData) {
+            setTimeout(redraw, 1);
+            return _data(newData);
+        }
+
+        return _data();
+    }
+
+    return streamAccessor;
+}
+
+function accessor(obj, attrbName, onChange) {
+    return {
+        get [attrbName]() {
+            return obj[attrbName]
+        },
+        set [attrbName](newValue) {
+            obj[attrbName] = newValue;
+
+            return newValue;
+        }
+    }
+}
+
 setMomentifyLocale();
 closeFlash();
 closeModal();
 checkReminder();
 
 export default {
+    ObservableStream,
+    ObservableRedrawStream,
+    RedrawStream,
     extractPhoneDDD,
     extractPhoneNumber,
     SentryInitSDK,
