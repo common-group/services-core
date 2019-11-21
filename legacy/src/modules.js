@@ -1,3 +1,4 @@
+export { default as AdminHomeBanners } from './root/admin-home-banners';
 export { default as AdminNotifications } from './root/admin-notifications';
 export { default as AdminProjects } from './root/admin-projects';
 export { default as Menu } from './root/menu';
