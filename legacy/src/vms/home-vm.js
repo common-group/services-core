@@ -13,47 +13,54 @@ import h from '../h';
  * @property {string} updated_at
  */
 
+/**
+ * @typedef {Object} HomeVM
+ * @property {Array<HomeBanner>} banners
+ * @property {boolean} isUpdating
+ */
+
 const homeVM = () => {
-    const i18nStart = window.I18n.translations[window.I18n.currentLocale()].projects.home || { banners : [] },
-        banners = i18nStart.banners;
-
-    function updateBanners() {
-
-    }
-
     const _isUpdating = h.RedrawStream(false);
     const _banners =  h.RedrawStream([]);
 
-    function getBanners() {
-        m
-            .request('/home_banners')
-            .then(_banners)
-            .catch(() => _banners([]));
+    async function getBanners() {
+
+        try {
+            const response = await m.request('/home_banners');
+            _banners(response.data);
+        } catch(e) {
+            _banners([]);
+        }
     }
 
     /** @param {Array<HomeBanner>} newBanners */
     async function updateBanners(newBanners) {
 
+        _isUpdating(true);
+
         try {
-            for await (const newBannerData of newBanners) {
-                await m.request({
-                    put: `/home_banners/${newBannerData.id}/`,
+            for (const newBannerData of newBanners) {
+
+                const response = await m.request({
+                    method: 'put',
+                    url: `/home_banners/${newBannerData.id}/`,
                     data: newBannerData,
                     config: h.setCsrfToken
                 });
             }
         } catch(e) {
-
+            console.log('error updating banners:', e);
         }
+
+        _isUpdating(false);
     }
 
     getBanners();
-
     
     return {
         /** @type {Array<HomeBanner>} */
         get banners() {
-            return _banners();
+            return _banners;
         },
 
         /** @param {Array<HomeBanner>} newBanners */
@@ -61,9 +68,12 @@ const homeVM = () => {
             updateBanners(newBanners);
         },
 
+        /** @type {boolean} */
         get isUpdating() {
             return _isUpdating()
-        }
+        },
+
+        updateBanners
     };
 };
 
