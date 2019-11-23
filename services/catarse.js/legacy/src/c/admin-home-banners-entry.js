@@ -14,7 +14,7 @@ export const AdminHomeBannersEntry = {
         } = attrs;
 
         return m('div.card.u-marginbottom-30', [
-            m('div.fontsize-larger.u-marginbottom-30', `Posição #${position()}`),
+            m('div.fontsize-larger.u-marginbottom-30.slide-entry', `Posição #${position()}`),
             m('div.w-form', [
                 m('div', [
                     m('div.fontsize-base',
