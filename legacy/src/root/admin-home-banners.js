@@ -7,7 +7,7 @@ import { AdminHomeBannersEntry } from '../c/admin-home-banners-entry';
 const AdminHomeBanners = {
     oninit(vnode) {
         vnode.state = {
-            vm: homeVM()
+            vm: vnode.attrs.vm || homeVM()
         };
     },
 
