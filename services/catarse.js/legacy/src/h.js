@@ -39,11 +39,19 @@ function RedrawScheduler() {
         if (redrawsRequestCounter > 0) {
             /// #if DEBUG
             const callStack = markedCallStack[redrawsRequestCounter];
+            try {
             /// #endif
 
-            if (redrawsRequestCounter === 1) {
-                m.redraw();
+                if (redrawsRequestCounter === 1) {
+                    m.redraw();
+                }
+
+            /// #if DEBUG
+            } catch(e) {
+                console.log('redraw error:', e);
+                console.log('callstack', callStack);
             }
+            /// #endif
 
             redrawsRequestCounter = Math.max(0, --redrawsRequestCounter);
         }
@@ -1173,31 +1181,29 @@ function RedrawStream(data) {
      * @template T
      */
     function streamAccessor(newData) {
-        if (newData) {
-            console.log('newData', newData);
+        if (newData !== undefined) {
             _data(newData);
             redraw();
             return newData;
         }
-
-        console.log('access...');
         return _data();
     }
 
     return streamAccessor;
 }
 
-function accessor(obj, attrbName, onChange) {
-    return {
-        get [attrbName]() {
-            return obj[attrbName]
-        },
-        set [attrbName](newValue) {
-            obj[attrbName] = newValue;
-
-            return newValue;
-        }
-    }
+function createPropAcessors(obj) {
+    return Object.keys(obj).reduce((curObject, prop) => {
+        return Object.assign(curObject, {
+            [prop]: function (newValue) {
+                if (newValue !== undefined) {
+                    obj[prop] = newValue;
+                    return newValue;
+                }
+                return obj[prop];
+            }
+        });
+    }, {});
 }
 
 setMomentifyLocale();
@@ -1206,6 +1212,7 @@ closeModal();
 checkReminder();
 
 export default {
+    createPropAcessors,
     ObservableStream,
     ObservableRedrawStream,
     RedrawStream,
