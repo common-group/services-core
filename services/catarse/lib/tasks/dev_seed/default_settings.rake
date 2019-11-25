@@ -1,4 +1,4 @@
-namespace :dev_seed do
+namespace :e do
   desc 'states'
   task input_states: :environment do
     ['Acre|AC',
@@ -11,7 +11,7 @@ namespace :dev_seed do
     'Espírito Santo|ES',
     'Goiás|GO',
     'Maranhão|MA',
-    'Mato Grosso|MT',
+    'Mato Grosso|MT'e
     'Mato Grosso do Sul|MS',
     'Minas Gerais|MG',
     'Pará|PA',

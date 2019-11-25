@@ -1,0 +1,5 @@
+FROM library/postgres:9.6.5-alpine
+
+COPY ./services/service-core-db/init.sql /docker-entrypoint-initdb.d/init.sql
+COPY ./services/service-core-db/sample.seed.sql /sample.seed.sql
+COPY ./services/service-core-db/setup_fdw_grants.sql /setup_fdw_grants.sql

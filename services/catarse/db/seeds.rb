@@ -76,7 +76,12 @@ puts 'Seeding the database...'
   instagram_url: 'http://instagram.com/catarse_',
   blog_url: "http://blog.catarse.me",
   github_url: 'http://github.com/catarse',
-  contato_url: 'http://suporte.catarse.me/'
+  contato_url: 'http://suporte.catarse.me/',
+  fdw_user: 'postgres'
+  common_db_user: 'postgres'
+  common_db_port: '5432'
+  common_db_password: 'example'
+  common_db_name: 'service_core'
 }.each do |name, value|
    conf = CatarseSettings.find_or_initialize_by(name: name)
    conf.update_attributes({

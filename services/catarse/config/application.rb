@@ -72,6 +72,6 @@ module Catarse
     config.active_record.raise_in_transactional_callbacks = true
 
     # Custom webpack-dev-server. Set it to true to use webpack-dev-server
-    config.webpack_dev_server = false
+    config.webpack_dev_server = true
   end
 end

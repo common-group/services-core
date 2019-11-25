@@ -1,11 +1,12 @@
+numpy
+cython
+pandas
 sklearn
 flask==1.0
 flask-jsonpify
 flask-sqlalchemy
 flask-restful
 lightfm
-numpy
-pandas
 psycopg2-binary
 xgboost
 flask-cors

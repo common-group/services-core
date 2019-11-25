@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: catarse
+  name: catarse
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: catarse
+    spec:
+      containers:
+      - args:
+        - bundle
+        - exec
+        - rails
+        - server
+        - -b
+        - 0.0.0.0
+        env:
+        - name: DATABASE_URL
+          value: postgres://catarse:example@localhostcatarse:5432/catarse_db
+        - name: RAILS_ENV
+          value: development
+        - name: REDIS_URL
+          value: redis://catarse_redis:6379
+        image: catarse
+        name: catarse
+        ports:
+        - containerPort: 3000
+        resources: {}
+      restartPolicy: Always
+status: {}

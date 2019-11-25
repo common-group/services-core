@@ -1,0 +1,3 @@
+FROM library/postgres:9.4-alpine
+
+COPY ./services/service-core-db/init_catarse.sql /docker-entrypoint-initdb.d/init.sql

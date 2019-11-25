@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: common-docs
+  name: common-docs
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: common-docs
+    spec:
+      containers:
+      - args:
+        - mdbook
+        - serve
+        - -p
+        - "3011"
+        - -w
+        - "3012"
+        - -n
+        - 0.0.0.0
+        image: common-docs
+        name: common-docs
+        ports:
+        - containerPort: 3011
+        - containerPort: 3012
+        resources: {}
+      restartPolicy: Always
+status: {}

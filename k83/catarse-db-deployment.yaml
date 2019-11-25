@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: catarse-db
+  name: catarse-db
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: catarse-db
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: catarse_db
+        - name: POSTGRES_PASSWORD
+          value: example
+        - name: POSTGRES_USER
+          value: catarse
+        image: catarse-db
+        name: catarse-db
+        ports:
+        - containerPort: 5432
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-catarse-data
+      restartPolicy: Always
+      volumes:
+      - name: postgres-catarse-data
+        persistentVolumeClaim:
+          claimName: postgres-catarse-data
+status: {}

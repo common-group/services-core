@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: catarse-api
+  name: catarse-api
+spec:
+  ports:
+  - name: "3008"
+    port: 3008
+    targetPort: 3000
+  selector:
+    io.kompose.service: catarse-api
+status:
+  loadBalancer: {}

@@ -29,7 +29,7 @@ window.init_redactor = function(){
               class: 'fontsize-large',
               clear: true
           }],
-        lang: 'pt_br',
+        lang: 'en',
         maxHeight: 800,
         minHeight: 300,
         convertVideoLinks: true,

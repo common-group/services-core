@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  DATABASE_URL: postgres://postgres:example@service_core_db:5432/service_core
+  SUBSCRIPTION_INTERVAL: 1 month
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: subscriptions-scheduler-compose_env--subscriptions_scheduler-env
+  name: subscriptions-scheduler-compose_env--subscriptions_scheduler-env

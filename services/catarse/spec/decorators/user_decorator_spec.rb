@@ -5,7 +5,7 @@ require 'rails_helper'
 
 RSpec.describe UserDecorator do
   before(:all) do
-    I18n.locale = :pt
+    I18n.locale = :en
   end
 
   describe '#display_pending_refund_payments_projects_name' do

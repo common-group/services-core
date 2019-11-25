@@ -1,0 +1,119 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: common-proxy
+  name: common-proxy
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: common-proxy
+    spec:
+      containers:
+      - args:
+        - /bin/sh
+        - -c
+        - envsubst '$PORT $PROTO_SCHEMA $PAYMENT_SERVICE_API_SERVER $PROJECT_SERVICE_API_SERVER
+          $COMMUNITY_SERVICE_API_SERVER $ANALYTICS_SERVICE_API_SERVER $NOTIFICATION_SERVICE_API_SERVER
+          $CATARSE_MOMENT_SERVICE_API_SERVER $RECOMMENDER_SERVICE_API_SERVER $COMMON_SERVICE_API_SERVER
+          $DNS_RESOLVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf
+          && openresty
+        env:
+        - name: ANALYTICS_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: ANALYTICS_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: CATARSE_MOMENT_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: CATARSE_MOMENT_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: COMMON_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: COMMON_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: COMMUNITY_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: COMMUNITY_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: common-proxy-compose_env--common_proxy-env
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: DB_NAME
+              name: common-proxy-compose_env--common_proxy-env
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PASSWORD
+              name: common-proxy-compose_env--common_proxy-env
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: DB_PORT
+              name: common-proxy-compose_env--common_proxy-env
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              key: DB_USERNAME
+              name: common-proxy-compose_env--common_proxy-env
+        - name: DNS_RESOLVER
+          valueFrom:
+            configMapKeyRef:
+              key: DNS_RESOLVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: NOTIFICATION_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: NOTIFICATION_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: PAYMENT_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: PAYMENT_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              key: PORT
+              name: common-proxy-compose_env--common_proxy-env
+        - name: PROJECT_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: PROJECT_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        - name: PROTO_SCHEMA
+          valueFrom:
+            configMapKeyRef:
+              key: PROTO_SCHEMA
+              name: common-proxy-compose_env--common_proxy-env
+        - name: RECOMMENDER_SERVICE_API_SERVER
+          valueFrom:
+            configMapKeyRef:
+              key: RECOMMENDER_SERVICE_API_SERVER
+              name: common-proxy-compose_env--common_proxy-env
+        image: common-proxy
+        name: common-proxy
+        ports:
+        - containerPort: 80
+        resources: {}
+      restartPolicy: Always
+status: {}

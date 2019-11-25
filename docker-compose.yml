@@ -38,9 +38,10 @@ services:
         ipv4_address: 10.0.1.41
 
   catarse_db:
-    image: library/postgres:9.4-alpine
+    build:
+      context: ./services/service-core-db/
+      dockerfile: Dockerfile.db
     volumes:
-      - ./services/service-core-db/init_catarse.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-catarse-data:/var/lib/postgresql/data
     ports:
       - "5445:5432"
@@ -57,9 +58,10 @@ services:
         ipv4_address: 10.0.1.42
 
   catarse_moments_db:
-    image: library/postgres:10.3-alpine
+    build:
+      context: ./services/service-core-db/
+      dockerfile: Dockerfile.moments-db
     volumes:
-      - ./services/service-core-db/init_catarse_moments.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-catarse-moments-data:/var/lib/postgresql/data
     ports:
       - "5446:5432"
@@ -76,11 +78,10 @@ services:
         ipv4_address: 10.0.1.59
 
   service_core_db:
-    image: library/postgres:9.6.5-alpine
+    build:
+      context: ./services/service-core-db/
+      dockerfile: Dockerfile.service_core-db
     volumes:
-      - ./services/service-core-db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./services/service-core-db/sample.seed.sql:/sample.seed.sql
-      - ./services/service-core-db/setup_fdw_grants.sql.example:/setup_fdw_grants.sql
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5444:5432"
@@ -101,10 +102,11 @@ services:
     env_file:
       - ./compose_env/.service_core_migrator.env
     command: ["./scripts/run_migrations.sh"]
-    volumes:
-      - ./services/service-core-db/migrations:/usr/app/migrations
+    # volumes:
+    # - ./services/service-core-db/migrations:/usr/app/migrations
     links:
         - "service_core_db:service_core_db"
+    restart: "no"
     networks:
       cluster:
         ipv4_address: 10.0.1.57
@@ -116,8 +118,8 @@ services:
     env_file:
       - ./compose_env/.notification_dispatcher.env
     command: ["./dispatchers/notification_dispatcher"]
-    volumes:
-      - ./services/notification-service-api/:/usr/app
+    # volumes:
+      # - ./services/notification-service-api/:/usr/app
     links:
       - "service_core_db:service_core_db"
       - "dispatcher_redis:dispatcher_redis"
@@ -136,8 +138,8 @@ services:
     env_file:
       - ./compose_env/.payment_stream_processor.env
     command: ["./dispatchers/payment_stream_processor"]
-    volumes:
-      - ./services/payment-service-api/:/usr/app
+    # volumes:
+      # - ./services/payment-service-api/:/usr/app
     links:
       - "service_core_db:service_core_db"
       - "dispatcher_redis:dispatcher_redis"
@@ -155,8 +157,8 @@ services:
     env_file:
       - ./compose_env/.subscriptions_scheduler.env
     command: ["./scripts/subscription_scheduler.js"]
-    volumes:
-      - ./services/payment-service-api/:/usr/app
+    # volumes:
+      # - ./services/payment-service-api/:/usr/app
     links:
       - "service_core_db:service_core_db"
     depends_on:
@@ -172,8 +174,8 @@ services:
     env_file:
       - ./compose_env/.hook_service_api.env
     command: ["npm", "start", "server.js"]
-    volumes:
-      - ./services/hook-service-api/:/usr/app
+    # volumes:
+      # - ./services/hook-service-api/:/usr/app
     links:
       - "service_core_db:service_core_db"
     depends_on:
@@ -192,11 +194,12 @@ services:
       RAILS_ENV: development
       DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
       REDIS_URL: redis://catarse_redis:6379
+    restart: "no"
     command: ["bundle", "exec", "rake", "db:migrate"]
-    volumes:
+    # volumes:
       # mount volumes for development on catarse / catarse.js
-      - ./services/catarse/:/usr/app
-     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
+      # - ./services/catarse/:/usr/app
+      # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
     links:
       - service_core_db
       - "catarse_db:localhostcatarse"
@@ -216,9 +219,9 @@ services:
       DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
       REDIS_URL: redis://catarse_redis:6379
     command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
-    volumes:
+    # volumes:
       # mount volumes for development on catarse / catarse.js
-      - ./services/catarse/:/usr/app
+      # - ./services/catarse/:/usr/app
       # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
     links:
       - service_core_db
@@ -338,8 +341,8 @@ services:
     env_file:
       - ./compose_env/.recommender_service_api.env
     command: gunicorn -w 4 -b 0.0.0.0:3009 catarse_recommender.application:app
-    volumes:
-      - ./services/catarse_recommender/:/usr/app
+    # volumes:
+      # - ./services/catarse_recommender/:/usr/app
     depends_on:
       - catarse_db
     links:
@@ -365,9 +368,9 @@ services:
         ipv4_address: 10.0.1.58
 
   common_docs:
-    image: hrektts/mdbook
-    volumes:
-      - ./services/common/:/data
+    build:
+      context: ./services/common
+      dockerfile: Dockerfile
     ports:
       - "3011:3011"
       - "3012:3012"
@@ -380,9 +383,9 @@ services:
     build:
       context: ./services/proxy
       dockerfile: Dockerfile
-    volumes:
-      - ./services/proxy/nginx.conf:/usr/local/openresty/nginx/confg/nginx.conf
-      - ./services/proxy/conf.d:/etc/nginx/conf.d
+    # volumes:
+      # - ./services/proxy/nginx.conf:/usr/local/openresty/nginx/confg/nginx.conf
+      # - ./services/proxy/conf.d:/etc/nginx/conf.d
     links:
       - "payment_service_api:payment_service_api"
       - "project_service_api:project_service_api"
@@ -408,9 +411,9 @@ services:
     build:
       context: ./services/common-api
       dockerfile: Dockerfile
-    volumes:
-      - ./services/common-api:/app
-      - ./services/common_models:/common_models
+    # volumes:
+      # - ./services/common-api:/app
+      # - ./services/common_models:/common_models
     links:
       - "service_core_db:service_core_db"
     env_file:
@@ -446,10 +449,11 @@ services:
       DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db_test
       REDIS_URL: redis://catarse_redis:6379
     command: "bash run_specs"
-    volumes:
+    restart: "no"
+    # volumes:
       # mount volumes for development on catarse / catarse.js
-      - ./services/catarse/:/usr/app
-     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
+      # - ./services/catarse/:/usr/app
+      # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
     links:
       - service_core_db
       - "catarse_db:localhostcatarse"

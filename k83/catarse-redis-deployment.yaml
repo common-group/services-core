@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: catarse-redis
+  name: catarse-redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: catarse-redis
+    spec:
+      containers:
+      - args:
+        - redis-server
+        - --appendonly
+        - "yes"
+        image: redis
+        name: catarse-redis
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/redis
+          name: catarse-redis-data
+      restartPolicy: Always
+      volumes:
+      - name: catarse-redis-data
+        persistentVolumeClaim:
+          claimName: catarse-redis-data
+status: {}
