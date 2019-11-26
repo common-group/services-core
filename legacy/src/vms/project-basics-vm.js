@@ -18,10 +18,13 @@ const fields = {
     admin_tags: prop(''),
     service_fee: prop(''),
     name: prop(''),
+    content_rating: prop(null),
     permalink: prop(''),
     category_id: prop(''),
     city_id: prop(''),
-    city_name: prop('')
+    city_name: prop(''),
+    show_cans_and_cants: h.toggleProp(false, true),
+    force_show_cans_and_cants: h.toggleProp(false, true),
 };
 
 const fillFields = (data) => {
@@ -31,9 +34,11 @@ const fillFields = (data) => {
     fields.public_tags(data.tag_list || '');
     fields.service_fee(data.service_fee);
     fields.name(data.name);
+    fields.content_rating(data.content_rating);
     fields.permalink(data.permalink);
     fields.category_id(data.category_id);
     fields.city_id(data.city_id || '');
+    fields.show_cans_and_cants(data.content_rating === 18);
     if (data.address.city) {
         fields.city_name(`${data.address.city} - ${data.address.state}`);
     }
@@ -47,6 +52,7 @@ const updateProject = (project_id) => {
         all_public_tags: fields.public_tags(),
         service_fee: fields.service_fee(),
         name: fields.name(),
+        content_rating: fields.content_rating(),
         permalink: fields.permalink(),
         category_id: fields.category_id(),
         city_id: fields.city_id };
