@@ -6,7 +6,7 @@ import h from '../h';
 const railsErrors = prop('');
 const setRailsErrors = errors => railsErrors(errors);
 const errorGroups = {
-    basics: ['public_name', 'permalink', 'category_id', 'city', 'public_tags', 'name'],
+    basics: ['public_name', 'permalink', 'category_id', 'city', 'public_tags', 'name', 'content_rating'],
     goal: ['goal', 'online_days'],
     goals: ['goals.size'],
     description: ['about_html'],
@@ -47,7 +47,9 @@ const mapRailsErrors = (rails_errors, errorsFields, e) => {
     };
 
     _.each(errorsFields, (item, i) => {
-        extractAndSetErrorMsg(item[0], item[1]);
+        if (item && item.length >= 2) {
+            extractAndSetErrorMsg(item[0], item[1]);
+        }
     });
 };
 

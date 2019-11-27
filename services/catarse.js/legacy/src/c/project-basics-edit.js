@@ -18,7 +18,7 @@ const projectBasicsEdit = {
             mapErrors = [
                 ['name', ['name']],
                 ['public_tags', ['public_tags']],
-                ['is_adult_content', ['is_adult_content']]
+                ['content_rating', ['content_rating']],
                 ['permalink', ['permalink']],
                 ['category_id', ['category']],
                 ['city_id', ['city']],
@@ -242,7 +242,8 @@ const projectBasicsEdit = {
                                                 try {
                                                     const content_rating_value = JSON.parse(event.target.value);
                                                     vm.fields.content_rating(content_rating_value);
-                                                    vm.fields.show_cans_and_cants(content_rating_value === 18);                                                    
+                                                    vm.fields.show_cans_and_cants(content_rating_value === 18);    
+                                                    vm.fields.force_show_cans_and_cants(false);                                                
                                                 } catch (e) {
                                                     console.log('Error setting content rating:', e);
                                                     h.captureException(e);
