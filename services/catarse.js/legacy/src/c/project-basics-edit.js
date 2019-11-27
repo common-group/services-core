@@ -228,14 +228,12 @@ const projectBasicsEdit = {
                                     vm.e.inlineError('name'),
                                 ],
                             }),
-
-
                             m(inputCard, {
                                 label: window.I18n.t('adult_content', I18nScope()),
                                 label_hint: window.I18n.t('adult_content_hint', I18nScope()),
                                 children: [
                                     m(
-                                        'select.required.w-input.text-field.w-select.positive.medium',
+                                        'select.required.w-input.text-field.w-select.positive.medium[id="content_rating_id"]',
                                         {
                                             value: vm.fields.content_rating(),
                                             class: vm.e.hasError('content_rating') ? 'error' : '',
@@ -293,8 +291,6 @@ const projectBasicsEdit = {
                                     ])
                                 ]
                             }),
-
-
                             m(inputCard, {
                                 label: window.I18n.t('tags', I18nScope()),
                                 label_hint: window.I18n.t('tags_hint', I18nScope()),
