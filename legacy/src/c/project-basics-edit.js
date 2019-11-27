@@ -48,6 +48,7 @@ const projectBasicsEdit = {
                         vm.e.resetFieldErrors();
                         showSuccess(true);
                         showError(false);
+                        vnode.attrs.reloadProject(vm.fillFields);
                     })
                     .catch(err => {
                         if (err.errors_json) {
