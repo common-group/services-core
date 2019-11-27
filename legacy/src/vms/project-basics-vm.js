@@ -55,7 +55,8 @@ const updateProject = (project_id) => {
         content_rating: fields.content_rating(),
         permalink: fields.permalink(),
         category_id: fields.category_id(),
-        city_id: fields.city_id };
+        city_id: fields.city_id 
+    };
 
     return projectVM.updateProject(project_id, projectData);
 };
