@@ -87,7 +87,7 @@ const footer = {
                                                     m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
                                                       ' Contato'
                                                      ),
-                                                m('a.link-footer[href=\'http://blog.catarse.me/category/atualizacoes\']',
+                                                m('a.link-footer[href=\'https://crowdfunding.catarse.me/changelog\']',
                                                   ' Atualizações 🌟'
                                                  ),
                                                 m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
