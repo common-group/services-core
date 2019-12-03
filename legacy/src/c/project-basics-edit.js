@@ -12,6 +12,10 @@ import projectEditSaveBtn from './project-edit-save-btn';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_basics');
 
+const ADULT_CONTENT_AGE = 18;
+const NO_ADULT_CONTENT_AGE = 1;
+const CONTENT_RATING_NOT_SET = 0;
+
 const projectBasicsEdit = {
     oninit: function (vnode) {
         const vm = projectBasicsVM,
@@ -241,7 +245,7 @@ const projectBasicsEdit = {
                                                 try {
                                                     const content_rating_value = JSON.parse(event.target.value);
                                                     vm.fields.content_rating(content_rating_value);
-                                                    vm.fields.show_cans_and_cants(content_rating_value === 18);    
+                                                    vm.fields.show_cans_and_cants(content_rating_value === ADULT_CONTENT_AGE);    
                                                     vm.fields.force_show_cans_and_cants(false);                                                
                                                 } catch (e) {
                                                     console.log('Error setting content rating:', e);
@@ -249,14 +253,14 @@ const projectBasicsEdit = {
                                                 }
                                             },
                                         },
-                                        m(`option[value=null]`, {
-                                            selected: vm.fields.content_rating() === null
+                                        m(`option[value=${CONTENT_RATING_NOT_SET}]`, {
+                                            selected: vm.fields.content_rating() === CONTENT_RATING_NOT_SET
                                         }, I18n.t('is_adult_content_answer_choose', I18nScope())),
-                                        m(`option[value=18]`, {
-                                            selected: vm.fields.content_rating() === 18
+                                        m(`option[value=${ADULT_CONTENT_AGE}]`, {
+                                            selected: vm.fields.content_rating() === ADULT_CONTENT_AGE
                                         }, I18n.t('is_adult_content_answer_yes', I18nScope())),
-                                        m(`option[value=0]`, {
-                                            selected: vm.fields.content_rating() === 0
+                                        m(`option[value=${NO_ADULT_CONTENT_AGE}]`, {
+                                            selected: vm.fields.content_rating() === NO_ADULT_CONTENT_AGE
                                         }, I18n.t('is_adult_content_answer_no', I18nScope()))
                                     ),
                                     vm.e.inlineError('content_rating'),
