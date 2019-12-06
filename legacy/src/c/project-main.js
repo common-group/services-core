@@ -59,7 +59,7 @@ const projectMain = {
         };
     },
     view: function({state, attrs}) {
-        return m('section.section[itemtype="http://schema.org/CreativeWork"]', [
+        return m('section.section[itemtype="http://schema.org/CreativeWork"]', { style: attrs.style }, [
             m(`${state.hash() !== '#contributions' ? '.w-container' : '.about-tab-content'}`, [
                 m('.w-row', attrs.project() ? state.displayTabContent(attrs.project) : h.loader())
             ])
