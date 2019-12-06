@@ -64,7 +64,7 @@ const projectHeader = {
             '');
         const hasBackground = Boolean(project().cover_image);
 
-        return !_.isUndefined(project()) ? m('#project-header', [
+        return !_.isUndefined(project()) ? m('#project-header', { style: attrs.style }, [
             m(`.w-section.section-product.${project().mode}`),
             m(`${projectVM.isSubscription(project) ? '.dark' : ''}.project-main-container`, {
                 class: hasBackground ? 'project-with-background' : null,
