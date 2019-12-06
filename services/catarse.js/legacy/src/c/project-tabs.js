@@ -60,7 +60,7 @@ const projectTabs = {
         const project = attrs.project,
             rewards = attrs.rewardDetails;
 
-        return m('nav-wrapper', project() ? [
+        return m('nav-wrapper', { style: attrs.style }, project() ? [
             m('.w-section.project-nav', {
                 oncreate: state.navDisplay
             }, [
