@@ -101,7 +101,8 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    puma (3.12.1)
+    puma (4.3.1)
+      nio4r (~> 2.0)
     pundit (2.0.0.beta1)
       activesupport (>= 3.0.0)
     rack (2.0.7)
@@ -210,7 +211,7 @@ DEPENDENCIES
   loofah (>= 2.2.3)
   postgres-copy
   pry
-  puma (~> 3.11)
+  puma (~> 4.3)
   pundit (= 2.0.0.beta1)
   rack (>= 2.0.6)
   rack-cors
