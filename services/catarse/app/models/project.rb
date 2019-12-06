@@ -6,6 +6,7 @@ class Project < ActiveRecord::Base
   PUBLISHED_STATES = %w[online waiting_funds successful failed].freeze
   HEADLINE_MAXLENGTH = 100
   NAME_MAXLENGTH = 50
+  
 
   include Statesman::Adapters::ActiveRecordQueries
   include PgSearch
@@ -493,12 +494,11 @@ class Project < ActiveRecord::Base
 
   def set_adult_content_tag
     
-    adult_content_admin_tag = I18n.t('project.adult_content_admin_tag')
-    
+    return if !should_include_adult_content_tag?
+    return if has_adult_content_tag? && content_rating >= 18
+
     _all_tags = tags.map(&:name)
-    
-    should_include_adult_content_tag = content_rating >= 18 && _all_tags.exclude?(adult_content_admin_tag)
-    if should_include_adult_content_tag
+    if should_include_adult_content_tag?
       _all_tags |= [adult_content_admin_tag]
     else
       _all_tags = _all_tags.reject{|tag| tag == adult_content_admin_tag}
@@ -509,6 +509,14 @@ class Project < ActiveRecord::Base
         tag.name = name.strip
       end
     end
+  end
+
+  def should_include_adult_content_tag?
+    content_rating >= 18 && tags.map(&:name).exclude?(adult_content_admin_tag)
+  end
+
+  def has_adult_content_tag?
+    tags.map(&:name).include?(adult_content_admin_tag)
   end
 
   def is_flexible?
@@ -556,6 +564,9 @@ class Project < ActiveRecord::Base
     pluck_from_database('refresh_project_metric_storage')
   end
 
+  def adult_content_admin_tag 
+    I18n.t('project.adult_content_admin_tag')
+  end
 
   # State machine delegation methods
   delegate :push_to_draft, :reject, :push_to_online, :fake_push_to_online, :finish, :push_to_trash,
