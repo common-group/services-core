@@ -319,7 +319,6 @@ const projectSubscriptionReport = {
         };
     },
     view: function ({ state, attrs }) {
-        const project = state.project;
         const subsCollection = state.subscriptions.collection();
         const filterBuilder = state.filterBuilder;
         const statusFilter = _.findWhere(filterBuilder, { label: 'status_filter' });
