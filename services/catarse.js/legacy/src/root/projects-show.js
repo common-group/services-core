@@ -92,8 +92,7 @@ const projectsShow = {
         const projectOwner = state.projectOwner;
         const displayAdultContentPopup = state.displayAdultContentPopup;
         const shouldDisplayAdultContentPopup = project() && project().is_adult_content && displayAdultContentPopup() && !project().is_owner_or_admin;
-        const blurredScreenConditionalStyle = shouldDisplayAdultContentPopup ? { filter: 'blur(7px)' } : { filter: 'blur(0px)', transition: '0.5s -webkit-filter linear' };
-
+        const blurredScreenConditionalStyle = shouldDisplayAdultContentPopup ? { filter: 'blur(7px)' } : { };
 
         return m('.project-show', {
             oncreate: projectVM.setProjectPageTitle(),
