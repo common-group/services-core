@@ -106,6 +106,7 @@ const projectCard = {
                 m(state.css().descriptionWrapper, [
                     m(state.css().description, [
                         m(state.css().title, [
+                            project.is_adult_content && [ m('span.badge', '+18'), m.trust('&nbsp;') ],
                             m(`a.link-hidden[href="/${project.permalink}?ref=${attrs.ref}"]`, {
                                 onclick: projectVM.routeToProject(project, attrs.ref)
                             },
