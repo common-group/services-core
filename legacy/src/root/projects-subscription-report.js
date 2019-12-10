@@ -19,7 +19,9 @@ import projectsContributionReportVM from '../vms/projects-contribution-report-vm
 import projectSubscriptionsListVM from '../vms/project-subscriptions-list-vm';
 import { SelectSubscriptionReports } from '../c/select-subscription-reports';
 import modalBox from '../c/modal-box';
+import userVM from '../vms/user-vm';
 import { createProjectReportExports } from '../vms/project-report-exports-vm';
+import { RequestedSubscriptionReportsModal } from './requested-subscription-reports-modal';
 
 const statusCustomFilter = {
     view: () => m('.fontsize-smaller.u-text-center', [
@@ -47,7 +49,7 @@ const projectSubscriptionReport = {
             isProjectDataLoaded = prop(false),
             isRewardsDataLoaded = prop(false),
             rewards = prop([]),
-            subscriptions = projectSubscriptionsListVM(),
+            subscriptions = projectSubscriptionsListVM(),            
             submit = () => {
                 // Set order by last paid on filters too
                 filterVM.order({ last_payment_data_created_at: 'desc' });
@@ -206,7 +208,9 @@ const projectSubscriptionReport = {
             },
             project = prop([{}]),
             displayDownloadReportDropdownMenu = h.toggleProp(false, true),
-            displayDownloadReportSelectionModal = h.toggleProp(false, true);
+            displayDownloadReportSelectionModal = h.toggleProp(false, true),
+            wasSubscriptionReportRequestSent = h.toggleProp(false, true),
+            projectUser = userVM.getCurrentUser();
 
         catarseVM.project_id(vnode.attrs.project_id);
 
@@ -261,15 +265,24 @@ const projectSubscriptionReport = {
             m.redraw();
         });
 
+        
+
         const isSendingReportDownloadRequest = prop(false);
 
+        /**
+         * @param {string} reportTypes 
+         * @param {string} reportFileExtension 
+         */
         const sendReportDownloadRequest = async (reportTypes, reportFileExtension) => {
-            const updateLoader = () => {
-                isSendingReportDownloadRequest(true);
+            /**
+             * @param {boolean} done 
+             */
+            const updateLoader = (done) => {
+                isSendingReportDownloadRequest(!done);
                 h.redraw();
             };
 
-            updateLoader();
+            updateLoader(false);
 
             for (const reportType of reportTypes) {
 
@@ -277,14 +290,14 @@ const projectSubscriptionReport = {
                     await createProjectReportExports(vnode.attrs.project_id, reportType, reportFileExtension);
                 } catch(e) {
                     console.log('Error on creating project report exports:', e);
-                    updateLoader();
+                    updateLoader(true);
                     throw e;
                 }
             }
 
-            updateLoader();
-
-            m.route.set(`/projects/${vnode.attrs.project_id}/subscriptions_report_download`);
+            updateLoader(true);
+            wasSubscriptionReportRequestSent(true);
+            h.redraw();
         };
 
         vnode.state = {
@@ -301,9 +314,12 @@ const projectSubscriptionReport = {
             displayDownloadReportSelectionModal,
             sendReportDownloadRequest,
             isSendingReportDownloadRequest,
+            wasSubscriptionReportRequestSent,
+            projectUser,
         };
     },
     view: function ({ state, attrs }) {
+        const project = state.project;
         const subsCollection = state.subscriptions.collection();
         const filterBuilder = state.filterBuilder;
         const statusFilter = _.findWhere(filterBuilder, { label: 'status_filter' });
@@ -316,13 +332,17 @@ const projectSubscriptionReport = {
         const displayDownloadReportSelectionModal = state.displayDownloadReportSelectionModal;
         const isSendingReportDownloadRequest = state.isSendingReportDownloadRequest;
         const sendReportDownloadRequest = state.sendReportDownloadRequest;
+        const wasSubscriptionReportRequestSent = state.wasSubscriptionReportRequestSent;
+        const shouldDisplaySelectReportsToExportModal = displayDownloadReportSelectionModal() && !wasSubscriptionReportRequestSent();
+        const shouldDisplayReportsExportingRedirectModal = displayDownloadReportSelectionModal() && wasSubscriptionReportRequestSent();
+        const projectUser = state.projectUser;
 
         rewardFilter.data.options = state.mapRewardsToOptions();
 
         if (state.isProjectDataLoaded() && state.isRewardsDataLoaded()) {
             return m('div', [
-                (
-                    displayDownloadReportSelectionModal() && 
+                [
+                    shouldDisplaySelectReportsToExportModal &&
                         m(modalBox, {
                             hideCloseButton: true,
                             displayModal: displayDownloadReportSelectionModal,
@@ -331,8 +351,19 @@ const projectSubscriptionReport = {
                                 onClose: displayDownloadReportSelectionModal.toggle,
                                 onSend: sendReportDownloadRequest,
                             }],
+                        }),
+
+                    shouldDisplayReportsExportingRedirectModal &&
+                        m(modalBox, {
+                            hideCloseButton: true,
+                            displayModal: displayDownloadReportSelectionModal,
+                            content: [RequestedSubscriptionReportsModal, { 
+                                projectUserEmail: projectUser().email,
+                                reportsExportingUrl: `/projects/${attrs.project_id}/subscriptions_report_download`,
+                                onClose: displayDownloadReportSelectionModal.toggle,
+                            }],
                         })
-                ),
+                ],
                 m(projectDashboardMenu, {
                     project: prop(_.first(state.project()))
                 }),
