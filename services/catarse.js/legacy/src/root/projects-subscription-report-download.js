@@ -25,6 +25,8 @@ const projectSubscriptionReportDownload = {
 
         lProject.load().then((data) => {
             project(data);
+            loading(false);
+            h.redraw();
         });
 
         const listProjectReportExportsVM = listProjectReportExports(vnode.attrs.project_id);
@@ -32,9 +34,12 @@ const projectSubscriptionReportDownload = {
         vnode.state = {
             project,
             listProjectReportExportsVM,
+            loadingProject: loading,
         };
     },
     view: function ({ state, attrs }) {
+
+        const project = state.project;
 
         /** @type {Report[]} */
         const reports = state.listProjectReportExportsVM.collection();
@@ -42,55 +47,64 @@ const projectSubscriptionReportDownload = {
         /** @type {boolean} */
         const loading = state.listProjectReportExportsVM.isLoading();
 
-        return m('div', [
-            m('div.dashboard-header.u-text-center',
-                m('div.w-container',
-                    m('div.w-row', [
-                        m('div.w-col.w-col-2'),
-                        m('div.w-col.w-col-8',
-                            m('div.fontweight-semibold.fontsize-larger.lineheight-looser', 'Relatórios exportados')
-                        ),
-                        m('div.w-col.w-col-2')
-                    ])
-                )
-            ),
-            m('div.section.min-height-70',
-                m('div.w-container',
-                    m('div.w-row', [
-                        m('div.w-col.w-col-2'),
-                        m('div.w-col.w-col-8', [
-                            m('.card.u-radius.u-marginbottom-20.card-terciary', [
-                                m('div.fontsize-small.fontweight-semibold.u-marginbottom-20', [
-                                    m('span.fa.fa-download'),
-                                    ' Baixar relatórios'
+        /** @type {boolean} */
+        const loadingProject = state.loadingProject();
+
+        if (!loadingProject) {
+            return m('div', [
+                m(projectDashboardMenu, {
+                    project: prop(_.first(project()))
+                }),
+                m('.dashboard-header',
+                    m('div.w-container',
+                        m('div.w-row', [
+                            m('div.w-col.w-col-2'),
+                            m('div.w-col.w-col-8',
+                                m('div.fontweight-semibold.fontsize-larger.lineheight-looser', 'Relatórios exportados')
+                            ),
+                            m('div.w-col.w-col-2')
+                        ])
+                    )
+                ),
+                m('div.section.min-height-70',
+                    m('div.w-container',
+                        m('div.w-row', [
+                            m('div.w-col.w-col-2'),
+                            m('div.w-col.w-col-8', [
+                                m('.card.u-radius.u-marginbottom-20.card-terciary', [
+                                    m('div.fontsize-small.fontweight-semibold.u-marginbottom-20', [
+                                        m('span.fa.fa-download'),
+                                        ' Baixar relatórios'
+                                    ]),
+                                    m('div.card.u-radius', [
+                                        m('strong', 'Atenção: '),
+                                        'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
+                                    ])
                                 ]),
-                                m('div.card.u-radius', [
-                                    m('strong', 'Atenção: '),
-                                    'Ao realizar o download desses dados, você se compromete a armazená-los em local seguro e respeitar o direitos dos usuários conforme o que está previsto nos Termos de Uso e na política de privacidade do Catarse.'
-                                ])
-                            ]),
-
-                            (
-                                loading ?
-                                    h.loader()
-                                :
-                                    reports.map(report => 
-                                        m(projectSubscriptionReportDownloadEntry, report)
-                                    )
-                            )
-                        ]), 
-                        m("div.w-col.w-col-2")
-                    ])
-                )
-            ),
-            m('.u-marginbottom-30.u-margintop-30.w-row', [
-                m(loadMoreBtn, {
-                    collection: state.listProjectReportExportsVM,
-                    cssClass: '.w-col-push-4'
-                })
-            ])
-        ]);
-
+    
+                                (
+                                    loading ?
+                                        h.loader()
+                                    :
+                                        reports.map(report => 
+                                            m(projectSubscriptionReportDownloadEntry, report)
+                                        )
+                                )
+                            ]), 
+                            m("div.w-col.w-col-2")
+                        ])
+                    )
+                ),
+                m('.u-marginbottom-30.u-margintop-30.w-row', [
+                    m(loadMoreBtn, {
+                        collection: state.listProjectReportExportsVM,
+                        cssClass: '.w-col-push-4'
+                    })
+                ])
+            ]);
+        } else {
+            return h.loader();
+        }
     }
 };
 
