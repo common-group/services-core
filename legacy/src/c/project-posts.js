@@ -10,8 +10,8 @@ const I18nScope = _.partial(h.i18nScope, 'projects.posts');
 
 const projectPosts = {
     oninit: function(vnode) {
-        const listVM = catarse.paginationVM(models.projectPostDetail),
-            filterVM = catarse.filtersVM({ project_id: 'eq', id: 'eq'});
+        const listVM = h.createBasicPaginationVMWithAutoRedraw(catarse.paginationVM(models.projectPostDetail));
+        const filterVM = catarse.filtersVM({ project_id: 'eq', id: 'eq'});
             
         const scrollTo = (localVnode) => {
             h.animateScrollTo(localVnode.dom);
