@@ -27,11 +27,11 @@ const slider = {
                 if (selectedSlideIdx() > 0) {
                     selectedSlideIdx(selectedSlideIdx() - 1);
                 } else {
-                    selectedSlideIdx(vnode.attrs.slides.length - 1);
+                    selectedSlideIdx(vnode.attrs.slides().length - 1);
                 }
             },
             incrementSlide = () => {
-                if (selectedSlideIdx() < (vnode.attrs.slides.length - 1)) {
+                if (selectedSlideIdx() < (vnode.attrs.slides().length - 1)) {
                     selectedSlideIdx(selectedSlideIdx() + 1);
                 } else {
                     selectedSlideIdx(0);
@@ -66,20 +66,22 @@ const slider = {
         };
     },
     view: function({state, attrs}) {
-        const slideClass = attrs.slideClass || '',
-            wrapperClass = attrs.wrapperClass || '',
-            effect = attrs.effect || 'slide',
-            sliderClick = (fn, param) => {
-                fn(param);
-                state.resetSliderTimer();
-                attrs.onchange && attrs.onchange();
-            },
-            effectStyle = (idx, translateStr) => {
-                const slideFx = `transform: ${translateStr}; -webkit-transform: ${translateStr}; -ms-transform:${translateStr}`,
-                    fadeFx = idx === state.selectedSlideIdx() ? 'opacity: 1; visibility: visible;' : 'opacity: 0; visibility: hidden;';
-
-                return effect === 'fade' ? fadeFx : slideFx;
-            };
+        
+        const slideClass = attrs.slideClass || '';
+        const slideComponent = attrs.slideComponent || '';
+        const wrapperClass = attrs.wrapperClass || '';
+        const effect = attrs.effect || 'slide';
+        const sliderClick = (fn, param) => {
+            fn(param);
+            state.resetSliderTimer();
+            attrs.onchange && attrs.onchange();
+        };
+        
+        const effectStyle = (idx, translateStr) => {
+            const slideFx = `transform: ${translateStr}; -webkit-transform: ${translateStr}; -ms-transform:${translateStr}`;
+            const fadeFx = idx === state.selectedSlideIdx() ? 'opacity: 1; visibility: visible;' : 'opacity: 0; visibility: hidden;';
+            return effect === 'fade' ? fadeFx : slideFx;
+        };
 
         return m(`.w-slider.${wrapperClass}`, {
             oncreate: state.translationSizeAndRedraw,
@@ -87,19 +89,16 @@ const slider = {
         }, [
             m('.fontsize-larger', attrs.title),
             m('.w-slider-mask', [
-                _.map(attrs.slides, (slide, idx) => {
+                _.map(attrs.slides(), (slide, idx) => {
                     let translateValue = (idx - state.selectedSlideIdx()) * state.translationSize(),
                         translateStr = `translate3d(${translateValue}px, 0, 0)`;
 
-                    return m(`.slide.w-slide.${slideClass}`, {
-                        style: `${effectStyle(idx, translateStr)} ${slide.customStyle}`
-                    }, [
-                        m('.w-container', [
-                            m('.w-row', [
-                                m('.w-col.w-col-8.w-col-push-2', slide.content)
-                            ])
-                        ])
-                    ]);
+                    const sliderTransitionStyle = effectStyle(idx, translateStr);
+                    return m(slideComponent, {
+                        slide,
+                        slideClass,
+                        sliderTransitionStyle,
+                    });
                 }),
                 m('#slide-prev.w-slider-arrow-left.w-hidden-small.w-hidden-tiny', {
                     onclick: () => sliderClick(state.decrementSlide)
@@ -111,7 +110,7 @@ const slider = {
                 }, [
                     m('.w-icon-slider-right.fa.fa-lg.fa-angle-right.fontcolor-terciary')
                 ]),
-                m('.w-slider-nav.w-slider-nav-invert.w-round.slide-nav', _(attrs.slides.length).times(idx => m(`.slide-bullet.w-slider-dot${state.selectedSlideIdx() === idx ? '.w-active' : ''}`, {
+                m('.w-slider-nav.w-slider-nav-invert.w-round.slide-nav', _(attrs.slides().length).times(idx => m(`.slide-bullet.w-slider-dot${state.selectedSlideIdx() === idx ? '.w-active' : ''}`, {
                     onclick: () => sliderClick(state.selectedSlideIdx, idx)
                 })))
             ])

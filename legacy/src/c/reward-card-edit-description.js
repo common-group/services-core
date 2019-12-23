@@ -1,12 +1,12 @@
 import m from 'mithril';
+import inlineError from './inline-error';
 
 const rewardCardEditDescription = {
 
     view: ({state, attrs}) => {
         const {
             reward,
-            descriptionError,
-            inlineError
+            descriptionError
         } = attrs;
 
         return [
@@ -25,7 +25,7 @@ const rewardCardEditDescription = {
                   'Descrição não pode ficar em branco'
                  )
             ]),
-            descriptionError() ? inlineError('Descrição não pode ficar em branco.') : ''
+            descriptionError() ? m(inlineError, { message: 'Descrição não pode ficar em branco.'}) : ''
         ];
     }
 };

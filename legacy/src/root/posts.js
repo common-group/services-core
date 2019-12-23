@@ -414,7 +414,7 @@ const posts = {
                                     m('.table-col.w-col.w-col-1')
                                 ]),
                                 (state.projectPosts() ? m('.fontsize-small.table-inner', [
-                                    _.map(state.projectPosts(), 
+                                    _.map(state.projectPosts(),
                                         post => m(postEntry, {
                                             post,
                                             project,

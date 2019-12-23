@@ -125,6 +125,11 @@ const menuProfile = {
                                         attrs.user.is_admin_role ? m('ul.w-list-unstyled.u-marginbottom-20',
                                             [
                                                 m('li.lineheight-looser',
+                                                    m(`a.alt-link.fontsize-smaller[href=\'/${window.I18n.locale}/new-admin#/home-banners\']`,
+                                                        'Banners'
+                                                    )
+                                                ),
+                                                m('li.lineheight-looser',
                                                     m(`a.alt-link.fontsize-smaller[href=\'/${window.I18n.locale}/new-admin#/users\']`,
                                                         'Usuários'
                                                     )
