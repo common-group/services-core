@@ -13,17 +13,28 @@ const sendPaymentRequest = data => commonPayment.postWithToken(
     { data: _.extend({}, data, { payment_id: paymentInfoId() }) },
     null,
     (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {})
-);
+)
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});
 
 const sendSubscriptionUpgrade = data => commonSubscriptionUpgrade.postWithToken(
     { data },
     null,
     (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {})
-);
+)
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});
 
-const saveCreditCard = creditCardHash => commonCreditCard.postWithToken(
-    { data: { card_hash: creditCardHash } }
-);
+const saveCreditCard = creditCardHash => commonCreditCard
+.postWithToken({ data: { card_hash: creditCardHash } })
+.catch((error) => {
+    h.captureException(error);
+    throw error;
+});;
 
 const updateUser = user => m.request({
     method: 'PUT',
@@ -32,6 +43,10 @@ const updateUser = user => m.request({
         user
     },
     config: h.setCsrfToken
+})
+.catch((error) => {
+    h.captureException(error);
+    throw error;
 });
 
 const setNewCreditCard = (creditCardFields) => {
@@ -62,17 +77,27 @@ const userPayload = (customer, address) => ({
     }
 });
 
-const displayError = fields => (data) => {
-    const errorMsg = data.message || window.I18n.t('submission.encryption_error', I18nScope());
+const displayError = fields => (exception) => {
+    const errorMsg = exception.message || window.I18n.t('submission.encryption_error', I18nScope());
     fields.isLoading(false);
     fields.submissionError(window.I18n.t('submission.error', I18nScope({ message: errorMsg })));
     m.redraw();
+    h.captureException(exception);
 };
 
-const paymentInfo = paymentId => commonPaymentInfo.postWithToken({ id: paymentId }, null,
-    (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {}));
+const paymentInfo = paymentId => commonPaymentInfo
+    .postWithToken({ id: paymentId }, null, (h.isDevEnv() ? { 'X-forwarded-For': '127.0.0.1' } : {}))
+    .catch((error) => {
+        h.captureException(error);
+        throw error;
+    });
 
-const creditCardInfo = creditCard => commonCreditCards.getRowWithToken(h.idVM.id(creditCard.id).parameters());
+const creditCardInfo = creditCard => commonCreditCards
+    .getRowWithToken(h.idVM.id(creditCard.id).parameters())
+    .catch((error) => {
+        h.captureException(error);
+        throw error;
+    });
 
 let retries = 10;
 const isReactivation = () => {
@@ -99,7 +124,7 @@ const requestInfo = (promise, paymentId, defaultPaymentMethod, isEdit) => {
         }
 
         return promise.resolve(resolvePayment(infoR.gateway_payment_method, true, paymentId, isEdit));
-    }).catch(() => promise.reject({}));
+    }).catch(error => promise.reject({}));
 };
 
 const getPaymentInfoUntilNoError = (paymentMethod, isEdit) => ({ id, catalog_payment_id }) => {
@@ -138,7 +163,7 @@ const waitForSavedCreditCard = promise => (creditCardId) => {
         }
 
         return promise.resolve({ creditCardId });
-    }).catch(err => promise.reject({ message: err.message }));
+    }).catch(error => promise.reject({ message: error.message }));
 
 
     return promise;
@@ -170,8 +195,8 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
 
     const customer = fields.fields;
     const address = customer.address().getFields();
-    const phoneDdd = address.phone_number ? address.phone_number.match(/\(([^)]*)\)/)[1] : null;
-    const phoneNumber = address.phone_number ? address.phone_number.substr(5, address.phone_number.length) : null;
+    const phoneDdd = address.phone_number ? h.extractPhoneDDD(address.phone_number) : null;
+    const phoneNumber = address.phone_number ? h.extractPhoneNumber(address.phone_number) : null;
     const addressState = address.state_id ? _.findWhere(addVM.states(), { id: address.state_id }) : address.address_state;
     const addressCountry = _.findWhere(addVM.countries(), { id: address.country_id }) || {};
 
@@ -248,8 +273,8 @@ const sendSlipPayment = (fields, commonData) => {
 
     const customer = fields.fields;
     const address = customer.address().getFields();
-    const phoneDdd = address.phone_number.match(/\(([^)]*)\)/)[1];
-    const phoneNumber = address.phone_number.substr(5, address.phone_number.length);
+    const phoneDdd = address.phone_number ? h.extractPhoneDDD(address.phone_number) : null;
+    const phoneNumber = address.phone_number ? h.extractPhoneNumber(address.phone_number) : null;
     const addressState = _.findWhere(addressVM.states(), { id: address.state_id });
     const addressCountry = _.findWhere(addressVM.countries(), { id: address.country_id });
     const payload = {
@@ -340,7 +365,12 @@ const tryRechargeSubscription = (subscription_id) => {
     const p = new Promise((resolve, reject) => {
         rechargeSubscription
             .postWithToken({ subscription_id })
-            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5)).catch(reject);
+            .then(payment_data => trialsToGetPaymentInfo({resolve, reject}, payment_data.catalog_payment_id, 5))
+            .catch((error) => {
+                h.captureException(error);
+                throw error;
+            })
+            .catch(reject);
     });
 
     return p;

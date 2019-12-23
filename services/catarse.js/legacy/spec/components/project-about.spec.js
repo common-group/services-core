@@ -10,6 +10,7 @@ describe('ProjectAbout', () => {
         beforeAll(() => {
             projectDetail = ProjectDetailsMockery()[0];
             rewardDetail = RewardDetailsMockery()[0];
+            m.originalTrust = m.trust;
             $output = mq(projectAbout, {
                 hasSubscription: prop(false),
                 project: prop(projectDetail),

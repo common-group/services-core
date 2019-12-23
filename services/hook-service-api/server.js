@@ -143,7 +143,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const transaction = req.body.transaction;
 
                 // transaction payment to status
-                if (!['processing', 'waiting_payment', 'pending_refund'].includes(current_status)) {
+                if (!['processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
 
                 const payables = await gateway_client.
                     payables.find({ transactionId: transaction.id});
@@ -188,6 +188,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                             await pool.query(subscription_transition_sql
                                 , [subscription.id, 'active', JSON.stringify(req.body)]);
                         } else if (current_status === 'refused') {
+                            // NOTE: now we have a retries before inactive on first refused
                             // inactive subscription when payment is refused
                             // await pool.query(subscription_transition_sql
                             //    , [subscription.id, 'inactive', JSON.stringify(req.body)]);

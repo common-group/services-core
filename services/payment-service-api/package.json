@@ -20,7 +20,7 @@
     "deep-extend": ">= 0.5.1",
     "express": "^4.16.2",
     "get-stdin": "^5.0.1",
-    "lodash": "^4.17.11",
+    "lodash": ">=4.5.0",
     "luxon": "^0.2.5",
     "nock": "^9.1.6",
     "pagarme": "4.4.1",
