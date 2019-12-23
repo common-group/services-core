@@ -28,6 +28,10 @@ module.exports = (config) => {
             'legacy/spec/**/*.spec.js': ['webpack'],
             'legacy/spec/index.spec.js': ['webpack']
         },
+        webpack: {
+            // mode: 'development'
+            mode: 'production'
+        },
         exclude: [],
         reporters: ['spec'],
         port: 9876,

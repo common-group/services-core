@@ -3,11 +3,14 @@ import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import projectVM from '../vms/project-vm';
+import userVM from '../vms/user-vm';
 import projectHeader from '../c/project-header';
 import projectTabs from '../c/project-tabs';
 import projectMain from '../c/project-main';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import subscriptionVM from '../vms/subscription-vm';
+import { AdultPopupModal, AdultPopupModalAttrs } from '../c/adult-popup-modal';
+import modalBox from '../c/modal-box';
 
 const projectsShow = {
     oninit: function(vnode) {
@@ -16,9 +19,15 @@ const projectsShow = {
             project_user_id,
             post_id
         } = vnode.attrs;
-        const currentUser = h.getUser(),
-            loading = prop(true),
-            userProjectSubscriptions = prop([]);
+
+        const currentUser = h.getUser();
+        const loading = prop(true);
+        const userProjectSubscriptions = prop([]);
+        const projectOwner = userVM.fetchUser(project_user_id, true, prop({}));
+
+        const currentUserIsProjectOwner = currentUser && (project_user_id == currentUser.id || currentUser.is_admin_role);
+
+        const displayAdultContentPopup = h.toggleProp(!currentUserIsProjectOwner, currentUserIsProjectOwner);
         
         if (project_id && !_.isNaN(Number(project_id))) {
             projectVM.init(project_id, project_user_id);
@@ -70,20 +79,42 @@ const projectsShow = {
 
         vnode.state = {
             loadUserSubscriptions,
+            projectOwner,
             projectVM,
             hasSubscription,
-            userProjectSubscriptions
+            userProjectSubscriptions,
+            displayAdultContentPopup,
         };
     },
     view: function({state, attrs}) {
-        const project = state.projectVM.currentProject,
-            projectVM = state.projectVM;
-        
+        const project = state.projectVM.currentProject;
+        const projectVM = state.projectVM;
+        const projectOwner = state.projectOwner;
+        const displayAdultContentPopup = state.displayAdultContentPopup;
+        const shouldDisplayAdultContentPopup = project() && project().is_adult_content && displayAdultContentPopup() && !project().is_owner_or_admin;
+        const blurredScreenConditionalStyle = shouldDisplayAdultContentPopup ? { filter: 'blur(7px)' } : { };
+
         return m('.project-show', {
-            oncreate: projectVM.setProjectPageTitle()
+            oncreate: projectVM.setProjectPageTitle(),
         }, project() ? [
+
+            (shouldDisplayAdultContentPopup ? m(modalBox, {
+                displayModal: displayAdultContentPopup,
+                content: [
+                    AdultPopupModal, 
+                    /** @type {AdultPopupModalAttrs} */
+                    {
+                        userPublicName: projectOwner().public_name,
+                        userPhotoUrl: userVM.displayImage(projectOwner()),
+                        onAgree: displayAdultContentPopup.toggle
+                    }
+                ],
+                hideCloseButton: true,
+            }) : ''),
+
             state.loadUserSubscriptions(),
             m(projectHeader, {
+                style: blurredScreenConditionalStyle,
                 project,
                 hasSubscription: state.hasSubscription,
                 userProjectSubscriptions: state.userProjectSubscriptions,
@@ -94,12 +125,14 @@ const projectsShow = {
                 goalDetails: projectVM.goalDetails
             }),
             m(projectTabs, {
+                style: blurredScreenConditionalStyle,
                 project,
                 hasSubscription: state.hasSubscription,
                 subscriptionData: projectVM.subscriptionData,
                 rewardDetails: projectVM.rewardDetails
             }),
             m(projectMain, {
+                style: blurredScreenConditionalStyle,
                 project,
                 post_id: attrs.post_id,
                 hasSubscription: state.hasSubscription,
@@ -112,7 +145,7 @@ const projectsShow = {
             (project() && project().is_owner_or_admin ? m(projectDashboardMenu, {
                 project
             }) : '')
-        ] : h.loader());
+        ] : h.loader())
     }
 };
 

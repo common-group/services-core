@@ -80,7 +80,10 @@ const addressVM = (args) => {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
             }));
-            exportData.fields.addressState(countryState.acronym);
+            
+            if (countryState) {
+                exportData.fields.addressState(countryState.acronym);
+            }
         }
     };
 
@@ -91,7 +94,10 @@ const addressVM = (args) => {
             const countryState = _.first(_.filter(states(), countryState => {
                 return exportData.fields.stateID() === countryState.id;
             }));
-            exportData.fields.addressState(countryState.acronym);
+            
+            if (countryState) {
+                exportData.fields.addressState(countryState.acronym);
+            }
         }
         const data = {};
         // data.id = exportData.fields.id();
@@ -114,8 +120,8 @@ const addressVM = (args) => {
 
     const checkPhone = () => {
         let hasError = false;
-        const phone = fields.phoneNumber(),
-            strippedPhone = String(phone || '').replace(/[\(|\)|\-|\s]*/g, '');
+        const phone = fields.phoneNumber();
+        const strippedPhone = String(phone || '').replace(/\D*/g, '');
 
         if (strippedPhone.length < 10) {
             errors.phoneNumber(true);

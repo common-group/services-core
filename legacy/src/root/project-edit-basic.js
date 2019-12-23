@@ -6,9 +6,21 @@ import projectBasicsEdit from '../c/project-basics-edit';
 
 const projectEditBasic = {
     oninit: function(vnode) {
+        const project = projectVM.fetchProject(vnode.attrs.project_id);
+        async function reloadProject(projectProp) {
+            try {
+                await projectVM.fetchProject(vnode.attrs.project_id, true, projectProp);
+                h.redraw();
+            } catch(e) {
+                console.log('Error loading project data:', e);
+                h.captureException(e);
+            }
+        }
+
         vnode.state = {
             user: userVM.fetchUser(vnode.attrs.user_id),
-            project: projectVM.fetchProject(vnode.attrs.project_id)
+            project,
+            reloadProject,
         };
     },
 
@@ -17,7 +29,8 @@ const projectEditBasic = {
             user: state.user(),
             userId: attrs.user_id,
             projectId: attrs.project_id,
-            project: state.project()
+            project: state.project(),
+            reloadProject: state.reloadProject,
         }) : m('div', h.loader()));
     }
 };

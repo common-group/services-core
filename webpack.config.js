@@ -32,24 +32,21 @@ module.exports = {
                     },
                 ],
             },
-            {
-                test: /\.elm$/,
-                exclude: [/elm-stuff/, /node_modules/],
-                loader: 'elm-webpack-loader',
-                options: {
-                    debug: true,
-                    warn: true,
-                },
-            },
         ],
     },
     devServer: {
         contentBase: './dist',
     },
-    devtool: isProd ? false : 'source-map',
+    devtool: 'source-map',
     output: {
-        filename: 'catarse.js',
         path: path.resolve(__dirname, 'dist'),
+        filename: 'catarse.js',
+        sourceMapFilename: 'catarse.js.map',
     },
-    plugins: !isProd ? [] : [new UglifyJsPlugin()],
+    plugins: isProd ? [new UglifyJsPlugin({
+        sourceMap: true,
+        uglifyOptions: {
+            compress: true
+        }
+    })] : [],
 };

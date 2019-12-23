@@ -140,7 +140,7 @@ const projectReportInfringesIntellectualProperty = {
 									assertError(state.fullNameError(), 'Informe seu nome completo'),
 									m('.w-row',
 										[
-											m('._w-sub-col.w-col.w-col-6',
+											m('.w-sub-col.w-col.w-col-6',
 												[
 													m('.fontsize-smaller.fontweight-semibold',
 														'CPF'
@@ -164,7 +164,7 @@ const projectReportInfringesIntellectualProperty = {
 									),
 									m('.w-row',
 										[
-											m('._w-sub-col.w-col.w-col-6',
+											m('.w-sub-col.w-col.w-col-6',
 												[
 													m('.fontsize-smaller.fontweight-semibold',
 														'Nome da empresa (caso aplicável)'
@@ -188,7 +188,7 @@ const projectReportInfringesIntellectualProperty = {
 									),
 									m('.w-row',
 										[
-											m('._w-sub-col.w-col.w-col-6',
+											m('.w-sub-col.w-col.w-col-6',
 												[
 													m('.fontsize-smaller.fontweight-semibold',
 														'Cargo (caso aplicável)'
