@@ -5,13 +5,17 @@ const { DateTime } = require('luxon');
 const R = require('ramda');
 const nock = require('nock');
 const helpers = require('../support/helpers');
-const {
-    genTransactionData,
+let {
+    buildTransactionData,
     isForeign,
     expirationDate,
     createGatewayTransaction,
     fetchTransactionPayables,
-    processPayment
+    processPayment,
+    shouldSendTransactionToAntifraud,
+    sendToTransactionAntifraud,
+    authorizeAnalyzeAndCapturePayment,
+    gatewayClient
 } = require('../../lib/payment_process');
 const { genAFMetadata } = require('../../lib/antifraud_context_gen');
 const { pool, generateDalContext } = require('../../lib/dal');
@@ -80,214 +84,6 @@ test('test isForeign with is_international not setted', t => {
 	t.is(isForeign(ctx), false);
 });
 
-test('test genTransactionData with boleto', t => {
-    const ctx = {
-        user: {
-            id: '1234',
-            created_at: '2016-02-01 12:30:21',
-        },
-        project_owner: {
-            id: '12345',
-            data: {
-                name: 'project owner name',
-                address: {
-                    country: 'Brasil',
-                    state: 'SP',
-                    street: 'Rua Lorem',
-                    city: 'São Paulo',
-                    zipcode: '33465765',
-                    neighborhood: 'Centro',
-                    street_number: '200',
-                    complementary: 'AP'
-                }
-            }
-        },
-        project: {
-            id: '12345',
-            mode: 'aon',
-            data: {
-                name: 'foo project',
-                expires_at: '2016-09-09 12:30:11'
-            }
-        },
-        payment: {
-            id: '123',
-            user_id: '1234',
-            project_id: '12345',
-            subscription_id: null,
-            platform_id: '12345678',
-            created_at: '2016-02-01 12:30:20',
-            data: {
-                payment_method: 'boleto',
-                current_ip: '127.0.0.1',
-                amount: 1000,
-                customer: {
-                    name:'Lorem name',
-                    email: 'lorem@email.com',
-                    document_number: '11111111111',
-                    address: {
-                        country: 'Brasil',
-                        state: 'SP',
-                        street: 'Rua Lorem',
-                        city: 'São Paulo',
-                        zipcode: '33465765',
-                        neighborhood: 'Centro',
-                        street_number: '200',
-                        complementary: 'AP'
-                    },
-                    phone: {
-                        ddi: 55,
-                        ddd: 21,
-                        number: 88888888
-                    }
-                }
-            }
-        }
-    },
-        expected = {
-            amount: 1000,
-            payment_method: 'boleto',
-            postback_url: undefined,
-            async: false,
-            customer: {
-                name: 'Lorem name',
-                email: 'lorem@email.com',
-                document_number: '11111111111',
-                address: {
-                    street: 'Rua Lorem',
-                    zipcode: '33465765',
-                    neighborhood: 'Centro',
-                    street_number: '200',
-                    city: 'São Paulo',
-                    state: 'SP'
-                },
-                phone: {
-                    ddi: 55,
-                    ddd: 21,
-                    number: 88888888
-                }
-            },
-            metadata: {
-                payment_id: '123',
-                project_id: '12345',
-                platform_id: '12345678',
-                subscription_id: null,
-                user_id: '1234',
-                cataloged_at: '2016-02-01 12:30:20'
-            },
-            antifraud_metadata: genAFMetadata(ctx)
-        };
-
-    let res = genTransactionData(ctx);
-    expected.boleto_expiration_date = res.boleto_expiration_date;
-	t.deepEqual(res, expected);
-});
-
-test('test genTransactionData with card_hash', t => {
-    const ctx = {
-        user: {
-            id: '1234',
-            created_at: '2016-02-01 12:30:21',
-        },
-        project_owner: {
-            id: '12345',
-            data: {
-                name: 'project owner name',
-                address: {
-                    country: 'Brasil',
-                    state: 'SP',
-                    street: 'Rua Lorem',
-                    city: 'São Paulo',
-                    zipcode: '33465765',
-                    neighborhood: 'Centro',
-                    street_number: '200',
-                    complementary: 'AP'
-                }
-            }
-        },
-        project: {
-            id: '12345',
-            mode: 'aon',
-            permalink: 'test_project',
-            data: {
-                name: 'foo project',
-                expires_at: '2016-09-09 12:30:11'
-            }
-        },
-        payment: {
-            id: '123',
-            user_id: '1234',
-            project_id: '12345',
-            subscription_id: null,
-            platform_id: '12345678',
-            created_at: '2016-02-01 12:30:20',
-            data: {
-                payment_method: 'credit_card',
-                card_hash: 'card_hash_123',
-                current_ip: '127.0.0.1',
-                amount: 1000,
-                customer: {
-                    name:'Lorem name',
-                    email: 'lorem@email.com',
-                    document_number: '11111111111',
-                    address: {
-                        country: 'Brasil',
-                        state: 'SP',
-                        street: 'Rua Lorem',
-                        city: 'São Paulo',
-                        zipcode: '33465765',
-                        neighborhood: 'Centro',
-                        street_number: '200',
-                        complementary: 'AP'
-                    },
-                    phone: {
-                        ddi: 55,
-                        ddd: 21,
-                        number: 88888888
-                    }
-                }
-            }
-        }
-    },
-        expected = {
-            amount: 1000,
-            payment_method: 'credit_card',
-            card_hash: 'card_hash_123',
-            postback_url: undefined,
-            async: false,
-            soft_descriptor: 'test_project',
-            customer: {
-                name: 'Lorem name',
-                email: 'lorem@email.com',
-                document_number: '11111111111',
-                address: {
-                    street: 'Rua Lorem',
-                    zipcode: '33465765',
-                    neighborhood: 'Centro',
-                    street_number: '200',
-                    city: 'São Paulo',
-                    state: 'SP'
-                },
-                phone: {
-                    ddi: 55,
-                    ddd: 21,
-                    number: 88888888
-                }
-            },
-            metadata: {
-                payment_id: '123',
-                project_id: '12345',
-                platform_id: '12345678',
-                subscription_id: null,
-                user_id: '1234',
-                cataloged_at: '2016-02-01 12:30:20'
-            },
-            antifraud_metadata: genAFMetadata(ctx)
-        };
-
-	t.deepEqual(genTransactionData(ctx), expected);
-});
-
 test('test createGatewayTransaction', async t => {
     process.env.GATEWAY_API_KEY = 'api_key_test';
 
@@ -353,6 +149,11 @@ test('test createGatewayTransaction', async t => {
                     }
                 }
             }
+        },
+        payment_card: {
+            gateway_data: {
+                id: '312'
+            }
         }
     };
 
@@ -360,7 +161,7 @@ test('test createGatewayTransaction', async t => {
         .post(/transactions/)
         .reply(200, transactionReply())
 
-    let transaction = await createGatewayTransaction(genTransactionData(ctx));
+    let transaction = await createGatewayTransaction(buildTransactionData(ctx));
 
     t.deepEqual(transaction, transactionReply());
 
@@ -496,3 +297,47 @@ test('test processPayment with error on gateway', async t => {
     await client.query('rollback;');
     await client.release();
 });
+
+test('test shouldSendTransactionToAntifraud - when transaction status is authorized and credit card is new', async t => {
+    let transaction = { payment_method: 'credit_card', status: 'authorized', card: { id: '123' } }
+
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    dalCtx.isCardAlreadyAnalyzedOnAntifraud = (cardId) => { return false }
+
+    const response = await shouldSendTransactionToAntifraud(transaction, dalCtx)
+    t.is(response, true)
+})
+
+test('test shouldSendTransactionToAntifraud - when transaction status is authorized and credit card isn`t new', async t => {
+    let transaction = { payment_method: 'credit_card', status: 'authorized', card: { id: '123' } }
+
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    dalCtx.isCardAlreadyAnalyzedOnAntifraud = (cardId) => { return true }
+
+    const response = await shouldSendTransactionToAntifraud(transaction, dalCtx)
+    t.is(response, false)
+})
+
+
+test('test shouldSendTransactionToAntifraud - when transaction status is refused', async t => {
+    let transaction = { payment_method: 'credit_card', status: 'refused', card: { id: '123' } }
+
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+
+    const response = await shouldSendTransactionToAntifraud(transaction, dalCtx)
+    t.is(response, true)
+})
+
+test('test sendToTransactionAntifraud', async t => {
+    process.env.ANTIFRAUD_API_KEY = 'api_key_test';
+    const expectedOrder = { mock: 'here' }
+    const fakeData = { payment: { created_at: '', data: { customer: { phone: {}, address: { country_en: '' } } } }, user: { created_at: '' }, payment_card: { gateway_data: { expiration_date: '' } }, project: { data: {} }, subscription: { created_at: '' }, project_owner: { data: {}, created_at: '' } }
+
+    nock('https://api.konduto.com').post('/v1/orders').reply(201, expectedOrder)
+
+    let response = await sendToTransactionAntifraud(fakeData, { transaction: { id: 'transaction-id' } })
+    t.deepEqual(expectedOrder, response.data)
+})
