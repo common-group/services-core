@@ -7,6 +7,7 @@ import models from '../models';
 import rewardVM from './reward-vm';
 import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
+import Stream from 'mithril/stream';
 
 const currentProject = prop(),
     userDetails = prop(),
@@ -174,6 +175,60 @@ const checkSubscribeAction = () => {
     }
 };
 
+/**
+ * @typedef ProjectIntegration
+ * @property {number} id
+ * @property {string} name
+ * @property {Object} data
+ * @property {number} project_id
+ */
+
+/** @type {Stream< ProjectIntegration[] >} */
+const integrations = prop([]);
+
+/**
+ * @param {number} projectId
+ * @returns {Promise<ProjectIntegration[]>}
+ */
+const getIntegrations = (projectId) =>
+    m.request({
+        method: 'GET',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/integrations.json`,
+    });
+
+/**
+ * @typedef ProjectIntegrationResponse
+ * @property {string} success
+ * @property {number} integration_id
+ */
+
+/**
+ * @param {number} projectId
+ * @param {ProjectIntegration} integration
+ * @returns {Promise<ProjectIntegrationResponse>}
+ */
+const createIntegration = (projectId, integration) =>
+    m.request({
+        method: 'POST',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/integrations.json`,
+        data: integration
+    });
+
+/**
+ * @param {number} projectId
+ * @param {ProjectIntegration} updatedIntegration
+ * @returns {Promise<ProjectIntegrationResponse>}
+ */
+const updateIntegration = (projectId, updatedIntegration) =>
+    m.request({
+        method: 'PUT',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/integrations/${updatedIntegration.id}.json`,
+        data: updatedIntegration
+    });
+
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -191,6 +246,9 @@ const projectVM = {
     isSubscription,
     storeSubscribeAction,
     checkSubscribeAction,
+    getIntegrations,
+    createIntegration,
+    updateIntegration,
 };
 
 export default projectVM;
