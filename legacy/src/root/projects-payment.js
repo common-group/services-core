@@ -23,6 +23,8 @@ const I18nIntScope = _.partial(h.i18nScope, 'projects.contributions.edit_interna
 
 const projectsPayment = {
     oninit: function (vnode) {
+        projectVM.sendPageViewForCurrentProject();
+
         const project = projectVM.currentProject;
         const vm = paymentVM();
         const showPaymentForm = prop(false);
