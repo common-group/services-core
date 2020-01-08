@@ -21,12 +21,11 @@ export class ProjectEditIntegrations {
          * */
         const findIntegrationByName = (name = '', integrations = []) => integrations.find(integration => integration.name === name);
 
-        const formatGATrackingID = _.partial(h.mask, '9999999-9');
         const GATracking = h.RedrawStream({ data: { id: '' }, name: GA });
         const FBPixelTracking = h.RedrawStream({ data: { id: '' }, name: PIXEL });
 
         const GATrackingID = h.RedrawStream('', id => {
-            GATracking(_.extend(GATracking(), { data: { id: id ? `UA-${formatGATrackingID(id)}` : '' }, name: GA }));
+            GATracking(_.extend(GATracking(), { data: { id }, name: GA }));
         });
         const FBPixelTrackingID = h.RedrawStream('', id => {
             FBPixelTracking(_.extend(FBPixelTracking(), { data: { id }, name: PIXEL }));
@@ -85,7 +84,6 @@ export class ProjectEditIntegrations {
 
         vnode.state = {
             GATrackingID,
-            formatGATrackingID,
             FBPixelTrackingID,
             loading,
             save,
@@ -99,7 +97,6 @@ export class ProjectEditIntegrations {
     view({ state, attrs }) {
 
         const GATrackingID = state.GATrackingID;
-        const formatGATrackingID = state.formatGATrackingID;
         const FBPixelTrackingID = state.FBPixelTrackingID;
         const save = state.save;
         const error = state.error;
@@ -144,8 +141,8 @@ export class ProjectEditIntegrations {
                                                     ),
                                                     m('div.w-col.w-col-10.w-col-tiny-10',
                                                         m(`input${error() ? '.error' : ''}.text-field.postfix.positive.medium.w-input[type="text"][placeholder="1234567-1"]`, {
-                                                            value: formatGATrackingID(GATrackingID()),
-                                                            onkeyup: (/** @type {Event} */ event) => GATrackingID(event.target.value.replace(/\D*/g, ''))
+                                                            value: GATrackingID(),
+                                                            onkeyup: (/** @type {Event} */ event) => GATrackingID(event.target.value)
                                                         }),
                                                     )
                                                 ])

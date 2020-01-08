@@ -106,7 +106,7 @@ const getCurrentProject = () => {
             currentProject(project_data);
         }
 
-        init(project_data.project_id, project_data.project_user_id);
+        init(project_data.project_id, project_data.project_user_id);        
 
         h.redraw();
 
@@ -175,6 +175,39 @@ const checkSubscribeAction = () => {
     }
 };
 
+const sendPageViewForCurrentProject = () => {
+
+    const root = document.getElementById('application');
+    const data = root && root.getAttribute('data-parameters');
+
+    if (data) {
+        const jsonData = JSON.parse(data);
+
+        const { projectId, projectUserId } = jsonData; // legacy
+        const { project_id, project_user_id } = jsonData;
+
+        const project_data = {
+            project_id: project_id || projectId,
+            project_user_id: project_user_id || projectUserId,
+        };
+
+        loadIntegrationsAndSendPageView(project_data.project_id);
+    }
+}
+
+/**
+ * @param {number} projectId 
+ */
+const loadIntegrationsAndSendPageView = async (projectId) => {
+
+    try {
+        const integrations = await getIntegrations(projectId);
+        SendPageView(integrations);
+    } catch(e) {
+        h.captureException(e);
+    }
+}
+
 /**
  * @typedef ProjectIntegration
  * @property {number} id
@@ -229,6 +262,25 @@ const updateIntegration = (projectId, updatedIntegration) =>
         data: updatedIntegration
     });
 
+/**
+ * @param {ProjectIntegration[]} projectIntegrations 
+ */
+const SendPageView = (projectIntegrations) => {
+
+    const urlsMatchsForPageView = [
+        //,
+
+    ]
+
+    for (const integration of projectIntegrations) {
+        const trackingFunction = window.trackingFunctions[integration.name];
+
+        if (trackingFunction) {
+            trackingFunction(integration.data.id);
+        }
+    }
+}
+
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -246,6 +298,7 @@ const projectVM = {
     isSubscription,
     storeSubscribeAction,
     checkSubscribeAction,
+    sendPageViewForCurrentProject,
     getIntegrations,
     createIntegration,
     updateIntegration,
