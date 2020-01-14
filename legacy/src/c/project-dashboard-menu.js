@@ -156,6 +156,9 @@ const projectDashboardMenu = {
                                 m(`a#dashboard_reward_link[class="${editLinkClass('#reward')}"][href="${editRoute}#reward"]`, [railsErrorsVM.errorsFor('reward'),
                                     'Recompensas', optionalOpt
                                 ]),
+                                m(`a#integrations[class="${editLinkClass('#integrations')}"][href="${editRoute}#integrations"]`, [railsErrorsVM.errorsFor('integrations'),
+                                    'Integrações', optionalOpt
+                                ]),
                                 projectVM.isSubscription(project) ?
                                 m(`a#dashboard_welcome_message_link[class="${editLinkClass('#welcome_message')}"][href="${editRoute}#welcome_message"]`, [railsErrorsVM.errorsFor('welcome_message'),
                                     'Email de boas vindas', optionalOpt

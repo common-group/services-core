@@ -21,6 +21,7 @@ import projectPreview from '../root/project-preview';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectAnnounceExpiration from '../c/project-announce-expiration';
 import projectEditTab from '../c/project-edit-tab';
+import { ProjectEditIntegrations } from './project-edit-integrations';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 
@@ -65,6 +66,13 @@ const projectEdit = {
                         title: window.I18n.t('reward_html', I18nScope()),
                         subtitle: window.I18n.t('reward_subtitle', I18nScope()),
                         content: m(projectEditReward, _.extend({}, c_opts))
+                    });
+
+                case '#integrations':
+                    return m(projectEditTab, {
+                        title: window.I18n.t('integrations_html', I18nScope()),
+                        subtitle: window.I18n.t('integrations_subtitle', I18nScope()),
+                        content: m(ProjectEditIntegrations, _.extend({}, c_opts))
                     });
 
                 case '#user_settings':
