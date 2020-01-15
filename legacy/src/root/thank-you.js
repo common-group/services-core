@@ -6,6 +6,7 @@ import facebookButton from '../c/facebook-button';
 import projectShareBox from '../c/project-share-box';
 import projectRow from '../c/project-row';
 import userVM from '../vms/user-vm';
+import projectVM from '../vms/project-vm';
 
 const { CatarseAnalytics } = window;
 
@@ -13,6 +14,9 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const thankYou = {
     oninit: function(vnode) {
+        
+        projectVM.sendPageViewForCurrentProject();
+
         const recommendedProjects = vnode.attrs.recommended_projects || userVM.getUserRecommendedProjects(),
             isSlip = vnode.attrs.contribution && !_.isEmpty(vnode.attrs.contribution.slip_url),
             sendContributionCreationData = () => {
