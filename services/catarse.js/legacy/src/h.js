@@ -1183,19 +1183,21 @@ function ObservableRedrawStream(data) {
 
 /**
  * @param {T} data
+ * @param {(data : T) => void} onUpdate
  * @template T
  */
-function RedrawStream(data) {
+function RedrawStream(data, onUpdate = (param) => {}) {
     
     const _data = prop(data);
 
     /**
      * @param {T} newData
-     * @template T
+     * @returns {T}
      */
     function streamAccessor(newData) {
         if (newData !== undefined) {
             _data(newData);
+            onUpdate(newData);
             redraw();
             return newData;
         }
@@ -1223,6 +1225,12 @@ setMomentifyLocale();
 closeFlash();
 closeModal();
 checkReminder();
+
+/**
+ * @typedef VNode
+ * @property {Object} attrs
+ * @property {Object} state
+ */
 
 export default {
     createPropAcessors,

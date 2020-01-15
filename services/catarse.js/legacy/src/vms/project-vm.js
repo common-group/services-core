@@ -7,6 +7,7 @@ import models from '../models';
 import rewardVM from './reward-vm';
 import projectGoalsVM from './project-goals-vm';
 import userVM from './user-vm';
+import Stream from 'mithril/stream';
 
 const currentProject = prop(),
     userDetails = prop(),
@@ -105,7 +106,7 @@ const getCurrentProject = () => {
             currentProject(project_data);
         }
 
-        init(project_data.project_id, project_data.project_user_id);
+        init(project_data.project_id, project_data.project_user_id);        
 
         h.redraw();
 
@@ -174,6 +175,112 @@ const checkSubscribeAction = () => {
     }
 };
 
+const sendPageViewForCurrentProject = () => {
+
+    const root = document.getElementById('application');
+    const data = root && root.getAttribute('data-parameters');
+
+    if (data) {
+        const jsonData = JSON.parse(data);
+
+        const { projectId, projectUserId } = jsonData; // legacy
+        const { project_id, project_user_id } = jsonData;
+
+        const project_data = {
+            project_id: project_id || projectId,
+            project_user_id: project_user_id || projectUserId,
+        };
+
+        loadIntegrationsAndSendPageView(project_data.project_id);
+    }
+}
+
+/**
+ * @param {number} projectId 
+ */
+const loadIntegrationsAndSendPageView = async (projectId) => {
+
+    try {
+        const integrations = await getIntegrations(projectId);
+        SendPageView(integrations);
+    } catch(e) {
+        h.captureException(e);
+    }
+}
+
+/**
+ * @typedef ProjectIntegration
+ * @property {number} id
+ * @property {string} name
+ * @property {Object} data
+ * @property {number} project_id
+ */
+
+/** @type {Stream< ProjectIntegration[] >} */
+const integrations = prop([]);
+
+/**
+ * @param {number} projectId
+ * @returns {Promise<ProjectIntegration[]>}
+ */
+const getIntegrations = (projectId) =>
+    m.request({
+        method: 'GET',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/integrations.json`,
+    });
+
+/**
+ * @typedef ProjectIntegrationResponse
+ * @property {string} success
+ * @property {number} integration_id
+ */
+
+/**
+ * @param {number} projectId
+ * @param {ProjectIntegration} integration
+ * @returns {Promise<ProjectIntegrationResponse>}
+ */
+const createIntegration = (projectId, integration) =>
+    m.request({
+        method: 'POST',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/integrations.json`,
+        data: integration
+    });
+
+/**
+ * @param {number} projectId
+ * @param {ProjectIntegration} updatedIntegration
+ * @returns {Promise<ProjectIntegrationResponse>}
+ */
+const updateIntegration = (projectId, updatedIntegration) =>
+    m.request({
+        method: 'PUT',
+        config: h.setCsrfToken,
+        url: `/projects/${projectId}/integrations/${updatedIntegration.id}.json`,
+        data: updatedIntegration
+    });
+
+/**
+ * @param {ProjectIntegration[]} projectIntegrations 
+ */
+const SendPageView = (projectIntegrations) => {
+
+    const urlsMatchsForPageView = [
+        //,
+
+    ]
+
+    for (const integration of projectIntegrations) {
+        const trackingFunction = window.trackingFunctions[integration.name];
+
+        if (trackingFunction) {
+            trackingFunction(integration.data.id);
+        }
+    }
+}
+
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -191,6 +298,10 @@ const projectVM = {
     isSubscription,
     storeSubscribeAction,
     checkSubscribeAction,
+    sendPageViewForCurrentProject,
+    getIntegrations,
+    createIntegration,
+    updateIntegration,
 };
 
 export default projectVM;

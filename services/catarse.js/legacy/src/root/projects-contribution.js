@@ -12,6 +12,9 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 
 const projectsContribution = {
     oninit: function(vnode) {
+        
+        projectVM.sendPageViewForCurrentProject();
+
         const rewards = () => _.union(
             [{
                 id: null,
