@@ -130,7 +130,7 @@ export class ProjectEditIntegrations {
                                                 m('label.fontweight-semibold.fontsize-base', 'Google Analytics Tracking ID'),
                                                 m('label.field-label.fontsize-smallest.fontcolor-secondary', [
                                                     'Envia informações dos visitantes de sua página para a sua conta do Google Analytics ',
-                                                    m('a.alt-link[href="#"]', 'Saiba mais')
+                                                    m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360038491812"]', 'Saiba mais')
                                                 ]),
                                                 m('img[src="https://uploads-ssl.webflow.com/57ba58b4846cc19e60acdd5b/5c5cacc4a3136e8188581846_logo_lockup_analytics_icon_horizontal_black_2x.png"][width="146"][alt=""]')
                                             ]),
@@ -153,12 +153,12 @@ export class ProjectEditIntegrations {
                                                 m('label.fontweight-semibold.fontsize-base', 'Facebook Pixel'),
                                                     m('label.field-label.fontsize-smallest.fontcolor-secondary', [
                                                         'Envia informações dos visitantes de sua página para o seu Facebook Pixel ',
-                                                        m('a.alt-link[href="#"]', 'Saiba mais')
+                                                        m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360038491672"]', 'Saiba mais')
                                                     ]),
                                                     m('img[src="https://uploads-ssl.webflow.com/57ba58b4846cc19e60acdd5b/5c5cad962b0f59780182c2b8_xfacebook-pixel-logotyp.png.pagespeed.ic.LYUwNiemhv.png"][width="146"][alt=""]')
                                             ]),
                                             m('div.w-col.w-col-7', [
-                                                m(`input${error() ? '.error' : ''}.text-field.medium.w-input[type="text"][placeholder="123456789123456"][id="fb-pixel-id"]`, {
+                                                m(`input${error() ? '.error' : ''}.text-field.medium.positive.w-input[type="text"][placeholder="123456789123456"][id="fb-pixel-id"]`, {
                                                     value: FBPixelTrackingID(),
                                                     onkeyup: (/** @type {Event} */ event) => FBPixelTrackingID(event.target.value.replace(/\D*/g, ''))
                                                 }),
