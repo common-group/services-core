@@ -46,7 +46,14 @@ export class ExploreLightBox {
                         )
                     ),
                     filters.map(filter => {
-                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=${filter.keyName}"]`, filter.name);
+                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=${filter.keyName}"]`, {
+                            onclick: (event) => {
+                                m.route.set(`/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=${filter.keyName}#`);
+                                window.location.hash = `#${filter.keyName}`;
+                                event.preventDefault();
+                                onClose();
+                            }
+                        }, filter.name);
                     })
                 ]),
                 m('div.u-marginbottom-30', [
@@ -54,10 +61,10 @@ export class ExploreLightBox {
                         m('div.fontsize-base.fontcolor-terciary', 'Categorias')
                     ),
                     categories().map(category => {
-                        return m(`a.explore-lightbox-filter-link[href="#"]`, {
+                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box#by_category_id/${category.id}"]`, {
                             onclick: (event) => {
-                                m.route.set(`/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box`);
-                                window.location.hash = `#by_category_id/${category.id}`;
+                                m.route.set(`/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=all`)
+                                window.location.hash = `#by_category_id${encodeURIComponent('/')}${category.id}`;
                                 event.preventDefault();
                                 onClose();
                             }

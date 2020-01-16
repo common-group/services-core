@@ -10,7 +10,10 @@ import { ExploreLightBox } from '../experiments/c/explore-light-box';
 
 const menu = {
     oninit: function(vnode) {
-        const exploreButtonBehavoir = h.RedrawStream(() => m.route.set('/explore?ref=ctrse_header'));
+        const exploreButtonBehavoir = h.RedrawStream((/** @type {Event} */ event) => {
+            event.preventDefault();
+            m.route.set('/explore?ref=ctrse_header');
+        });
         const displayLightBox = h.RedrawStream(false);
         const user = h.getUser();
         const menuCss = () => {
@@ -34,12 +37,12 @@ const menu = {
 
         window.optimizeObserver.addListener((variantName) => {            
             if (variantName === 'Explore Light Box') {
+                exploreButtonBehavoir((/** @type {Event} */ event) => {
+                        event.preventDefault();
+                    displayLightBox(true)
+                });
             }
         });
-                        exploreButtonBehavoir((event) => {
-                            event.preventDefault();
-                            displayLightBox(true)
-                        });
         
         vnode.state = {
             user,
