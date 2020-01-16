@@ -32,7 +32,7 @@ const projectsExplore = {
             currentUser = h.getUser() || {},
             chosenRecommender = prop(null),
             currentMode = prop(filtersMap.all_modes),
-            selectedCategory = prop({
+            selectedCategory = h.RedrawStream({
                 name: 'Todas as categorias',
                 id: null
             }),
@@ -47,6 +47,7 @@ const projectsExplore = {
             changeFilter = (newFilter) => {
                 currentFilter(filtersMap[newFilter]);
                 h.setParamByName('filter', currentFilter().keyName);
+                window.location.hash = decodeURIComponent(window.location.hash);
                 // reset category
                 if (_.contains(availableRecommenders, newFilter)) {
                     history.replaceState(null, null, ' ');
@@ -104,6 +105,11 @@ const projectsExplore = {
                 const currentCategory = getCurrentCategory();
                 if (currentCategory) {
                     selectedCategory(currentCategory);
+                } else {
+                    selectedCategory({
+                        name: 'Todas as categorias',
+                        id: null
+                    });
                 }
                 m.redraw();
             }),
@@ -122,6 +128,8 @@ const projectsExplore = {
                 return route && route[2] && findCategory(route[2]);
             },
             loadRoute = () => {
+                const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all';
+                currentFilter(filtersMap[innerDefaultFilter]);
                 const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/),
                     cat = route &&
                     route[2] &&
@@ -134,6 +142,11 @@ const projectsExplore = {
 
                         if (cat) {
                             selectedCategory(cat);
+                        } else {
+                            selectedCategory({
+                                name: 'Todas as categorias',
+                                id: null
+                            });
                         }
                         return route &&
                             route[1] &&
@@ -251,6 +264,7 @@ const projectsExplore = {
             title = prop();
 
         window.addEventListener('hashchange', () => {
+            window.location.hash = decodeURIComponent(window.location.hash);
             resetContextFilter();
             loadRoute();
             m.redraw();
