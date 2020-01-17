@@ -127,7 +127,7 @@ export class ProjectEditIntegrations {
                                     m('form', [
                                         m('div.u-marginbottom-20.card.card-terciary.medium.w-row', [
                                             m('div.w-col.w-col-5', [
-                                                m('label.fontweight-semibold.fontsize-base', 'Google Analytics Tracking ID'),
+                                                m('label.fontweight-semibold.fontsize-base', 'ID de Acompanhamento do Google Analytics'),
                                                 m('label.field-label.fontsize-smallest.fontcolor-secondary', [
                                                     'Envia informações dos visitantes de sua página para a sua conta do Google Analytics ',
                                                     m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360038491812"]', 'Saiba mais')
