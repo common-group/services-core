@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fdw-settings
+spec:
+  template:
+    spec:
+      containers:
+        - name: fdw-settings
+          env:
+            - name: DATABASE_URL
+              value: postgres://catarse:example@catarse-db:5432/catarse_db
+            - name: RAILS_ENV
+              value: development
+            - name: REDIS_URL
+              value: redis://catarse-redis:6379
+          image: catarse-deploy/catarse
+          command:
+            - bundle
+            - exec
+            - rake
+            - common:generate_fdw
+      restartPolicy: OnFailure
+

@@ -18,3 +18,23 @@ $ psql -h localhost -p 5444 -U postgres service_core < services/service-core-db/
 
 Start services:
 `$ docker-compose up -d`
+
+## Skaffold notes
+
+Start with running the base profile:
+`skaffold run`
+
+Start the migration job:
+`skaffold run -p migrations`
+
+Now seed the DB:
+`skaffold run -p prime`
+
+Next load default/demo settings
+`skaffold run -p setup`
+
+Wait for migrations job to re-run and be succesful, or force start it
+
+Restart catarse:
+`kubectl scale deploy/catarse -replicas=0`
+`kubectl scale deploy/catarse -replicas=1`

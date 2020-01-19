@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: catarse-migrations
+  name: catarse-migrations
+spec:
+  template:
+    spec:
+      containers:
+      - name: catarse-migrations
+        args:
+        - bundle
+        - exec
+        - rake
+        - db:migrate
+        env:
+        - name: DATABASE_URL
+          value: postgres://catarse:example@catarse-db:5432/catarse_db
+        - name: RAILS_ENV
+          value: development
+        - name: REDIS_URL
+          value: redis://catarse-redis:6379
+        image: catarse-deploy/catarse
+      restartPolicy: OnFailure

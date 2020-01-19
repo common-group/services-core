@@ -36,7 +36,7 @@ services:
   jobs: &app
     # Specify the directory from where all commands sent to the container will be
     # issued to where the code is mounted:
-    image: catarse/catarse:development
+    image: catarse-deploy/catarse:development
     command: bundle exec sidekiq -c 1 -q default
     working_dir: /usr/src/app
     build:

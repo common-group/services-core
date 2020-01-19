@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: demo-settings
+spec:
+  template:
+    spec:
+      containers:
+        - name: demo-settings
+          env:
+            - name: DATABASE_URL
+              value: postgres://catarse:example@catarse-db:5432/catarse_db
+            - name: RAILS_ENV
+              value: development
+            - name: REDIS_URL
+              value: redis://catarse-redis:6379
+          image: catarse-deploy/catarse
+          command:
+            - bundle
+            - exec
+            - rake
+            - dev_seed:demo_settings
+      restartPolicy: OnFailure

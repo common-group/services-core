@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: migrations
+  name: migrations
+spec:
+  template:
+    spec:
+      containers:
+      - name: migrations
+        args:
+        - ./scripts/run_migrations.sh
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              key: DATABASE_URL
+              name: migrations-env
+        image: catarse-deploy/migrations
+      restartPolicy: OnFailure

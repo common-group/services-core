@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: community-service-api
+  name: community-service-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: community-service-api
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: community-service-api
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: DATABASE_URL
+                  name: community-service-api-env
+            - name: PGRST_DB_ANON_ROLE
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_DB_ANON_ROLE
+                  name: community-service-api-env
+            - name: PGRST_DB_POOL
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_DB_POOL
+                  name: community-service-api-env
+            - name: PGRST_DB_SCHEMA
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_DB_SCHEMA
+                  name: community-service-api-env
+            - name: PGRST_DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_DB_URI
+                  name: community-service-api-env
+            - name: PGRST_JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_JWT_SECRET
+                  name: community-service-api-env
+            - name: PGRST_SERVER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_SERVER_HOST
+                  name: community-service-api-env
+            - name: PGRST_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_SERVER_PORT
+                  name: community-service-api-env
+            - name: PGRST_SERVER_PROXY_URI
+              valueFrom:
+                configMapKeyRef:
+                  key: PGRST_SERVER_PROXY_URI
+                  name: community-service-api-env
+            - name: POSTGREST_VER
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGREST_VER
+                  name: community-service-api-env
+            - name: PROCESS_PAYMENT_DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: PROCESS_PAYMENT_DATABASE_URL
+                  name: community-service-api-env
+          image: postgrest/postgrest:v0.4.4.0
+          name: community-service-api
+          ports:
+            - containerPort: 3000
+          resources: {}
+      restartPolicy: Always
+status: {}

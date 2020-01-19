@@ -1,4 +1,4 @@
-namespace :e do
+namespace :dev_seed do
   desc 'states'
   task input_states: :environment do
     ['Acre|AC',
@@ -11,7 +11,7 @@ namespace :e do
     'Espírito Santo|ES',
     'Goiás|GO',
     'Maranhão|MA',
-    'Mato Grosso|MT'e
+    'Mato Grosso|MT',
     'Mato Grosso do Sul|MS',
     'Minas Gerais|MG',
     'Pará|PA',
@@ -99,7 +99,7 @@ namespace :e do
 			common_proxy_service_api: 'http://proxy',
       common_platform_token: 'a28be766-bb36-4821-82ec-768d2634d78b',
       common_platform_id: '8187a11e-6fa5-4561-a5e5-83329236fbd6',
-      common_db_host: 'service_core_db',
+      common_db_host: 'service-core-db',
       common_db_name: 'service_core',
       common_db_port: '5432',
 			common_db_password: 'example',

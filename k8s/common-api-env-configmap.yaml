@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  DATABASE_URL: postgres://postgres:example@catarse-db:5432/service_core
+  GATEWAY_API_KEY: API_PAGARME_TEST_HERE
+  JWT_SECRET: bUH75katNm6Yj0iPSchcgUuTwYAzZr7C
+  PORT: "3000"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: common-api-compose-env
+  name: common-api-compose-env

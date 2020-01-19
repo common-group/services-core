@@ -1,0 +1,24 @@
+apiVersion: v1
+data:
+  ANALYTICS_SERVICE_API_SERVER: analytics-service-api:3000
+  CATARSE_MOMENT_SERVICE_API_SERVER: catarse-moment-service-api:3000
+  COMMON_SERVICE_API_SERVER: common-api:3000
+  COMMUNITY_SERVICE_API_SERVER: community-service-api:3000
+  DB_HOST: 10.0.1.43
+  DB_NAME: service_core
+  DB_PASSWORD: example
+  DB_PORT: "5432"
+  DB_USERNAME: proxy_server
+  DNS_RESOLVER: 8.8.8.8
+  NOTIFICATION_SERVICE_API_SERVER: notification-service-api:3000
+  PAYMENT_SERVICE_API_SERVER: payment-service-api:3000
+  PORT: "80"
+  PROJECT_SERVICE_API_SERVER: project-service-api:3000
+  PROTO_SCHEMA: http
+  RECOMMENDER_SERVICE_API_SERVER: recommender-service-api:3009
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: common-proxy-env
+  name: common-proxy-env

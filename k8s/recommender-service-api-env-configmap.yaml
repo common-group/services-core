@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  DATABASE_URL: postgres://catarse:example@catarse-db:5432/catarse_db
+  FLASK_APP: application.py
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONPATH: /usr
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: recommender-service-api-env
+  name: recommender-service-api-env

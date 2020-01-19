@@ -42,6 +42,7 @@ server {
     set $host_notification_service_api ${NOTIFICATION_SERVICE_API_SERVER};
     set $host_recommender_service_api ${RECOMMENDER_SERVICE_API_SERVER};
     set $host_common_service_api ${COMMON_SERVICE_API_SERVER};
+
 	set $require_pagination "off";
 	
 	set $proxy_host ${COMMON_SERVICE_API_SERVER};
