@@ -32,12 +32,12 @@ const projectsExplore = {
             currentUser = h.getUser() || {},
             chosenRecommender = prop(null),
             currentMode = prop(filtersMap.all_modes),
-            selectedCategory = prop({
+            selectedCategory = h.RedrawStream({
                 name: 'Todas as categorias',
                 id: null
             }),
             defaultFilter = h.paramByName('filter') || 'all',
-            currentFilter = prop(filtersMap[defaultFilter]),
+            currentFilter = h.RedrawStream(filtersMap[defaultFilter]),
             modeToggle = h.toggleProp(true, false),
             //availableRecommenders = ['recommended_1', 'recommended_2'],
             availableRecommenders = [],
@@ -46,6 +46,8 @@ const projectsExplore = {
             showFilter = h.toggleProp(true, false),
             changeFilter = (newFilter) => {
                 currentFilter(filtersMap[newFilter]);
+                h.setParamByName('filter', currentFilter().keyName);
+                window.location.hash = decodeURIComponent(window.location.hash);
                 // reset category
                 if (_.contains(availableRecommenders, newFilter)) {
                     history.replaceState(null, null, ' ');
@@ -100,6 +102,15 @@ const projectsExplore = {
                 name: 'asc'
             }).parameters()).then(c => {
                 categoryCollection(c);
+                const currentCategory = getCurrentCategory();
+                if (currentCategory) {
+                    selectedCategory(currentCategory);
+                } else {
+                    selectedCategory({
+                        name: 'Todas as categorias',
+                        id: null
+                    });
+                }
                 m.redraw();
             }),
             externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories,
@@ -112,8 +123,14 @@ const projectsExplore = {
                 isLoading: () => true,
                 isLastPage: () => true
             }),
+            getCurrentCategory = () => {
+                const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/);
+                return route && route[2] && findCategory(route[2]);
+            },
             loadRoute = () => {
-                const route = window.location.hash.match(/\#([^\/]*)\/?(\d+)?/),
+                const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all';
+                currentFilter(filtersMap[innerDefaultFilter]);
+                const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/),
                     cat = route &&
                     route[2] &&
                     findCategory(route[2]),
@@ -125,6 +142,11 @@ const projectsExplore = {
 
                         if (cat) {
                             selectedCategory(cat);
+                        } else {
+                            selectedCategory({
+                                name: 'Todas as categorias',
+                                id: null
+                            });
                         }
                         return route &&
                             route[1] &&
@@ -242,6 +264,7 @@ const projectsExplore = {
             title = prop();
 
         window.addEventListener('hashchange', () => {
+            window.location.hash = decodeURIComponent(window.location.hash);
             resetContextFilter();
             loadRoute();
             m.redraw();
@@ -265,6 +288,8 @@ const projectsExplore = {
             currentFilter(filtersMap[defaultFilter]);
         }
 
+        h.setParamByName('filter', currentFilter().keyName);
+
         let notWasTried = true;
         let firstLoad = true;
 
@@ -279,10 +304,12 @@ const projectsExplore = {
                 modeToggle(true);
                 notWasTried = false;
             }
-            else if (filterIsForContributedByFriends) {
-                currentFilter(filtersMap[innerDefaultFilter]);
-            }
+            //  else if (filterIsForContributedByFriends) {
+            //     currentFilter(filtersMap[innerDefaultFilter]);
+            // } else if (innerDefaultFilter) {
 
+            // }
+            currentFilter(filtersMap[innerDefaultFilter]);
             if (firstLoad) {
                 h.scrollTop();
                 firstLoad = false;
@@ -454,7 +481,8 @@ const projectsExplore = {
                             state.filterToggle() ? '' :
                             m('.explore-filter-select', [
                                 _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                        onclick: () => {
+                                        onclick: (/** @type {Event} */ event) => {
+                                            event.preventDefault();
                                             state.changeFilter(pageFilter.keyName);
                                             state.filterToggle.toggle();
                                         },

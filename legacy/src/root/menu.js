@@ -3,37 +3,68 @@ import _ from 'underscore';
 import h from '../h';
 import menuSearch from '../c/menu-search';
 import menuProfile from '../c/menu-profile';
+import models from '../models';
+import { catarse } from '../api';
+
+import { ExploreLightBox } from '../experiments/c/explore-light-box';
 
 const menu = {
     oninit: function(vnode) {
-        const user = h.getUser(),
-            menuCss = () => {
-                let dynamicClasses;
-
-                return `${vnode.attrs.menuTransparency ? 'overlayer' : ''} ${(vnode.attrs.withAlert || vnode.attrs.withFixedAlert) ? 'with-global-alert' : ''}`;
-            },
-            homeAttrs = () => {
-                if (vnode.attrs.absoluteHome) {
-                    return {
-                        href: h.rootUrl(),
-                        oncreate: m.route.link
-                    };
-                }
+        const exploreButtonBehavoir = h.RedrawStream((/** @type {Event} */ event) => {
+            event.preventDefault();
+            m.route.set('/explore?ref=ctrse_header');
+        });
+        const displayLightBox = h.RedrawStream(false);
+        const user = h.getUser();
+        const menuCss = () => {
+            return `${vnode.attrs.menuTransparency ? 'overlayer' : ''} ${(vnode.attrs.withAlert || vnode.attrs.withFixedAlert) ? 'with-global-alert' : ''}`;
+        };
+        const homeAttrs = () => {
+            if (vnode.attrs.absoluteHome) {
                 return {
+                    href: h.rootUrl(),
                     oncreate: m.route.link
                 };
+            }
+            return {
+                oncreate: m.route.link
             };
+        };
 
+        const filters = catarse.filtersVM;
+        const categories = h.RedrawStream([]);
+        models.category.getPageWithToken(filters({}).order({ name: 'asc' }).parameters()).then(categories);
+
+        window.optimizeObserver.addListener((variantName) => {            
+            if (variantName === 'Explore Light Box') {
+                exploreButtonBehavoir((/** @type {Event} */ event) => {
+                        event.preventDefault();
+                    displayLightBox(true)
+                });
+            }
+        });
+        
         vnode.state = {
             user,
             menuCss,
-            homeAttrs
+            homeAttrs,
+            exploreButtonBehavoir,
+            displayLightBox,
+            categories,
         };
     },
     view: function({state, attrs}) {
+
+        const exploreButtonBehavoir = state.exploreButtonBehavoir;
+        const displayLightBox = state.displayLightBox;
+        const categories = state.categories;
+
         return m('header.main-header', {
             class: state.menuCss()
         }, [
+
+            (displayLightBox() ? m(ExploreLightBox, { onClose: () => displayLightBox(false), categories }) : null),
+
             m('.w-row', [
                 m('.w-clearfix.w-col.w-col-8.w-col-small-8.w-col-tiny-8',
                     [
@@ -43,7 +74,9 @@ const menu = {
                         ),
                         attrs.menuShort ? '' : m('div#menu-components', [
                             m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'https://crowdfunding.catarse.me/comece\']', 'Comece seu projeto'),
-                            m('a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/explore?ref=ctrse_header\']', { oncreate: m.route.link }, 'Explore'),
+                            m(`a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/${window.I18n.locale}/explore?ref=ctrse_header\']`, { onclick: exploreButtonBehavoir() }, 
+                                'Explore'
+                            ),
                             m(menuSearch)
                         ])
                     ]
@@ -60,7 +93,7 @@ const menu = {
                         'Comece seu projeto'
                     ),
                     m(`a.header-link.w-nav-link[href=\'/${window.I18n.locale}/explore?ref=ctrse_header\']`,
-                        { onclick: () => m.route.set('/explore') },
+                        { onclick: exploreButtonBehavoir() },
                         'Explore'
                     )
                 ]

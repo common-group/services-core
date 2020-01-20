@@ -5,6 +5,7 @@ describe('ProjectsExplore', () => {
     let $output, project, component;
 
     beforeAll(() => {
+        window.onpopstate = function() {}
         window.location.hash = '#by_category_id/1';
 
         component = m(projectsExplore, { root: { getAttribute: (x) => { return null; }} });
@@ -31,7 +32,6 @@ describe('ProjectsExplore', () => {
 
         it('should render explorer selecting aon and flex', () => {
             expect($outputWithAonFlexSelected.contains('Projetos pontuais')).toBeTrue();
-            expect($outputWithAonFlexSelected.contains('Populares')).toBeTrue();            
         });
     });
 });
