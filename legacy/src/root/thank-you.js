@@ -15,7 +15,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const thankYou = {
     oninit: function(vnode) {
         
-        projectVM.sendPageViewForCurrentProject();
+        projectVM.sendPageViewForCurrentProject(vnode.attrs.project_id);
 
         const recommendedProjects = vnode.attrs.recommended_projects || userVM.getUserRecommendedProjects(),
             isSlip = vnode.attrs.contribution && !_.isEmpty(vnode.attrs.contribution.slip_url),

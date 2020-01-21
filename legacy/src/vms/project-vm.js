@@ -175,7 +175,7 @@ const checkSubscribeAction = () => {
     }
 };
 
-const sendPageViewForCurrentProject = () => {
+const sendPageViewForCurrentProject = (project_id) => {
 
     const root = document.getElementById('application');
     const data = root && root.getAttribute('data-parameters');
@@ -192,6 +192,8 @@ const sendPageViewForCurrentProject = () => {
         };
 
         loadIntegrationsAndSendPageView(project_data.project_id);
+    } else if (project_id) {
+        loadIntegrationsAndSendPageView(project_id);
     }
 }
 
@@ -266,11 +268,6 @@ const updateIntegration = (projectId, updatedIntegration) =>
  * @param {ProjectIntegration[]} projectIntegrations 
  */
 const SendPageView = (projectIntegrations) => {
-
-    const urlsMatchsForPageView = [
-        //,
-
-    ]
 
     for (const integration of projectIntegrations) {
         const trackingFunction = window.trackingFunctions[integration.name];
