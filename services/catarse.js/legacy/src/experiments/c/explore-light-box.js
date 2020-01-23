@@ -36,6 +36,8 @@ export class ExploreLightBox {
             }
         ];
 
+        const urlBaseParams = 'ref=ctrse_header&utm_source=catarse&utm_medium=ctrse_header&utm_campaign=testeAB_explorelightbox';
+
         return m('div.explore-lightbox', 
             m('div.explore-lightbox-container.w-clearfix', [
                 m('a.modal-close-container.fa.fa-2x.fa-close.w-inline-block[href="#"]', { onclick: closePreventRedirect }),
@@ -46,9 +48,9 @@ export class ExploreLightBox {
                         )
                     ),
                     filters.map(filter => {
-                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=${filter.keyName}"]`, {
+                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?${urlBaseParams}&filter=${filter.keyName}"]`, {
                             onclick: (event) => {
-                                m.route.set(`/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=${filter.keyName}#`);
+                                m.route.set(`/${window.I18n.locale}/explore?${urlBaseParams}&filter=${filter.keyName}#`);
                                 window.location.hash = `#${filter.keyName}`;
                                 event.preventDefault();
                                 onClose();
@@ -61,9 +63,9 @@ export class ExploreLightBox {
                         m('div.fontsize-base.fontcolor-terciary', 'Categorias')
                     ),
                     categories().map(category => {
-                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box#by_category_id/${category.id}"]`, {
+                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?${urlBaseParams}#by_category_id/${category.id}"]`, {
                             onclick: (event) => {
-                                m.route.set(`/${window.I18n.locale}/explore?ref=ctse_header_explore_light_box&filter=all`)
+                                m.route.set(`/${window.I18n.locale}/explore?${urlBaseParams}&filter=all`)
                                 window.location.hash = `#by_category_id${encodeURIComponent('/')}${category.id}`;
                                 event.preventDefault();
                                 onClose();
