@@ -64,7 +64,7 @@ server.get('/', (req, res) => {
 server.post('/webhooks/konduto', async (req, resp) => {
     try {
         if (verifyKondutoSignature(req)) {
-            console.log('received valid postback ', req.body);
+            console.log('received valid koduto postback ', req.body);
 
             let client = await pagarme.client.connect({ api_key: process.env.GATEWAY_API_KEY });
 
@@ -94,7 +94,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
 
             // check if postback is from gateway
             if(gateway_client.security.verify(req.rawBody, req.headers['x-hub-signature'].split('=')[1])) {
-                console.log('received valid postback ', req.body);
+                console.log('received valid pagarme postback ', req.body);
 
                 // fetch payment and user data to build context
                 const res = await pool.query(
