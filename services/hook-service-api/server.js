@@ -131,10 +131,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const subscription = res.rows[0].subscription_data;
                 const last_payment = res.rows[0].last_payment_data;
 
-                if (req.body.old_status === 'authorized') {
-                    req.body.old_status = 'pending'
-
-                    if (req.body.current_status === 'refunded') {
+                if (req.body.old_status === 'authorized' && req.body.current_status === 'refunded') {
                         req.body.current_status = 'refused'
                     }
                 }
@@ -143,7 +140,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const transaction = req.body.transaction;
 
                 // transaction payment to status
-                if (!['processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
+                if (!['authorized',  'processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
 
                 const payables = await gateway_client.
                     payables.find({ transactionId: transaction.id});
