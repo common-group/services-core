@@ -1,23 +1,21 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "targets": {
-          "browsers": [
-            "ie >= 11",
-            "safari >= 7"
-          ]
-        }
-      }
-    ]
-  ],
+  "presets": ["@babel/preset-env"],
   "plugins": [
     [
-      "transform-runtime",
-      {
+      "@babel/plugin-transform-runtime", 
+      { 
         "regenerator": true
       }
-    ]
+    ],
+    "@babel/plugin-transform-parameters",
+    "@babel/plugin-syntax-async-generators",
+    ["@babel/plugin-transform-for-of", {
+      "assumeArray": true // defaults to false
+    }],
+    "@babel/plugin-transform-classes",
+    "@babel/plugin-transform-destructuring",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-transform-shorthand-properties"
   ]
 }
