@@ -132,8 +132,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const last_payment = res.rows[0].last_payment_data;
 
                 if (req.body.old_status === 'authorized' && req.body.current_status === 'refunded') {
-                        req.body.current_status = 'refused'
-                    }
+                    req.body.current_status = 'refused'
                 }
 
                 const current_status = req.body.current_status;
