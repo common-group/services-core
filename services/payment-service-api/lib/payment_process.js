@@ -223,6 +223,7 @@ const processPayment = async (dbclient, paymentId) => {
         await dbclient.query('ROLLBACK');
 
         if(err.response && err.response.errors) {
+            console.log('error data', err.response.data);
             console.log('error on processing', err.response.errors);
             try {
                 await dbclient.query('BEGIN;')

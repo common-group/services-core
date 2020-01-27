@@ -24,7 +24,7 @@ const buildAntifraudData = (context, options) => {
   const sellerData = buildSeller(projectOwner)
 
   return {
-    id: options.transaction.id,
+    id: options.transaction.id.toString(),
     visitor: payment.user_id,
     total_amount: payment.data.amount / 100,
     currency: 'BRL',
