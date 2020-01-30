@@ -1,10 +1,23 @@
 {
-  "presets": ["@babel/preset-env"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry",
+        "targets": {
+          "chrome": "40",
+          "ie": "11"
+        }
+      }
+    ]
+  ],
   "plugins": [
     [
       "@babel/plugin-transform-runtime", 
       { 
-        "regenerator": true
+        "corejs" : 3,
+        "regenerator": true,
+        "useESModules": false
       }
     ],
     "@babel/plugin-transform-parameters",
@@ -16,6 +29,7 @@
     "@babel/plugin-transform-destructuring",
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-proposal-object-rest-spread",
-    "@babel/plugin-transform-shorthand-properties"
+    "@babel/plugin-transform-shorthand-properties",
+    "@babel/plugin-transform-eval"
   ]
 }
