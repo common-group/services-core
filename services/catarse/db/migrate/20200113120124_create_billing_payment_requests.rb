@@ -4,7 +4,9 @@ class CreateBillingPaymentRequests < ActiveRecord::Migration
       t.decimal :total_amount, null: false, precision: 10, scale: 2
       t.decimal :gateway_fee, null: false, precision: 10, scale: 2
       t.string :payment_method, null: false
-      t.string :state
+      t.string :state, null: false
+      t.string :gateway_card_id, foreign_key: false
+      t.string :gateway_card_cash
       t.integer :installments_count, null: false
 
       t.timestamps null: false

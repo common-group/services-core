@@ -13,6 +13,10 @@ module Catarse
           requires :payment_request, type: Hash do
             requires :payment_method, type: String, values: %w[bank_slip credit_card]
             requires :installments_count, type: Integer, values: 1..6
+            optional :gateway_card_hash, type: String
+            optional :gateway_card_id, type: String
+
+            exactly_one_of :card_hash, :card_id
 
             requires :billing_address, type: Hash do
               requires :country_id, type: Integer

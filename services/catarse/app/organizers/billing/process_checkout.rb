@@ -11,7 +11,15 @@ module Billing
     def self.actions
       [
         CreatePaymentRequestAction,
-        ChargePaymentRequestAction
+        reduce_if(->(context) { context.payment_request.bank_slip? }, [
+          GenerateBankSlip
+        ]),
+        reduce_if(->(context) { context.payment_request.credit_card? }, [
+          AuthorizePayment,
+          AnalyzePayment,
+          CapturePayment
+        ]),
+
       ]
     end
   end
