@@ -127,9 +127,9 @@ export class ProjectEditIntegrations {
                                     m('form', [
                                         m('div.u-marginbottom-20.card.card-terciary.medium.w-row', [
                                             m('div.w-col.w-col-5', [
-                                                m('label.fontweight-semibold.fontsize-base', 'Google Analytics Tracking ID'),
+                                                m('label.fontweight-semibold.fontsize-base', 'Google Analytics'),
                                                 m('label.field-label.fontsize-smallest.fontcolor-secondary', [
-                                                    'Envia informações dos visitantes de sua página para a sua conta do Google Analytics ',
+                                                    'Informe o seu ID de Acompanhamento e comece a enviar informações dos visitantes de sua página para a sua conta do Google Analytics ',
                                                     m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360038491812"]', 'Saiba mais')
                                                 ]),
                                                 m('img[src="https://uploads-ssl.webflow.com/57ba58b4846cc19e60acdd5b/5c5cacc4a3136e8188581846_logo_lockup_analytics_icon_horizontal_black_2x.png"][width="146"][alt=""]')
