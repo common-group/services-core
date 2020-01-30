@@ -90,6 +90,27 @@ const _dataCache = {},
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
+    setParamByName = (name, value) => {
+        const originalHash = window.location.hash;
+        const keysAndValues = window.location.search.replace('?', '').split('&').reduce((finalQueryObject, keyValue) => {
+            const [key, value] = keyValue.split('=');
+            finalQueryObject[key] = value;
+            return finalQueryObject;
+        }, {});
+
+        keysAndValues[name] = value;
+
+        const queryString = '?' + Object.keys(keysAndValues).map(key => {
+            return `${key}=${keysAndValues[key]}`;
+        }).join('&');
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + window.location.hash;
+        m.route.set(newurl)
+
+        // if (history.pushState) {
+        //     window.history.pushState({ path: newurl }, '', newurl);
+        // }        
+    },
     selfOrEmpty = (obj, emptyState = '') => obj || emptyState,
     setMomentifyLocale = () => {
         moment.locale('pt', {
@@ -1275,6 +1296,7 @@ export default {
     toAnchor,
     capitalize,
     paramByName,
+    setParamByName,
     i18nScope,
     RDTracker,
     selfOrEmpty,
