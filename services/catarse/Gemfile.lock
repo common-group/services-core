@@ -18,6 +18,8 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    aasm (5.0.6)
+      concurrent-ruby (~> 1.0)
     actionmailer (4.2.11)
       actionpack (= 4.2.11)
       actionview (= 4.2.11)
@@ -713,6 +715,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aasm (= 5.0.6)
   activerecord-nulldb-adapter
   auto_html (~> 1.6)
   aws-sdk (~> 2)
@@ -758,7 +761,7 @@ DEPENDENCIES
   koala
   launchy
   letter_opener
-  light-service
+  light-service (= 0.12.0)
   loofah (>= 2.2.3)
   mail_form
   mini_magick (>= 4.9.4)
