@@ -8,75 +8,39 @@ import inlineError from "./inline-error";
 const I18nScope = _.partial(h.i18nScope, "users.edit.notifications_fields");
 const userNotifications = {
     oninit: function(vnode) {
-        const contributedProjects = prop(),
-            subscribedProjects = prop(),
-            projectReminders = prop(),
-            mailMarketingLists = prop(),
-            user_id = vnode.attrs.userId,
-            showNotifications = h.toggleProp(false, true),
-            error = prop(false),
-            unsubscribedNewsProjects = prop([]);
-
-        let loadNewsCounter = 4;
-
-        const countDownToDraw = () => {
-            loadNewsCounter = Math.max(0, loadNewsCounter - 1);
-
-            if (loadNewsCounter == 0) {
-                m.redraw();
-            }
-        };
+        const contributedProjects = h.RedrawStream();
+        const subscribedProjects = h.RedrawStream();
+        const projectReminders = h.RedrawStream();
+        const mailMarketingLists = h.RedrawStream();
+        const user_id = vnode.attrs.userId;
+        const showNotifications = h.toggleProp(false, true);
+        const error = h.RedrawStream(false);
+        const unsubscribedNewsProjects = h.RedrawStream([]);
 
         userVM
             .getUserUnsubscribesProjects(user_id)
-            .then(unsubscribes => {
-                unsubscribedNewsProjects(unsubscribes);
-                countDownToDraw();
-            })
-            .catch(err => {
-                error(true);
-                countDownToDraw();
-            });
+            .then(unsubscribedNewsProjects)
+            .catch(error);
 
         userVM
             .getUserProjectReminders(user_id)
             .then(projectReminders)
-            .then(countDownToDraw)
-            .catch(err => {
-                error(true);
-                countDownToDraw();
-            });
+            .catch(error);
 
         userVM
             .getMailMarketingLists()
             .then(data => mailMarketingLists(generateListHandler(data)))
-            .then(countDownToDraw)
-            .catch(err => {
-                error(true);
-                countDownToDraw();
-            });
+            .catch(error);
 
         userVM
             .getUserContributedProjects(user_id, null)
-            .then(projects => {
-                contributedProjects(projects);
-                countDownToDraw();
-            })
-            .catch(err => {
-                error(true);
-                countDownToDraw();
-            });
+            .then(contributedProjects)
+            .catch(error);
 
         userVM
             .getUserSubscribedProjects(user_id, null)
-            .then(projects => {
-                subscribedProjects(projects);
-                countDownToDraw();
-            })
-            .catch(err => {
-                error(true);
-                countDownToDraw();
-            });
+            .then(subscribedProjects)
+            .catch(error);
 
         const generateListHandler = list => {
             const user_lists = vnode.attrs.user.mail_marketing_lists;
