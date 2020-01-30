@@ -303,6 +303,9 @@ const userVM = {
     currentUser,
     getMailMarketingLists,
     getUserUnsubscribesProjects,
+    get isLoggedIn() {
+        return h.getUserID() !== null;
+    },
 };
 
 export default userVM;

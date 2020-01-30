@@ -21,6 +21,7 @@ import search from '../c/search';
 import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
+import userVM from '../vms/user-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
@@ -60,16 +61,11 @@ const projectsExplore = {
             },
             resetContextFilter = () => {
                 currentFilter(filtersMap[defaultFilter]);
-                const contextFilters = ['finished', 'all', 'contributed_by_friends', 'expiring', 'recent'];
-                // only show recommended projects to logged in users with contributions
-                //
-                //if (currentUser.contributions && currentUser.contributions > 0 && currentMode().keyName !== 'sub') {
-                //    const lastDigit = parseInt(currentUser.id.toString().slice(-1));
-                //    // group into 2 even sets for A/B testing
-                //    const testedRecommenderIndex = lastDigit % 2;
-                //    chosenRecommender(availableRecommenders[testedRecommenderIndex]);
-                //    contextFilters.push(chosenRecommender());
-                //}
+                const contextFilters = userVM.isLoggedIn ? 
+                        ['finished', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent']
+                    :   
+                        ['finished', 'all', 'expiring', 'recent'];
+
                 projectFiltersVM.setContextFilters(contextFilters);
             },
             changeMode = (newMode) => {
@@ -304,12 +300,9 @@ const projectsExplore = {
                 modeToggle(true);
                 notWasTried = false;
             }
-            //  else if (filterIsForContributedByFriends) {
-            //     currentFilter(filtersMap[innerDefaultFilter]);
-            // } else if (innerDefaultFilter) {
 
-            // }
             currentFilter(filtersMap[innerDefaultFilter]);
+
             if (firstLoad) {
                 h.scrollTop();
                 firstLoad = false;
@@ -546,6 +539,8 @@ const projectsExplore = {
                                         ref = 'ctrse_explore_featured';
                                     }
                                 }
+                            } else if (filterKeyName === 'saved_projects') {
+                                ref = 'ctrse_explore_saved_project'
                             }
 
                             return (_.indexOf(widowProjects, idx) > -1 && !state.projects().isLastPage()) ? '' : m(projectCard, {

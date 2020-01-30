@@ -45,6 +45,11 @@ const projectFiltersVM = () => {
             open_for_contributions: 'eq'
         }).open_for_contributions('true'),
 
+        saved_projects = filtersVM({
+            open_for_contributions: 'eq',
+            saved_projects: 'eq'
+        }).open_for_contributions('true').saved_projects(true),
+
         contributed_by_friends = filtersVM({
             open_for_contributions: 'eq',
             contributed_by_friends: 'eq'
@@ -78,6 +83,13 @@ const projectFiltersVM = () => {
             //    isContextual: false,
             //    keyName: 'recommended_2'
             //},
+            saved_projects: {
+                title: 'Projetos Salvos',
+                filter: saved_projects,
+                nicename: 'Projetos Salvos',
+                isContextual: false,
+                keyName: 'saved_projects'
+            },
             contributed_by_friends: {
                 title: 'Amigos',
                 filter: contributed_by_friends,

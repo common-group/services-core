@@ -3,6 +3,7 @@ import h from '../../h';
 import models from '../../models';
 import { catarse } from '../../api';
 import './explore-light-box.css';
+import userVM from '../../vms/user-vm';
 
 export class ExploreLightBox {
     oninit(vnode) {
@@ -29,12 +30,20 @@ export class ExploreLightBox {
             {
                 name: 'Reta final',
                 keyName: 'expiring'
-            },
-            {
-                name: 'Apoiados por amigos',
-                keyName: 'contributed_by_friends'
             }
         ];
+
+        if (userVM.isLoggedIn) {
+            filters.push({
+                name: 'Apoiados por amigos',
+                keyName: 'contributed_by_friends'
+            });
+
+            filters.push({
+                name: 'Projetos Salvos',
+                keyName: 'saved_projects'
+            });
+        }
 
         const urlBaseParams = 'ref=ctrse_header&utm_source=catarse&utm_medium=ctrse_header&utm_campaign=testeAB_explorelightbox';
 
