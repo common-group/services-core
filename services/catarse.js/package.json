@@ -45,7 +45,7 @@
         "karma-webpack": "^3.0.0",
         "mithril-query": "^2.5.0",
         "puppeteer": "^1.5.0",
-        "simple-xml-parser": "ssh+git@github.com:grpse/simple-xml-parser.git#v0.0.3",
+        "simple-xml-parser": "https://github.com/grpse/simple-xml-parser.git#v0.0.3",
         "style-loader": "^1.1.2",
         "uglifyjs-webpack-plugin": "^1.2.6"
     },
