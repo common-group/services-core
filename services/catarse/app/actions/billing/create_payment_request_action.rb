@@ -43,12 +43,23 @@ module Billing
     end
 
     private_class_method def self.create_payment_request(context:, billing_address:, payment_request_items:)
-      payment_request = Billing::PaymentRequest.create(
+      payment_request_attributes = build_card_identifier.merge({
+        billing_address: billing_address
         payment_method: context.payment_request_attributes[:payment_method],
         installments_count: context.payment_request_attributes[:installments_count],
-        total_amount: payment_request_items.sum { |item| item.payable.value }
-      )
+        total_amount: payment_request_items.sum { |item| item.payable.value },
+      })
+
+      payment_request = Billing::PaymentRequest.create(payment_request_attributes)
       payment_request.items << payment_request_items
+    end
+
+    private_class_method def self.build_card_identifier(payment_request_attributes)
+      if payment_request_attributes[:gateway_card_id].present?
+        { card_id: payment_request_attributes[:gateway_card_id] }
+      else
+        { card_hash: payment_request_attributes[:gateway_card_hash] }
+      end
     end
   end
 end
