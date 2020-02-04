@@ -90,7 +90,7 @@ const expectedAntifraudData = (overwrite) => {
       status: undefined
     }],
     billing: {
-      name: 'John Appleseed',
+      name: 'holder name',
       address1: 'Rua 1',
       address2: 'Complement',
       city: 'Fortaleza',
@@ -118,7 +118,10 @@ const expectedAntifraudData = (overwrite) => {
 
 test('test buildAntifraudData - approved on gateway', async t => {
   const context = sampleContext()
-  const antifraudData = buildAntifraudData(context, { shouldAnalyze: true, transaction: { id: 't-id' } })
+  const antifraudData = buildAntifraudData(context, {
+    shouldAnalyze: true,
+    transaction: { id: 't-id', card: { holder_name: 'holder name' } }
+  })
   const expectedData = expectedAntifraudData({
     analyze: true,
     payment: [{
@@ -135,7 +138,10 @@ test('test buildAntifraudData - approved on gateway', async t => {
 
 test('test buildAntifraudData - declined on gateway', async t => {
   const context = sampleContext()
-  const antifraudData = buildAntifraudData(context, { shouldAnalyze: false, transaction: { id: 't-id' } })
+  const antifraudData = buildAntifraudData(context, {
+    shouldAnalyze: false,
+    transaction: { id: 't-id', card: { holder_name: 'holder name' } }
+  })
   const expectedData = expectedAntifraudData({
     analyze: false,
     payment: [{

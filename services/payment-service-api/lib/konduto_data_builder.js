@@ -19,7 +19,7 @@ const buildAntifraudData = (context, options) => {
 
   const customerData = buildCustomer(payment, user)
   const paymentData = buildPayment(creditCard, options.shouldAnalyze)
-  const billingData = buildBilling(payment.data.customer)
+  const billingData = buildBilling(payment.data.customer, options.transaction)
   const shoppingCartData = buildShoppingCart(payment, project, subscription)
   const sellerData = buildSeller(projectOwner)
 
@@ -87,12 +87,12 @@ const buildPayment = (creditCard, isApproved) => {
  * @param { Object } customer - Customer data
  * @return { Object } - object with billing data
  */
-const buildBilling = (customer) => {
+const buildBilling = (customer, transaction) => {
   const address = customer.address
 
   return {
     billing: {
-      name: customer.name,
+      name: transaction.card.holder_name,
       address1: address.street,
       address2: address.complementary,
       city: address.city,
