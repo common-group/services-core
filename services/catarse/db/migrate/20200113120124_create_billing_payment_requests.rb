@@ -2,7 +2,7 @@ class CreateBillingPaymentRequests < ActiveRecord::Migration
   def change
     create_table :payment_requests, id: :uuid do |t|
       t.references :user, null: false, foreign_key: true, index: true
-      t.references :billing_address, null: false, foreign_key: true
+      t.references :billing_address, null: false, foreign_key: { references: :addresses }
 
       t.decimal :total_amount, null: false, precision: 10, scale: 2
       t.string :payment_method, null: false
