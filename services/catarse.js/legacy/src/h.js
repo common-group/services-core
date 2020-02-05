@@ -5,7 +5,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
-import generativeTrust from 'mithril-generative-trust/src/index';
+import generativeTrust from './../vendor/mithril-generative-trust';
 
 function getCallStack() {
     const callStackStr = new Error().stack;
@@ -89,6 +89,27 @@ const _dataCache = {},
             regex = new RegExp(`[\\?&]${normalName}=([^&#]*)`),
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    },
+    setParamByName = (name, value) => {
+        const originalHash = window.location.hash;
+        const keysAndValues = window.location.search.replace('?', '').split('&').reduce((finalQueryObject, keyValue) => {
+            const [key, value] = keyValue.split('=');
+            finalQueryObject[key] = value;
+            return finalQueryObject;
+        }, {});
+
+        keysAndValues[name] = value;
+
+        const queryString = '?' + Object.keys(keysAndValues).map(key => {
+            return `${key}=${keysAndValues[key]}`;
+        }).join('&');
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + window.location.hash;
+        m.route.set(newurl)
+
+        // if (history.pushState) {
+        //     window.history.pushState({ path: newurl }, '', newurl);
+        // }        
     },
     selfOrEmpty = (obj, emptyState = '') => obj || emptyState,
     setMomentifyLocale = () => {
@@ -1162,19 +1183,21 @@ function ObservableRedrawStream(data) {
 
 /**
  * @param {T} data
+ * @param {(data : T) => void} onUpdate
  * @template T
  */
-function RedrawStream(data) {
+function RedrawStream(data, onUpdate = (param) => {}) {
     
     const _data = prop(data);
 
     /**
      * @param {T} newData
-     * @template T
+     * @returns {T}
      */
     function streamAccessor(newData) {
         if (newData !== undefined) {
             _data(newData);
+            onUpdate(newData);
             redraw();
             return newData;
         }
@@ -1202,6 +1225,12 @@ setMomentifyLocale();
 closeFlash();
 closeModal();
 checkReminder();
+
+/**
+ * @typedef VNode
+ * @property {Object} attrs
+ * @property {Object} state
+ */
 
 export default {
     createPropAcessors,
@@ -1267,6 +1296,7 @@ export default {
     toAnchor,
     capitalize,
     paramByName,
+    setParamByName,
     i18nScope,
     RDTracker,
     selfOrEmpty,

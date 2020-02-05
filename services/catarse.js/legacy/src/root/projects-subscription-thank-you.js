@@ -6,12 +6,14 @@ import facebookButton from '../c/facebook-button';
 import projectShareBox from '../c/project-share-box';
 import projectRow from '../c/project-row';
 import UserVM from '../vms/user-vm';
-import ProjectVM from '../vms/project-vm';
+import projectVM from '../vms/project-vm';
 import CommonPaymentVM from '../vms/common-payment-vm.js';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const ProjectsSubscriptionThankYou = {
     oninit: function(vnode) {
+        projectVM.sendPageViewForCurrentProject(vnode.attrs.project_id);
+        
         const paymentMethod = m.route.param('payment_method');
         const paymentConfirmed = JSON.parse(m.route.param('payment_confirmed'));
         const paymentId = m.route.param('payment_id');
@@ -49,7 +51,7 @@ const ProjectsSubscriptionThankYou = {
                 .then(paymentData).catch(() => error(true));
         }
 
-        ProjectVM
+        projectVM
             .fetchProject(projectId, false)
             .then((projectData) => {
                 project(_.first(projectData));
