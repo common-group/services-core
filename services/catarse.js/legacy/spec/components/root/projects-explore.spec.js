@@ -18,11 +18,16 @@ describe('ProjectsExplore', () => {
 
     describe('view', () => {
 
-        let $outputWithSubscriptionsSelected, $outputWithAonFlexSelected;
+        let $outputWithSubscriptionsSelected, $outputWithAonFlexSelected, $outputAllModes;
 
         beforeAll(() => {
+            $outputAllModes = mq(m(projectsExplore));
             $outputWithSubscriptionsSelected = mq(m(projectsExplore, { filter: 'sub' }));
             $outputWithAonFlexSelected = mq(m(projectsExplore, { filter: 'not_sub' }));
+        });
+
+        it('should render explore with all modes', () => {            
+            expect($outputAllModes.contains('Todos os projetos')).toBeTrue();
         });
 
         it('should render explorer selecting subscriptions', () => {
