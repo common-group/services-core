@@ -22,6 +22,7 @@ import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import userVM from '../vms/user-vm';
+import { loadProjectsWithConfiguredParameters } from '../vms/projects-explore-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
@@ -126,138 +127,37 @@ const projectsExplore = {
             loadRoute = () => {
                 const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all';
                 currentFilter(filtersMap[innerDefaultFilter]);
-                const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/),
-                    cat = route &&
-                    route[2] &&
-                    findCategory(route[2]),
+                const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/);
+                const cat = route && route[2] && findCategory(route[2]);
+                const filterFromRoute = () => {
+                    const byCategory = filters({ category_id: 'eq' });
 
-                    filterFromRoute = () => {
-                        const byCategory = filters({
-                            category_id: 'eq'
-                        });
-
-                        if (cat) {
-                            selectedCategory(cat);
-                        } else {
-                            selectedCategory({
-                                name: 'Todas as categorias',
-                                id: null
-                            });
-                        }
-                        return route &&
-                            route[1] &&
-                            filtersMap[route[1]] ||
-                            cat && {
-                                title: cat.name,
-                                filter: byCategory.category_id(cat.id)
-                            };
-                    },
-                    filter = filterFromRoute() || currentFilter();
-
-                const search = h.paramByName('pg_search'),
-                    recommendedProjects = (alg) => {
-                        let model;
-                        switch (alg) {
-                            case '1':
-                                model = models.recommendedProjects1;
-                                break;
-                            default:
-                                model = models.recommendedProjects2;
-                        }
-                        const pages = commonRecommender.paginationVM(model, '', {}, false);
-                        const rFilter = commonRecommender.filtersVM({
-                            user_id: 'eq'
-                        }).user_id(currentUser.id);
-
-                        const parameters = _.extend({}, currentFilter().filter.parameters(),
-                            filter.filter.parameters(),
-                            rFilter.parameters(),
-                            currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages
-                            .firstPage(parameters)
-                            .then(_ => m.redraw());
-                        return pages;
-                    },
-
-                    searchProjects = () => {
-                        const l = catarse.loaderWithToken(models.projectSearch.postOptions({
-                                query: search
-                            })),
-                            page = { // We build an object with the same interface as paginationVM
-                                collection: prop([]),
-                                isLoading: l,
-                                isLastPage: () => true,
-                                nextPage: () => false
-                            };
-                        l
-                            .load()
-                            .then(p => {
-                                page.collection(p);
-                                m.redraw();
-                                return p;
-                            });
-                        return page;
-                    },
-
-                    // @TODO fix infinite requests when collection is empty
-                    loadProjects = () => {
-                        const pages = catarse.paginationVM(models.project, null, {
-                            Prefer: 'count=exact'
-                        });
-                        const parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
-                            open_for_contributions: 'desc',
-                            state_order: 'asc',
-                            state: 'desc',
-                            score: 'desc',
-                            pledged: 'desc'
-                        }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages
-                            .firstPage(parameters)
-                            .then(_ => m.redraw());
-                        return pages;
-                    },
-
-                    loadFinishedProjects = () => {
-                        const pages = catarse.paginationVM(models.finishedProject, null, {
-                                Prefer: 'count=exact'
-                            }),
-                            parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
-                                state_order: 'asc',
-                                state: 'desc',
-                                pledged: 'desc'
-                            }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages
-                            .firstPage(parameters)
-                            .then(_ => m.redraw());
-
-                        return pages;
-                    };
-
-                if (_.isString(search) && search.length > 0 && route === null) {
-                    isSearch(true);
-                    title(`Busca ${search}`);
-                    projects(searchProjects());
-                } else if (currentFilter().keyName === 'finished') {
-                    isSearch(false);
-                    projects(loadFinishedProjects());
-                } else if (currentFilter().keyName === 'recommended_1') {
-                    isSearch(false);
-                    projects(recommendedProjects('1'));
-                } else if (currentFilter().keyName === 'recommended_2') {
-                    isSearch(false);
-                    projects(recommendedProjects('2'));
-                } else {
-                    isSearch(false);
-                    title(filter.title);
-                    if (!_.isNull(route) && route[1] == 'finished') {
-                        projects(loadFinishedProjects());
+                    if (cat) {
+                        selectedCategory(cat);
                     } else {
-                        projects(loadProjects());
+                        selectedCategory({
+                            name: 'Todas as categorias',
+                            id: null
+                        });
                     }
-                }
+                    return route &&
+                        route[1] &&
+                        filtersMap[route[1]] ||
+                        cat && {
+                            title: cat.name,
+                            filter: byCategory.category_id(cat.id)
+                        };
+                };
+
+                const filter = filterFromRoute() || currentFilter();
+                const searchParam = h.paramByName('pg_search');
+
+                isSearch(_.isString(searchParam) && searchParam.length > 0 && route === null);
+                const routeName = route && route[1];
+                projects(loadProjectsWithConfiguredParameters(currentMode, currentFilter, filter, routeName));
                 categoryId(cat && cat.id);
-            },
-            title = prop();
+                h.redraw();
+            };
 
         window.addEventListener('hashchange', () => {
             window.location.hash = decodeURIComponent(window.location.hash);
@@ -293,7 +193,6 @@ const projectsExplore = {
             const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all'
             const projectModes = ['sub', 'not_sub'];
             const isSubscriptionOrAonFlex = projectModes.indexOf(innerDefaultFilter) >= 0;
-            const filterIsForContributedByFriends = innerDefaultFilter === 'contributed_by_friends';
 
             if (notWasTried && isSubscriptionOrAonFlex) {
                 changeMode(innerDefaultFilter);
@@ -315,7 +214,6 @@ const projectsExplore = {
             resetContextFilter,
             projects,
             category,
-            title,
             loadRoute,
             modeToggle,
             availableRecommenders,
