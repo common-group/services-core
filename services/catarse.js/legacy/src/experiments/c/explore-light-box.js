@@ -23,6 +23,14 @@ export class ExploreLightBox {
                 name: 'Populares',
                 keyName: 'all',
             },
+            userVM.isLoggedIn ? {
+                name: 'Projetos Salvos',
+                keyName: 'saved_projects'
+            } : null,
+            userVM.isLoggedIn ? {
+                name: 'Apoiados por amigos',
+                keyName: 'contributed_by_friends'
+            } : null,
             {
                 name: 'Recentes',
                 keyName: 'recent'
@@ -31,19 +39,7 @@ export class ExploreLightBox {
                 name: 'Reta final',
                 keyName: 'expiring'
             }
-        ];
-
-        if (userVM.isLoggedIn) {
-            filters.push({
-                name: 'Apoiados por amigos',
-                keyName: 'contributed_by_friends'
-            });
-
-            filters.push({
-                name: 'Projetos Salvos',
-                keyName: 'saved_projects'
-            });
-        }
+        ].filter(f => f !== null);
 
         const urlBaseParams = 'ref=ctrse_header&utm_source=catarse&utm_medium=ctrse_header&utm_campaign=testeAB_explorelightbox';
 
