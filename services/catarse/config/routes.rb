@@ -8,6 +8,8 @@ end
 
 Catarse::Application.routes.draw do
   constraints Blacklist.new do
+    mount Catarse::BaseAPI => '/'
+
     mount RedactorRails::Engine => '/redactor_rails'
     mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
     devise_for(
