@@ -68,7 +68,7 @@ FactoryGirl.define do
     f.email { generate(:email) }
     f.about_html "This is Foo bar's biography."
     f.birth_date '10/10/1989'
-
+    f.full_text_index { {} }
     trait :without_bank_data do
       bank_account { nil }
     end
@@ -83,7 +83,7 @@ FactoryGirl.define do
     f.password '123456'
     f.cpf '64118189402'
     f.email { generate(:email) }
-    
+
     trait :without_bank_data do
       bank_account { nil }
     end

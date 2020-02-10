@@ -8,6 +8,7 @@ require 'shoulda/matchers'
 require 'sidekiq/testing'
 require 'fakeweb'
 require 'pundit/rspec'
+require 'aasm/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
