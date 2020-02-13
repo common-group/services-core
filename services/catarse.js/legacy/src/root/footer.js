@@ -142,16 +142,16 @@ const footer = {
                                                 m('a.w-hidden-main.w-hidden-medium.w-hidden-small.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\']',
                                                     ' Contato'
                                                 ),
-                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=score&ref=ctrse_footer\']`,
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=all&ref=ctrse_footer\']`,
                                                     ' Populares'
                                                 ),
-                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=online&ref=ctrse_footer\']`,
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=all&ref=ctrse_footer\']`,
                                                     ' No ar'
                                                 ),
                                                 m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=finished&ref=ctrse_footer\']`,
                                                     ' Finalizados'
                                                 ),
-                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?filter=sub&ref=ctrse_footer\']`,
+                                                m(`a.w-hidden-tiny.link-footer[href=\'/${window.I18n.locale}/explore?mode=sub&ref=ctrse_footer\']`,
                                                     ' Assinaturas'
                                                 )
                                             ]
