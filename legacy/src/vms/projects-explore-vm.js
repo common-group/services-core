@@ -8,12 +8,9 @@ import projectFilters from '../vms/project-filters-vm';
 
 const projectFiltersVM = projectFilters();
 
-export const loadProjectsWithConfiguredParameters = (currentMode, currentFilter, routeFilter, routeName) => {
+export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter, currentFilter, isSearch, searchParam) => {
    
     const filtersMap = projectFiltersVM.filters;
-    const currentUser = h.getUser() || {};
-                
-    const searchParam = h.paramByName('pg_search');
 
     const currentFiltersAndModeParamaters = _.extend(
         {},
@@ -21,13 +18,13 @@ export const loadProjectsWithConfiguredParameters = (currentMode, currentFilter,
         currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {}
     );    
     
-    if (_.isString(searchParam) && searchParam.length > 0 && routeName === null) {
+    if (isSearch()) {
         return searchProjects(searchParam);
-    } else if (currentFilter().keyName === 'finished' || routeName == 'finished') {
+    } else if (currentFilter().keyName === 'finished') {
         
         const finishedProjectsParameters = _.extend(
             currentFiltersAndModeParamaters,
-            routeFilter.filter.order({
+            categoryFilter().filter.order({
                 state_order: 'asc',
                 state: 'desc',
                 pledged: 'desc'
@@ -36,23 +33,25 @@ export const loadProjectsWithConfiguredParameters = (currentMode, currentFilter,
 
         return loadFinishedProjects(finishedProjectsParameters);
     } else if (currentFilter().keyName === 'recommended_1') {
+        const currentUser = h.getUser() || {};
         const loadProjectsByRecommenderParameters = _.extend(
             currentFiltersAndModeParamaters,
-            routeFilter.filter.parameters(),
+            categoryFilter().filter.parameters(),
             commonRecommender.filtersVM({ user_id: 'eq' }).user_id(currentUser.id).parameters()
         );
         return recommendedProjectsAlgorithm1(loadProjectsByRecommenderParameters);
     } else if (currentFilter().keyName === 'recommended_2') {
+        const currentUser = h.getUser() || {};
         const loadProjectsByRecommenderParameters = _.extend(
             currentFiltersAndModeParamaters,
-            routeFilter.filter.parameters(),
+            categoryFilter().filter.parameters(),
             commonRecommender.filtersVM({ user_id: 'eq' }).user_id(currentUser.id).parameters()
         );
         return recommendedProjectsAlgorithm2(loadProjectsByRecommenderParameters);
     } else {
         const loadProjectsParameters = _.extend(
             currentFiltersAndModeParamaters,
-            routeFilter.filter.order({
+            categoryFilter().filter.order({
                 open_for_contributions: 'desc',
                 state_order: 'asc',
                 state: 'desc',
