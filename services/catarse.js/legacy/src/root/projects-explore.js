@@ -45,7 +45,8 @@ const projectsExplore = {
         };
         
         // Mode (sub, not_sub)
-        const modeKey = h.paramByName('mode') || vnode.attrs.mode || 'all_modes';
+        const getDefaultMode = () => h.paramByName('mode') || vnode.attrs.mode || 'all_modes';
+        const modeKey = getDefaultMode();
         const currentMode = h.RedrawStream(filtersMap[modeKey]);
         const modeToggle = h.RedrawStream(false);
         const changeMode = (newMode) => {
@@ -56,7 +57,7 @@ const projectsExplore = {
             }
         };
         const configureMode = () => {
-            const newMode = h.paramByName('mode') || vnode.attrs.mode || 'all_modes';
+            const newMode = getDefaultMode();
             modeToggle(false);
             currentMode(filtersMap[newMode]);
             resetContextFilter();
@@ -100,7 +101,8 @@ const projectsExplore = {
         };
 
         // Filter
-        const defaultFilter = h.paramByName('filter') || 'all';
+        const getDefaultFilter = () => h.paramByName('filter') || vnode.attrs.filter || 'all';
+        const defaultFilter = getDefaultFilter();
         const currentFilter = h.RedrawStream(filtersMap[defaultFilter]);
         const filterToggle = h.RedrawStream(false);
         // 1. Don't show filter when is subscription
@@ -114,7 +116,7 @@ const projectsExplore = {
         };
         const configureFilter = () => {
             const modeKey = h.paramByName('mode');
-            const newFilter = modeKey === 'sub' ? 'all' : (h.paramByName('filter') || vnode.attrs.filter || 'all');
+            const newFilter = modeKey === 'sub' ? 'all' : getDefaultFilter();
             currentFilter(filtersMap[newFilter]);
         };
           
@@ -130,7 +132,7 @@ const projectsExplore = {
             
         const filterFromRoute = () => {
             const byCategory = filters({ category_id: 'eq' });
-            const category = selectedCategory();
+            const category = getCurrentCategory();
 
             return category.id && prop({
                 title: category.name,
@@ -144,7 +146,7 @@ const projectsExplore = {
             configureFilter();
 
             const categoryFilter = filterFromRoute() || currentFilter;
-            const searchParam = h.paramByName('pg_search');
+            const searchParam = h.paramByName('pg_search') || vnode.attrs.pg_search;
             const hasSearchParamContent = _.isString(searchParam) && searchParam.length > 0;
             const noFilterIsSelected = currentMode().keyName === 'all_modes' && !categoryFilter().title;
             isSearch(hasSearchParamContent && noFilterIsSelected);
@@ -210,7 +212,7 @@ const projectsExplore = {
                 },
                 category.name
             )
-        );        
+        );
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
