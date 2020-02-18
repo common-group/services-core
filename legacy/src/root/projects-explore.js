@@ -37,9 +37,9 @@ const projectsExplore = {
 
         const resetContextFilter = () => {
             const contextFilters = userVM.isLoggedIn ? 
-                ['finished', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent']
+                ['finished', 'projects_we_love', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent']
             :   
-                ['finished', 'all', 'expiring', 'recent'];
+                ['finished', 'projects_we_love', 'all', 'expiring', 'recent'];
 
             projectFiltersVM.setContextFilters(contextFilters);
         };
@@ -101,14 +101,14 @@ const projectsExplore = {
         };
 
         // Filter
-        const getDefaultFilter = () => h.paramByName('filter') || vnode.attrs.filter || 'all';
+        const getDefaultFilter = () => h.paramByName('filter') || vnode.attrs.filter || 'projects_we_love';
         const defaultFilter = getDefaultFilter();
         const currentFilter = h.RedrawStream(filtersMap[defaultFilter]);
         const filterToggle = h.RedrawStream(false);
         // 1. Don't show filter when is subscription
         const showFilter = h.RedrawStream(true);
         const changeFilter = (newFilter) => {
-            if (newFilter === 'all') {
+            if (newFilter === 'projects_we_love') {
                 h.removeParamByName('filter');
             } else {
                 h.setParamByName('filter', newFilter);

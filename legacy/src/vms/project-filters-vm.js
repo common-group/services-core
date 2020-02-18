@@ -61,7 +61,19 @@ const projectFiltersVM = () => {
 
         finished = filtersVM({}),
 
+        projects_we_love = filtersVM({
+            recommended: 'eq'
+        }).recommended(true),
+
         filters = {
+
+            projects_we_love: {
+                title: 'Projetos que amamos',
+                filter: projects_we_love,
+                nicename: 'Projetos que amamos',
+                isContextual: false,
+                keyName: 'projects_we_love'
+            },
             all: {
                 title: 'Todas as Categorias',
                 filter: all,
