@@ -338,6 +338,6 @@ test('test sendToTransactionAntifraud', async t => {
 
     nock('https://api.konduto.com').post('/v1/orders').reply(201, expectedOrder)
 
-    let response = await sendToTransactionAntifraud(fakeData, { transaction: { id: 'transaction-id' } })
+    let response = await sendToTransactionAntifraud(fakeData, { transaction: { id: 'transaction-id', card: { holder_name: 'holder name' } } })
     t.deepEqual(expectedOrder, response.data)
 })

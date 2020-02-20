@@ -64,7 +64,7 @@ server.get('/', (req, res) => {
 server.post('/webhooks/konduto', async (req, resp) => {
     try {
         if (verifyKondutoSignature(req)) {
-            console.log('received valid postback ', req.body);
+            console.log('received valid koduto postback ', req.body);
 
             let client = await pagarme.client.connect({ api_key: process.env.GATEWAY_API_KEY });
 
@@ -94,7 +94,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
 
             // check if postback is from gateway
             if(gateway_client.security.verify(req.rawBody, req.headers['x-hub-signature'].split('=')[1])) {
-                console.log('received valid postback ', req.body);
+                console.log('received valid pagarme postback ', req.body);
 
                 // fetch payment and user data to build context
                 const res = await pool.query(
@@ -131,19 +131,15 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const subscription = res.rows[0].subscription_data;
                 const last_payment = res.rows[0].last_payment_data;
 
-                if (req.body.old_status === 'authorized') {
-                    req.body.old_status = 'pending'
-
-                    if (req.body.current_status === 'refunded') {
-                        req.body.current_status = 'refused'
-                    }
+                if (req.body.old_status === 'authorized' && req.body.current_status === 'refunded') {
+                    req.body.current_status = 'refused'
                 }
 
                 const current_status = req.body.current_status;
                 const transaction = req.body.transaction;
 
                 // transaction payment to status
-                if (!['processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
+                if (!['authorized',  'processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
 
                 const payables = await gateway_client.
                     payables.find({ transactionId: transaction.id});
