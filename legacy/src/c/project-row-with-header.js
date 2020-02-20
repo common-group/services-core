@@ -22,7 +22,7 @@ const projectRowWithHeader = {
                     m('.w-row', [
                         m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title}`)),
                         m('.w-col.w-col-4', [
-                            m(`a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=${ref}&mode=${collection.hash}"]`, 
+                            m(`a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=${ref}${ collection.mode ? `&mode=${collection.mode}` : '' }&filter=${collection.hash}"]`, 
                                 { 
                                     oncreate: m.route.link
                                 },
