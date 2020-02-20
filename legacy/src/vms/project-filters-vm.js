@@ -72,7 +72,8 @@ const projectFiltersVM = () => {
                 filter: projects_we_love,
                 nicename: 'Projetos que amamos',
                 isContextual: false,
-                keyName: 'projects_we_love'
+                keyName: 'projects_we_love',
+                header_badges: ['badge-aon-h-margin', 'badge-flex-h-margin']
             },
             all: {
                 title: 'Todas as Categorias',

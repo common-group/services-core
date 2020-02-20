@@ -20,6 +20,10 @@ export class ExploreLightBox {
 
         const filters = [
             {
+                name: 'Projetos que amamos',
+                keyName: 'projects_we_love',
+            },
+            {
                 name: 'Populares',
                 keyName: 'all',
             },
