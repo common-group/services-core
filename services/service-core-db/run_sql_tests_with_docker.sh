@@ -32,6 +32,6 @@ docker run -i --rm -e="DATABASE_URL=postgres://postgres:example@pg:5432/test_db"
 echo 'running tests...'
 docker create -v /specs --name sql_test_files_inline_common comum/deps /bin/true
 docker cp specs sql_test_files_inline_common:/
-docker run -e PGPASSWORD=example -t --rm --volumes-from sql_test_files_inline_common --link common_service_db_inline_test:pg comum/pgtap -h pg -u postgres -d test_db -t '/specs/sql-specs/*/*.sql'
+docker run -e PGPASSWORD=example -t --rm --volumes-from sql_test_files_inline_common --link common_service_db_inline_test:pg comum/pgtap -h pg -u postgres -d test_db -w example -t '/specs/sql-specs/*/*.sql'
 
 echo 'removing test container...'
