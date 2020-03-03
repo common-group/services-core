@@ -103,6 +103,12 @@ const projectCard = {
                         display: 'block'
                     }
                 }),
+                (
+                    project.recommended &&
+                    m('div.loved-projects-container', 
+                        m(`a.loved-projects-badge[href="/${window.I18n.locale}/explore?filter=projects_we_love"]`, 'Projeto que amamos')
+                    )
+                ),
                 m(state.css().descriptionWrapper, [
                     m(state.css().description, [
                         m(state.css().title, [
