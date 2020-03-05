@@ -12,7 +12,13 @@ import CommonPaymentVM from '../vms/common-payment-vm.js';
 const I18nScope = _.partial(h.i18nScope, 'projects.contributions');
 const ProjectsSubscriptionThankYou = {
     oninit: function(vnode) {
-        projectVM.sendPageViewForCurrentProject(vnode.attrs.project_id);
+
+        const {
+            ViewContentEvent,
+            SubscribeEvent
+        } = projectVM;
+        
+        projectVM.sendPageViewForCurrentProject(vnode.attrs.project_id, [ ViewContentEvent(), SubscribeEvent() ]);
         
         const paymentMethod = m.route.param('payment_method');
         const paymentConfirmed = JSON.parse(m.route.param('payment_confirmed'));
