@@ -18,3 +18,12 @@ $ psql -h localhost -p 5444 -U postgres service_core < services/service-core-db/
 
 Start services:
 `$ docker-compose up -d`
+
+
+Run migrations of catarse
+```
+$ docker-compose exec catarse rake db:migrate # will have an error here after some migrations running.
+$ docker-compose exec catarse rake dev_seed:demo_settings # insert host data to configure common_db forward schema
+$ docker-compose exec catarse rake common:generate_fdw # generate forward schemas using config from previous command
+$ docker-compose exec catarse rake db:migrate # run again and should finish migrations
+```

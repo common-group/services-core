@@ -20,6 +20,7 @@ jobs:
       - image: circleci/ruby:2.5.1-node-browsers-legacy
       - image: postgres:9.6
         environment:
+          POSTGRES_PASSWORD: example
           POSTGRES_DB: services_core_test
     steps:
       - run: sudo apt update && sudo apt install postgresql-client
@@ -42,7 +43,7 @@ jobs:
             && touch Cargo.toml \
             && psql -U postgres -h localhost -p 5432 services_core_test < ./init.sql \
             && psql -U postgres -h localhost -p 5432 -c "alter user postgrest with superuser;" \
-            && DATABASE_URL=postgres://postgres@localhost:5432/services_core_test ./scripts/run_migrations.sh
+            && DATABASE_URL=postgres://postgres:example@localhost:5432/services_core_test ./scripts/run_migrations.sh
       - run:
           name: common api installs
           command: |
@@ -70,16 +71,16 @@ jobs:
           name: Common models tests
           command: |
             set -ex \
-            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && docker run -e POSTGRES_PASSWORD=example -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
             && cd services/service-core-db/ \
             && docker build -f Dockerfile -t comum/services-core:test . \
             && cd ../common-api/vendor/gems/common_models/ \
             && docker build -f Dockerfile -t comum/common_models:test . \
             && cd ../../../../../ \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
-            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
-            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
+            && docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres:example@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres:example@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
 
   test_catarse:
     docker:
@@ -87,6 +88,7 @@ jobs:
       - image: postgres:9.4
         environment:
           POSTGRES_DB: catarse_test
+          POSTGRES_PASSWORD: example
     steps:
       - checkout
       - setup_remote_docker:
@@ -163,16 +165,16 @@ jobs:
           name: Payment service tests
           command: |
             set -ex \
-            && docker run -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
+            && docker run -e POSTGRES_PASSWORD=example -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6 \
             && cd services/service-core-db/ \
             && docker build -f Dockerfile -t comum/services-core:test . \
             && cd ../payment-service-api/ \
             && docker build -f Dockerfile -t comum/payment-service:test . \
             && cd ../../ \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
-            && docker run -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
-            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
-            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres@localhost.pg:5432/services_core_test" comum/payment-service:test npm test -- -v
+            && docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql \
+            && docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;" \
+            && docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres:example@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh \
+            && docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres:example@localhost.pg:5432/services_core_test" comum/payment-service:test npm test -- -v
 
   test_proxy_config:
     docker:
