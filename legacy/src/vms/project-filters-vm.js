@@ -61,7 +61,33 @@ const projectFiltersVM = () => {
 
         finished = filtersVM({}),
 
+        projects_we_love = filtersVM({
+            recommended: 'eq'
+        }).recommended(true),
+
+        projects_we_love_not_sub = filtersVM({
+            recommended: 'eq',
+            mode: 'not.eq'
+        }).recommended(true).mode('sub'),
+        
         filters = {
+            projects_we_love_not_sub: {
+                title: 'Projetos que amamos',
+                filter: projects_we_love_not_sub,
+                mode: 'not_sub',
+                nicename: 'Projetos que amamos',
+                isContextual: false,
+                keyName: 'projects_we_love',
+                header_badges: ['badge-aon-h-margin', 'badge-flex-h-margin']
+            },
+            projects_we_love: {
+                title: 'Projetos que amamos',
+                filter: projects_we_love,
+                nicename: 'Projetos que amamos',
+                isContextual: false,
+                keyName: 'projects_we_love',
+                header_badges: ['badge-aon-h-margin', 'badge-flex-h-margin']
+            },
             all: {
                 title: 'Todas as Categorias',
                 filter: all,
@@ -156,6 +182,7 @@ const projectFiltersVM = () => {
                 title: 'Assinaturas',
                 nicename: 'Assinaturas',
                 filter: sub,
+                mode: 'sub',
                 isContextual: false,
                 keyName: 'sub',
                 header_badges: ['badge-sub-h-margin']

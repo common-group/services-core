@@ -130,6 +130,65 @@ beforeAll(function(){
   jasmine.Ajax.stubRequest(new RegExp("("+apiPrefix + '\/projects)'+'(.*)')).andReturn({
     'responseText' : JSON.stringify(ProjectMockery())
   });
+
+
+  ProjectsGenerator = function(numberOfProjects, overrides, url) {
+    
+    const projectBase = {
+      project_id: 5,
+      category_id: 1,
+      project_name: "TEST1",
+      headline: "qwdqwd",
+      permalink: url,
+      mode: "aon",
+      state: "online",
+      state_order: "published",
+      online_date: "2020-01-09T18:57:32.485809",
+      recommended: false,
+      project_img: "something.jpg",
+      remaining_time: {
+        total: 15,
+        unit: "days"
+      },
+      expires_at: "2020-02-29T02:59:59.999999",
+      pledged: 0,
+      progress: 0,
+      state_acronym: "LK",
+      owner_name: "Owner Name",
+      city_name: "City Name",
+      full_text_index: null,
+      open_for_contributions: true,
+      elapsed_time: {
+        total: 34,
+        unit: "days"
+      },
+      score: null,
+      contributed_by_friends: false,
+      project_user_id: 5,
+      video_embed_url: null,
+      updated_at: "2020-01-09T21:57:32.977841",
+      owner_public_name: "Public Owner Name",
+      zone_expires_at: "2020-02-28T23:59:59.999999",
+      common_id: "a60eec2e-dbe0-4efb-876c-e8c5ec0c8adc",
+      is_adult_content: false,
+      content_rating: 1,
+      saved_projects: true
+    };
+
+    const projects = [];
+    let project_id = 1;
+    for (let i = 0; i < numberOfProjects; i++ ) {
+      projects.push(Object.assign({}, projectBase, {...overrides, project_id}));
+      project_id++;
+    }
+
+    return projects;
+  };
+
+  jasmine.Ajax.stubRequest(new RegExp(`(${apiPrefix}/rpc/project_search).*`)).andReturn({
+    'responseText' : JSON.stringify(ProjectsGenerator(5, {project_name: 'SEARCH'}))
+  });
+
 });
 
 
