@@ -90,26 +90,40 @@ const _dataCache = {},
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
+    reduceSearchString = (callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
+    objectToSearchString = (obj) => '?' + Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&'),
     setParamByName = (name, value) => {
         const originalHash = window.location.hash;
-        const keysAndValues = window.location.search.replace('?', '').split('&').reduce((finalQueryObject, keyValue) => {
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
             const [key, value] = keyValue.split('=');
-            finalQueryObject[key] = value;
+            if (key) {
+                finalQueryObject[key] = value;
+            }
             return finalQueryObject;
         }, {});
 
         keysAndValues[name] = value;
 
-        const queryString = '?' + Object.keys(keysAndValues).map(key => {
-            return `${key}=${keysAndValues[key]}`;
-        }).join('&');
+        const queryString = objectToSearchString(keysAndValues);
 
-        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + window.location.hash;
-        m.route.set(newurl)
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    removeParamByName = (name) => {
 
-        // if (history.pushState) {
-        //     window.history.pushState({ path: newurl }, '', newurl);
-        // }        
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+
+            const [key, value] = keyValue.split('=');
+            if (name !== key && key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+
+        const queryString = objectToSearchString(keysAndValues);
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
     },
     selfOrEmpty = (obj, emptyState = '') => obj || emptyState,
     setMomentifyLocale = () => {
@@ -1226,6 +1240,17 @@ closeFlash();
 closeModal();
 checkReminder();
 
+function attachEventsToHistory(type) {
+    var orig = history[type];
+    return function() {
+        var rv = orig.apply(this, arguments);
+        var e = new Event(type.toLowerCase());
+        e.arguments = arguments;
+        window.dispatchEvent(e);
+        return rv;
+    };
+};
+
 /**
  * @typedef VNode
  * @property {Object} attrs
@@ -1297,6 +1322,7 @@ export default {
     capitalize,
     paramByName,
     setParamByName,
+    removeParamByName,
     i18nScope,
     RDTracker,
     selfOrEmpty,
@@ -1330,4 +1356,5 @@ export default {
     userSignedIn,
     isDevEnv,
     trust,
+    attachEventsToHistory,
 };

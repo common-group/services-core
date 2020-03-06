@@ -26,7 +26,7 @@ const projectsDisplay = {
             loader = catarse.loaderWithToken,
             project = models.project,
             collectionsMap = ['score', 'contributed_by_friends'],
-            subHomeWith6CollectionsFilters = ['not_sub', 'sub', 'contributed_by_friends'],
+            subHomeWith6CollectionsFilters = ['projects_we_love_not_sub', 'sub', 'contributed_by_friends'],
             windowEventNOTDispatched = true;
 
         project.pageSize(20);
@@ -55,7 +55,8 @@ const projectsDisplay = {
 
             return {
                 title: f.nicename,
-                hash: name === 'score' ? 'all' : name,
+                hash: name === 'score' ? 'all' : f.keyName,
+                mode: f.mode,
                 collection,
                 loader: cLoader,
                 showFriends: name === 'contributed_by_friends',
