@@ -7,6 +7,9 @@ module Billing
     belongs_to :user
     belongs_to :billing_address, class_name: 'Address'
 
+    has_one :credit_card, class_name: 'Billing::CreditCard', as: :owner, dependent: :destroy
+    has_one :bank_slip, class_name: 'Billing::BankSlip', dependent: :destroy
+
     has_many :state_transitions, class_name: 'Billing::PaymentRequestStateTransition', dependent: :destroy
     has_many :items, class_name: 'Billing::PaymentRequestItem', dependent: :destroy, autosave: false
 
@@ -23,7 +26,6 @@ module Billing
     validates :total_amount, numericality: { greater_than: 0 }
     validates :installments_count, numericality: { greater_than: 0, less_than_or_equal_to: 6 }, if: :credit_card?
     validates :installments_count, numericality: { equal_to: 1 }, if: :bank_slip?
-
 
     validates :state, inclusion: { in: Billing::PaymentRequest.aasm.states.map(&:name).map(&:to_s) }
 
