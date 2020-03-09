@@ -16,6 +16,9 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         .class_name('Billing::PaymentRequestItem')
         .dependent(:destroy)
     end
+
+    it { is_expected.to have_one(:credit_card).class_name('Billing::CreditCard').dependent(:destroy) }
+    it { is_expected.to have_one(:bank_slip).class_name('Billing::BankSlip').dependent(:destroy) }
   end
 
   describe 'Indexes' do

@@ -5,83 +5,228 @@ RSpec.describe Billing::PaymentRequest, type: :model do
 
   describe 'States' do
     it 'has :waiting_payment as initial state' do
-      expect(subject.initial_state).to eq :waiting_payment
+      expect(subject.initial_state).to eq :created
     end
 
     it 'defines states' do
-      expect(subject.states.map(&:name)).to eq %i[waiting_payment paid overdue refused refunded]
+      expect(subject.states.map(&:name)).to eq %i[
+        created
+        waiting_payment
+        authorized
+        approved_on_antifraud
+        declined_on_antifraud
+        waiting_review
+        paid
+        overdue
+        refused
+        refunded
+      ]
     end
   end
 
   describe 'Transitions' do
+    context 'when state is created' do
+      subject { described_class.new(state: :created) }
+
+      %i[refused].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
+
+      %i[approved_on_antifraud declined_on_antifraud waiting_review paid overdue refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[refuse].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      context 'when is a credit card payment request' do
+        subject { described_class.new(state: :created, payment_method: :credit_card) }
+
+        it { is_expected.to allow_transition_to(:authorized) }
+        it { is_expected.to_not allow_transition_to(:waiting_payment) }
+
+        it { is_expected.to allow_event(:authorize) }
+        it { is_expected.to_not allow_event(:wait_payment) }
+      end
+
+      context 'when is a bank slip payment request' do
+        subject { described_class.new(state: :created, payment_method: :bank_slip) }
+
+        it { is_expected.to allow_transition_to(:waiting_payment) }
+        it { is_expected.to_not allow_transition_to(:authorized) }
+
+        it { is_expected.to allow_event(:wait_payment) }
+        it { is_expected.to_not allow_event(:authorize) }
+      end
+
+      %i[approve decline wait_review settle expire refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
+    end
+
     context 'when state is waiting_payment' do
       subject { described_class.new(state: :waiting_payment) }
 
-      it { is_expected.to allow_transition_to(:paid) }
-      it { is_expected.to allow_transition_to(:overdue) }
-      it { is_expected.to allow_transition_to(:refused) }
-      it { is_expected.to_not allow_transition_to(:refunded) }
+      %i[paid overdue].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
 
-      it { is_expected.to allow_event(:settle) }
-      it { is_expected.to allow_event(:expire) }
-      it { is_expected.to allow_event(:refuse) }
-      it { is_expected.to_not allow_event(:refund) }
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review
+        refused refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[settle expire].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      %i[authorize wait_payment approve decline wait_review refuse refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
+    end
+
+    context 'when state is authorized' do
+      subject { described_class.new(state: :authorized) }
+
+      %i[approved_on_antifraud declined_on_antifraud waiting_review paid].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
+
+      %i[created waiting_payment authorized overdue refused refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[approve decline wait_review settle].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      %i[authorize wait_payment expire refuse refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
+    end
+
+    context 'when state is approved_on_antifraud' do
+      subject { described_class.new(state: :approved_on_antifraud) }
+
+      %i[paid].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
+
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review overdue
+        refused refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[settle].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      %i[authorize wait_payment approve decline wait_review expire refuse refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
+    end
+
+    context 'when state is declined_on_antifraud' do
+      subject { described_class.new(state: :declined_on_antifraud) }
+
+      %i[refused].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
+
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
+        refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[refuse].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      %i[authorize wait_payment approve decline wait_review settle expire refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
+    end
+
+    context 'when state is waiting_review' do
+      subject { described_class.new(state: :waiting_review) }
+
+      %i[paid refused].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
+
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review overdue
+        refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[settle refuse].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      %i[authorize wait_payment approve decline wait_review expire refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
     end
 
     context 'when state is paid' do
       subject { described_class.new(state: :paid) }
 
-      it { is_expected.to allow_transition_to(:refunded) }
-      it { is_expected.to_not allow_transition_to(:waiting_payment) }
-      it { is_expected.to_not allow_transition_to(:overdue) }
-      it { is_expected.to_not allow_transition_to(:refused) }
+      %i[refunded].each do |state|
+        it { is_expected.to allow_transition_to(state) }
+      end
 
-      it { is_expected.to_not allow_event(:settle) }
-      it { is_expected.to_not allow_event(:expire) }
-      it { is_expected.to_not allow_event(:refuse) }
-      it { is_expected.to allow_event(:refund) }
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
+        refused].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
+
+      %i[refund].each do |event|
+        it { is_expected.to allow_event(event) }
+      end
+
+      %i[authorize wait_payment approve decline wait_review settle expire refuse].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
     end
 
     context 'when state is overdue' do
       subject { described_class.new(state: :overdue) }
 
-      it { is_expected.to_not allow_transition_to(:waiting_payment) }
-      it { is_expected.to_not allow_transition_to(:paid) }
-      it { is_expected.to_not allow_transition_to(:refused) }
-      it { is_expected.to_not allow_transition_to(:refunded) }
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
+        refused refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
 
-      it { is_expected.to_not allow_event(:settle) }
-      it { is_expected.to_not allow_event(:expire) }
-      it { is_expected.to_not allow_event(:refuse) }
-      it { is_expected.to_not allow_event(:refund) }
+      %i[authorize wait_payment approve decline wait_review settle expire refuse refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
     end
 
     context 'when state is refused' do
       subject { described_class.new(state: :refused) }
 
-      it { is_expected.to_not allow_transition_to(:waiting_payment) }
-      it { is_expected.to_not allow_transition_to(:paid) }
-      it { is_expected.to_not allow_transition_to(:overdue) }
-      it { is_expected.to_not allow_transition_to(:refunded) }
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
+        refused refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
 
-      it { is_expected.to_not allow_event(:settle) }
-      it { is_expected.to_not allow_event(:expire) }
-      it { is_expected.to_not allow_event(:refuse) }
-      it { is_expected.to_not allow_event(:refund) }
+      %i[authorize wait_payment approve decline wait_review settle expire refuse refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
     end
 
     context 'when state is refunded' do
       subject { described_class.new(state: :refunded) }
 
-      it { is_expected.to_not allow_transition_to(:waiting_payment) }
-      it { is_expected.to_not allow_transition_to(:paid) }
-      it { is_expected.to_not allow_transition_to(:overdue) }
-      it { is_expected.to_not allow_transition_to(:refused) }
+      %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
+        refused refunded].each do |state|
+        it { is_expected.to_not allow_transition_to(state) }
+      end
 
-      it { is_expected.to_not allow_event(:settle) }
-      it { is_expected.to_not allow_event(:expire) }
-      it { is_expected.to_not allow_event(:refuse) }
-      it { is_expected.to_not allow_event(:refund) }
+      %i[authorize wait_payment approve decline wait_review settle expire refuse refund].each do |event|
+        it { is_expected.to_not allow_event(event) }
+      end
     end
   end
 
@@ -95,7 +240,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
 
   describe '#create_state_transition' do
     let(:payment_request) { create(:payment_request, :credit_card) }
-    let(:state_transition) { payment_request.send(:create_state_transition) }
+    let(:state_transition) { payment_request.send(:create_state_transition, { metadata: { some: { data: 'here' } } }) }
 
     before do
       allow(payment_request.aasm).to receive(:from_state).and_return(:waiting_payment)
@@ -108,6 +253,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       expect(state_transition.from_state).to eq 'waiting_payment'
       expect(state_transition.to_state).to eq 'paid'
       expect(state_transition.event).to eq 'settle'
+      expect(state_transition.metadata).to eq('some' => { 'data' => 'here' })
     end
   end
 end

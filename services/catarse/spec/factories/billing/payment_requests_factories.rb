@@ -1,4 +1,3 @@
-
 FactoryGirl.define do
   factory :payment_request, class: 'Billing::PaymentRequest' do
     user { create(:user, :without_bank_data) }

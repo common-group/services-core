@@ -9,7 +9,8 @@ require 'sidekiq/testing'
 require 'fakeweb'
 require 'pundit/rspec'
 require 'aasm/rspec'
-
+require 'webmock/rspec'
+WebMock.allow_net_connect!
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
