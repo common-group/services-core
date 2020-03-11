@@ -20,6 +20,10 @@ export class ExploreLightBox {
 
         const filters = [
             {
+                name: 'Projetos que amamos',
+                keyName: 'projects_we_love',
+            },
+            {
                 name: 'Populares',
                 keyName: 'all',
             },
@@ -53,10 +57,12 @@ export class ExploreLightBox {
                         )
                     ),
                     filters.map(filter => {
-                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?${urlBaseParams}&filter=${filter.keyName}"]`, {
+
+                        const navigateUrl = `/${window.I18n.locale}/explore?${urlBaseParams}&filter=${filter.keyName}`;
+
+                        return m(`a.explore-lightbox-filter-link[href="${navigateUrl}"]`, {
                             onclick: (event) => {
-                                m.route.set(`/${window.I18n.locale}/explore?${urlBaseParams}&filter=${filter.keyName}#`);
-                                window.location.hash = `#${filter.keyName}`;
+                                m.route.set(navigateUrl);
                                 event.preventDefault();
                                 onClose();
                             }
@@ -68,10 +74,12 @@ export class ExploreLightBox {
                         m('div.fontsize-base.fontcolor-terciary', 'Categorias')
                     ),
                     categories().map(category => {
-                        return m(`a.explore-lightbox-filter-link[href="/${window.I18n.locale}/explore?${urlBaseParams}#by_category_id/${category.id}"]`, {
+
+                        const navigateUrl = `/${window.I18n.locale}/explore?${urlBaseParams}&category_id=${category.id}&filter=all`;
+
+                        return m(`a.explore-lightbox-filter-link[href="${navigateUrl}"]`, {
                             onclick: (event) => {
-                                m.route.set(`/${window.I18n.locale}/explore?${urlBaseParams}&filter=all`)
-                                window.location.hash = `#by_category_id${encodeURIComponent('/')}${category.id}`;
+                                m.route.set(navigateUrl);
                                 event.preventDefault();
                                 onClose();
                             }

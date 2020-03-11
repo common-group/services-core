@@ -22,303 +22,155 @@ import projectCard from '../c/project-card';
 import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import userVM from '../vms/user-vm';
+import { loadProjectsWithConfiguredParameters } from '../vms/projects-explore-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
 const projectsExplore = {
+
     oninit: function(vnode) {
-        const filters = catarse.filtersVM,
-            projectFiltersVM = projectFilters(),
-            filtersMap = projectFiltersVM.filters,
-            currentUser = h.getUser() || {},
-            chosenRecommender = prop(null),
-            currentMode = prop(filtersMap.all_modes),
-            selectedCategory = h.RedrawStream({
-                name: 'Todas as categorias',
-                id: null
-            }),
-            defaultFilter = h.paramByName('filter') || 'all',
-            currentFilter = h.RedrawStream(filtersMap[defaultFilter]),
-            modeToggle = h.toggleProp(true, false),
-            //availableRecommenders = ['recommended_1', 'recommended_2'],
-            availableRecommenders = [],
-            categoryToggle = h.toggleProp(true, false),
-            filterToggle = h.toggleProp(true, false),
-            showFilter = h.toggleProp(true, false),
-            changeFilter = (newFilter) => {
-                currentFilter(filtersMap[newFilter]);
-                h.setParamByName('filter', currentFilter().keyName);
-                window.location.hash = decodeURIComponent(window.location.hash);
-                // reset category
-                if (_.contains(availableRecommenders, newFilter)) {
-                    history.replaceState(null, null, ' ');
-                    selectedCategory({
-                        name: 'Todas as categorias',
-                        id: null
-                    });
-                }
-                loadRoute();
-            },
-            resetContextFilter = () => {
-                currentFilter(filtersMap[defaultFilter]);
-                const contextFilters = userVM.isLoggedIn ? 
-                        ['finished', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent']
-                    :   
-                        ['finished', 'all', 'expiring', 'recent'];
+        
+        const filters = catarse.filtersVM;
+        const projectFiltersVM = projectFilters();
+        const filtersMap = projectFiltersVM.filters;
+        const currentUser = h.getUser() || {};
 
-                projectFiltersVM.setContextFilters(contextFilters);
-            },
-            changeMode = (newMode) => {
-                modeToggle.toggle();
-                currentMode(filtersMap[newMode]);
-                if (newMode === 'sub') {
-                    // temporarily remove filters from sub projects
-                    showFilter.toggle();
-                    resetContextFilter();
-                    projectFiltersVM.removeContextFilter(projectFiltersVM.filters.finished);
-                    projectFiltersVM.removeContextFilter(projectFiltersVM.filters.expiring);
-                    changeFilter('all');
-                } else {
-                    if (!showFilter()) {
-                        showFilter.toggle();
-                    }
-                    resetContextFilter();
-                    const scoreFilterForAonFlex = _.first(projectFiltersVM.getContextFilters());
-                    currentFilter(scoreFilterForAonFlex);
-                }
-                loadRoute();
-            },
-            hasFBAuth = currentUser.has_fb_auth,
-            isSearch = prop(false),
-            categoryCollection = prop([]),
-            categoryId = prop(),
-            findCategory = id => _.find(categoryCollection(), c => c.id === parseInt(id)),
-            category = _.compose(findCategory, categoryId),
-            loadCategories = () => models.category.getPageWithToken(filters({}).order({
-                name: 'asc'
-            }).parameters()).then(c => {
-                categoryCollection(c);
-                const currentCategory = getCurrentCategory();
-                if (currentCategory) {
-                    selectedCategory(currentCategory);
-                } else {
-                    selectedCategory({
-                        name: 'Todas as categorias',
-                        id: null
-                    });
-                }
-                m.redraw();
-            }),
-            externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories,
-            hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]),
-            // just small fix when have two scored projects only
-            checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3,
-            // Fake projects object to be able to render page while loadding (in case of search)
-            projects = prop({
-                collection: prop([]),
-                isLoading: () => true,
-                isLastPage: () => true
-            }),
-            getCurrentCategory = () => {
-                const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/);
-                return route && route[2] && findCategory(route[2]);
-            },
-            loadRoute = () => {
-                const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all';
-                currentFilter(filtersMap[innerDefaultFilter]);
-                const route = window.location.hash.match(/\#([^\/]*)\/(\d+)?/),
-                    cat = route &&
-                    route[2] &&
-                    findCategory(route[2]),
+        const resetContextFilter = () => {
+            const contextFilters = userVM.isLoggedIn ? 
+                ['finished', 'projects_we_love', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent']
+            :   
+                ['finished', 'projects_we_love', 'all', 'expiring', 'recent'];
 
-                    filterFromRoute = () => {
-                        const byCategory = filters({
-                            category_id: 'eq'
-                        });
-
-                        if (cat) {
-                            selectedCategory(cat);
-                        } else {
-                            selectedCategory({
-                                name: 'Todas as categorias',
-                                id: null
-                            });
-                        }
-                        return route &&
-                            route[1] &&
-                            filtersMap[route[1]] ||
-                            cat && {
-                                title: cat.name,
-                                filter: byCategory.category_id(cat.id)
-                            };
-                    },
-                    filter = filterFromRoute() || currentFilter();
-
-                const search = h.paramByName('pg_search'),
-                    recommendedProjects = (alg) => {
-                        let model;
-                        switch (alg) {
-                            case '1':
-                                model = models.recommendedProjects1;
-                                break;
-                            default:
-                                model = models.recommendedProjects2;
-                        }
-                        const pages = commonRecommender.paginationVM(model, '', {}, false);
-                        const rFilter = commonRecommender.filtersVM({
-                            user_id: 'eq'
-                        }).user_id(currentUser.id);
-
-                        const parameters = _.extend({}, currentFilter().filter.parameters(),
-                            filter.filter.parameters(),
-                            rFilter.parameters(),
-                            currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages
-                            .firstPage(parameters)
-                            .then(_ => m.redraw());
-                        return pages;
-                    },
-
-                    searchProjects = () => {
-                        const l = catarse.loaderWithToken(models.projectSearch.postOptions({
-                                query: search
-                            })),
-                            page = { // We build an object with the same interface as paginationVM
-                                collection: prop([]),
-                                isLoading: l,
-                                isLastPage: () => true,
-                                nextPage: () => false
-                            };
-                        l
-                            .load()
-                            .then(p => {
-                                page.collection(p);
-                                m.redraw();
-                                return p;
-                            });
-                        return page;
-                    },
-
-                    // @TODO fix infinite requests when collection is empty
-                    loadProjects = () => {
-                        const pages = catarse.paginationVM(models.project, null, {
-                            Prefer: 'count=exact'
-                        });
-                        const parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
-                            open_for_contributions: 'desc',
-                            state_order: 'asc',
-                            state: 'desc',
-                            score: 'desc',
-                            pledged: 'desc'
-                        }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages
-                            .firstPage(parameters)
-                            .then(_ => m.redraw());
-                        return pages;
-                    },
-
-                    loadFinishedProjects = () => {
-                        const pages = catarse.paginationVM(models.finishedProject, null, {
-                                Prefer: 'count=exact'
-                            }),
-                            parameters = _.extend({}, currentFilter().filter.parameters(), filter.filter.order({
-                                state_order: 'asc',
-                                state: 'desc',
-                                pledged: 'desc'
-                            }).parameters(), currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {});
-                        pages
-                            .firstPage(parameters)
-                            .then(_ => m.redraw());
-
-                        return pages;
-                    };
-
-                if (_.isString(search) && search.length > 0 && route === null) {
-                    isSearch(true);
-                    title(`Busca ${search}`);
-                    projects(searchProjects());
-                } else if (currentFilter().keyName === 'finished') {
-                    isSearch(false);
-                    projects(loadFinishedProjects());
-                } else if (currentFilter().keyName === 'recommended_1') {
-                    isSearch(false);
-                    projects(recommendedProjects('1'));
-                } else if (currentFilter().keyName === 'recommended_2') {
-                    isSearch(false);
-                    projects(recommendedProjects('2'));
-                } else {
-                    isSearch(false);
-                    title(filter.title);
-                    if (!_.isNull(route) && route[1] == 'finished') {
-                        projects(loadFinishedProjects());
-                    } else {
-                        projects(loadProjects());
-                    }
-                }
-                categoryId(cat && cat.id);
-            },
-            title = prop();
-
-        window.addEventListener('hashchange', () => {
-            window.location.hash = decodeURIComponent(window.location.hash);
+            projectFiltersVM.setContextFilters(contextFilters);
+        };
+        
+        // Mode (sub, not_sub)
+        const getDefaultMode = () => h.paramByName('mode') || vnode.attrs.mode || 'all_modes';
+        const modeKey = getDefaultMode();
+        const currentMode = h.RedrawStream(filtersMap[modeKey]);
+        const modeToggle = h.RedrawStream(false);
+        const changeMode = (newMode) => {
+            if (newMode === 'all_modes') {
+                h.removeParamByName('mode');
+            } else {
+                h.setParamByName('mode', newMode);
+            }
+        };
+        const configureMode = () => {
+            const newMode = getDefaultMode();
+            modeToggle(false);
+            currentMode(filtersMap[newMode]);
             resetContextFilter();
-            loadRoute();
-            m.redraw();
-        }, false);
+            if (newMode === 'sub') {
+                // temporarily remove filters from sub projects
+                showFilter(false);
+                projectFiltersVM.removeContextFilter(projectFiltersVM.filters.finished);
+                projectFiltersVM.removeContextFilter(projectFiltersVM.filters.expiring);
+                currentFilter(filtersMap['all']);
+            } else {
+                showFilter(true);
+                const scoreFilterForAonFlex = _.first(projectFiltersVM.getContextFilters());
+                currentFilter(scoreFilterForAonFlex);
+            }
+        };
+
+        // Category (loaded)
+        const allCategories = { name: 'Todas as categorias', id: null };
+        const categoriesCollection = prop(vnode.attrs.categories || []);
+        const findCategory = id => _.find(categoriesCollection(), c => c.id === parseInt(id));
+        const getCurrentCategory = () => findCategory(h.paramByName('category_id')) || allCategories;
+        const selectedCategory = h.RedrawStream(getCurrentCategory());
+        const categoryToggle = h.RedrawStream(false);
+        const configureCategory = () => selectedCategory(getCurrentCategory());
+        const changeCategory = (category_id) => {
+            if (category_id) {
+                h.setParamByName('category_id', category_id);
+            } else {
+                h.removeParamByName('category_id');
+            }
+        };
+        const loadCategories = () => {
+            return models.category
+                .getPageWithToken(
+                    filters({}).order({ name: 'asc' }).parameters()
+                )
+                .then(c => {
+                    categoriesCollection(c);
+                    configureCategory();
+                })
+        };
+
+        // Filter
+        const getDefaultFilter = () => h.paramByName('filter') || vnode.attrs.filter || 'projects_we_love';
+        const defaultFilter = getDefaultFilter();
+        const currentFilter = h.RedrawStream(filtersMap[defaultFilter]);
+        const filterToggle = h.RedrawStream(false);
+        // 1. Don't show filter when is subscription
+        const showFilter = h.RedrawStream(true);
+        const changeFilter = (newFilter) => {
+            if (newFilter === 'projects_we_love') {
+                h.removeParamByName('filter');
+            } else {
+                h.setParamByName('filter', newFilter);
+            }
+        };
+        const configureFilter = () => {
+            const modeKey = h.paramByName('mode');
+            const newFilter = modeKey === 'sub' ? 'all' : getDefaultFilter();
+            currentFilter(filtersMap[newFilter]);
+        };
+          
+        const hasFBAuth = currentUser.has_fb_auth;
+        const isSearch = prop(false);
+        
+        const externalLinkCategories = window.I18n.translations[window.I18n.currentLocale()].projects.index.explore_categories;
+        const hasSpecialFooter = categoryId => !_.isUndefined(externalLinkCategories[categoryId]);
+        // just small fix when have two scored projects only
+        const checkForMinScoredProjects = collection => _.size(_.filter(collection, x => x.score >= 1)) >= 3;
+        // Fake projects object to be able to render page while loadding (in case of search)
+        const projects = h.RedrawStream({ collection: prop([]), isLoading: () => true, isLastPage: () => true });
+            
+        const filterFromRoute = () => {
+            const byCategory = filters({ category_id: 'eq' });
+            const category = getCurrentCategory();
+
+            return category.id && prop({
+                title: category.name,
+                filter: byCategory.category_id(category.id)
+            });
+        };
+
+        const loadRoute = () => {
+            configureMode();
+            configureCategory();
+            configureFilter();
+
+            const categoryFilter = filterFromRoute() || currentFilter;
+            const searchParam = h.paramByName('pg_search') || vnode.attrs.pg_search;
+            const hasSearchParamContent = _.isString(searchParam) && searchParam.length > 0;
+            const noFilterIsSelected = currentMode().keyName === 'all_modes' && !categoryFilter().title;
+            isSearch(hasSearchParamContent && noFilterIsSelected);
+            projects(loadProjectsWithConfiguredParameters(currentMode, categoryFilter, currentFilter, isSearch, searchParam));
+            h.redraw();
+        };
 
         // Initial loads
         resetContextFilter();
-        if (chosenRecommender()) {
-            // clear category from hash
-            history.replaceState(null, null, ' ');
-            changeFilter(chosenRecommender());
-        }
         models.project.pageSize(9);
         loadCategories().then(loadRoute).then(() => m.redraw());
+        
+        h.scrollTop();
 
-        if (vnode.attrs.filter) {
-            currentFilter(filtersMap[vnode.attrs.filter]);
-        }
-
-        if (!currentFilter()) {
-            currentFilter(filtersMap[defaultFilter]);
-        }
-
-        h.setParamByName('filter', currentFilter().keyName);
-
-        let notWasTried = true;
-        let firstLoad = true;
-
-        const tryLoadFromQueryPath = () => {
-            const innerDefaultFilter = h.paramByName('filter') || vnode.attrs.filter || 'all'
-            const projectModes = ['sub', 'not_sub'];
-            const isSubscriptionOrAonFlex = projectModes.indexOf(innerDefaultFilter) >= 0;
-            const filterIsForContributedByFriends = innerDefaultFilter === 'contributed_by_friends';
-
-            if (notWasTried && isSubscriptionOrAonFlex) {
-                changeMode(innerDefaultFilter);
-                modeToggle(true);
-                notWasTried = false;
-            }
-
-            currentFilter(filtersMap[innerDefaultFilter]);
-
-            if (firstLoad) {
-                h.scrollTop();
-                firstLoad = false;
-            }
-        }
+        window.addEventListener('popstate', (event) => loadRoute());
+        window.addEventListener('pushstate', (event) => loadRoute());
 
         vnode.state = {
-            categories: categoryCollection,
+            categories: categoriesCollection,
             changeFilter,
             resetContextFilter,
             projects,
-            category,
-            title,
             loadRoute,
             modeToggle,
-            availableRecommenders,
             categoryToggle,
             filterToggle,
             selectedCategory,
@@ -331,33 +183,36 @@ const projectsExplore = {
             isSearch,
             hasFBAuth,
             checkForMinScoredProjects,
-            categoryId,
             hasSpecialFooter,
             externalLinkCategories,
-            tryLoadFromQueryPath
+            changeCategory,
+            allCategories,
         };
     },
+    onremove: function() {
+        window.removeEventListener('popstate');
+        window.removeEventListener('pushstate');
+    },
     view: function({state, attrs}) {
-        const categoryId = state.categoryId,
-            projectsCollection = state.projects().collection(),
-            projectsCount = projectsCollection.length,
-            filterKeyName = state.currentFilter().keyName,
-            isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends'),
-            hasSpecialFooter = state.hasSpecialFooter(categoryId());
+        const allCategories = state.allCategories;
+        const category_id = state.selectedCategory().id;
+        const projectsCollection = state.projects().collection();
+        const projectsCount = projectsCollection.length;
+        const filterKeyName = state.currentFilter().keyName;
+        const isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
+        const hasSpecialFooter = state.hasSpecialFooter(category_id);
+
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
-            m(`a.explore-filter-link[href='#by_category_id/${category.id}']`, {
+            m(`a.explore-filter-link[href=\'javascript:void(0);\']`, {
                     onclick: () => {
-                        state.categoryToggle.toggle();
-                        state.selectedCategory(category);
+                        state.categoryToggle(false);
+                        state.changeCategory(category.id);
                     },
-                    class: state.selectedCategory() === category ? 'selected' : ''
+                    class: state.selectedCategory().id === category.id ? 'selected' : ''
                 },
                 category.name
             )
         );
-        let widowProjects = [];
-
-        state.tryLoadFromQueryPath();
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -372,7 +227,7 @@ const projectsExplore = {
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: state.modeToggle.toggle
+                            onclick: () => state.modeToggle(!state.modeToggle())
                         }, [
                             m('.explore-mobile-label',
                                 'MODALIDADE'
@@ -382,43 +237,45 @@ const projectsExplore = {
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
-                        state.modeToggle() ? '' :
-                        m('.explore-filter-select', [
-                            m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                    onclick: () => {
-                                        state.changeMode('all_modes');
-                                    },
-                                    class: state.currentMode() === null ? 'selected' : ''
-                                },
-                                'Todos os projetos'
-                            ),
-                            m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                    onclick: () => {
-                                        state.changeMode('not_sub');
-                                    },
-                                    class: state.currentMode() === 'not_sub' ? 'selected' : ''
-                                },
-                                'Projetos pontuais'
-                            ),
-                            m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                    onclick: () => {
-                                        state.changeMode('sub');
-                                    },
-                                    class: state.currentMode() === 'sub' ? 'selected' : ''
-                                },
-                                'Assinaturas'
-                            ),
-                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                onclick: state.modeToggle.toggle
-                            })
-                        ])
+                        (
+                            state.modeToggle() && 
+                                m('.explore-filter-select', [
+                                    m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                            onclick: () => {
+                                                state.changeMode('all_modes');
+                                            },
+                                            class: state.currentMode() === null ? 'selected' : ''
+                                        },
+                                        'Todos os projetos'
+                                    ),
+                                    m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                            onclick: () => {
+                                                state.changeMode('not_sub');
+                                            },
+                                            class: state.currentMode() === 'not_sub' ? 'selected' : ''
+                                        },
+                                        'Projetos pontuais'
+                                    ),
+                                    m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                            onclick: () => {
+                                                state.changeMode('sub');
+                                            },
+                                            class: state.currentMode() === 'sub' ? 'selected' : ''
+                                        },
+                                        'Assinaturas'
+                                    ),
+                                    m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                        onclick: () => state.modeToggle(false)
+                                    })
+                                ])
+                        )
                     ]),
                     m('.explore-text-fixed',
                         'de'
                     ),
                     m('.explore-filter-wrapper', [
                         m('.explore-span-filter', {
-                            onclick: state.categoryToggle.toggle
+                            onclick: () => state.categoryToggle(!state.categoryToggle())
                         }, [
                             m('.explore-mobile-label',
                                 'CATEGORIA'
@@ -428,67 +285,71 @@ const projectsExplore = {
                             ),
                             m('.inline-block.fa.fa-angle-down')
                         ]),
-                        state.categoryToggle() ? '' :
-                        m('.explore-filter-select.big',
-                            m('.explore-filer-select-row', [
-                                m('.explore-filter-select-col', [
-                                    m("a.explore-filter-link[href='#']", {
-                                            onclick: () => {
-                                                state.categoryToggle.toggle();
-                                                state.selectedCategory({
-                                                    name: 'Todas as categorias',
-                                                    id: null
-                                                });
+                        (
+                            state.categoryToggle() &&
+                            m('.explore-filter-select.big',
+                                m('.explore-filer-select-row', [
+                                    m('.explore-filter-select-col', [
+                                        m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                                onclick: () => {
+                                                    state.categoryToggle(false);
+                                                    state.changeCategory(allCategories.id);
+                                                },
+                                                class: state.selectedCategory().id === null ? 'selected' : ''
                                             },
-                                            class: state.selectedCategory().id === null ? 'selected' : ''
-                                        },
-                                        'Todas as categorias'
-                                    ),
-                                    categoryColumn(state.categories(), 0, Math.floor(_.size(state.categories()) / 2))
-                                ]),
-                                m('.explore-filter-select-col', [
-                                    categoryColumn(state.categories(), Math.floor(_.size(state.categories()) / 2), _.size(state.categories()))
-                                ]),
-                                m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                    onclick: state.categoryToggle.toggle
-                                })
-                            ])
+                                            'Todas as categorias'
+                                        ),
+                                        categoryColumn(state.categories(), 0, Math.floor(_.size(state.categories()) / 2))
+                                    ]),
+                                    m('.explore-filter-select-col', [
+                                        categoryColumn(state.categories(), Math.floor(_.size(state.categories()) / 2), _.size(state.categories()))
+                                    ]),
+                                    m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                        onclick: () => state.categoryToggle(false)
+                                    })
+                                ])
+                            )
                         )
                     ]),
-                    state.showFilter() ? [
-                        m('.explore-text-fixed',
-                            'que são'
-                        ),
-                        m('.explore-filter-wrapper', [
-                            m('.explore-span-filter', {
-                                onclick: state.filterToggle.toggle
-                            }, [
-                                m('.explore-mobile-label',
-                                    'FILTRO'
-                                ),
-                                m('.inline-block',
-                                    state.currentFilter().nicename
-                                ),
-                                m('.inline-block.fa.fa-angle-down')
-                            ]),
-                            state.filterToggle() ? '' :
-                            m('.explore-filter-select', [
-                                _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                        onclick: (/** @type {Event} */ event) => {
-                                            event.preventDefault();
-                                            state.changeFilter(pageFilter.keyName);
-                                            state.filterToggle.toggle();
-                                        },
-                                        class: state.currentFilter() === pageFilter ? 'selected' : ''
-                                    },
-                                    pageFilter.nicename
-                                )),
-                                m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                    onclick: state.filterToggle.toggle
-                                })
+                    (
+                        state.showFilter() && 
+                        [
+                            m('.explore-text-fixed',
+                                'que são'
+                            ),
+                            m('.explore-filter-wrapper', [
+                                m('.explore-span-filter', {
+                                    onclick: () => state.filterToggle(!state.filterToggle())
+                                }, [
+                                    m('.explore-mobile-label',
+                                        'FILTRO'
+                                    ),
+                                    m('.inline-block',
+                                        state.currentFilter().nicename
+                                    ),
+                                    m('.inline-block.fa.fa-angle-down')
+                                ]),
+                                (
+                                    state.filterToggle() &&
+                                    m('.explore-filter-select', [
+                                        _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                                onclick: (/** @type {Event} */ event) => {
+                                                    event.preventDefault();
+                                                    state.changeFilter(pageFilter.keyName);
+                                                    state.filterToggle(false);
+                                                },
+                                                class: state.currentFilter() === pageFilter ? 'selected' : ''
+                                            },
+                                            pageFilter.nicename
+                                        )),
+                                        m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                            onclick: () => state.filterToggle(false)
+                                        })
+                                    ])
+                                )
                             ])
-                        ])
-                    ] : ''
+                        ]
+                    )
                 ])
             ]), !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
             m('div',
@@ -510,8 +371,10 @@ const projectsExplore = {
                 m('.w-container', [
                     m('.w-row', [
                         m('.w-row', _.map(projectsCollection, (project, idx) => {
-                            let cardType = 'small',
-                                ref = 'ctrse_explore';
+                            let cardType = 'small';
+                            let ref = 'ctrse_explore';
+
+                            let widowProjects = [];
 
                             if (state.isSearch()) {
                                 ref = 'ctrse_explore_pgsearch';
@@ -541,13 +404,15 @@ const projectsExplore = {
                                 }
                             } else if (filterKeyName === 'saved_projects') {
                                 ref = 'ctrse_explore_saved_project'
+                            } else if (filterKeyName === 'projects_we_love') {
+                                ref = 'ctrse_explore_projects_we_love'
                             }
 
                             return (_.indexOf(widowProjects, idx) > -1 && !state.projects().isLastPage()) ? '' : m(projectCard, {
                                 project,
                                 ref,
                                 type: cardType,
-                                showFriends: isContributedByFriendsFilter
+                                showFriends: isContributedByFriendsFilter,
                             });
                         })),
                         state.projects().isLoading() ? h.loader() : ''
@@ -577,16 +442,16 @@ const projectsExplore = {
                 m('.w-container.u-text-center', [
                     m('img.u-marginbottom-20.icon-hero', {
                         src: hasSpecialFooter ?
-                            state.externalLinkCategories[categoryId()].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
+                            state.externalLinkCategories[category_id].icon : 'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/56f4414d3a0fcc0124ec9a24_icon-launch-explore.png'
                     }),
                     m('h2.fontsize-larger.u-marginbottom-60',
-                        hasSpecialFooter ? state.externalLinkCategories[categoryId()].title : 'Lance sua campanha no Catarse!'),
+                        hasSpecialFooter ? state.externalLinkCategories[category_id].title : 'Lance sua campanha no Catarse!'),
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             hasSpecialFooter ?
                             m('a.w-button.btn.btn-large', {
-                                href: `${state.externalLinkCategories[categoryId()].link}?ref=ctrse_explore`
-                            }, state.externalLinkCategories[categoryId()].cta) :
+                                href: `${state.externalLinkCategories[category_id].link}?ref=ctrse_explore`
+                            }, state.externalLinkCategories[category_id].cta) :
                             m('a.w-button.btn.btn-large', {
                                 href: '/start?ref=ctrse_explore'
                             }, 'Aprenda como')

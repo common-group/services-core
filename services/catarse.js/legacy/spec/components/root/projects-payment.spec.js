@@ -17,13 +17,13 @@ describe('ProjectsPayment', () => {
         document.body.setAttribute('data-user', JSON.stringify(UserDetailMockery()[0]));
         document.body.appendChild(root);
 
-        $projectPaymentComponent = m(projectsPayment, {address: {international : prop(true)}});
-        $output = mq($projectPaymentComponent);
+        $output = mq(projectsPayment, {address: {international : prop(true)}});
 
     });
 
     describe('when contribution is international', () => {
         beforeAll(() => {
+            // $output = mq(projectsPayment, {address: {international : prop(false)}});
             // $output.setValue('#country', 74);
         });
 
@@ -41,14 +41,18 @@ describe('ProjectsPayment', () => {
 
     describe('when contribution is national', () => {
         beforeAll(() => {
+            $output = mq(projectsPayment, {address: {international : prop(false)}});
             $output.setValue('#country', 36);
         });
+
         it('should show user document', () => {
             expect($output.has('input#document')).toBeTrue();
         });
+
         it('should show phone number', () => {
             expect($output.has('input#phone')).toBeTrue();
         });
+
         it('should have address state as select input', () => {
 
             expect($output.has('input#address-state')).toBeFalse();
