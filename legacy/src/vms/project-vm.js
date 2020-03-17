@@ -175,7 +175,7 @@ const checkSubscribeAction = () => {
     }
 };
 
-const sendPageViewForCurrentProject = (project_id) => {
+const sendPageViewForCurrentProject = (project_id, eventsArray) => {
 
     const root = document.getElementById('application');
     const data = root && root.getAttribute('data-parameters');
@@ -191,20 +191,20 @@ const sendPageViewForCurrentProject = (project_id) => {
             project_user_id: project_user_id || projectUserId,
         };
 
-        loadIntegrationsAndSendPageView(project_data.project_id);
+        loadIntegrationsAndSendPageView(project_data.project_id, eventsArray);
     } else if (project_id) {
-        loadIntegrationsAndSendPageView(project_id);
+        loadIntegrationsAndSendPageView(project_id, eventsArray);
     }
 }
 
 /**
  * @param {number} projectId 
  */
-const loadIntegrationsAndSendPageView = async (projectId) => {
+const loadIntegrationsAndSendPageView = async (projectId, eventsArray) => {
 
     try {
         const integrations = await getIntegrations(projectId);
-        SendPageView(integrations);
+        SendPageView(integrations, eventsArray);
     } catch(e) {
         h.captureException(e);
     }
@@ -267,14 +267,38 @@ const updateIntegration = (projectId, updatedIntegration) =>
 /**
  * @param {ProjectIntegration[]} projectIntegrations 
  */
-const SendPageView = (projectIntegrations) => {
+const SendPageView = (projectIntegrations, eventsArray) => {
 
     for (const integration of projectIntegrations) {
         const trackingFunction = window.trackingFunctions[integration.name];
 
         if (trackingFunction) {
-            trackingFunction(integration.data.id);
+            trackingFunction(integration.data.id, eventsArray);
         }
+    }
+}
+
+const ViewContentEvent = () => {
+    return {
+        event: 'ViewContent'
+    }
+}
+
+const AddToCartEvent = () => {
+    return {
+        event: 'AddToCart'
+    }
+}
+
+const PurchaseEvent = () => {
+    return {
+        event: 'Purchase'
+    }
+}
+
+const SubscribeEvent = () => {
+    return {
+        event: 'Subscribe'
     }
 }
 
@@ -299,6 +323,10 @@ const projectVM = {
     getIntegrations,
     createIntegration,
     updateIntegration,
+    ViewContentEvent,
+    AddToCartEvent,
+    PurchaseEvent,
+    SubscribeEvent
 };
 
 export default projectVM;
