@@ -112,6 +112,7 @@ const paymentCreditCard = {
             vm.creditCardFields.errors([]);
 
             if (selectedCreditCard().id === -1) {
+                checkCardOwnerDocument();
                 checkExpiry();
                 checkcvv();
                 checkCreditCard();
@@ -337,7 +338,8 @@ const paymentCreditCard = {
                                      class: state.fieldHasError('cardOwnerDocument') ? 'error' : '',
                                      onblur: state.checkCardOwnerDocument,
                                      onkeyup: m.withAttr('value', state.applyDocumentMask),
-                                     value: state.creditCard.cardOwnerDocument()
+                                     value: state.creditCard.cardOwnerDocument(),
+                                     name: 'card-owner-document'
                                  }),
                                  state.fieldHasError('cardOwnerDocument')
                              ]) : '')
