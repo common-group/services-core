@@ -84,6 +84,14 @@ m.trust = (text) => h.trust(text);
 
         m.route.prefix('');
 
+        /**
+         * Contribution/Subscription flow.
+         * 
+         * ProjectShow ->
+         *      contribution: ProjectsContribution -> ProjectsPayment -> ThankYou
+         *      subscription: ProjectsSubscriptionContribution -> ProjectsSubscriptionCheckout -> ProjectsSubscriptionThankYou 
+         */
+
         m.route(rootEl, '/', {
             '/': wrap(isUserProfile ? c.root.UsersShow : c.root.ProjectsHome, { menuTransparency: true, footerBig: true, absoluteHome: isUserProfile }),
             '/explore': wrap(c.root.ProjectsExplore, { menuTransparency: true, footerBig: true }),
