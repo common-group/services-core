@@ -76,10 +76,10 @@ const projectReminder = {
             },
 
               (project().in_reminder ? [
-                  m('span.fa.fa-heart'),
+                  m('span.fa.fa-bookmark'),
                   ' Lembrete ativo'
               ] : [
-                  m('span.fa.fa-heart-o'),
+                  m('span.fa.fa-bookmark-o'),
                   ' Lembrar-me'
               ])
             ),
@@ -87,7 +87,7 @@ const projectReminder = {
             m(`button[class="w-hidden-small w-hidden-tiny ${buttonClass} ${(project().in_reminder ? 'link-hidden-success' : 'fontcolor-secondary')} fontweight-semibold"]`, {
                 onclick: onclickFunc
             }, [
-                (state.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-heart') : m('span.fa.fa-heart-o')))
+                (state.l() ? h.loader() : (project().in_reminder ? m('span.fa.fa-bookmark') : m('span.fa.fa-bookmark-o')))
             ]), (state.popNotification() ? m(popNotification, {
                 message: 'Ok, Vamos te mandar um lembrete por e-mail antes do fim da campanha!'
             }) : '')
