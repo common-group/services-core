@@ -5,36 +5,46 @@ import h from '../h';
 export const InputSelectSearchClearable = {
     oninit(vnode) {
 
-        const openSearchControl = h.RedrawStream(false);
+        const openSearchControl = h.RedrawToggleStream(false, true);
 
         vnode.state = {
             openSearchControl
-        }
+        };
     },
 
     view({ state, attrs }) {
 
         const onSearch = attrs.onSearch;
         const onSelect = attrs.onSelect;
-        const selectedItem = attrs.selectedItem || prop('Brasil');
-        const foundItems = attrs.foundItems || prop([]);
+        const selectedItem = attrs.selectedItem() || 'Brasil';
+        const foundItems = attrs.foundItems() || [];
         const itemToString = attrs.itemToString;
         const openSearchControl = state.openSearchControl;
         const openSearchControlDisplayStyle = openSearchControl() ? 'block' : 'none';
+        const onToggleSearchBox = (/** @type {Event} */ event) => {
+            event.stopPropagation();
+            openSearchControl.toggle();
+            if (openSearchControl()) {
+                onSearch('');
+            }
+        }
 
         return m('div.explore-filter-wrapper', [
-            m('div.explore-span-filter', { 'style': { 'border-color': 'rgba(0, 0, 0, 0.11)' } }, [
+            m('div.explore-span-filter', { 
+                'style': { 'border-color': 'rgba(0, 0, 0, 0.11)' },
+                onclick: onToggleSearchBox
+            }, [
                 m('div.explore-span-filter-name', [
                     m('div.explore-mobile-label', 'LOCAL'),
-                    m('div.inline-block', selectedItem())
+                    m('div.inline-block', selectedItem)
                 ]),
                 m('.inline-block.fa.fa-angle-down[aria-hidden="true"]', {
-                    onclick: () => openSearchControl(true)
+                    onclick: onToggleSearchBox
                 })
             ]),
             m('div.explore-filter-select.big.w-clearfix', { 'style': { 'display': openSearchControlDisplayStyle } }, [
                 m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block[href="#"]', {
-                    onclick: () => openSearchControl(false)
+                    onclick: onToggleSearchBox
                 }),
                 m('div.w-form', [
                     m('form.position-relative', [
@@ -45,8 +55,8 @@ export const InputSelectSearchClearable = {
                             oninput: (/** @type {Event} */ event) => onSearch(event.target.value),
                             onkeyup: (/** @type {Event} */ event) => onSearch(event.target.value),
                         }),
-                        m('div.table-outer', { 'style': { 'display': 'block' } }, [
-                            foundItems().map(item => {
+                        m('div.table-outer.search-cities-pre-result', [
+                            foundItems.map(item => {
                                 return m('div.table-row.fontsize-smallest.fontcolor-secondary',
                                     m('a.fontsize-smallest.link-hidden-light[href="#"]', {
                                         onclick: () => onSelect(item)
