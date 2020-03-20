@@ -383,8 +383,8 @@ const projectsExplore = {
                             foundItems: foundCitiesStateEntries,
                             itemToString: (/** @type {CityState} */ cityState) => {
                                 const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
-                                const secondPart = `${cityState.city ? cityState.state.acronym : '(Estado)'}`;
-                                return `${firstPart}, ${secondPart}`; 
+                                const secondPart = `${cityState.city ? `, ${cityState.state.acronym}` : '(Estado)'}`;
+                                return `${firstPart}${secondPart}`;
                             }
                         }),
                         (
