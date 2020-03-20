@@ -1221,6 +1221,31 @@ function RedrawStream(data, onUpdate = (param) => {}) {
     return streamAccessor;
 }
 
+/**
+ * @param {T} data
+ * @template T
+ */
+function RedrawToggleStream(firstState, secondState) {
+    const _data = prop(firstState);
+
+    /**
+     * @param {T} newData
+     * @returns {T}
+     */
+    function streamAccessor(newData) {
+        if (newData !== undefined) {
+            _data(newData);
+            redraw();
+            return newData;
+        }
+        return _data();
+    }
+
+    streamAccessor.toggle = () => streamAccessor(_data() === firstState ? secondState : firstState);
+
+    return streamAccessor;   
+}
+
 function createPropAcessors(obj) {
     return Object.keys(obj).reduce((curObject, prop) => {
         return Object.assign(curObject, {
@@ -1262,6 +1287,7 @@ export default {
     ObservableStream,
     ObservableRedrawStream,
     RedrawStream,
+    RedrawToggleStream,
     extractPhoneDDD,
     extractPhoneNumber,
     SentryInitSDK,
