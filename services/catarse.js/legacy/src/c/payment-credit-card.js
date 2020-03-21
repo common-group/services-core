@@ -112,7 +112,9 @@ const paymentCreditCard = {
             vm.creditCardFields.errors([]);
 
             if (selectedCreditCard().id === -1) {
-                checkCardOwnerDocument();
+                if (!vm.isInternational()) {
+                    checkCardOwnerDocument();
+                }
                 checkExpiry();
                 checkcvv();
                 checkCreditCard();
