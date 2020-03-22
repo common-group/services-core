@@ -16,7 +16,9 @@ export const InputSelectSearchClearable = {
 
         const onSearch = attrs.onSearch;
         const onSelect = attrs.onSelect;
-        const selectedItem = attrs.selectedItem() || 'Brasil';
+        const selectedToString = attrs.selectedToString;
+        const hasItemSelected = attrs.selectedItem() !== null;
+        const selectedItem = hasItemSelected ? selectedToString(attrs.selectedItem()) : attrs.noneSelected;
         const foundItems = attrs.foundItems() || [];
         const itemToString = attrs.itemToString;
         const openSearchControl = state.openSearchControl;
@@ -27,19 +29,26 @@ export const InputSelectSearchClearable = {
             if (openSearchControl()) {
                 onSearch('');
             }
-        }
+        };
 
         return m('div.explore-filter-wrapper', [
-            m('div.explore-span-filter', { 
-                'style': { 'border-color': 'rgba(0, 0, 0, 0.11)' },
+            m('div.explore-span-filter', {
                 onclick: onToggleSearchBox
             }, [
                 m('div.explore-span-filter-name', [
                     m('div.explore-mobile-label', 'LOCAL'),
                     m('div.inline-block', selectedItem)
                 ]),
-                m('.inline-block.fa.fa-angle-down[aria-hidden="true"]', {
-                    onclick: onToggleSearchBox
+                m(`.inline-block.fa${ hasItemSelected ? '.fa-times' : '.fa-angle-down'}[aria-hidden="true"]`, {
+                    onclick: (/** @type {Event} */ event) => {
+                        if (hasItemSelected) {
+                            onSelect(null);
+                            event.stopPropagation();
+                            openSearchControl(false);
+                        } else {
+                            onToggleSearchBox(event);
+                        }
+                    }
                 })
             ]),
             m('div.explore-filter-select.big.w-clearfix', { 'style': { 'display': openSearchControlDisplayStyle } }, [
@@ -59,7 +68,11 @@ export const InputSelectSearchClearable = {
                             foundItems.map(item => {
                                 return m('div.table-row.fontsize-smallest.fontcolor-secondary',
                                     m('a.fontsize-smallest.link-hidden-light[href="#"]', {
-                                        onclick: () => onSelect(item)
+                                        onclick: (/** @type {Event} */ event) => {
+                                            event.preventDefault();
+                                            onSelect(item);
+                                            onToggleSearchBox(event);
+                                        }
                                     }, itemToString(item))
                                 );
                             })
