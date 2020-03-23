@@ -463,7 +463,7 @@ const _dataCache = {},
     },
     useAvatarOrDefault = avatarPath => avatarPath || '/assets/catarse_bootstrap/user.jpg',
     // Templates
-    loader = () => m('.u-text-center.u-margintop-30 u-marginbottom-30', [m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')]),
+    loader = () => m('.u-text-center.u-margintop-30.u-marginbottom-30', [m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')]),
     loaderWithSize = (width, height) => m(`img[alt="Loader"][width=${width}][height=${height || width}][src="https://s3.amazonaws.com/catarse.files/loader.gif"]`),
     newFeatureBadge = () => m('span.badge.badge-success.margin-side-5', window.I18n.t('projects.new_feature_badge')),
     fbParse = () => {
