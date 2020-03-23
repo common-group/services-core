@@ -81,7 +81,7 @@
         "jquery": "^3.3.1",
         "liquidjs": "^5.3.0-0",
         "mithril": "^1.1.6",
-        "mithril-node-render": "^2.3.2",
+        "mithril-node-render": "^3.0.0",
         "mithril-postgrest": "git://github.com:catarse/mithril-postgrest.git#4.0.0",
         "moment": "~> 2.19.3",
         "moment-timezone": "^0.5.16",
