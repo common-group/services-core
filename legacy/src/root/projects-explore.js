@@ -18,7 +18,7 @@ import projectCard from '../c/project-card';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import userVM from '../vms/user-vm';
 import { loadProjectsWithConfiguredParameters, searchCitiesGroupedByState, CityState } from '../vms/projects-explore-vm';
-import { InputSelectSearchClearable } from '../c/input-select-search-clearable';
+import { ExploreSearchFilterSelect } from '../c/explore-search-filter-select';
 import { ExploreFilterSelect } from '../c/explore-filter-select';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
@@ -211,7 +211,6 @@ const projectsExplore = {
         window.removeEventListener('pushstate', window.onpushstate);
     },
     view: function({state, attrs}) {
-        const allCategories = state.allCategories;
         const category_id = state.selectedCategory().id;
         const projectsCollection = state.projects().collection();
         const projectsCount = projectsCollection.length;
@@ -222,12 +221,6 @@ const projectsExplore = {
         const foundCitiesStateEntries = state.foundCitiesStateEntries;
         const onSearchCities = state.onSearchCities;
         const onSelectCityState = state.onSelectCityState;
-
-        const cityStateToString = (/** @type {CityState} */ cityState) => {
-            const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
-            const secondPart = `${cityState.city ? `, ${cityState.state.acronym}` : ' (Estado)'}`;
-            return `${firstPart}${secondPart}`;
-        };
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -293,14 +286,18 @@ const projectsExplore = {
                     ]),
                     m('div', [
                         m('div.explore-text-fixed', 'localizados em'),
-                        m(InputSelectSearchClearable, {
+                        m(ExploreSearchFilterSelect, {
                             onSearch: onSearchCities,
                             onSelect: onSelectCityState,
                             selectedItem: selectedCityState,
                             foundItems: foundCitiesStateEntries,
                             noneSelected: 'Brasil',
-                            selectedToString: cityStateToString,
-                            itemToString: cityStateToString,
+                            mobileLabel: 'LOCAL',
+                            itemToString: (/** @type {CityState} */ cityState) => {
+                                const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
+                                const secondPart = `${cityState.city ? `, ${cityState.state.acronym}` : ' (Estado)'}`;
+                                return `${firstPart}${secondPart}`;
+                            },
                         }),
                         (
                             state.showFilter() && 
@@ -320,10 +317,7 @@ const projectsExplore = {
                                     isSelected: (item) => {
                                         return state.currentFilter().keyName === item.value;
                                     },
-                                    onSelect: (item) => {
-                                        console.log(item);
-                                        state.changeFilter(item.value)
-                                    },
+                                    onSelect: (item) => state.changeFilter(item.value),
                                 }),
                             ]
                         )
