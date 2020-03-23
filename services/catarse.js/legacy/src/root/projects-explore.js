@@ -168,14 +168,33 @@ const projectsExplore = {
 
         const selectedCityState = h.RedrawStream(null);
         const foundCitiesStateEntries = h.RedrawStream([]);
+        const isLoadingSearchCities = h.RedrawStream(false);
         const onSearchCities = async (inputText) => {
-            foundCitiesStateEntries(await searchCitiesGroupedByState(inputText));
+            let hasLoadedBeforeDisplayLoader = false;
+            const waitMSTimeBeforeShowingLoader = 150;
+            const showLoaderIfDelaysSearchResponse = () => {
+                if (hasLoadedBeforeDisplayLoader) {
+                    isLoadingSearchCities(true);
+                }
+            };
+
+            setTimeout(showLoaderIfDelaysSearchResponse, waitMSTimeBeforeShowingLoader);
+            
+            try {
+                hasLoadedBeforeDisplayLoader = true;
+                const foundCitiesStateResponse = await searchCitiesGroupedByState(inputText);
+                foundCitiesStateEntries(foundCitiesStateResponse);
+                hasLoadedBeforeDisplayLoader = false;
+                isLoadingSearchCities(false);
+            } catch(e) {
+                isLoadingSearchCities(false);
+            }
+            
         };
 
         const onSelectCityState = (cityState) => {
             selectedCityState(cityState);
         };
-        
 
         vnode.state = {
             categories: categoriesCollection,
@@ -204,6 +223,7 @@ const projectsExplore = {
             foundCitiesStateEntries,
             onSearchCities,
             onSelectCityState,
+            isLoadingSearchCities,
         };
     },
     onremove: function() {
@@ -221,6 +241,7 @@ const projectsExplore = {
         const foundCitiesStateEntries = state.foundCitiesStateEntries;
         const onSearchCities = state.onSearchCities;
         const onSelectCityState = state.onSelectCityState;
+        const isLoadingSearchCities = state.isLoadingSearchCities;
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -293,6 +314,7 @@ const projectsExplore = {
                             foundItems: foundCitiesStateEntries,
                             noneSelected: 'Brasil',
                             mobileLabel: 'LOCAL',
+                            isLoading: isLoadingSearchCities,
                             itemToString: (/** @type {CityState} */ cityState) => {
                                 const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
                                 const secondPart = `${cityState.city ? `, ${cityState.state.acronym}` : ' (Estado)'}`;
