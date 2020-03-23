@@ -2,7 +2,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import h from '../h';
 
-export const InputSelectSearchClearable = {
+export const ExploreSearchFilterSelect = {
     oninit(vnode) {
 
         const openSearchControl = h.RedrawToggleStream(false, true);
@@ -16,11 +16,11 @@ export const InputSelectSearchClearable = {
 
         const onSearch = attrs.onSearch;
         const onSelect = attrs.onSelect;
-        const selectedToString = attrs.selectedToString;
-        const hasItemSelected = attrs.selectedItem() !== null;
-        const selectedItem = hasItemSelected ? selectedToString(attrs.selectedItem()) : attrs.noneSelected;
-        const foundItems = attrs.foundItems() || [];
         const itemToString = attrs.itemToString;
+        const mobileLabel = attrs.mobileLabel;
+        const hasItemSelected = attrs.selectedItem() !== null;
+        const selectedItem = hasItemSelected ? itemToString(attrs.selectedItem()) : attrs.noneSelected;
+        const foundItems = attrs.foundItems() || [];
         const openSearchControl = state.openSearchControl;
         const openSearchControlDisplayStyle = openSearchControl() ? 'block' : 'none';
         const onToggleSearchBox = (/** @type {Event} */ event) => {
@@ -36,7 +36,7 @@ export const InputSelectSearchClearable = {
                 onclick: onToggleSearchBox
             }, [
                 m('div.explore-span-filter-name', [
-                    m('div.explore-mobile-label', 'LOCAL'),
+                    m('div.explore-mobile-label', mobileLabel),
                     m('div.inline-block', selectedItem)
                 ]),
                 m(`.inline-block.fa${ hasItemSelected ? '.fa-times' : '.fa-angle-down'}[aria-hidden="true"]`, {
