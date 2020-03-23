@@ -320,7 +320,10 @@ const projectsExplore = {
                                     isSelected: (item) => {
                                         return state.currentFilter().keyName === item.value;
                                     },
-                                    onSelect: (item) => state.changeFilter(item.value),
+                                    onSelect: (item) => {
+                                        console.log(item);
+                                        state.changeFilter(item.value)
+                                    },
                                 }),
                             ]
                         )
