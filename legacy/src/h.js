@@ -92,8 +92,7 @@ const _dataCache = {},
     },
     reduceSearchString = (callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
     objectToSearchString = (obj) => '?' + Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&'),
-    setParamByName = (name, value) => {
-        const originalHash = window.location.hash;
+    setParamByName = (name, value) => {        
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
             const [key, value] = keyValue.split('=');
             if (key) {
@@ -109,6 +108,36 @@ const _dataCache = {},
         const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
         m.route.set(newurl);
     },
+    setMultParams = (/** @type {{[key : string] : string}} */ objectParams) => {
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+            const [key, value] = keyValue.split('=');
+            if (key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+
+        const queryString = objectToSearchString(Object.assign(keysAndValues, objectParams));
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    setAndResetMultParams = function (/** @type {{[key : string] : string}} */ setParams) {
+        const argumentsArray = Array.from(arguments);
+        const resetParams = argumentsArray.length > 1 ? argumentsArray.slice(1) : [];
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+            const [key, value] = keyValue.split('=');
+            if (!resetParams.includes(key) && key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+
+        const queryString = objectToSearchString(Object.assign(keysAndValues, setParams));
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
     removeParamByName = (name) => {
 
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
@@ -120,6 +149,23 @@ const _dataCache = {},
             return finalQueryObject;
         }, {});
 
+        const queryString = objectToSearchString(keysAndValues);
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    removeMultParams = function () {
+        const paramsNamesToRemove = Array.from(arguments);
+
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+
+            const [key, value] = keyValue.split('=');            
+            if (!paramsNamesToRemove.includes(key) && key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+        
         const queryString = objectToSearchString(keysAndValues);
 
         const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
@@ -1349,7 +1395,10 @@ export default {
     capitalize,
     paramByName,
     setParamByName,
+    setMultParams,
+    setAndResetMultParams,
     removeParamByName,
+    removeMultParams,
     i18nScope,
     RDTracker,
     selfOrEmpty,
