@@ -10,8 +10,8 @@ const { replaceDiacritics } = window;
 
 const projectFiltersVM = projectFilters();
 
-export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter, currentFilter, isSearch, searchParam) => {
-   
+export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter, currentCityStateFilter, currentFilter, isSearch, searchParam) => {
+    
     const filtersMap = projectFiltersVM.filters;
 
     const currentFiltersAndModeParamaters = _.extend(
@@ -30,7 +30,8 @@ export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter
                 state_order: 'asc',
                 state: 'desc',
                 pledged: 'desc'
-            }).parameters()
+            }).parameters(),
+            currentCityStateFilter().parameters()
         );
 
         return loadFinishedProjects(finishedProjectsParameters);
@@ -39,7 +40,8 @@ export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter
         const loadProjectsByRecommenderParameters = _.extend(
             currentFiltersAndModeParamaters,
             categoryFilter().filter.parameters(),
-            commonRecommender.filtersVM({ user_id: 'eq' }).user_id(currentUser.id).parameters()
+            commonRecommender.filtersVM({ user_id: 'eq' }).user_id(currentUser.id).parameters(),
+            currentCityStateFilter().parameters()
         );
         return recommendedProjectsAlgorithm1(loadProjectsByRecommenderParameters);
     } else if (currentFilter().keyName === 'recommended_2') {
@@ -47,7 +49,8 @@ export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter
         const loadProjectsByRecommenderParameters = _.extend(
             currentFiltersAndModeParamaters,
             categoryFilter().filter.parameters(),
-            commonRecommender.filtersVM({ user_id: 'eq' }).user_id(currentUser.id).parameters()
+            commonRecommender.filtersVM({ user_id: 'eq' }).user_id(currentUser.id).parameters(),
+            currentCityStateFilter().parameters()
         );
         return recommendedProjectsAlgorithm2(loadProjectsByRecommenderParameters);
     } else {
@@ -59,7 +62,8 @@ export const loadProjectsWithConfiguredParameters = (currentMode, categoryFilter
                 state: 'desc',
                 score: 'desc',
                 pledged: 'desc'
-            }).parameters()
+            }).parameters(),
+            currentCityStateFilter().parameters()
         );
         return loadProjects(loadProjectsParameters);
     }

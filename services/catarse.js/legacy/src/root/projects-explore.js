@@ -95,6 +95,107 @@ const projectsExplore = {
                 });
         };
 
+        // City and State
+        const selectedCityState = h.RedrawStream(null);
+        const foundCitiesStateEntries = h.RedrawStream([]);
+        const isLoadingSearchCities = h.RedrawStream(false);
+        const onSearchCities = async (inputText) => {
+            let hasLoadedBeforeDisplayLoader = false;
+            const waitMSTimeBeforeShowingLoader = 150;
+            const showLoaderIfDelaysSearchResponse = () => {
+                if (hasLoadedBeforeDisplayLoader) {
+                    isLoadingSearchCities(true);
+                }
+            };
+
+            setTimeout(showLoaderIfDelaysSearchResponse, waitMSTimeBeforeShowingLoader);
+            
+            try {
+                hasLoadedBeforeDisplayLoader = true;
+                const foundCitiesStateResponse = await searchCitiesGroupedByState(inputText);
+                foundCitiesStateEntries(foundCitiesStateResponse);
+                hasLoadedBeforeDisplayLoader = false;
+                isLoadingSearchCities(false);
+            } catch(e) {
+                isLoadingSearchCities(false);
+            }
+            
+        };
+
+        /**
+         * @param {CityState} cityState 
+         */
+        const onSelectCityState = (cityState) => {
+            selectedCityState(cityState);
+
+            if (cityState) {
+                const options = {};
+                options.state_acronym = cityState.state.acronym;
+                options.state_name = cityState.state.state_name;
+
+                if (cityState.city) {
+                    options.city_name = cityState.city.name;
+                }
+
+                h.setAndResetMultParams(options, 'city_name', 'state_acronym', 'state_name');
+            } else {
+                h.removeMultParams('city_name', 'state_acronym', 'state_name');
+            }
+        };
+        const currentCityStateFilter = prop(catarse.filtersVM({}));
+        const initSetupCityState = () => {
+
+            const options = {};
+            const city_name = h.paramByName('city_name');
+            const state_acronym = h.paramByName('state_acronym');
+            const state_name = h.paramByName('state_name');
+
+            if (city_name) {
+                options.city = {
+                    name: city_name,
+                };
+            }
+
+            if (state_acronym) {
+                options.state = {
+                    acronym: state_acronym,
+                    state_name,
+                };
+                selectedCityState(options);
+            }
+
+        };
+        initSetupCityState();
+
+        const configureCityState = () => {
+            const cityName = h.paramByName('city_name') || vnode.attrs.city_name;
+            const stateAcronym = h.paramByName('state_acronym') || vnode.attrs.state_acronym;            
+            
+            if (cityName && stateAcronym) {
+                const filter = catarse
+                    .filtersVM({ cityOrState: 'or' })
+                    .cityOrState({
+                        state_acronym: {
+                            eq: stateAcronym
+                        },
+                        city_name: {
+                            eq: cityName
+                        },
+                    });
+                currentCityStateFilter(filter);
+            } else if (stateAcronym) {
+                const filter = catarse
+                    .filtersVM({ state_acronym: 'eq' })
+                    .state_acronym(stateAcronym);
+                currentCityStateFilter(filter);
+            } else {
+                const filter = catarse
+                    .filtersVM({});
+                currentCityStateFilter(filter);
+            }
+
+        };
+
         // Filter
         const getDefaultFilter = () => {
             const queryFilter = h.paramByName('filter');
@@ -145,6 +246,7 @@ const projectsExplore = {
         const loadRoute = () => {
             configureMode();
             configureCategory();
+            configureCityState();
             configureFilter();
 
             const categoryFilter = filterFromRoute() || currentFilter;
@@ -152,7 +254,7 @@ const projectsExplore = {
             const hasSearchParamContent = _.isString(searchParam) && searchParam.length > 0;
             const noFilterIsSelected = currentMode().keyName === 'all_modes' && categoryFilter().keyName === 'all';
             isSearch(hasSearchParamContent && noFilterIsSelected);
-            projects(loadProjectsWithConfiguredParameters(currentMode, categoryFilter, currentFilter, isSearch, searchParam));
+            projects(loadProjectsWithConfiguredParameters(currentMode, categoryFilter, currentCityStateFilter, currentFilter, isSearch, searchParam));
             h.redraw();
         };
 
@@ -165,36 +267,6 @@ const projectsExplore = {
 
         window.addEventListener('popstate', loadRoute);
         window.addEventListener('pushstate', loadRoute);
-
-        const selectedCityState = h.RedrawStream(null);
-        const foundCitiesStateEntries = h.RedrawStream([]);
-        const isLoadingSearchCities = h.RedrawStream(false);
-        const onSearchCities = async (inputText) => {
-            let hasLoadedBeforeDisplayLoader = false;
-            const waitMSTimeBeforeShowingLoader = 150;
-            const showLoaderIfDelaysSearchResponse = () => {
-                if (hasLoadedBeforeDisplayLoader) {
-                    isLoadingSearchCities(true);
-                }
-            };
-
-            setTimeout(showLoaderIfDelaysSearchResponse, waitMSTimeBeforeShowingLoader);
-            
-            try {
-                hasLoadedBeforeDisplayLoader = true;
-                const foundCitiesStateResponse = await searchCitiesGroupedByState(inputText);
-                foundCitiesStateEntries(foundCitiesStateResponse);
-                hasLoadedBeforeDisplayLoader = false;
-                isLoadingSearchCities(false);
-            } catch(e) {
-                isLoadingSearchCities(false);
-            }
-            
-        };
-
-        const onSelectCityState = (cityState) => {
-            selectedCityState(cityState);
-        };
 
         vnode.state = {
             categories: categoriesCollection,
