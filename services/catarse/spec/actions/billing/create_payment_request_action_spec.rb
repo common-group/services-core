@@ -115,7 +115,7 @@ RSpec.describe Billing::CreatePaymentRequestAction, type: :action do
       )
 
       expect(payment_request).to be_persisted
-      expect(payment_request).to be_waiting_payment
+      expect(payment_request).to be_created
       expect(payment_request.user).to eq user
       expect(payment_request.billing_address).to eq billing_address
       expect(payment_request.items.map(&:payable)).to eq payables

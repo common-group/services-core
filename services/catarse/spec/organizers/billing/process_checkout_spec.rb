@@ -1,18 +1,44 @@
 require 'rails_helper'
 
 RSpec.describe Billing::ProcessCheckout, type: :organizer do
-  let(:context) { LightService::Context.make(user: user, payment_request_attributes:payment_request_attributes) }
   let(:user) { double }
   let(:payment_request_attributes) { double }
 
-  before do
-    allow(Billing::CreatePaymentRequestAction).to receive(:execute)
-      .with(context)
-      .and_return(context)
-  end
+  describe '.call' do
+    context 'when is a bank slip payment request' do
+      let(:context) do
+        LightService::Context.make(
+          user: user,
+          payment_request_attributes: payment_request_attributes,
+          payment_request: double(bank_slip?: true, credit_card?: false)
+        )
+      end
 
-  it 'calls create payment request action' do
-    result = described_class.call(user: user, payment_request_attributes: payment_request_attributes)
-    expect(result).to eq context
+      it 'calls bank slip generation actions' do
+        expect(Billing::CreatePaymentRequestAction).to receive(:execute).with(context).ordered
+        expect(Billing::GenerateBankSlipAction).to receive(:execute).with(context).ordered
+
+        described_class.call(context)
+      end
+    end
+
+    context 'when is a credit card payment request' do
+      let(:context) do
+        LightService::Context.make(
+          user: user,
+          payment_request_attributes: payment_request_attributes,
+          payment_request: double(bank_slip?: false, credit_card?: true)
+        )
+      end
+
+      it 'calls credit card processing actions' do
+        expect(Billing::CreatePaymentRequestAction).to receive(:execute).with(context).ordered
+        expect(Billing::AuthorizeTransactionAction).to receive(:execute).with(context).ordered
+        expect(Billing::AnalyzeTransactionAction).to receive(:execute).with(context).ordered
+        expect(Billing::CaptureOrRefundTransactionAction).to receive(:execute).with(context).ordered
+
+        described_class.call(context)
+      end
+    end
   end
 end

@@ -24,6 +24,7 @@ module Catarse
       rescue_from :all do |e|
         raise e if Rails.env.development?
 
+        Raven.capture_exception(e)
         error!({ error: 'Internal server error' }, 500)
       end
 
