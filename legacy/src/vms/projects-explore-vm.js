@@ -96,6 +96,7 @@ export const searchProjects = (search) => {
 
 // @TODO fix infinite requests when collection is empty
 export const loadProjects = (parameters) => {
+    models.project.pageSize(9);
     const pages = catarse.paginationVM(models.project, null, { Prefer: 'count=exact' });
 
     pages
@@ -213,4 +214,14 @@ function cityGroupToList(cityGroup) {
     });
 
     return cityList;
+}
+
+export async function countProjects(filter) {
+    models.project.pageSize(1);
+    const selectMinimalFieldsFilterVM = catarse.filtersVM({ selectFields: 'select'});
+    selectMinimalFieldsFilterVM.selectFields('project_id');
+    filter.order({score: 'desc'});
+    const pages = catarse.paginationVM(models.project, null, { Prefer: 'count=exact' });
+    const response = await pages.firstPage(_.extend(filter.parameters(), selectMinimalFieldsFilterVM.parameters()));
+    return pages.total();
 }
