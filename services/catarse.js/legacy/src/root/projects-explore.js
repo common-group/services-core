@@ -450,7 +450,7 @@ const projectsExplore = {
                 ])
             ]), 
             (
-                !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
+                (!state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total())) ?
                     m(ExploreProjectsFoundCounter, {
                         total: state.projects().total(),
                         perFilter: (selectedCityState() && selectedCityState().city) ? 
