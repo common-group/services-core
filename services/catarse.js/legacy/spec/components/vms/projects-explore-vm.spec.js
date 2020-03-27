@@ -46,7 +46,7 @@ describe('ProjectExploreVM', () => {
 
         beforeAll(() => {
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=score.desc&city_name=eq.CITY_NAME&state_acronym=eq.STATE_ACRONYM&select=project_id`
+                `${apiPrefix}/projects?order=id.desc&city_name=eq.CITY_NAME&state_acronym=eq.STATE_ACRONYM&select=project_id`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-0/0',
@@ -55,7 +55,7 @@ describe('ProjectExploreVM', () => {
             });
 
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=score.desc&city_name=eq.CITY_NAME_2&state_acronym=eq.STATE_ACRONYM_2&select=project_id`
+                `${apiPrefix}/projects?order=id.desc&city_name=eq.CITY_NAME_2&state_acronym=eq.STATE_ACRONYM_2&select=project_id`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-1/1'
@@ -69,7 +69,7 @@ describe('ProjectExploreVM', () => {
             const postgrest = new Postgrest();
             const countProjectsFilter = postgrest.filtersVM({ city_name: 'eq', state_acronym: 'eq' });
             countProjectsFilter.city_name('CITY_NAME').state_acronym('STATE_ACRONYM');
-            const count = await countProjects(countProjectsFilter);
+            const count = await countProjects(countProjectsFilter.parameters());
             expect(count).toBe(0);
         });
 
@@ -77,7 +77,7 @@ describe('ProjectExploreVM', () => {
             const postgrest = new Postgrest();
             const countProjectsFilter = postgrest.filtersVM({ city_name: 'eq', state_acronym: 'eq' });
             countProjectsFilter.city_name('CITY_NAME_2').state_acronym('STATE_ACRONYM_2');
-            const count = await countProjects(countProjectsFilter);
+            const count = await countProjects(countProjectsFilter.parameters());
             expect(count).toBe(1);
         });
     });
