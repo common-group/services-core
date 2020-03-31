@@ -71,13 +71,17 @@ export const searchProjects = (search) => {
         collection: prop([]),
         isLoading: searchVM,
         isLastPage: () => true,
-        nextPage: () => false
+        nextPage: () => false,
+        total: h.RedrawStream(0),
     };
     
     searchVM
         .load()
         .then(p => {
-            page.collection(p);
+            try {
+                page.collection(p);
+                page.total(p.length);
+            } catch(e) { }
             m.redraw();
             return p;
         });
