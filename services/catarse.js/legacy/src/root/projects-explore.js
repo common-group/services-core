@@ -148,7 +148,7 @@ const projectsExplore = {
             const categoryFilter = filterFromRoute() || currentFilter;
             const searchParam = h.paramByName('pg_search') || vnode.attrs.pg_search;
             const hasSearchParamContent = _.isString(searchParam) && searchParam.length > 0;
-            const noFilterIsSelected = currentMode().keyName === 'all_modes' && !categoryFilter().title;
+            const noFilterIsSelected = currentMode().keyName === 'all_modes' && categoryFilter().keyName === 'projects_we_love';
             isSearch(hasSearchParamContent && noFilterIsSelected);
             projects(loadProjectsWithConfiguredParameters(currentMode, categoryFilter, currentFilter, isSearch, searchParam));
             h.redraw();
