@@ -19,6 +19,7 @@ module Billing
           state :overdue
           state :refused
           state :refunded
+          state :chargedback
 
           after_all_transitions :create_state_transition
 
@@ -61,6 +62,10 @@ module Billing
 
           event :refund do
             transitions from: :paid, to: :refunded
+          end
+
+          event :chargeback do
+            transitions from: :paid, to: :chargedback
           end
         end
 

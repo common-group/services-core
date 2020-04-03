@@ -34,7 +34,7 @@ module Billing
             id: customer.id.to_s,
             name: customer.name[0..99],
             email: customer.email[0..99],
-            dob: customer.birth_date.iso8601,
+            dob: customer.birth_date.try(:iso8601),
             phone1: customer.phone_number,
             created_at: customer.created_at.to_date.iso8601
           }

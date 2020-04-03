@@ -5,6 +5,8 @@ module Catarse
       version :v2, using: :path
       format :json
 
+      helpers Catarse::V2::Helpers::RequestHelpers
+
       rescue_from ActiveRecord::RecordInvalid do |e|
         error!({ errors: e.record.errors.messages }, 422)
       end
@@ -30,6 +32,10 @@ module Catarse
 
       namespace 'billing' do
         mount Catarse::V2::Billing::PaymentRequestsAPI
+      end
+
+      namespace 'integrations' do
+        mount Catarse::V2::Integrations::WebhooksAPI
       end
     end
   end

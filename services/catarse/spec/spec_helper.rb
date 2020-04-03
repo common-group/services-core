@@ -77,6 +77,7 @@ RSpec.configure do |config|
 
   # Stubs and configuration
   config.before(:each) do
+    Sidekiq::Worker.clear_all
     allow(Sidekiq::ScheduledSet).to receive(:new).and_return({})
     allow_any_instance_of(BankAccount).to receive(:must_be_valid_on_pagarme).and_return(true)
     allow_any_instance_of(UserObserver).to receive(:after_create)

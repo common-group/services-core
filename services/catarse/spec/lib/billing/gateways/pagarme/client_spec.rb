@@ -11,10 +11,38 @@ RSpec.describe Billing::Gateways::Pagarme::Client, type: :lib do
     end
   end
 
+  describe 'Class methods' do
+    describe '#api_key' do
+      let(:test_api_key) { Faker::Lorem.word }
+      let(:production_api_key) { Faker::Lorem.word }
+
+      before do
+        allow(CatarseSettings).to receive(:get_without_cache).with(:pagarme_test_api_key).and_return(test_api_key)
+        allow(CatarseSettings).to receive(:get_without_cache).with(:pagarme_api_key).and_return(production_api_key)
+      end
+
+      context 'when is production environment' do
+        before { allow(Rails).to receive_message_chain('env.production?').and_return(true) }
+
+        it 'returns production api key' do
+          expect(described_class.api_key).to eq production_api_key
+        end
+      end
+
+      context 'when isn`t production environment' do
+        before { allow(Rails).to receive_message_chain('env.production?').and_return(false) }
+
+        it 'returns test api key' do
+          expect(described_class.api_key).to eq test_api_key
+        end
+      end
+    end
+  end
+
   describe 'Public methods' do
     describe '#create_transction' do
       let(:transaction_params) { { key: 'value' } }
-      let(:request_response) { Faker::Json.shallow_json(2, key: 'Lorem.word', value: 'Lorem.word') }
+      let(:request_response) { Hash[*Faker::Lorem.words(4)].to_json }
 
       before do
         stub_request(:post, "#{described_class.base_uri}/transactions")
@@ -32,7 +60,7 @@ RSpec.describe Billing::Gateways::Pagarme::Client, type: :lib do
 
     describe '#capture_transaction' do
       let(:gateway_id) { Faker::Lorem.word }
-      let(:request_response) { Faker::Json.shallow_json(2, key: 'Lorem.word', value: 'Lorem.word') }
+      let(:request_response) { Hash[*Faker::Lorem.words(4)].to_json }
 
       before do
         stub_request(:post, "#{described_class.base_uri}/transactions/#{gateway_id}/capture")
@@ -46,11 +74,34 @@ RSpec.describe Billing::Gateways::Pagarme::Client, type: :lib do
         expect(response).to be_success
         expect(response.body).to eq request_response
       end
+
+      context 'when request is successfull' do
+        it 'doesn`t capture message via Raven' do
+          expect(Raven).to_not receive(:capture_message)
+
+          subject.capture_transaction(gateway_id: gateway_id)
+        end
+      end
+
+      context 'when request fails' do
+        before do
+          stub_request(:post, "#{described_class.base_uri}/transactions/#{gateway_id}/capture")
+            .with(body: { api_key: api_key })
+            .to_return(status: 500, body: request_response, headers: { 'Content-Type' => 'application/json' })
+        end
+
+        it 'captures message via Raven' do
+          expect(Raven).to receive(:capture_message)
+            .with('Transaction cannot be captured on gateway', level: :fatal, extra: JSON.parse(request_response))
+
+          subject.capture_transaction(gateway_id: gateway_id)
+        end
+      end
     end
 
     describe '#refund_transaction' do
       let(:gateway_id) { Faker::Lorem.word }
-      let(:request_response) { Faker::Json.shallow_json(2, key: 'Lorem.word', value: 'Lorem.word') }
+      let(:request_response) { Hash[*Faker::Lorem.words(4)].to_json }
 
       before do
         stub_request(:post, "#{described_class.base_uri}/transactions/#{gateway_id}/refund")
@@ -63,6 +114,29 @@ RSpec.describe Billing::Gateways::Pagarme::Client, type: :lib do
 
         expect(response).to be_success
         expect(response.body).to eq request_response
+      end
+
+      context 'when request is successfull' do
+        it 'doesn`t capture message via Raven' do
+          expect(Raven).to_not receive(:capture_message)
+
+          subject.refund_transaction(gateway_id: gateway_id)
+        end
+      end
+
+      context 'when request fails' do
+        before do
+          stub_request(:post, "#{described_class.base_uri}/transactions/#{gateway_id}/refund")
+            .with(body: { api_key: api_key })
+            .to_return(status: 500, body: request_response, headers: { 'Content-Type' => 'application/json' })
+        end
+
+        it 'captures message via Raven' do
+          expect(Raven).to receive(:capture_message)
+            .with('Transaction cannot be refunded on gateway', level: :fatal, extra: JSON.parse(request_response))
+
+          subject.refund_transaction(gateway_id: gateway_id)
+        end
       end
     end
 
@@ -117,34 +191,6 @@ RSpec.describe Billing::Gateways::Pagarme::Client, type: :lib do
           expires_on: '20/01/2020'.to_date,
           metadata: gateway_response
         )
-      end
-    end
-  end
-
-  describe 'Private methods' do
-    describe '#api_key' do
-      let(:test_api_key) { Faker::Lorem.word }
-      let(:production_api_key) { Faker::Lorem.word }
-
-      before do
-        allow(CatarseSettings).to receive(:get_without_cache).with(:pagarme_test_api_key).and_return(test_api_key)
-        allow(CatarseSettings).to receive(:get_without_cache).with(:pagarme_api_key).and_return(production_api_key)
-      end
-
-      context 'when is production environment' do
-        before { allow(Rails).to receive_message_chain('env.production?').and_return(true) }
-
-        it 'returns production api key' do
-          expect(subject.send(:api_key)).to eq production_api_key
-        end
-      end
-
-      context 'when isn`t production environment' do
-        before { allow(Rails).to receive_message_chain('env.production?').and_return(false) }
-
-        it 'returns test api key' do
-          expect(subject.send(:api_key)).to eq test_api_key
-        end
       end
     end
   end

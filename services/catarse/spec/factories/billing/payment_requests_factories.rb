@@ -4,6 +4,7 @@ FactoryGirl.define do
     association :billing_address, factory: :address
     state { Billing::PaymentRequest.aasm.states.map(&:name).sample }
     gateway_fee { 0 }
+    gateway_id { SecureRandom.uuid }
 
     trait :bank_slip do
       payment_method { :bank_slip }
