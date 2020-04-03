@@ -6,15 +6,19 @@ export const SelectSubscriptionReports = {
     oninit(vnode) {
 
         const reportsExtension = stream('csv');
-        const selectedReportTypes = new Set();
+        const selectedReportTypes = [];
 
         vnode.state = {
             getSelectedReportTypes: () => selectedReportTypes,
             selectReportType: (report_type, checked) => {
+                const indexIn = selectedReportTypes.indexOf(report_type);
+                const isInside = indexIn >= 0;
                 if (checked) {
-                    selectedReportTypes.add(report_type);
-                } else if (selectedReportTypes.has(report_type)) {
-                    selectedReportTypes.delete(report_type);
+                    if (!isInside) {
+                        selectedReportTypes.push(report_type);
+                    }
+                } else if (isInside) {
+                    selectedReportTypes.splice(indexIn, 1);
                 }
             },
             reportsExtension,
@@ -67,7 +71,7 @@ export const SelectSubscriptionReports = {
                                                     onclick: (event) => selectReportType(event.target.value, event.target.checked)
                                                 }),
                                                 m('span.w-form-label', reportTypeCheck.name)
-                                            ])
+                                            ]);
                                         })
                                     ),
                                 ])
