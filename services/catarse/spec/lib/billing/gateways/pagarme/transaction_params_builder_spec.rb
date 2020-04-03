@@ -51,7 +51,7 @@ RSpec.describe Billing::Gateways::Pagarme::TransactionParamsBuilder, type: :lib 
             installments: payment_request.installments_count,
             postback_url: 'http://postback.url',
             payment_method: 'boleto',
-            boleto_expiration_date: 2.business_days.from_now,
+            boleto_expiration_date: 2.business_days.from_now.to_date,
             customer: {
               name: payment_request.user.name,
               document: payment_request.user.cpf
@@ -79,7 +79,7 @@ RSpec.describe Billing::Gateways::Pagarme::TransactionParamsBuilder, type: :lib 
         before { allow(Rails).to receive_message_chain('env.production?').and_return(true) }
 
         it 'returns url with www subdomain' do
-          expect(subject.send(:postback_url)).to eq 'https://www.host.com/v2/webhooks/pagarme'
+          expect(subject.send(:postback_url)).to eq 'https://www.host.com/v2/integrations/webhooks/pagarme'
         end
       end
 
@@ -87,7 +87,7 @@ RSpec.describe Billing::Gateways::Pagarme::TransactionParamsBuilder, type: :lib 
         before { allow(Rails).to receive_message_chain('env.production?').and_return(false) }
 
         it 'returns url with sandbox subdomain' do
-          expect(subject.send(:postback_url)).to eq 'https://sandbox.host.com/v2/webhooks/pagarme'
+          expect(subject.send(:postback_url)).to eq 'https://sandbox.host.com/v2/integrations/webhooks/pagarme'
         end
       end
     end

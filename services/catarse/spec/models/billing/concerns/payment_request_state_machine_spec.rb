@@ -20,6 +20,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         overdue
         refused
         refunded
+        chargedback
       ]
     end
   end
@@ -32,7 +33,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_transition_to(state) }
       end
 
-      %i[approved_on_antifraud declined_on_antifraud waiting_review paid overdue refunded].each do |state|
+      %i[approved_on_antifraud declined_on_antifraud waiting_review paid overdue refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
@@ -60,7 +61,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to_not allow_event(:authorize) }
       end
 
-      %i[approve decline wait_review settle expire refund].each do |event|
+      %i[approve decline wait_review settle expire refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -73,7 +74,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       end
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review
-        refused refunded].each do |state|
+        refused refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
@@ -81,7 +82,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_event(event) }
       end
 
-      %i[authorize wait_payment approve decline wait_review refuse refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review refuse refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -93,7 +94,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_transition_to(state) }
       end
 
-      %i[created waiting_payment authorized overdue refused refunded].each do |state|
+      %i[created waiting_payment authorized overdue refused refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
@@ -101,7 +102,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_event(event) }
       end
 
-      %i[authorize wait_payment expire refuse refund].each do |event|
+      %i[authorize wait_payment expire refuse refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -114,7 +115,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       end
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review overdue
-        refused refunded].each do |state|
+        refused refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
@@ -122,7 +123,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_event(event) }
       end
 
-      %i[authorize wait_payment approve decline wait_review expire refuse refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review expire refuse refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -135,7 +136,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       end
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
-        refunded].each do |state|
+        refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
@@ -143,7 +144,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_event(event) }
       end
 
-      %i[authorize wait_payment approve decline wait_review settle expire refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review settle expire refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -156,7 +157,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       end
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review overdue
-        refunded].each do |state|
+        refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
@@ -164,7 +165,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to allow_event(event) }
       end
 
-      %i[authorize wait_payment approve decline wait_review expire refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review expire refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -172,7 +173,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
     context 'when state is paid' do
       subject { described_class.new(state: :paid) }
 
-      %i[refunded].each do |state|
+      %i[refunded chargedback].each do |state|
         it { is_expected.to allow_transition_to(state) }
       end
 
@@ -181,7 +182,7 @@ RSpec.describe Billing::PaymentRequest, type: :model do
         it { is_expected.to_not allow_transition_to(state) }
       end
 
-      %i[refund].each do |event|
+      %i[refund chargeback].each do |event|
         it { is_expected.to allow_event(event) }
       end
 
@@ -194,11 +195,11 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       subject { described_class.new(state: :overdue) }
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
-        refused refunded].each do |state|
+        refused refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
-      %i[authorize wait_payment approve decline wait_review settle expire refuse refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review settle expire refuse refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -207,11 +208,11 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       subject { described_class.new(state: :refused) }
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
-        refused refunded].each do |state|
+        refused refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
-      %i[authorize wait_payment approve decline wait_review settle expire refuse refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review settle expire refuse refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end
@@ -220,11 +221,11 @@ RSpec.describe Billing::PaymentRequest, type: :model do
       subject { described_class.new(state: :refunded) }
 
       %i[created waiting_payment authorized approved_on_antifraud declined_on_antifraud waiting_review paid overdue
-        refused refunded].each do |state|
+        refused refunded chargedback].each do |state|
         it { is_expected.to_not allow_transition_to(state) }
       end
 
-      %i[authorize wait_payment approve decline wait_review settle expire refuse refund].each do |event|
+      %i[authorize wait_payment approve decline wait_review settle expire refuse refund chargeback].each do |event|
         it { is_expected.to_not allow_event(event) }
       end
     end

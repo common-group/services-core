@@ -27,7 +27,7 @@ module Billing
     validates :installments_count, numericality: { greater_than: 0, less_than_or_equal_to: 6 }, if: :credit_card?
     validates :installments_count, numericality: { equal_to: 1 }, if: :bank_slip?
 
-    validates :state, inclusion: { in: Billing::PaymentRequest.aasm.states.map(&:name).map(&:to_s) }
+    validates :state, inclusion: { in: aasm.states.map(&:name).map(&:to_s) }
 
     validate :card_identifier_presence, if: :credit_card?
 

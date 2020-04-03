@@ -11,41 +11,7 @@ RSpec.describe Billing::Antifraud::Konduto::Client, type: :lib do
     end
   end
 
-
-  describe 'Public methods' do
-    describe '#analyze_transaction' do
-      let(:headers) { { 'Some-Header' => 'Value' } }
-      let(:transaction_params) { { key: 'value' } }
-      let(:request_response) { Faker::Json.shallow_json(2, key: 'Lorem.word', value: 'Lorem.word') }
-
-      before do
-        stub_request(:post, "#{described_class.base_uri}/orders")
-          .with(body: transaction_params.to_json)
-          .to_return(body: request_response, headers: { 'Content-Type' => 'application/json' })
-
-        allow(subject).to receive(:headers).and_return(headers)
-      end
-
-      it 'makes a post request to orders and returns parsed body' do
-        response = subject.analyze_transaction(transaction_params: transaction_params)
-        expected_response = JSON.parse(request_response)
-
-        expect(response).to eq expected_response
-      end
-    end
-  end
-
-  describe 'Private methods' do
-    describe '#headers' do
-      it 'includes authorization header' do
-        expect(subject.send(:headers)).to include('Authorization' => "Basic #{Base64.encode64(api_key)}")
-      end
-
-      it 'includes content type header' do
-        expect(subject.send(:headers)).to include('Content-Type' => 'application/json')
-      end
-    end
-
+  describe 'Class methods' do
     describe '#api_key' do
       let(:test_api_key) { Faker::Lorem.word }
       let(:production_api_key) { Faker::Lorem.word }
@@ -59,7 +25,7 @@ RSpec.describe Billing::Antifraud::Konduto::Client, type: :lib do
         before { allow(Rails).to receive_message_chain('env.production?').and_return(true) }
 
         it 'returns production api key' do
-          expect(subject.send(:api_key)).to eq production_api_key
+          expect(described_class.api_key).to eq production_api_key
         end
       end
 
@@ -67,8 +33,42 @@ RSpec.describe Billing::Antifraud::Konduto::Client, type: :lib do
         before { allow(Rails).to receive_message_chain('env.production?').and_return(false) }
 
         it 'returns test api key' do
-          expect(subject.send(:api_key)).to eq test_api_key
+          expect(described_class.api_key).to eq test_api_key
         end
+      end
+    end
+  end
+
+  describe 'Public methods' do
+    describe '#analyze_transaction' do
+      let(:headers) { { 'Some-Header' => 'Value' } }
+      let(:transaction_params) { { key: 'value' } }
+      let(:request_response) { Hash[*Faker::Lorem.words(4)] }
+
+      before do
+        stub_request(:post, "#{described_class.base_uri}/orders")
+          .with(body: transaction_params.to_json)
+          .to_return(body: request_response, headers: { 'Content-Type' => 'application/json' })
+
+        allow(subject).to receive(:headers).and_return(headers)
+      end
+
+      it 'makes a post request to orders and returns parsed body' do
+        response = subject.analyze_transaction(transaction_params: transaction_params)
+
+        expect(response).to eq request_response
+      end
+    end
+  end
+
+  describe 'Private methods' do
+    describe '#headers' do
+      it 'includes authorization header' do
+        expect(subject.send(:headers)).to include('Authorization' => "Basic #{Base64.encode64(api_key)}")
+      end
+
+      it 'includes content type header' do
+        expect(subject.send(:headers)).to include('Content-Type' => 'application/json')
       end
     end
   end

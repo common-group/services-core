@@ -47,7 +47,7 @@ module Billing
         def build_params_for_bank_slip_transaction
           shared_params.merge(
             payment_method: 'boleto',
-            boleto_expiration_date: 2.business_days.from_now,
+            boleto_expiration_date: 2.business_days.from_now.to_date,
             customer: {
               name: payment_request.user.name,
               document: payment_request.user.cpf
@@ -58,7 +58,7 @@ module Billing
         def postback_url
           subdomain = Rails.env.production? ? 'www' : 'sandbox'
           host = CatarseSettings.get_without_cache(:host)
-          path = 'v2/webhooks/pagarme'
+          path = 'v2/integrations/webhooks/pagarme'
           "https://#{subdomain}.#{host}/#{path}"
         end
       end
