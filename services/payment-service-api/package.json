@@ -16,7 +16,6 @@
     "atob": ">= 2.1.0",
     "ava": "^1.0.0-rc.2",
     "axios": "^0.19.0",
-    "country-list": "^2.2.0",
     "deep-extend": ">= 0.5.1",
     "express": "^4.16.2",
     "get-stdin": "^5.0.1",

@@ -334,7 +334,7 @@ test('test shouldSendTransactionToAntifraud - when transaction status is refused
 test('test sendToTransactionAntifraud', async t => {
     process.env.ANTIFRAUD_API_KEY = 'api_key_test';
     const expectedOrder = { mock: 'here' }
-    const fakeData = { payment: { created_at: '', data: { customer: { phone: {}, address: { country_en: '' } } } }, user: { created_at: '' }, payment_card: { gateway_data: { expiration_date: '' } }, project: { data: {} }, subscription: { created_at: '' }, project_owner: { data: {}, created_at: '' } }
+    const fakeData = { payment: { created_at: '', data: { customer: { phone: {}, address: { country_code: '' } } } }, user: { created_at: '' }, payment_card: { gateway_data: { expiration_date: '' } }, project: { data: {} }, subscription: { created_at: '' }, project_owner: { data: {}, created_at: '' } }
 
     nock('https://api.konduto.com').post('/v1/orders').reply(201, expectedOrder)
 

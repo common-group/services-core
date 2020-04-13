@@ -29,8 +29,7 @@ const sampleContext = () => {
             city: 'Fortaleza',
             state: 'CE',
             zipcode: '60000420',
-            country_en: 'Australia'
-
+            country_code: 'AU'
           }
         }
       }
