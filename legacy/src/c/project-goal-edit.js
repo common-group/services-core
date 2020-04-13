@@ -49,6 +49,11 @@ const projectGoalEdit = {
         }
         vm.fillFields(vnode.attrs.project);
 
+        const project = vnode.attrs.project;
+        const projectSolidarityIntegration = (project.integrations || []).find(integration => integration.name === 'SOLIDARITY_SERVICE_FEE');
+        const isSolidarityProject = !_.isEmpty(projectSolidarityIntegration);
+        console.log('isSolidarityProject', isSolidarityProject);
+
         vnode.state = {
             onSubmit,
             showSuccess,
@@ -57,11 +62,15 @@ const projectGoalEdit = {
             showTaxesDiff,
             vm,
             applyGoalMask,
-            loading
+            loading,
+            isSolidarityProject,
         };
     },
     view: function({state, attrs}) {
         const vm = state.vm;
+        const isSolidarityProject = state.isSolidarityProject;
+        const project = vnode.attrs.project;
+        
         return m('#goal-tab', [
             (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
@@ -103,8 +112,24 @@ const projectGoalEdit = {
                                     ]),
                                     (state.showModeDiff() ? m('.mode-diff.u-margintop-30', [
                                         m('.flex-row', [
-                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('aon_diff_html', I18nScope()))),
-                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('flex_diff_html', I18nScope())))
+                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', [
+                                                m.trust(window.I18n.t('aon_diff_html', I18nScope())),
+                                                (
+                                                    isSolidarityProject ? 
+                                                        null
+                                                    :
+                                                        m.trust(window.I18n.t('aon_diff_fees_html', I18nScope({ percentage: 13 })))
+                                                )
+                                            ]),
+                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', [
+                                                m.trust(window.I18n.t('flex_diff_html', I18nScope())),
+                                                (
+                                                    isSolidarityProject ? 
+                                                        null
+                                                    :
+                                                        m.trust(window.I18n.t('flex_diff_fees_html', I18nScope({ percentage: 13 })))
+                                                )
+                                            ])
                                         ]),
                                         m('.u-text-center.u-margintop-30', [
                                             m('.divider.u-marginbottom-20'),
