@@ -1,7 +1,5 @@
 'use strict';
 
-const { getCode } = require('country-list')
-
 /*
  * buildAntifraudData(context, options)
  * build a object with antifraud data
@@ -49,12 +47,13 @@ const buildAntifraudData = (context, options) => {
  */
 const buildCustomer = (payment, user) => {
   const customer = payment.data.customer
+  const taxId = customer.document_number ? { tax_id: customer.document_number } : {}
 
   return {
     customer: {
+      ...taxId,
       id: payment.user_id,
       name: customer.name,
-      tax_id: payment.data.credit_card_owner_document || customer.document_number,
       phone1: buildPhoneNumber(customer.phone),
       email: customer.email,
       created_at: user.created_at.substr(0, 10),
@@ -89,6 +88,7 @@ const buildPayment = (creditCard, isApproved) => {
  */
 const buildBilling = (customer, transaction) => {
   const address = customer.address
+  const countryData = address.country_code ? { country: address.country_code } : {}
 
   return {
     billing: {
@@ -98,7 +98,7 @@ const buildBilling = (customer, transaction) => {
       city: address.city,
       state: address.state,
       zip: address.zipcode,
-      country: getCode(address.country_en)
+      ...countryData
     }
   }
 }
@@ -108,7 +108,7 @@ const buildBilling = (customer, transaction) => {
  * build a object with shopping cart data
  * @param { Object } payment - Payment data
  * @param { Object } project - Project data
- * @param { Object } subscription - Subscription data
+ * @param { Object } subscription - Subscription datac
  * @return { Object } - object with shopping cart data
  */
 const buildShoppingCart = (payment, project, subscription) => {

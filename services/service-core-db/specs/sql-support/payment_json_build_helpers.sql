@@ -55,9 +55,9 @@ begin
                  when $1::jsonb ?| '{customer_address_country}' then
                      $1->>'customer_address_country'::text
                  else 'Brasil' end) ,
-                 'country_en', (case
-                 when $1::jsonb ?| '{customer_address_country_en}' then
-                     $1->>'customer_address_country_en'::text
+                 'country_code', (case
+                 when $1::jsonb ?| '{customer_address_country_code}' then
+                     $1->>'customer_address_country_code'::text
                  else 'Brazil' end) ,
                  'complementary', (case
                  when $1::jsonb ?| '{customer_address_complementary}' then
