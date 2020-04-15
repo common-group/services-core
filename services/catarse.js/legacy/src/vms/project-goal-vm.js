@@ -8,13 +8,18 @@ const e = generateErrorInstance();
 const fields = {
     mode: prop(''),
     online_days: prop(''),
-    goal: prop('')
+    goal: prop(''),
+    is_solidarity: prop(false),
+    service_fee: prop(0.13),
 };
 
 const fillFields = (data) => {
     fields.mode(data.mode || 'aon');
     fields.online_days(data.online_days || '');
     fields.goal(data.goal);
+    const projectSolidarityIntegration = (data.integrations || []).find(integration => integration.name === 'SOLIDARITY_SERVICE_FEE');
+    fields.is_solidarity(!!projectSolidarityIntegration);
+    fields.service_fee(data.service_fee);
 };
 
 const updateProject = (project_id) => {
