@@ -20,7 +20,7 @@ const publish = {
             loader = catarse.loaderWithToken;
 
         const project_id = vnode.attrs.project_id;
-        //filtersVM.project_id(vnode.attrs.root.getAttribute('data-id'));
+        
         filtersVM.project_id(project_id);
         
 
@@ -36,26 +36,37 @@ const publish = {
 
         const acceptedIndex = prop(0);
 
+        const getTerms = (project) => {
+            switch (project.mode) {
+                case 'flex':
+                    return publishVM.flexTerms(project);
+                case 'aon':
+                    return publishVM.aonTerms(project, expiresAt());
+                case 'sub':
+                    return publishVM.subTerms(project);
+                default:
+                    return publishVM.subTerms(project);
+            }
+        };
+
         vnode.state = {
             l,
             accountL,
             acceptedIndex,
-            expiresAt,
             filtersVM,
             projectAccount,
-            projectDetails
+            projectDetails,
+            getTerms,
         };
     },
     view: function({state, attrs}) {
-        const project = _.first(state.projectDetails()),
-            acceptedIndex = state.acceptedIndex,
-            account = _.first(state.projectAccount());
+        const project = _.first(state.projectDetails());
+        const acceptedIndex = state.acceptedIndex;
+        const account = _.first(state.projectAccount());
 
         if (project) {
-            const terms = project.mode === 'flex' ? publishVM.flexTerms(project) :
-                project.mode === 'aon' ? publishVM.aonTerms(project, state.expiresAt()) :
-                                        publishVM.subTerms(project);
-    
+            const terms = state.getTerms(project);
+
             return [
                 project && account ? 
                     [
