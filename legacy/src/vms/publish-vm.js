@@ -1,6 +1,8 @@
 import m from 'mithril';
 import h from '../h';
 
+const formattedServiceFee = (project) => (project.service_fee * 100).toFixed(2).replace(/(\.|,)?0+$/g, '');
+
 const aonTerms = (project, expiresAt) => [
     m('.w-col.w-col-11', [
         m('div', [
@@ -53,7 +55,7 @@ const aonTerms = (project, expiresAt) => [
             }, 'Taxas')
         ]),
         m('div', [
-            'Cobramos 13% sobre o ',
+            `Cobramos ${formattedServiceFee(project)}% sobre o `,
             m('span.fontweight-semibold', 'valor total arrecadado'),
             ' pelo seu projeto caso ele atinja ou supere a meta dentro do prazo da campanha. Se o projeto não atingir a meta, nenhuma taxa será cobrada.',
             m('span.fontweight-semibold')
@@ -168,7 +170,7 @@ const flexTerms = project => [
             m('span.fontweight-semibold', 'Taxas')
         ]),
         m('div', [
-            'Ao final da campanha, cobraremos 13% sobre o ',
+            `Ao final da campanha, cobraremos ${formattedServiceFee(project)}% sobre o `,
             m('span.fontweight-semibold', 'valor total arrecadado.')
         ])
     ]),
@@ -186,7 +188,11 @@ const flexTerms = project => [
             ' ',
             m('span.fontweight-semibold', 'Prazo para repasse')
         ]),
-        m('div', m.trust('Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em 10 dias úteis. O valor depositado já estará considerando o desconto de 13% da taxa.'))
+        m('div', 
+            m.trust(
+                `Quando o prazo do seu projeto chegar ao fim, você deverá inscrever e confirmar seus dados bancários. Você poderá alterar o Banco, Conta e a Agência <strong>somente se a nova conta cadastrada for de sua titularidade</strong>. Após a confirmação, o Catarse depositará na sua conta corrente em 10 dias úteis. O valor depositado já estará considerando o desconto de ${formattedServiceFee(project)}% da taxa.`
+            )
+        )
     ]),
     m('.w-col.w-col-11', [
         m('div', [
@@ -282,7 +288,7 @@ const subTerms = project => [
             )
         ]),
         m('div', [
-            'Cobramos 13% sobre todos os valores arrecadados em sua campanha de assinatura. ',
+            `Cobramos ${formattedServiceFee(project)}% sobre todos os valores arrecadados em sua campanha de assinatura. `,
             m('span.fontweight-semibold')
         ])
     ]),
