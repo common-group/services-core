@@ -25,6 +25,8 @@ const fields = {
     city_name: prop(''),
     show_cans_and_cants: h.toggleProp(false, true),
     force_show_cans_and_cants: h.toggleProp(false, true),
+    solidarity: h.RedrawStream(null),
+    is_solidarity: h.RedrawStream(false),
 };
 
 const fillFields = (data) => {
@@ -42,9 +44,12 @@ const fillFields = (data) => {
     if (data.address.city) {
         fields.city_name(`${data.address.city} - ${data.address.state}`);
     }
+    const projectSolidarityIntegration = (data.integrations || []).find(integration => integration.name === 'SOLIDARITY_SERVICE_FEE');
+    fields.solidarity(!!projectSolidarityIntegration ? projectSolidarityIntegration : null);
+    fields.is_solidarity(!!projectSolidarityIntegration);
 };
 
-const updateProject = (project_id) => {
+const updateProject = async (project_id) => {
     const projectData = {
         tracker_snippet_html: fields.tracker_snippet_html(),
         user_id: fields.user_id(),
@@ -55,8 +60,28 @@ const updateProject = (project_id) => {
         content_rating: fields.content_rating(),
         permalink: fields.permalink(),
         category_id: fields.category_id(),
-        city_id: fields.city_id 
+        city_id: fields.city_id,
     };
+    
+    if (fields.solidarity() && !fields.is_solidarity()) {
+        projectData.integrations_attributes = [
+            {
+                id: fields.solidarity().id,
+                name: 'SOLIDARITY_SERVICE_FEE',
+                _destroy: true
+            }
+        ];
+    
+    } else if (!fields.solidarity() && fields.is_solidarity()) {
+        projectData.integrations_attributes = [
+            { 
+                name: 'SOLIDARITY_SERVICE_FEE',
+                data: {
+                    name: 'COVID-19'
+                }
+            }
+        ];
+    }
 
     return projectVM.updateProject(project_id, projectData);
 };

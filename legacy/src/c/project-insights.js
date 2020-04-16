@@ -21,6 +21,7 @@ import projectSuccessfullNextSteps from '../c/project-successful-next-steps';
 import {
     catarseMoments
 } from '../api';
+import { SolidarityProjectInsightsWelcomeDraft } from './solidarity-project-insights-welcome-draft';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.insights');
 
@@ -119,6 +120,16 @@ const projectInsights = {
             .then(buildPerRefTable)
             .then(requestRedraw);
 
+        function isSolidarityProject() {
+            const project = vnode.attrs.project;
+            if (project) {
+                const solidarityIntegration = (project.integrations || []).find(integration => integration.name === 'SOLIDARITY_SERVICE_FEE');
+                return !!solidarityIntegration;
+            } else {
+                return false;
+            }
+        }
+
         vnode.state = {
             lContributionsPerRef,
             lContributionsPerLocation,
@@ -130,11 +141,13 @@ const projectInsights = {
             contributionsPerLocationTable,
             contributionsPerRefTable,
             visitorsPerDay,
-            visitorsTotal
+            visitorsTotal,
+            isSolidarityProject
         };
     },
     view: function({state, attrs}) {
         const project = attrs.project,
+            isSolidarityProject = state.isSolidarityProject,
             buildTooltip = el => m(tooltip, {
                 el,
                 text: [
@@ -164,19 +177,29 @@ const projectInsights = {
                         m('.w-row.u-marginbottom-40', [
                             m('.w-col.w-col-8.w-col-push-2', [
                                 m('.fontweight-semibold.fontsize-larger.lineheight-looser.u-marginbottom-10.u-text-center.dashboard-header', window.I18n.t('campaign_title', I18nScope())),
-                                (project.state === 'online' && !project.has_cancelation_request ? m(projectInviteCard, { project }) : ''),
-                                (project.state === 'draft' && !project.has_cancelation_request ? m(adminProjectDetailsCard, { resource: project }) : ''),
-                                m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`,
-                                    project.has_cancelation_request ? 
-                                        m.trust(window.I18n.t('has_cancelation_request_explanation', I18nScope())) : [
-                                            project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? 
-                                                m('span', [
-                                                    m.trust(window.I18n.t('finish_explanation', I18nScope())),
-                                                    m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/213783503-tudo-sobre-Prazo-da-campanha"][target="_blank"]', window.I18n.t('know_more', I18nScope()))
-                                                ]) : 
-                                                m.trust(
-                                                    window.I18n.t(`campaign.${project.mode}.${project.state}`, 
-                                                    I18nScope({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))
+
+                                (
+                                    (project.state === 'draft' && !project.has_cancelation_request && isSolidarityProject()) ?
+                                        [
+                                            m(SolidarityProjectInsightsWelcomeDraft),
+                                        ] 
+                                    :
+                                        [
+                                            (project.state === 'online' && !project.has_cancelation_request ? m(projectInviteCard, { project }) : ''),
+                                            (project.state === 'draft' && !project.has_cancelation_request ? m(adminProjectDetailsCard, { resource: project }) : ''),
+                                            m(`p.${project.state}-project-text.u-text-center.fontsize-small.lineheight-loose`,
+                                                project.has_cancelation_request ? 
+                                                    m.trust(window.I18n.t('has_cancelation_request_explanation', I18nScope())) : [
+                                                        project.mode === 'flex' && _.isNull(project.expires_at) && project.state !== 'draft' ? 
+                                                            m('span', [
+                                                                m.trust(window.I18n.t('finish_explanation', I18nScope())),
+                                                                m('a.alt-link[href="http://suporte.catarse.me/hc/pt-br/articles/213783503-tudo-sobre-Prazo-da-campanha"][target="_blank"]', window.I18n.t('know_more', I18nScope()))
+                                                            ]) : 
+                                                            m.trust(
+                                                                window.I18n.t(`campaign.${project.mode}.${project.state}`, 
+                                                                I18nScope({ username: project.user.name, expires_at: h.momentify(project.zone_expires_at), sent_to_analysis_at: h.momentify(project.sent_to_analysis_at) })))
+                                                    ]
+                                            )
                                         ]
                                 )
                             ])

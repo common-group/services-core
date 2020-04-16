@@ -7,6 +7,7 @@ import projectGoalVM from '../vms/project-goal-vm';
 import popNotification from './pop-notification';
 import bigCard from './big-card';
 import projectEditSaveBtn from './project-edit-save-btn';
+import { SolidarityProjectDescription } from './solidarity-project-description';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_goal');
 
@@ -57,11 +58,13 @@ const projectGoalEdit = {
             showTaxesDiff,
             vm,
             applyGoalMask,
-            loading
+            loading,
         };
     },
     view: function({state, attrs}) {
         const vm = state.vm;
+        const serviceFee = (vm.fields.service_fee() * 100).toFixed(2).replace(/(\.|,)?0+$/g, '');
+        
         return m('#goal-tab', [
             (state.showSuccess() ? m(popNotification, {
                 message: window.I18n.t('shared.successful_update'),
@@ -103,8 +106,14 @@ const projectGoalEdit = {
                                     ]),
                                     (state.showModeDiff() ? m('.mode-diff.u-margintop-30', [
                                         m('.flex-row', [
-                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('aon_diff_html', I18nScope()))),
-                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', m.trust(window.I18n.t('flex_diff_html', I18nScope())))
+                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', [
+                                                m.trust(window.I18n.t('aon_diff_html', I18nScope())),
+                                                m.trust(window.I18n.t('aon_diff_fees_html', I18nScope({ percentage: serviceFee })))
+                                            ]),
+                                            m('.w-hidden-small.w-hidden-tiny.fontsize-smaller.flex-column', [
+                                                m.trust(window.I18n.t('flex_diff_html', I18nScope())),
+                                                m.trust(window.I18n.t('flex_diff_fees_html', I18nScope({ percentage: serviceFee })))
+                                            ])
                                         ]),
                                         m('.u-text-center.u-margintop-30', [
                                             m('.divider.u-marginbottom-20'),
@@ -142,25 +151,33 @@ const projectGoalEdit = {
                                         ]),
                                         m('.w-col.w-col-2')
                                     ]),
-                                    m('.u-text-center.fontsize-smaller.fontweight-semibold', [
-                                        m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
-                                            onclick: state.showTaxesDiff.toggle
-                                        }, [
-                                            window.I18n.t('goal_taxes_link', I18nScope()),
-                                            m('span.fa.fa-chevron-down')
-                                        ])
-                                    ]),
-                                    (state.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
-                                        m('.u-marginbottom-30', [
-                                            m('.fontsize-small.fontweight-semibold', window.I18n.t('goal_taxes_label', I18nScope())),
-                                            m('.fontsize-smaller', window.I18n.t(`goal_${vm.fields.mode()}_taxes_hint`, I18nScope()))
-                                        ]),
-                                        m('.u-text-center.u-margintop-30', [
-                                            m('.divider.u-marginbottom-20'),
-                                            m('.fontsize-base', window.I18n.t('want_more', I18nScope())),
-                                            m.trust(window.I18n.t('goal_taxes_watch_video_html', I18nScope()))
-                                        ])
-                                    ]) : ''),
+
+                                    (
+                                        vm.fields.is_solidarity() ?
+                                            m(SolidarityProjectDescription, { percentage: serviceFee })
+                                        :
+                                            (
+                                                m('.u-text-center.fontsize-smaller.fontweight-semibold', [
+                                                    m('a.fee-toggle.link-hidden-light[href="javascript:void(0)"]', {
+                                                        onclick: state.showTaxesDiff.toggle
+                                                    }, [
+                                                        window.I18n.t('goal_taxes_link', I18nScope()),
+                                                        m('span.fa.fa-chevron-down')
+                                                    ])
+                                                ]),
+                                                (state.showTaxesDiff() ? m('.fee-explanation.u-margintop-30', [
+                                                    m('.u-marginbottom-30', [
+                                                        m('.fontsize-small.fontweight-semibold', window.I18n.t('goal_taxes_label', I18nScope())),
+                                                        m('.fontsize-smaller', window.I18n.t(`goal_${vm.fields.mode()}_taxes_hint`, I18nScope()))
+                                                    ]),
+                                                    m('.u-text-center.u-margintop-30', [
+                                                        m('.divider.u-marginbottom-20'),
+                                                        m('.fontsize-base', window.I18n.t('want_more', I18nScope())),
+                                                        m.trust(window.I18n.t('goal_taxes_watch_video_html', I18nScope()))
+                                                    ])
+                                                ]) : '')
+                                            )
+                                    ),
                                 ]
                             }),
                             m(bigCard, {
