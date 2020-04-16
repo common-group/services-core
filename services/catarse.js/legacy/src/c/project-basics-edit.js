@@ -215,6 +215,25 @@ const projectBasicsEdit = {
                                         }),
                                     ],
                                 }),
+
+                                m(inputCard, {
+                                    label: window.I18n.t('solidarity_covid', I18nScope()),
+                                    children: [
+                                        m('select.required.w-input.text-field.w-select.positive.medium', {
+                                            value: `${vm.fields.is_solidarity()}`,
+                                            class: vm.e.hasError('integrations') ? 'error' : '',
+                                            onchange: m.withAttr('value', (value) => vm.fields.is_solidarity(JSON.parse(value))),
+                                        }, [
+                                            m(`option[value=true]`, {
+                                                selected: vm.fields.is_solidarity(),
+                                            }, 'Sim'),
+                                            m(`option[value=false]`, {
+                                                selected: !vm.fields.is_solidarity(),
+                                            }, 'Não')
+                                        ]),
+                                        vm.e.inlineError('integrations'),
+                                    ]
+                                })
                             ]),
                         ])
                         : '',
