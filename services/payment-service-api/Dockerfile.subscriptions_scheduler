@@ -1,3 +1,5 @@
 FROM comum/payment-service:latest
 WORKDIR /usr/app
+COPY . .
+RUN npm install
 CMD ./scripts/subscription_scheduler.js
