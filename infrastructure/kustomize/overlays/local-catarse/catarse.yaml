@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: catarse
+  name: catarse
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+      io.kompose.service: catarse
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      labels:
+        io.kompose.service: catarse
+    spec:
+      hostAliases:
+        - ip: "172.28.128.9"
+          hostnames:
+          - "local.bundlesites.com"
+      containers:
+        - args:
+            - bundle
+            - exec
+            - rails
+            - server
+            - -b
+            - 0.0.0.0
+          env:
+            - name: DATABASE_URL
+              value: postgres://catarse:example@catarse-db:5432/catarse_db
+            - name: REDIS_URL
+              value: redis://catarse-redis:6379
+            - name: RAILS_ENV
+              valueFrom:
+                configMapKeyRef:
+                  key: RAILS_ENV
+                  name: catarse-env
+            - name: SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: SECRET_KEY
+                  name: catarse-env
+            - name: BUNDLE_SITE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: BUNDLE_SITE_URL
+                  name: catarse-env     
+            - name: BUNDLE_AUTHORIZE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: BUNDLE_AUTHORIZE_URL
+                  name: catarse-env 
+            - name: OAUTH_DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  key: OAUTH_DEBUG
+                  name: catarse-env 
+          image: catarse-deploy/catarse
+          name: catarse
+          ports:
+            - containerPort: 3000
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: catarse
+  name: catarse
+spec:
+  ports:
+  - name: "3000"
+    port: 3000
+    targetPort: 3000
+  selector:
+    io.kompose.service: catarse
+status:
+  loadBalancer: {}
+  

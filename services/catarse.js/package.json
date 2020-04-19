@@ -26,8 +26,16 @@
         "karma-spec-reporter": "0.0.20",
         "karma-webpack": "^3.0.0",
         "mithril-query": "^2.5.0",
+        "npm-watch": "^0.6.0",
         "puppeteer": "^1.5.0",
         "uglifyjs-webpack-plugin": "^1.2.6"
+    },
+    "watch": {
+        "publish:dev": {
+            "pattern": [
+                "dist"
+            ]
+        }
     },
     "scripts": {
         "test": "./node_modules/karma/bin/karma start",
@@ -35,7 +43,8 @@
         "start-dev": "NODE_OPTIONS=\"--max-old-space-size=512\" webpack -d --watch",
         "build": "./node_modules/.bin/webpack",
         "build:prod": "NODE_ENV=production ./node_modules/.bin/webpack --mode production",
-        "build:dev": "./node_modules/.bin/webpack-dev-server"
+        "build:dev": "./node_modules/.bin/webpack-dev-server",
+        "publish:dev": "node publish.dev"
     },
     "dependencies": {
         "@sentry/browser": "^5.7.1",
@@ -47,7 +56,7 @@
         "mithril": "^1.1.6",
         "mithril-generative-trust": "https://github.com/grpse/mithril-generative-trust.git#v1.0.2",
         "mithril-node-render": "^2.3.2",
-        "mithril-postgrest": "git://github.com:catarse/mithril-postgrest.git#4.0.0",
+        "mithril-postgrest": "git://github.com/catarse/mithril-postgrest.git#4.0.0",
         "moment": "~> 2.19.3",
         "moment-timezone": "^0.5.16",
         "select": "^1.1.2",

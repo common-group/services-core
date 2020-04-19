@@ -1,0 +1,15 @@
+{
+  "name": "private-npm-registry",
+  "version": "1.0.0",
+  "description": "Private NPM registry for local development",
+  "main": "index.js",
+  "author": "John Dean <john.holmes.dean@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "verdaccio": "^4.5.1"
+  },
+  "scripts": {
+    "start": "verdaccio -c config.yaml"
+  }
+}

@@ -17,3 +17,4 @@ en:
             submit: 'Log me in'
             password: "Password"
             facebook: 'Log in with Facebook'
+            bundle: 'Log in with Bundle'

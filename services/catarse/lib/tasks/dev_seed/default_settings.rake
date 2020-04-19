@@ -37,6 +37,13 @@ namespace :dev_seed do
 
   desc 'setup demo configurations'
   task demo_settings: :environment do |t, args|
+    bundle = OauthProvider.where(name: 'bundle').first_or_initialize
+    bundle.update_attributes(
+      key: 'testclient',
+      secret: 'testpass',
+      path: 'bundle',
+      strategy: 'bundle'
+    )
     raise 'only run in development' unless Rails.env.development?
     rewrite = ENV['REWRITE_ALL'].present? && ENV['REWRITE_ALL'] == 'true'
 

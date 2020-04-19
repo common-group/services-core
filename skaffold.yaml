@@ -31,6 +31,8 @@ build:
   - image: catarse-deploy/catarse
     context: ./services/catarse/
     docker:
+      buildArgs:
+        NPM_AUTH: '{{ .NPM_AUTH }}'
       dockerfile: ./dev.Dockerfile  
   - image: catarse-deploy/recommender-service-api
     context: ./services/catarse_recommender/
@@ -49,9 +51,8 @@ build:
     docker:
       dockerfile: ./Dockerfile         
 deploy:
-  kubectl:
-    manifests:
-    - k8s/*.yaml
+  kustomize:
+    path: infrastructure/kustomize/overlays/local-run
 profiles:
 - name: migrations
   build:
@@ -59,15 +60,29 @@ profiles:
     - image: catarse-deploy/catarse
       context: ./services/catarse/
       docker:
+        buildArgs:
+          NPM_AUTH: '{{ .NPM_AUTH }}'
         dockerfile: ./dev.Dockerfile        
     - image: catarse-deploy/migrations
       context: ./services/service-core-db/
       docker:
         dockerfile: ./Dockerfile     
   deploy:
-    kubectl:
-      manifests:
-      - k8s/migrate/*
+    kustomize:
+      path: infrastructure/kustomize/overlays/local-migrations
+- name: catarse
+  build:
+    artifacts:
+      - image: catarse-deploy/catarse
+        context: ./services/catarse/
+        docker:
+          network: 'host'
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./dev.Dockerfile  
+  deploy:
+    kustomize:
+      path: infrastructure/kustomize/overlays/local-catarse
 - name: prime
   build:
     artifacts:
@@ -76,17 +91,18 @@ profiles:
         docker:
           dockerfile: ./Dockerfile.service_core-db
   deploy:
-    kubectl:
-      manifests:
-      - k8s/prime/*
+    kustomize:
+      path: infrastructure/kustomize/overlays/local-prime
 - name: setup
   build:
     artifacts:
       - image: catarse-deploy/catarse
         context: ./services/catarse/
         docker:
-          dockerfile: ./dev.Dockerfile   
+          network: 'host'
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./dev.Dockerfile 
   deploy:
-    kubectl:
-      manifests:
-      - k8s/setup/*
+    kustomize:
+      path: infrastructure/kustomize/overlays/local-setup         

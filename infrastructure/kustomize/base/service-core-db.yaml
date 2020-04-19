@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  
+  labels:
+    io.kompose.service: service-core-db
+  name: service-core-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: service-core-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      labels:
+        io.kompose.service: service-core-db
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: service_core
+            - name: POSTGRES_PASSWORD
+              value: example
+            - name: POSTGRES_USER
+              value: postgres
+          image: catarse-deploy/catarse-db
+          name: service-core-db
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: core-data
+      restartPolicy: Always
+      volumes:
+        - name: core-data
+          persistentVolumeClaim:
+            claimName: core-data
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  
+  labels:
+    io.kompose.service: service-core-db
+  name: service-core-db
+spec:
+  ports:
+  - port: 5432
+  selector:
+    io.kompose.service: service-core-db
+status:
+  loadBalancer: {}

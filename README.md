@@ -21,6 +21,11 @@ Start services:
 
 ## Skaffold notes
 
+Using Verdaccio (an open source private NPM registry) to be able to create intermediary builds of catarse.js. See services/private-npm-registry for details on setting up
+
+After generating an ~/.npmrc file, add it to the env for the build:
+`export NPM_AUTH=$(cat ~/.npmrc)`
+
 Start with running the base profile:
 `skaffold run`
 
@@ -33,8 +38,8 @@ Now seed the DB:
 Next load default/demo settings
 `skaffold run -p setup`
 
-Wait for migrations job to re-run and be succesful, or force start it
+Wait for migrations job to re-run and be succesful, or force start it. To check the status of the migration run `kubectl logs job/catarse-migrations`
 
 Restart catarse:
-`kubectl scale deploy/catarse -replicas=0`
-`kubectl scale deploy/catarse -replicas=1`
+`kubectl scale deploy/catarse --replicas=0`
+`kubectl scale deploy/catarse --replicas=1`

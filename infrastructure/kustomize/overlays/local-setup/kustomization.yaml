@@ -1,0 +1,19 @@
+bases:
+  - ../base
+resources:
+  - ../environment/local/analytics-service-api-env.yaml
+  - ../environment/local/catarse-env-configmap.yaml
+  - ../environment/local/catarse-api-env-configmap.yaml
+  - ../environment/local/catarse-moment-service-api-env-configmap.yaml
+  - ../environment/local/common-api-env-configmap.yaml
+  - ../environment/local/community-service-api-env-configmap.yaml
+  - ../environment/local/hook-service-api-env-configmap.yaml
+  - ../environment/local/notification-dispatcher-env-configmap.yaml
+  - ../environment/local/notification-service-api-env-configmap.yaml
+  - ../environment/local/payment-service-api-env-configmap.yaml
+  - ../environment/local/payment-stream-processor-env-configmap.yaml
+  - ../environment/local/platform-service-api-env-configmap.yaml
+  - ../environment/local/project-service-api-env-configmap.yaml
+  - ../environment/local/read_api-env-configmap.yaml
+  - ../environment/local/recommender-service-api-env-configmap.yaml
+  - ../environment/local/subscriptions-scheduler-env-configmap.yaml

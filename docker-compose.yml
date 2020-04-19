@@ -4,7 +4,7 @@ volumes:
     driver: local
   postgres-catarse-data:
     driver: local
-  postgres-catarse-moments-data:
+  catarse-moments-data:
     driver: local
   dispatcher-redis-data:
     driver: local
@@ -62,7 +62,7 @@ services:
       context: ./services/service-core-db/
       dockerfile: Dockerfile.moments-db
     volumes:
-      - postgres-catarse-moments-data:/var/lib/postgresql/data
+      - catarse-moments-data:/var/lib/postgresql/data
     ports:
       - '5446:5432'
     links:

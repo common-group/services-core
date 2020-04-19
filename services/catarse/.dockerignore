@@ -48,3 +48,5 @@ db/*.sqlite3
 log/*.log
 tmp/**/*
 config/database.yml
+
+node_modules
