@@ -21,9 +21,9 @@ import userSettingsVM from '../vms/user-settings-vm';
 const I18nScope = _.partial(h.i18nScope, 'users.balance');
 
 const userBalanceRequestModelContent = {
-    oninit: function(vnode) {
+    oninit: function (vnode) {
         let parsedErrors = userSettingsVM.mapRailsErrors(vnode.attrs.rails_errors);
-
+        const user = vnode.attrs.user;
         const fields = {
             agency: prop(''),
             bank_id: prop(''),
@@ -35,66 +35,86 @@ const userBalanceRequestModelContent = {
         };
 
         const bankAccounts = prop([]);
+        const banks = prop([]);
+        const userBankAccount = prop({});
+        const banksLoader = catarse.loader(models.bank.getPageOptions());
+        const bankInput = prop('');
+        const bankCode = prop('-1');
+        const balance = vnode.attrs.balance;
+        const loaderOpts = models.balanceTransfer.postOptions({ user_id: balance.user_id });
+        const requestLoader = catarse.loaderWithToken(loaderOpts);
+        const loading = prop(false);
+        const displayDone = h.toggleProp(false, true);
+        const displayConfirmation = h.toggleProp(false, true);
+        const updateUserData = (user_id) => {
+            const userData = {};
+            userData.bank_account_attributes = {
+                bank_id: bankCode(),
+                input_bank_number: bankInput(),
+                agency_digit: fields.agency_digit(),
+                agency: fields.agency(),
+                account: fields.account(),
+                account_digit: fields.account_digit(),
+                account_type: fields.bank_account_type()
+            };
 
-        const bankInput = prop(''),
-            bankCode = prop('-1'),
-            vm = catarse.filtersVM({ user_id: 'eq' }),
-            balance = vnode.attrs.balance,
-            loaderOpts = models.balanceTransfer.postOptions({
-                user_id: balance.user_id }),
-            requestLoader = catarse.loaderWithToken(loaderOpts),
-            loading = prop(false),
-            displayDone = h.toggleProp(false, true),
-            displayConfirmation = h.toggleProp(false, true),
-            updateUserData = (user_id) => {
-                const userData = {};
-                userData.bank_account_attributes = {
-                    bank_id: bankCode(),
-                    input_bank_number: bankInput(),
-                    agency_digit: fields.agency_digit(),
-                    agency: fields.agency(),
-                    account: fields.account(),
-                    account_digit: fields.account_digit(),
-                    account_type: fields.bank_account_type()
-                };
+            if ((fields.bank_account_id())) {
+                userData.bank_account_attributes.id = fields.bank_account_id().toString();
+            }
 
-                if ((fields.bank_account_id())) {
-                    userData.bank_account_attributes.id = fields.bank_account_id().toString();
+            loading(true);
+            m.redraw();
+            return m.request({
+                method: 'PUT',
+                url: `/users/${user_id}.json`,
+                data: { user: userData },
+                config: h.setCsrfToken
+            }).then((data) => {
+                if (parsedErrors) {
+                    parsedErrors.resetFieldErrors();
                 }
 
-                loading(true);
+                userVM.getUserBankAccount(user_id).then(bankAccounts).then(() => m.redraw());
+                loading(false);
+                displayConfirmation(true);
                 m.redraw();
-                return m.request({
-                    method: 'PUT',
-                    url: `/users/${user_id}.json`,
-                    data: { user: userData },
-                    config: h.setCsrfToken
-                }).then((data) => {
-                    if (parsedErrors) {
-                        parsedErrors.resetFieldErrors();
-                    }
+            }).catch((err) => {
+                if (parsedErrors) {
+                    parsedErrors.resetFieldErrors();
+                }
+                parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
+                loading(false);
+                m.redraw();
+            });
+        };
+        const requestFund = () => {
+            requestLoader.load().then(data => {
+                vnode.attrs.balanceManager.load().then(() => m.redraw());
+                displayConfirmation(false);
+                displayDone.toggle();
+                m.redraw();
+            });
+        };
 
-                    userVM.getUserBankAccount(user_id).then(bankAccounts).then(() => m.redraw());
-                    loading(false);
-                    displayConfirmation(true);
-                    m.redraw();
-                }).catch((err) => {
-                    if (parsedErrors) {
-                        parsedErrors.resetFieldErrors();
-                    }
-                    parsedErrors = userSettingsVM.mapRailsErrors(err.errors_json);
-                    loading(false);
-                    m.redraw();
-                });
-            },
-            requestFund = () => {
-                requestLoader.load().then(data => {
-                    vnode.attrs.balanceManager.load().then(() => m.redraw());
-                    displayConfirmation(false);
-                    displayDone.toggle();
-                    m.redraw();
-                });
-            };
+        userVM.getUserBankAccount(user.id).then((data) => {
+            if (!_.isEmpty(_.first(data))) {
+                userBankAccount(_.first(data));
+                fields.bank_account_id(userBankAccount().bank_account_id);
+                fields.account(userBankAccount().account);
+                fields.account_digit(userBankAccount().account_digit);
+                fields.agency(userBankAccount().agency);
+                fields.agency_digit(userBankAccount().agency_digit);
+                fields.bank_id(userBankAccount().bank_id);
+                fields.bank_account_type(userBankAccount().account_type);
+                bankCode(userBankAccount().bank_id);
+            } else {
+                fields.bank_account_type('conta_corrente');
+            }
+
+            h.redraw();
+        });
+
+        banksLoader.load().then(banks);
 
         vnode.state = {
             loading,
@@ -105,17 +125,23 @@ const userBalanceRequestModelContent = {
             displayConfirmation,
             loadBankA: vnode.attrs.bankAccountManager.loader,
             updateUserData,
-            requestFund,
             parsedErrors,
             fields,
             bankInput,
-            bankCode
+            bankCode,
+            userBankAccount,
+            banks,
         };
     },
-    view: function({state, attrs}) {
-        const balance = attrs.balance,
-            fields = state.fields,
-            user = attrs.user;
+    view: function ({ state, attrs }) {
+        const balance = attrs.balance;
+        const fields = state.fields;
+        const bankCode = state.bankCode;
+        const user = attrs.user;
+        const parsedErrors = state.parsedErrors;
+        const bankInput = state.bankInput;
+        const userBankAccount = state.userBankAccount;
+        const banks = state.banks;
 
         return m('div', [
             m('.modal-dialog-header', [
@@ -127,8 +153,8 @@ const userBalanceRequestModelContent = {
                         m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
                         m.trust('&nbsp;'),
                         m('span.text-success',
-                       window.I18n.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) })
-                      )
+                            window.I18n.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) })
+                        )
                     ]),
                     m('.fontsize-base.u-marginbottom-10', [
                         m('span', { style: { 'font-weight': ' 600' } }, window.I18n.t('bank.account', I18nScope()))
@@ -167,58 +193,58 @@ const userBalanceRequestModelContent = {
                     ])
                 ])
             )) : (
-                state.displayDone() ? m('.modal-dialog-content.u-text-center', [
-                    m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
-                    m('p.fontsize-large', window.I18n.t('success_message', I18nScope()))
-                ]) : m('.modal-dialog-content', [
-                    m('.fontsize-base.u-marginbottom-20', [
-                        m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
-                        m.trust('&nbsp;'),
-                        m('span.text-success',
-                       window.I18n.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) })
-                      )
-                    ]),
-                    m(UserOwnerBox, { user: attrs.user, hideAvatar: true }),
-                    m(userBankForm, { user: attrs.user, parsedErrors: state.parsedErrors, fields: state.fields, bankCode: state.bankCode, bankInput: state.bankInput })
-                ]))),
+                    state.displayDone() ? m('.modal-dialog-content.u-text-center', [
+                        m('.fa.fa-check-circle.fa-5x.text-success.u-marginbottom-40'),
+                        m('p.fontsize-large', window.I18n.t('success_message', I18nScope()))
+                    ]) : m('.modal-dialog-content', [
+                        m('.fontsize-base.u-marginbottom-20', [
+                            m('span.fontweight-semibold', `${window.I18n.t('value_text', I18nScope())}:`),
+                            m.trust('&nbsp;'),
+                            m('span.text-success',
+                                window.I18n.t('shared.currency', { amount: h.formatNumber(balance.amount, 2, 3) })
+                            )
+                        ]),
+                        m(UserOwnerBox, { user, hideAvatar: true }),
+                        m(userBankForm, { parsedErrors, fields, bankCode, bankInput, userBankAccount, banks })
+                    ]))),
             (state.displayConfirmation() ? m('.modal-dialog-nav-bottom.u-margintop-40', { style: 'position: relative' }, [
                 m('.w-row', [
                     m('.w-col.w-col-1'),
                     m('.w-col.w-col-5',
                         (state.requestLoader() || state.loading() ?
-                         h.loader()
-                         : [
-                             m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]',
-                               { onclick: () => state.requestFund() },
-                               window.I18n.t('shared.confirm_text')),
-                         ])
+                            h.loader()
+                            : [
+                                m('a.btn.btn-medium.btn-request-fund[href="javascript:void(0);"]',
+                                    { onclick: () => state.requestFund() },
+                                    window.I18n.t('shared.confirm_text')),
+                            ])
                     ),
                     m('.w-col.w-col-5',
-                      (state.requestLoader() || state.loading() ?
-                       ''
-                       : [
-                           m('a.btn.btn-medium.btn-terciary.w-button', {
-                               onclick: state.displayConfirmation.toggle
-                           }, window.I18n.t('shared.back_text'))
-                       ])
-                     ),
+                        (state.requestLoader() || state.loading() ?
+                            ''
+                            : [
+                                m('a.btn.btn-medium.btn-terciary.w-button', {
+                                    onclick: state.displayConfirmation.toggle
+                                }, window.I18n.t('shared.back_text'))
+                            ])
+                    ),
                     m('.w-col.w-col-1')
                 ])
             ]) : ''),
             (!state.displayConfirmation() && !state.displayDone() ?
-             m('.modal-dialog-nav-bottom', { style: 'position: relative;' }, [
-                 m('.w-row', [
-                     m('.w-col.w-col-3'),
-                     m('.w-col.w-col-6', [
-                         (state.requestLoader() || state.loading() ?
-                          h.loader()
-                          : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]',
-                              { onclick: () => state.updateUserData(attrs.user.id) },
-                              window.I18n.t('request_fund', I18nScope())))
-                     ]),
-                     m('.w-col.w-col-3')
-                 ])
-             ]) : '')
+                m('.modal-dialog-nav-bottom', { style: 'position: relative;' }, [
+                    m('.w-row', [
+                        m('.w-col.w-col-3'),
+                        m('.w-col.w-col-6', [
+                            (state.requestLoader() || state.loading() ?
+                                h.loader()
+                                : m('a.btn.btn-large.btn-request-fund[href="javascript:void(0);"]',
+                                    { onclick: () => state.updateUserData(attrs.user.id) },
+                                    window.I18n.t('request_fund', I18nScope())))
+                        ]),
+                        m('.w-col.w-col-3')
+                    ])
+                ]) : '')
         ]);
     }
 };
