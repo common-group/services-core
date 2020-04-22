@@ -111,6 +111,7 @@ test('test createGatewayTransaction', async t => {
         project: {
             id: '12345',
             mode: 'aon',
+            permalink: 'fooproject',
             data: {
                 name: 'foo project',
                 expires_at: '2016-09-09 12:30:11'
@@ -153,6 +154,13 @@ test('test createGatewayTransaction', async t => {
         payment_card: {
             gateway_data: {
                 id: '312'
+            }
+        },
+        user: {
+            external_id: '2355',
+            email: 'josedasilva@email.com',
+            data: {
+                name: 'José da Silva'
             }
         }
     };

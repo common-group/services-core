@@ -10,7 +10,7 @@ const buildTransactionData = (context) => {
   const payment = context.payment
   const isCreditCard = payment.data.payment_method === 'credit_card'
   const paymentData = isCreditCard ? cardTransactionData(context) : bankSlipTransactionData(context)
-  const transactionMetadata = buildTransactionMetadata(payment)
+  const transactionMetadata = buildTransactionMetadata(context)
   return {
     postback_url: process.env.POSTBACK_URL,
     async: false,
@@ -70,14 +70,19 @@ const bankSlipTransactionData = (context) => {
  * @param { Object } context - generated context from dal execution
  * @return { Object } - object with metadata transaction attributes
  */
-const buildTransactionMetadata = (payment) => {
+const buildTransactionMetadata = ({ payment, user, project }) => {
   return {
     metadata: {
       payment_id: payment.id,
       project_id: payment.project_id,
+      project_name: project.name,
+      permalink: project.permalink,
       platform_id: payment.platform_id,
       subscription_id: payment.subscription_id,
-      user_id: payment.user_id,
+      common_user_id: payment.user_id,
+      user_id: user.external_id,
+      user_name: user.data.name,
+      user_email: user.email,
       cataloged_at: payment.created_at
     }
   }

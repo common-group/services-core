@@ -21,6 +21,17 @@ const sampleContext = (overwrite = {}) => {
     },
     payment_card: {
       gateway_data: {}
+    },
+    project: {
+      name: 'Projeto Novo',
+      permalink: 'projetonovo'
+    },
+    user: {
+      external_id: '2355',
+      email: 'josedasilva@email.com',
+      data: {
+        name: 'José da Silva'
+      }
     }
   }
 
@@ -72,9 +83,14 @@ test('test buildTransactionData - common data', async t => {
       metadata: {
         payment_id: context.payment.id,
         project_id: context.payment.project_id,
+        project_name: context.project.name,
+        permalink: context.project.permalink,
         platform_id: context.payment.platform_id,
         subscription_id: context.payment.subscription_id,
-        user_id: context.payment.user_id,
+        common_user_id: context.payment.user_id,
+        user_id: context.user.external_id,
+        user_name: context.user.data.name,
+        user_email: context.user.email,
         cataloged_at: context.payment.created_at
       }
     }
