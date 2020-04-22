@@ -51,13 +51,23 @@ const updateUser = user => m.request({
 
 const setNewCreditCard = (creditCardFields) => {
     const creditCard = new window.PagarMe.creditCard();
-    creditCard.cardHolderName = creditCardFields.name();
+    creditCard.cardHolderName = titleCase(creditCardFields.name());
     creditCard.cardExpirationMonth = creditCardFields.expMonth();
     creditCard.cardExpirationYear = creditCardFields.expYear();
     creditCard.cardNumber = creditCardFields.number();
     creditCard.cardCVV = creditCardFields.cvv();
     return creditCard;
 };
+
+const titleCase = (str) => {
+    return str.toLowerCase().split(' ').map(function(word) {
+        if (['de', 'da', 'do', 'das', 'dos'].includes(word)) {
+            return word.toLowerCase()
+        } else {
+            return word.replace(word[0], word[0].toUpperCase());
+        }
+    }).join(' ');
+}
 
 const userPayload = (customer, address) => ({
     id: h.getUser().id,
