@@ -27,7 +27,7 @@ const buildAntifraudData = (context, options) => {
     total_amount: payment.data.amount / 100,
     currency: 'BRL',
     installments: 1,
-    ip: payment.data.current_ip,
+    ip: payment.data.current_ip && payment.data.current_ip.split(', ').slice(-1)[0],
     purchased_at: stringDateToISO8601(payment.created_at),
     analyze: options.shouldAnalyze,
     ...customerData,
