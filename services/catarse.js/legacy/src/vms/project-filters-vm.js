@@ -95,9 +95,10 @@ const projectFiltersVM = () => {
                 keyName: 'all'
             },
             covid_19: {
-                title: 'COVID-19',
+                title: 'Projetos COVID-19',
                 filter: covid19,
-                nicename: 'COVID-19',
+                mode: 'covid_19',
+                nicename: 'Projetos COVID-19',
                 isContextual: false,
                 keyName: 'covid_19',
             },
