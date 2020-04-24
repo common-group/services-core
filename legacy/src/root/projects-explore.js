@@ -94,7 +94,14 @@ const projectsExplore = {
         };
 
         // Filter
-        const getDefaultFilter = () => h.paramByName('filter') || vnode.attrs.filter || 'projects_we_love';
+        const getDefaultFilter = () => {
+            const queryFilter = h.paramByName('filter');
+            if (queryFilter) {
+                return queryFilter || vnode.attrs.filter || 'projects_we_love';
+            } else {
+                return 'projects_we_love';
+            }
+        };
         const defaultFilter = getDefaultFilter();
         const currentFilter = h.RedrawStream(filtersMap[defaultFilter]);
         const filterToggle = h.RedrawStream(false);
@@ -154,8 +161,8 @@ const projectsExplore = {
         
         h.scrollTop();
 
-        window.addEventListener('popstate', (event) => loadRoute());
-        window.addEventListener('pushstate', (event) => loadRoute());
+        window.addEventListener('popstate', loadRoute);
+        window.addEventListener('pushstate', loadRoute);
 
         vnode.state = {
             categories: categoriesCollection,
@@ -183,8 +190,8 @@ const projectsExplore = {
         };
     },
     onremove: function() {
-        window.removeEventListener('popstate');
-        window.removeEventListener('pushstate');
+        window.removeEventListener('popstate', window.onpopstate);
+        window.removeEventListener('pushstate', window.onpushstate);
     },
     view: function({state, attrs}) {
         const allCategories = state.allCategories;
@@ -194,8 +201,6 @@ const projectsExplore = {
         const filterKeyName = state.currentFilter().keyName;
         const isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
         const hasSpecialFooter = state.hasSpecialFooter(category_id);
-
-        console.log('state.currentMode()', state.currentMode());
 
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
             m('a.explore-filter-link[href=\'javascript:void(0);\']', {
@@ -263,7 +268,7 @@ const projectsExplore = {
                                         },
                                         class: state.currentMode().keyName === 'covid_19' ? 'selected' : ''
                                     },
-                                    'COVID-19'
+                                    'Projetos COVID-19'
                                     ),
                                     m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                                         onclick: () => state.modeToggle(false)
