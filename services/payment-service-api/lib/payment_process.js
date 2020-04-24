@@ -12,6 +12,7 @@ const { genAFMetadata } = require('./antifraud_context_gen');
 const { generateDalContext } = require('./dal');
 const { buildTransactionData } = require('./transaction_data_builder');
 const { buildAntifraudData } = require('./konduto_data_builder')
+let transactionID
 
 /*
  * gatewayClient
@@ -88,6 +89,7 @@ const fetchTransactionPayables = async (transactionId) => {
 const authorizeAnalyzeAndCapturePayment = async (paymentContext, dalContext) => {
     const client = await gatewayClient();
     let transaction = await createTransaction(paymentContext)
+    transactionID = transaction.id
 
     if (transaction.payment_method === 'boleto') {
         return transaction
@@ -221,6 +223,16 @@ const processPayment = async (dbclient, paymentId) => {
         };
     } catch(err) {
         await dbclient.query('ROLLBACK');
+
+        if (transactionID) {
+            try {
+                let client = await gatewayClient();
+                await client.withVersion('2019-09-01').transactions.refund({ id: transactionID });
+            } catch(err) {
+                console.log('error when refunding transaction ', transactionID)
+                console.log('error:', err)
+            }
+        }
 
         if(err.response && err.response.errors) {
             console.log('error data', err.response.data);
