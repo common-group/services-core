@@ -21,12 +21,10 @@ const projectsDisplay = {
             currentCase = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_CURRENT),
             subHomeWith6 = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_6SUBHOM),
             subHomeWith3 = prop(window.__GO_EXPE_NAME == EXPERIMENT_CASE_3SUBHOM),
-            sample6 = _.partial(_.sample, _, 6),
             sample3 = _.partial(_.sample, _, 3),
             loader = catarse.loaderWithToken,
             project = models.project,
-            collectionsMap = ['score', 'contributed_by_friends'],
-            subHomeWith6CollectionsFilters = ['projects_we_love_not_sub', 'sub', 'contributed_by_friends'],
+            subHomeWith6CollectionsFilters = ['covid_19', 'projects_we_love_not_sub', 'sub', 'contributed_by_friends'],
             windowEventNOTDispatched = true;
 
         project.pageSize(20);
@@ -53,31 +51,29 @@ const projectsDisplay = {
                 )
                 .then(() => m.redraw());
 
+            const query = {};
+
+            if (f.mode) {
+                query.mode = f.mode;
+            } else {
+                query.filter = f.keyName;
+            }
+
             return {
                 title: f.nicename,
                 hash: name === 'score' ? 'all' : f.keyName,
                 mode: f.mode,
                 collection,
+                query,
                 loader: cLoader,
                 showFriends: name === 'contributed_by_friends',
                 badges: !_.isUndefined(f.header_badges) ? f.header_badges : [],
             };
         };
 
-        //const collections = _.map(collectionsMap, collectionsMapper.bind(collectionsMapper, sample6));
-        //const aonAndFlex_Sub_6 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample6));
         const aonAndFlex_Sub_3 = _.map(subHomeWith6CollectionsFilters, collectionsMapper.bind(collectionsMapper, sample3));
 
-        window.addEventListener('optimize_load', event => {
-            currentCase(window.__GO_EXPE_NAME == EXPERIMENT_CASE_CURRENT);
-            subHomeWith6(window.__GO_EXPE_NAME == EXPERIMENT_CASE_6SUBHOM);
-            subHomeWith3(window.__GO_EXPE_NAME == EXPERIMENT_CASE_3SUBHOM);
-            console.log('Experiment Name:', window.__GO_EXPE_NAME);
-        });
-
         vnode.state = {
-            //collections,
-            //aonAndFlex_Sub_6,
             aonAndFlex_Sub_3,
             currentCase,
             subHomeWith6,

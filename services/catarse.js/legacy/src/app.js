@@ -69,7 +69,7 @@ m.trust = (text) => h.trust(text);
     }
 
     const app = document.getElementById('application'),
-        body = document.body
+        body = document.body;
 
     const urlWithLocale = function (url) {
         return `/${window.I18n.locale}${url}`;
