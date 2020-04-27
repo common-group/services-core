@@ -39,22 +39,20 @@ const projectsHome = {
         const banners = vm.banners;
 
         return m('#projects-home-component', {
-                oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
-            },
-            [
-                m(slider, {
-                    slides: banners,
-                    slideComponent: HomeBannerSlide,
-                    effect: 'fade',
-                    slideClass: 'hero-slide start',
-                    wrapperClass: 'hero-full hero-full-slide',
-                    sliderTime: 10000
-                }),
-                m(projectsDisplay),
-                (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect, { largeBg: true }) : ''),
-                m(blogBanner)
-            ]
-        );
+            oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope())) 
+        }, [
+            m(slider, {
+                slides: banners,
+                slideComponent: HomeBannerSlide,
+                effect: 'fade',
+                slideClass: 'hero-slide start',
+                wrapperClass: 'hero-full hero-full-slide',
+                sliderTime: 10000
+            }),
+            m(projectsDisplay),
+            (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect, { largeBg: true }) : ''),
+            m(blogBanner)
+        ]);
     }
 };
 

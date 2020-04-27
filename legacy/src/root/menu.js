@@ -38,8 +38,8 @@ const menu = {
         window.optimizeObserver.addListener((variantName) => {            
             if (variantName === 'Explore Light Box') {
                 exploreButtonBehavoir((/** @type {Event} */ event) => {
-                        event.preventDefault();
-                    displayLightBox(true)
+                    event.preventDefault();
+                    displayLightBox(true);
                 });
             }
         });
