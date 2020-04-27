@@ -8,18 +8,13 @@
  */
 import m from 'mithril';
 import prop from 'mithril/stream';
-import {
-    catarse,
-    commonRecommender
-} from '../api';
+import { catarse } from '../api';
 import _ from 'underscore';
 import h from '../h';
 import models from '../models';
 import projectFilters from '../vms/project-filters-vm';
-import categoryButton from '../c/category-button';
 import search from '../c/search';
 import projectCard from '../c/project-card';
-import tooltip from '../c/tooltip';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import userVM from '../vms/user-vm';
 import { loadProjectsWithConfiguredParameters } from '../vms/projects-explore-vm';
@@ -36,11 +31,9 @@ const projectsExplore = {
         const currentUser = h.getUser() || {};
 
         const resetContextFilter = () => {
-            const contextFilters = userVM.isLoggedIn ? 
-                ['finished', 'projects_we_love', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent']
-            :   
-                ['finished', 'projects_we_love', 'all', 'expiring', 'recent'];
-
+            const loggedInContextFilters = ['finished', 'projects_we_love', 'all', 'saved_projects', 'contributed_by_friends', 'expiring', 'recent'];
+            const notLoggedInContextFilters = ['finished', 'projects_we_love', 'all', 'expiring', 'recent'];
+            const contextFilters = userVM.isLoggedIn ? loggedInContextFilters : notLoggedInContextFilters;
             projectFiltersVM.setContextFilters(contextFilters);
         };
         
@@ -97,11 +90,18 @@ const projectsExplore = {
                 .then(c => {
                     categoriesCollection(c);
                     configureCategory();
-                })
+                });
         };
 
         // Filter
-        const getDefaultFilter = () => h.paramByName('filter') || vnode.attrs.filter || 'projects_we_love';
+        const getDefaultFilter = () => {
+            const queryFilter = h.paramByName('filter');
+            if (queryFilter) {
+                return queryFilter || vnode.attrs.filter || 'projects_we_love';
+            } else {
+                return 'projects_we_love';
+            }
+        };
         const defaultFilter = getDefaultFilter();
         const currentFilter = h.RedrawStream(filtersMap[defaultFilter]);
         const filterToggle = h.RedrawStream(false);
@@ -161,8 +161,8 @@ const projectsExplore = {
         
         h.scrollTop();
 
-        window.addEventListener('popstate', (event) => loadRoute());
-        window.addEventListener('pushstate', (event) => loadRoute());
+        window.addEventListener('popstate', loadRoute);
+        window.addEventListener('pushstate', loadRoute);
 
         vnode.state = {
             categories: categoriesCollection,
@@ -190,8 +190,8 @@ const projectsExplore = {
         };
     },
     onremove: function() {
-        window.removeEventListener('popstate');
-        window.removeEventListener('pushstate');
+        window.removeEventListener('popstate', window.onpopstate);
+        window.removeEventListener('pushstate', window.onpushstate);
     },
     view: function({state, attrs}) {
         const allCategories = state.allCategories;
@@ -203,23 +203,21 @@ const projectsExplore = {
         const hasSpecialFooter = state.hasSpecialFooter(category_id);
 
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
-            m(`a.explore-filter-link[href=\'javascript:void(0);\']`, {
-                    onclick: () => {
-                        state.categoryToggle(false);
-                        state.changeCategory(category.id);
-                    },
-                    class: state.selectedCategory().id === category.id ? 'selected' : ''
+            m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                onclick: () => {
+                    state.categoryToggle(false);
+                    state.changeCategory(category.id);
                 },
-                category.name
-            )
+                class: state.selectedCategory().id === category.id ? 'selected' : ''
+            }, category.name)
         );
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
         }, [
             m('.hero-search.explore', [
-                m(".u-marginbottom-10.w-container",
-                  m(search)
+                m('.u-marginbottom-10.w-container',
+                    m(search)
                 ),
                 m('.u-text-center.w-container', [
                     m('.explore-text-fixed',
@@ -240,29 +238,37 @@ const projectsExplore = {
                         (
                             state.modeToggle() && 
                                 m('.explore-filter-select', [
-                                    m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                            onclick: () => {
-                                                state.changeMode('all_modes');
-                                            },
-                                            class: state.currentMode() === null ? 'selected' : ''
+                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                                        onclick: () => {
+                                            state.changeMode('all_modes');
                                         },
-                                        'Todos os projetos'
+                                        class: (state.currentMode() === null || state.currentMode().keyName === 'all_modes') ? 'selected' : ''
+                                    },
+                                    'Todos os projetos'
                                     ),
-                                    m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                            onclick: () => {
-                                                state.changeMode('not_sub');
-                                            },
-                                            class: state.currentMode() === 'not_sub' ? 'selected' : ''
+                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                                        onclick: () => {
+                                            state.changeMode('not_sub');
                                         },
-                                        'Projetos pontuais'
+                                        class: state.currentMode().keyName === 'not_sub' ? 'selected' : ''
+                                    },
+                                    'Projetos pontuais'
                                     ),
-                                    m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                            onclick: () => {
-                                                state.changeMode('sub');
-                                            },
-                                            class: state.currentMode() === 'sub' ? 'selected' : ''
+                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                                        onclick: () => {
+                                            state.changeMode('sub');
                                         },
-                                        'Assinaturas'
+                                        class: state.currentMode().keyName === 'sub' ? 'selected' : ''
+                                    },
+                                    'Assinaturas'
+                                    ),
+                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                                        onclick: () => {
+                                            state.changeMode('covid_19');
+                                        },
+                                        class: state.currentMode().keyName === 'covid_19' ? 'selected' : ''
+                                    },
+                                    'Projetos COVID-19'
                                     ),
                                     m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                                         onclick: () => state.modeToggle(false)
@@ -290,14 +296,14 @@ const projectsExplore = {
                             m('.explore-filter-select.big',
                                 m('.explore-filer-select-row', [
                                     m('.explore-filter-select-col', [
-                                        m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                                onclick: () => {
-                                                    state.categoryToggle(false);
-                                                    state.changeCategory(allCategories.id);
-                                                },
-                                                class: state.selectedCategory().id === null ? 'selected' : ''
+                                        m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                                            onclick: () => {
+                                                state.categoryToggle(false);
+                                                state.changeCategory(allCategories.id);
                                             },
-                                            'Todas as categorias'
+                                            class: state.selectedCategory().id === null ? 'selected' : ''
+                                        },
+                                        'Todas as categorias'
                                         ),
                                         categoryColumn(state.categories(), 0, Math.floor(_.size(state.categories()) / 2))
                                     ]),
@@ -332,15 +338,15 @@ const projectsExplore = {
                                 (
                                     state.filterToggle() &&
                                     m('.explore-filter-select', [
-                                        _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                                onclick: (/** @type {Event} */ event) => {
-                                                    event.preventDefault();
-                                                    state.changeFilter(pageFilter.keyName);
-                                                    state.filterToggle(false);
-                                                },
-                                                class: state.currentFilter() === pageFilter ? 'selected' : ''
+                                        _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m('a.explore-filter-link[href=\'javascript:void(0);\']', {
+                                            onclick: (/** @type {Event} */ event) => {
+                                                event.preventDefault();
+                                                state.changeFilter(pageFilter.keyName);
+                                                state.filterToggle(false);
                                             },
-                                            pageFilter.nicename
+                                            class: state.currentFilter() === pageFilter ? 'selected' : ''
+                                        },
+                                        pageFilter.nicename
                                         )),
                                         m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                                             onclick: () => state.filterToggle(false)
@@ -352,18 +358,18 @@ const projectsExplore = {
                     )
                 ])
             ]), !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
-            m('div',
-                m('.w-container',
-                    m('.w-row', [
-                        m('.w-col.w-col-9.w-col-tiny-9.w-col-small-9',
-                            m('.fontsize-large',
-                                `${state.projects().total()} projetos encontrados`
-                            )
-                        ),
-                        m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
-                    ])
-                )
-            ) : '',
+                m('div',
+                    m('.w-container',
+                        m('.w-row', [
+                            m('.w-col.w-col-9.w-col-tiny-9.w-col-small-9',
+                                m('.fontsize-large',
+                                    `${state.projects().total()} projetos encontrados`
+                                )
+                            ),
+                            m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
+                        ])
+                    )
+                ) : '',
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
                 (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
                 ''),
@@ -403,9 +409,9 @@ const projectsExplore = {
                                     }
                                 }
                             } else if (filterKeyName === 'saved_projects') {
-                                ref = 'ctrse_explore_saved_project'
+                                ref = 'ctrse_explore_saved_project';
                             } else if (filterKeyName === 'projects_we_love') {
-                                ref = 'ctrse_explore_projects_we_love'
+                                ref = 'ctrse_explore_projects_we_love';
                             }
 
                             return (_.indexOf(widowProjects, idx) > -1 && !state.projects().isLastPage()) ? '' : m(projectCard, {
@@ -449,12 +455,12 @@ const projectsExplore = {
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4', [
                             hasSpecialFooter ?
-                            m('a.w-button.btn.btn-large', {
-                                href: `${state.externalLinkCategories[category_id].link}?ref=ctrse_explore`
-                            }, state.externalLinkCategories[category_id].cta) :
-                            m('a.w-button.btn.btn-large', {
-                                href: '/start?ref=ctrse_explore'
-                            }, 'Aprenda como')
+                                m('a.w-button.btn.btn-large', {
+                                    href: `${state.externalLinkCategories[category_id].link}?ref=ctrse_explore`
+                                }, state.externalLinkCategories[category_id].cta) :
+                                m('a.w-button.btn.btn-large', {
+                                    href: '/start?ref=ctrse_explore'
+                                }, 'Aprenda como')
                         ])
                     ])
                 ])

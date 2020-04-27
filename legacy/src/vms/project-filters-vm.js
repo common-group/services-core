@@ -1,10 +1,13 @@
-import m from 'mithril';
 import _ from 'underscore';
 import moment from 'moment';
 import { catarse } from '../api';
 
 const projectFiltersVM = () => {
     const filtersVM = catarse.filtersVM,
+        covid19 = filtersVM({
+            integrations: 'like',
+        }).integrations('COVID-19'),
+
         all = filtersVM({
             state: 'eq'
         }).state('online'),
@@ -38,10 +41,6 @@ const projectFiltersVM = () => {
         }).score('1').open_for_contributions('true'),
 
         online = filtersVM({
-            open_for_contributions: 'eq'
-        }).open_for_contributions('true'),
-
-        recommended = filtersVM({
             open_for_contributions: 'eq'
         }).open_for_contributions('true'),
 
@@ -95,20 +94,14 @@ const projectFiltersVM = () => {
                 isContextual: false,
                 keyName: 'all'
             },
-            //recommended_1: {
-            //    title: 'Recomendados para você',
-            //    filter: recommended,
-            //    nicename: 'Recomendados para você',
-            //    isContextual: false,
-            //    keyName: 'recommended_1'
-            //},
-            //recommended_2: {
-            //    title: 'Recomendados para você',
-            //    filter: recommended,
-            //    nicename: 'Recomendados para você',
-            //    isContextual: false,
-            //    keyName: 'recommended_2'
-            //},
+            covid_19: {
+                title: 'Projetos COVID-19',
+                filter: covid19,
+                mode: 'covid_19',
+                nicename: 'Projetos COVID-19',
+                isContextual: false,
+                keyName: 'covid_19',
+            },
             saved_projects: {
                 title: 'Projetos Salvos',
                 filter: saved_projects,
