@@ -101,6 +101,10 @@ const projectFiltersVM = () => {
                 nicename: 'Projetos COVID-19',
                 isContextual: false,
                 keyName: 'covid_19',
+                query: {
+                    mode: 'covid_19',
+                    filter: 'all'
+                }
             },
             saved_projects: {
                 title: 'Projetos Salvos',

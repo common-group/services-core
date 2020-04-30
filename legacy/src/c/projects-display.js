@@ -51,12 +51,14 @@ const projectsDisplay = {
                 )
                 .then(() => m.redraw());
 
-            const query = {};
-
-            if (f.mode) {
-                query.mode = f.mode;
-            } else {
-                query.filter = f.keyName;
+            const query = f.query || {};
+            
+            if (!f.query) {
+                if (f.mode) {
+                    query.mode = f.mode;
+                } else {
+                    query.filter = f.keyName;
+                }
             }
 
             return {
