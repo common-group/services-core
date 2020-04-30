@@ -1,0 +1,23 @@
+bases:
+  - ../../base
+resources:
+  - analytics-service-api-env-configmap.yaml
+  - catarse-env-configmap.yaml
+  - catarse-api-env-configmap.yaml
+  - catarse-data-persistentvolumeclaim.yaml
+  - catarse-moment-service-api-env-configmap.yaml
+  - catarse-moment-data-persistentvolumeclaim.yaml
+  - common-api-env-configmap.yaml
+  - community-service-api-env-configmap.yaml
+  - dispatcher-redis-data-persistentvolumeclaim.yaml
+  - notification-dispatcher-env-configmap.yaml
+  - notification-service-api-env-configmap.yaml
+  - payment-service-api-env-configmap.yaml
+  - payment-stream-processor-env-configmap.yaml
+  - platform-service-api-env-configmap.yaml
+  - postgres-data-persistentvolumeclaim.yaml
+  - project-service-api-env-configmap.yaml
+  - read_api-env-configmap.yaml
+  - recommender-service-api-env-configmap.yaml
+  - subscriptions-scheduler-env-configmap.yaml
+  - catarse-secrets-dec.yaml

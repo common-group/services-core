@@ -28,9 +28,9 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: notification-dispatcher-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: DEFAULT_FROM
               valueFrom:
                 configMapKeyRef:
@@ -38,9 +38,9 @@ spec:
                   name: notification-dispatcher-env
             - name: DISPATCHER_DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DISPATCHER_DATABASE_URL
-                  name: notification-dispatcher-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: DISPATCHER_DB_CHANNEL
               valueFrom:
                 configMapKeyRef:
@@ -68,14 +68,14 @@ spec:
                   name: notification-dispatcher-env
             - name: SENDGRID_API_KEY
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: SENDGRID_API_KEY
-                  name: notification-dispatcher-env
+                  name: catarse-secrets
             - name: SENTRY_DSN
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: SENTRY_DSN
-                  name: notification-dispatcher-env
+                  name: catarse-secrets
           image: catarse-deploy/notification-dispatcher
           name: notification-dispatcher
           resources: {}

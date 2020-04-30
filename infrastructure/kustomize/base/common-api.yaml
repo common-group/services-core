@@ -35,19 +35,19 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: common-api-compose-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: GATEWAY_API_KEY
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: GATEWAY_API_KEY
-                  name: common-api-compose-env
+                  name: catarse-secrets
             - name: JWT_SECRET
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: JWT_SECRET
-                  name: common-api-compose-env
+                  name: catarse-secrets
             - name: PORT
               valueFrom:
                 configMapKeyRef:

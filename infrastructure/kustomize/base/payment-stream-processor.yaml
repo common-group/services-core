@@ -28,9 +28,9 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: payment-stream-processor-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: DISPATCHER_CHANNEL
               valueFrom:
                 configMapKeyRef:
@@ -38,9 +38,9 @@ spec:
                   name: payment-stream-processor-env
             - name: DISPATCHER_DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DISPATCHER_DATABASE_URL
-                  name: payment-stream-processor-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: DISPATCHER_EXEC
               valueFrom:
                 configMapKeyRef:
@@ -63,9 +63,9 @@ spec:
                   name: payment-stream-processor-env
             - name: GATEWAY_API_KEY
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: GATEWAY_API_KEY
-                  name: payment-stream-processor-env
+                  name: catarse-secrets
             - name: POSTBACK_URL
               valueFrom:
                 configMapKeyRef:
@@ -73,9 +73,9 @@ spec:
                   name: payment-stream-processor-env
             - name: SENTRY_DSN
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: SENTRY_DSN
-                  name: payment-stream-processor-env
+                  name: catarse-secrets
           image: catarse-deploy/payments
           name: payment-stream-processor
           resources: {}

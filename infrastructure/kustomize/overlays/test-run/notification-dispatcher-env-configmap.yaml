@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  # FIXME: Update to bundle of holding email
+  DEFAULT_FROM: default@fromemail.cm
+  DISPATCHER_DB_CHANNEL: dispatch_notifications_channel
+  DISPATCHER_EXEC: ./scripts/send_mail.js
+  DISPATCHER_MODE: both
+  DISPATCHER_REDIS_URL: redis://dispatcher_redis:6379
+  DISPATCHER_WORKERS: "2"
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: notification-dispatcher-env
+  name: notification-dispatcher-env

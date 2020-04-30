@@ -19,9 +19,9 @@ spec:
         - env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: analytics-service-api-compose-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: PGRST_DB_ANON_ROLE
               valueFrom:
                 configMapKeyRef:
@@ -39,14 +39,9 @@ spec:
                   name: analytics-service-api-compose-env
             - name: PGRST_DB_URI
               valueFrom:
-                configMapKeyRef:
-                  key: PGRST_DB_URI
-                  name: analytics-service-api-compose-env
-            - name: PGRST_JWT_SECRET
-              valueFrom:
-                configMapKeyRef:
-                  key: PGRST_JWT_SECRET
-                  name: analytics-service-api-compose-env
+                secretKeyRef:
+                  key: JWT_SECRET
+                  name: catarse-secrets
             - name: PGRST_SERVER_HOST
               valueFrom:
                 configMapKeyRef:
@@ -69,9 +64,9 @@ spec:
                   name: analytics-service-api-compose-env
             - name: PROCESS_PAYMENT_DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: PROCESS_PAYMENT_DATABASE_URL
-                  name: analytics-service-api-compose-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
           image: postgrest/postgrest:v0.4.4.0
           name: analytics-service-api
           ports:

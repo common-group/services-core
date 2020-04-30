@@ -1,0 +1,23 @@
+resources:
+  - analytics-service-api.yaml
+  - catarse-api.yaml
+  - catarse-db.yaml
+  - catarse-moment-service-api.yaml
+  - catarse-moments-db.yaml
+  - catarse-redis.yaml
+  - common-api.yaml
+  - common-docs.yaml
+  - common-proxy.yaml
+  - community-service-api.yaml
+  - dispatcher-redis.yaml
+  - hook-service-api.yaml
+  - notification-dispatcher.yaml
+  - notification-service-api.yaml
+  - payment-service-api.yaml
+  - payment-stream-processor.yaml
+  - platform-service-api.yaml
+  - project-service-api.yaml
+  - read-api.yaml
+  - recommender-service-api.yaml
+  - service-core-db.yaml
+  - subscriptions-scheduler.yaml

@@ -42,9 +42,9 @@ spec:
                   name: catarse-env
             - name: SECRET_KEY
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: SECRET_KEY
-                  name: catarse-env
+                  name: catarse-secrets
             - name: BUNDLE_SITE_URL
               valueFrom:
                 configMapKeyRef:

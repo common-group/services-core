@@ -33,9 +33,9 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: recommender-service-api-env
+                secretKeyRef:
+                  key: CATARSE_DB_URI
+                  name: catarse-secrets
             - name: FLASK_APP
               valueFrom:
                 configMapKeyRef:

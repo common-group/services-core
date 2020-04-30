@@ -28,9 +28,9 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: subscriptions-scheduler-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: SUBSCRIPTION_INTERVAL
               valueFrom:
                 configMapKeyRef:

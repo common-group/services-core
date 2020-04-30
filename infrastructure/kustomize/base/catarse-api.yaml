@@ -26,9 +26,9 @@ spec:
         - env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: catarse-api-compose-env
+                secretKeyRef:
+                  key: CATARSE_DB_URI
+                  name: catarse-secrets
             - name: PGRST_DB_ANON_ROLE
               valueFrom:
                 configMapKeyRef:
@@ -46,14 +46,14 @@ spec:
                   name: catarse-api-compose-env
             - name: PGRST_DB_URI
               valueFrom:
-                configMapKeyRef:
-                  key: PGRST_DB_URI
-                  name: catarse-api-compose-env
+                secretKeyRef:
+                  key: CATARSE_DB_URI
+                  name: catarse-secrets
             - name: PGRST_JWT_SECRET
               valueFrom:
-                configMapKeyRef:
-                  key: PGRST_JWT_SECRET
-                  name: catarse-api-compose-env
+                secretKeyRef:
+                  key: JWT_SECRET
+                  name: catarse-secrets
             - name: PGRST_SERVER_HOST
               valueFrom:
                 configMapKeyRef:

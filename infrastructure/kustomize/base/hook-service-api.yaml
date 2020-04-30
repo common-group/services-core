@@ -30,19 +30,19 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  key: DATABASE_URL
-                  name: hook-service-api-env
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
             - name: GATEWAY_API_KEY
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: GATEWAY_API_KEY
-                  name: hook-service-api-env
+                  name: catarse-secrets
             - name: SENTRY_DSN
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   key: SENTRY_DSN
-                  name: hook-service-api-env
+                  name: catarse-secrets
           image: catarse-deploy/hook-service-api
           name: hook-service-api
           ports:
