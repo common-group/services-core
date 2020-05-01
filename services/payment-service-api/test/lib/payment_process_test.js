@@ -231,6 +231,9 @@ test('test processPayment with subscription and valid credit card data', async t
     let apipayablesmock = nock(/pagar\.me/)
         .get(/transactions\/\d+\/payables/)
         .reply(200, payablesReply());
+    let apirefundmock = nock(/pagar\.me/)
+        .get(/transactions\/\d+\/refund/)
+        .reply(200, {});
 
     const {
         transaction,
@@ -292,6 +295,9 @@ test('test processPayment with error on gateway', async t => {
     let apipayablesmock = nock(/pagar\.me/)
         .get(/transactions\/\d+\/payables/)
         .reply(200, payablesReply());
+    let apirefundmock = nock(/pagar\.me/)
+        .get(/transactions\/\d+\/refund/)
+        .reply(200, {});
 
     const error = await t.throwsAsync( async ()=> {
         await processPayment(client, gen_payment.id);
