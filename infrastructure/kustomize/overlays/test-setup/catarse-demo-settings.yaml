@@ -9,12 +9,15 @@ spec:
         - name: demo-settings
           env:
             - name: DATABASE_URL
-              value: postgres://catarse:example@catarse-db:5432/catarse_db
+              valueFrom:
+                secretKeyRef:
+                  key: CATARSE_DB_URI
+                  name: catarse-secrets
             - name: RAILS_ENV
               value: development
             - name: REDIS_URL
               value: redis://catarse-redis:6379
-          image: catarse-deploy/catarse
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
           command:
             - bundle
             - exec

@@ -43,3 +43,80 @@ Wait for migrations job to re-run and be succesful, or force start it. To check 
 Restart catarse:
 `kubectl scale deploy/catarse --replicas=0`
 `kubectl scale deploy/catarse --replicas=1`
+
+# Provisioning
+
+You will need the following tools installed:
+ - kubectl
+ - terraform
+ - AWS CLI w/ default credentials configured for the account you want to deploy to
+
+Inside `/infrastructure/terraform` run the following commands:
+
+```
+terraform init
+terraform plan -var provision=true --out plan
+terraform apply plan
+```
+
+Configure kubectl to talk to cluster:
+
+```
+aws eks --region $(terraform output region) update-kubeconfig --name $(terraform output cluster_name)
+```
+
+Check that your `kubectl` is connected to the cluster:
+
+```
+$ kubectl cluster-info
+Kubernetes master is running at https://38B74DBEA9E95716E5E724B719EFADF7.yl4.us-east-1.eks.amazonaws.com
+CoreDNS is running at https://38B74DBEA9E95716E5E724B719EFADF7.yl4.us-east-1.eks.amazonaws.com/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+```
+
+Finish the provisioning:
+
+```
+terraform plan --out plan
+terraform apply plan
+```
+
+Enable Amazon EBS for persitent volumes:
+
+```
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.4.0/docs/example-iam-policy.json
+aws iam create-policy --policy-name Amazon_EBS_CSI_Driver \--policy-document file://example-iam-policy.json
+```
+
+Next add the metrics server (to enable system monitor dashboards):
+
+```
+wget -O v0.3.6.tar.gz https://codeload.github.com/kubernetes-sigs/metrics-server/tar.gz/v0.3.6 && tar -xzf v0.3.6.tar.gz
+kubectl apply -f metrics-server-0.3.6/deploy/1.8+/
+```
+
+Wait for the deployment to show 1/1 READY
+
+```
+kubectl get deployment metrics-server -n kube-system
+```
+
+Install the default Kubernetes dashboard:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/hashicorp/learn-terraform-provision-eks-cluster/master/kubernetes-dashboard-admin.rbac.yaml
+```
+
+To login, you'll need a token. Generate one:
+
+```
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep service-controller-token | awk '{print $1}')
+```
+
+To log into the dashboard, you need to create a local proxy:
+
+```
+kubectl proxy
+```
+
+While the proxt is running, visist http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ and enter the token retrieved earlier.

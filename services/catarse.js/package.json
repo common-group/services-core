@@ -1,5 +1,5 @@
 {
-    "name": "catarse.js",
+    "name": "@mooneleaf/catarse.js",
     "version": "1.0.37",
     "author": "Diogo Biazus",
     "contributors": [
@@ -8,6 +8,11 @@
             "email": "vchavesster@gmail.com"
         }
     ],
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@github.com/mooneleaf/services-core.git",
+        "directory": "services/catarse.js"
+    },
     "description": "Catarse JS components",
     "devDependencies": {
         "babel-core": "^6.26.3",

@@ -1,3 +1,5 @@
+
+
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
   cluster_name = local.cluster_name
@@ -8,6 +10,7 @@ module "eks" {
     "kubernetes.io/cluster/${local.cluster_name}", "shared"
   ), local.common_tags)}"
 
+  manage_aws_auth = !var.provision
   vpc_id = module.vpc.vpc_id
 
   worker_groups = [
@@ -15,6 +18,7 @@ module "eks" {
       name                          = "worker-group-1"
       instance_type                 = "t2.small"
       asg_desired_capacity          = 3
+      
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
     },
   ]

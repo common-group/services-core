@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  DATABASE_URL: postgres://postgres:example@service-core-db:5432/service_core
-kind: ConfigMap
-metadata:
-  labels:
-    io.kompose.service: migrations-env
-  name: migrations-env

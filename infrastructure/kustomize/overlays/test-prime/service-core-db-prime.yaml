@@ -7,10 +7,22 @@ spec:
     spec:
       containers:
         - name: sample-seed
-          image: catarse-deploy/core-db
-          command: [ 'sh', '-c', 'PGPASSWORD=example psql -d service_core -h service-core-db -U postgres < /sample.seed.sql']
+          env: 
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          command: [ 'sh', '-c', 'psql -d service_core -h service-core-db -U postgres < /sample.seed.sql']
         - name: fdw-grants
-          image: catarse-deploy/core-db
-          command: [ 'sh', '-c', 'PGPASSWORD=example psql -d service_core -h service-core-db -U postgres < /setup_fdw_grants.sql']
+          env: 
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          command: [ 'sh', '-c', 'psql -d service_core -h service-core-db -U postgres < /setup_fdw_grants.sql']
       restartPolicy: Never
   backoffLimit: 0

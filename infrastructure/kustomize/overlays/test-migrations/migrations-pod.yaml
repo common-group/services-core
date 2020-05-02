@@ -12,10 +12,10 @@ spec:
         args:
         - ./scripts/run_migrations.sh
         env:
-        - name: DATABASE_URL
+        - name: SERVICE_CORE_DB_URI
           valueFrom:
-            configMapKeyRef:
-              key: DATABASE_URL
-              name: migrations-env
-        image: catarse-deploy/migrations
+            secretKeyRef:
+              key: SERVICE_CORE_DB_URI
+              name: catarse-secrets
+        image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/migrations
       restartPolicy: OnFailure
