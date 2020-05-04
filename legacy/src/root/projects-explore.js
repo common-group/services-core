@@ -21,6 +21,7 @@ import { loadProjectsWithConfiguredParameters, searchCitiesGroupedByState, CityS
 import { ExploreSearchFilterSelect } from '../c/explore-search-filter-select';
 import { ExploreFilterSelect } from '../c/explore-filter-select';
 import { ExploreProjectsFoundCounter } from '../c/explore-projects-found-counter';
+import { ExploreProjectsList } from '../c/explore-projects-list';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
@@ -185,7 +186,29 @@ const projectsExplore = {
                         },
                     });
                 currentCityStateFilter(filter);
-                countProjects(catarse.filtersVM({city_name:'eq'}).city_name(cityName)).then(projectsFoundOnCity);
+
+                const countProjectFromCityFilter = catarse.filtersVM({city_name:'eq'}).city_name(cityName);
+
+                const currentFiltersAndModeParamaters = _.extend(
+                    currentFilter().keyName !== 'finished' ? 
+                        currentFilter().filter.order({
+                            state_order: 'asc',
+                            state: 'desc',
+                            pledged: 'desc'
+                        }).parameters()
+                        :
+                        currentFilter().filter.order({
+                            open_for_contributions: 'desc',
+                            state_order: 'asc',
+                            state: 'desc',
+                            score: 'desc',
+                            pledged: 'desc'
+                        }).parameters(),
+                    currentMode().filter ? filtersMap[currentMode().keyName].filter.parameters() : {},
+                    countProjectFromCityFilter.parameters()
+                );
+                
+                countProjects(currentFiltersAndModeParamaters).then(projectsFoundOnCity);
             } else if (stateAcronym) {
                 const filter = catarse
                     .filtersVM({ state_acronym: 'eq' })
@@ -248,8 +271,8 @@ const projectsExplore = {
         const loadRoute = () => {
             configureMode();
             configureCategory();
-            configureCityState();
             configureFilter();
+            configureCityState();
 
             const categoryFilter = filterFromRoute() || currentFilter;
             const searchParam = h.paramByName('pg_search') || vnode.attrs.pg_search;
@@ -310,7 +333,6 @@ const projectsExplore = {
     view: function({state, attrs}) {
         const category_id = state.selectedCategory().id;
         const projectsCollection = state.projects().collection();
-        const projectsCount = projectsCollection.length;
         const filterKeyName = state.currentFilter().keyName;
         const isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
         const hasSpecialFooter = state.hasSpecialFooter(category_id);
@@ -435,7 +457,7 @@ const projectsExplore = {
                                     label: ` ${projectsFoundOnCity() || 'Nenhum'} em ${selectedCityState().city.name}, ${selectedCityState().state.acronym}  `
                                 },
                                 {
-                                    label: ` ${(state.projects().total() - projectsFoundOnCity()) || 'Nenhum'} em ${selectedCityState().state.state_name} (${selectedCityState().state.acronym})`
+                                    label: ` ${state.projects().total() - projectsFoundOnCity()} em outras cidades de ${selectedCityState().state.acronym}`
                                 }
                             ]
                             :
@@ -444,62 +466,17 @@ const projectsExplore = {
                     : 
                     ''
             ),
-            ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
-                (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
-                ''),
-            m('.w-section.section', [
-                m('.w-container', [
-                    m('.w-row', [
-                        m('.w-row', _.map(projectsCollection, (project, idx) => {
-                            let cardType = 'small';
-                            let ref = 'ctrse_explore';
-
-                            let widowProjects = [];
-
-                            if (state.isSearch()) {
-                                ref = 'ctrse_explore_pgsearch';
-                            } else if (isContributedByFriendsFilter) {
-                                ref = 'ctrse_explore_friends';
-                            } else if (_.indexOf(state.availableRecommenders, state.currentFilter().keyName) !== -1) {
-                                ref = `ctrse_${state.currentFilter().keyName}`;
-                            } else if (filterKeyName === 'all') {
-                                if (project.score >= 1) {
-                                    if (idx === 0) {
-                                        cardType = 'big';
-                                        ref = 'ctrse_explore_featured_big';
-                                        widowProjects = [projectsCount - 1, projectsCount - 2];
-                                    } else if (idx === 1 || idx === 2) {
-                                        if (state.checkForMinScoredProjects(projectsCollection)) {
-                                            cardType = 'medium';
-                                            ref = 'ctrse_explore_featured_medium';
-                                            widowProjects = [];
-                                        } else {
-                                            cardType = 'big';
-                                            ref = 'ctrse_explore_featured_big';
-                                            widowProjects = [projectsCount - 1];
-                                        }
-                                    } else {
-                                        ref = 'ctrse_explore_featured';
-                                    }
-                                }
-                            } else if (filterKeyName === 'saved_projects') {
-                                ref = 'ctrse_explore_saved_project';
-                            } else if (filterKeyName === 'projects_we_love') {
-                                ref = 'ctrse_explore_projects_we_love';
-                            }
-
-                            return (_.indexOf(widowProjects, idx) > -1 && !state.projects().isLastPage()) ? '' : m(projectCard, {
-                                project,
-                                ref,
-                                type: cardType,
-                                showFriends: isContributedByFriendsFilter,
-                            });
-                        })),
-                        state.projects().isLoading() ? h.loader() : ''
-                    ])
-                ])
-            ]),
-
+            (
+                (isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
+                    (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') 
+                    :
+                    ''
+            ),
+            m(ExploreProjectsList, {
+                projects: state.projects(),
+                isSearch: state.isSearch(),
+                filterKeyName: state.currentFilter().keyName,
+            }),
             m('.w-section.u-marginbottom-80', [
                 m('.w-container', [
                     m('.w-row', [
@@ -509,7 +486,7 @@ const projectsExplore = {
                                     state
                                         .projects()
                                         .nextPage()
-                                        .then(_ => m.redraw());
+                                        .then(() => m.redraw());
                                     return false;
                                 }
                             }, 'Carregar mais')

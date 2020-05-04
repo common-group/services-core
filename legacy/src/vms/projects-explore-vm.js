@@ -216,12 +216,11 @@ function cityGroupToList(cityGroup) {
     return cityList;
 }
 
-export async function countProjects(filter) {
+export async function countProjects(filterParameters) {
     models.project.pageSize(1);
-    const selectMinimalFieldsFilterVM = catarse.filtersVM({ selectFields: 'select'});
+    const selectMinimalFieldsFilterVM = catarse.filtersVM({ selectFields: 'select', });
     selectMinimalFieldsFilterVM.selectFields('project_id');
-    filter.order({score: 'desc'});
     const pages = catarse.paginationVM(models.project, null, { Prefer: 'count=exact' });
-    const response = await pages.firstPage(_.extend(filter.parameters(), selectMinimalFieldsFilterVM.parameters()));
+    const response = await pages.firstPage(_.extend(filterParameters, selectMinimalFieldsFilterVM.parameters()));
     return pages.total();
 }
