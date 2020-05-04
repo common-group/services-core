@@ -10,6 +10,8 @@ m.originalTrust = m.trust;
 m.trust = (text) => h.trust(text);
 
 (function () {
+    
+    window.m = m;
 
     h.SentryInitSDK();
 
