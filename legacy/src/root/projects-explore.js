@@ -17,7 +17,8 @@ import search from '../c/search';
 import projectCard from '../c/project-card';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import userVM from '../vms/user-vm';
-import { loadProjectsWithConfiguredParameters } from '../vms/projects-explore-vm';
+import { loadProjectsWithConfiguredParameters, searchCitiesGroupedByState, CityState } from '../vms/projects-explore-vm';
+import { InputSelectSearchClearable } from '../c/input-select-search-clearable';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
@@ -164,6 +165,19 @@ const projectsExplore = {
         window.addEventListener('popstate', loadRoute);
         window.addEventListener('pushstate', loadRoute);
 
+        const selectedCityState = h.RedrawStream(null);
+        const foundCitiesStateEntries = h.RedrawStream([]);
+        const onSearchCities = async (inputText) => {
+            console.log('inputText', inputText);
+            foundCitiesStateEntries(await searchCitiesGroupedByState(inputText));
+        }
+
+        const onSelectCityState = (cityState) => {
+            console.log('cityState', cityState);
+            // selectedCityState(cityState);
+        }
+        
+
         vnode.state = {
             categories: categoriesCollection,
             changeFilter,
@@ -187,6 +201,10 @@ const projectsExplore = {
             externalLinkCategories,
             changeCategory,
             allCategories,
+            selectedCityState,
+            foundCitiesStateEntries,
+            onSearchCities,
+            onSelectCityState,
         };
     },
     onremove: function() {
@@ -201,6 +219,10 @@ const projectsExplore = {
         const filterKeyName = state.currentFilter().keyName;
         const isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
         const hasSpecialFooter = state.hasSpecialFooter(category_id);
+        const selectedCityState = state.selectedCityState;
+        const foundCitiesStateEntries = state.foundCitiesStateEntries;
+        const onSearchCities = state.onSearchCities;
+        const onSelectCityState = state.onSelectCityState;
 
         const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
             m('a.explore-filter-link[href=\'javascript:void(0);\']', {
@@ -305,14 +327,10 @@ const projectsExplore = {
                                         },
                                         'Todas as categorias'
                                         ),
-                                        categoryColumn(state.categories(), 0, Math.floor(_.size(state.categories()) / 2))
-                                    ]),
-                                    m('.explore-filter-select-col', [
-                                        categoryColumn(state.categories(), Math.floor(_.size(state.categories()) / 2), _.size(state.categories()))
-                                    ]),
-                                    m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                        onclick: () => state.categoryToggle(false)
-                                    })
+                                        m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                            onclick: () => state.modeToggle(false)
+                                        })
+                                    ])
                                 ])
                             )
                         )
@@ -349,13 +367,66 @@ const projectsExplore = {
                                         pageFilter.nicename
                                         )),
                                         m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                            onclick: () => state.filterToggle(false)
+                                            onclick: () => state.categoryToggle(false)
                                         })
                                     ])
                                 )
-                            ])
-                        ]
-                    )
+                            )
+                        ]),
+                    ]),
+                    m('div', [
+                        m('div.explore-text-fixed', 'localizados em'),
+                        m(InputSelectSearchClearable, {
+                            onSearch: onSearchCities,
+                            onSelect: onSelectCityState,
+                            selectedItem: selectedCityState,
+                            foundItems: foundCitiesStateEntries,
+                            itemToString: (/** @type {CityState} */ cityState) => {
+                                const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
+                                const secondPart = `${cityState.city ? cityState.state.acronym : '(Estado)'}`;
+                                return `${firstPart}, ${secondPart}`; 
+                            }
+                        }),
+                        (
+                            state.showFilter() && 
+                            [
+                                m('.explore-text-fixed',
+                                    'que são'
+                                ),
+                                m('.explore-filter-wrapper', [
+                                    m('.explore-span-filter', {
+                                        onclick: () => state.filterToggle(!state.filterToggle())
+                                    }, [
+                                        m('.explore-mobile-label',
+                                            'FILTRO'
+                                        ),
+                                        m('.inline-block',
+                                            state.currentFilter().nicename
+                                        ),
+                                        m('.inline-block.fa.fa-angle-down')
+                                    ]),
+                                    (
+                                        state.filterToggle() &&
+                                        m('.explore-filter-select', [
+                                            _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
+                                                    onclick: (/** @type {Event} */ event) => {
+                                                        event.preventDefault();
+                                                        state.changeFilter(pageFilter.keyName);
+                                                        state.filterToggle(false);
+                                                    },
+                                                    class: state.currentFilter() === pageFilter ? 'selected' : ''
+                                                },
+                                                pageFilter.nicename
+                                            )),
+                                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
+                                                onclick: () => state.filterToggle(false)
+                                            })
+                                        ])
+                                    )
+                                ])
+                            ]
+                        )
+                    ])
                 ])
             ]), !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
                 m('div',
