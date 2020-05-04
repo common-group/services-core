@@ -66,16 +66,19 @@ const projectTabs = {
             }, [
                 m('.w-container', [
                     m('.w-row', [
-                        m('.w-col.w-col-8', [!_.isEmpty(rewards()) ?
-                            m(`a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf  ${(h.hashMatch('#rewards') || (h.mobileScreen() && h.hashMatch('')) ? 'selected' : '')}"][href="/${project().permalink}#rewards"]`, {
-                                style: 'float: left;',
-                                onclick: h.analytics.event({
-                                    cat: 'project_view', act: 'project_rewards_view', project: project() })
-                            }, 'Recompensas') : m(`a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ${(h.hashMatch('#contribution_suggestions') || (h.mobileScreen() && h.hashMatch('')) ? 'selected' : '')}"][href="/${project().permalink}#contribution_suggestions"]`, {
-                                style: 'float: left;',
-                                onclick: h.analytics.event({
-                                    cat: 'project_view', act: 'project_contribsuggestions_view', project: project() })
-                            }, 'Valores Sugeridos'),
+                        m('.w-col.w-col-8', [
+                            !_.isEmpty(rewards()) ?
+                                m(`a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf  ${(h.hashMatch('#rewards') || (h.mobileScreen() && h.hashMatch('')) ? 'selected' : '')}"][href="/${project().permalink}#rewards"]`, {
+                                    style: 'float: left;',
+                                    onclick: h.analytics.event({
+                                        cat: 'project_view', act: 'project_rewards_view', project: project() })
+                                }, 'Recompensas') 
+                                : 
+                                m(`a[id="rewards-link"][class="w-hidden-main w-hidden-medium dashboard-nav-link mf ${(h.hashMatch('#contribution_suggestions') || (h.mobileScreen() && h.hashMatch('')) ? 'selected' : '')}"][href="/${project().permalink}#contribution_suggestions"]`, {
+                                    style: 'float: left;',
+                                    onclick: h.analytics.event({
+                                        cat: 'project_view', act: 'project_contribsuggestions_view', project: project() })
+                                }, 'Valores Sugeridos'),
                             m(`a[id="about-link"][class="dashboard-nav-link mf ${(h.hashMatch('#about') || (!h.mobileScreen() && h.hashMatch('')) ? 'selected' : '')}"][href="#about"]`, {
                                 style: 'float: left;',
                                 onclick: h.analytics.event({
