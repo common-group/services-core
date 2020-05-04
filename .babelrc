@@ -1,5 +1,6 @@
 {
   "presets": [
+    "@babel/preset-typescript",
     [
       "@babel/preset-env",
       {
@@ -12,6 +13,14 @@
     ]
   ],
   "plugins": [
+    "@babel/plugin-transform-typescript",
+    [
+      "@babel/plugin-transform-react-jsx",
+      {
+        "pragma": "m",
+        "pragmaFrag": "'['"
+      }
+    ],
     [
       "@babel/plugin-transform-runtime", 
       { 
