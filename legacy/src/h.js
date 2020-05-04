@@ -1224,6 +1224,7 @@ function RedrawStream(data, onUpdate = (param) => {}) {
 /**
  * @param {T} data
  * @template T
+ * @returns {{ (newData : T) => T, toggle() : T }}
  */
 function RedrawToggleStream(firstState, secondState) {
     const _data = prop(firstState);

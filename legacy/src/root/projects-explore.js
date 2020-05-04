@@ -19,6 +19,7 @@ import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect
 import userVM from '../vms/user-vm';
 import { loadProjectsWithConfiguredParameters, searchCitiesGroupedByState, CityState } from '../vms/projects-explore-vm';
 import { InputSelectSearchClearable } from '../c/input-select-search-clearable';
+import { ExploreFilterSelect } from '../c/explore-filter-select';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
@@ -168,14 +169,12 @@ const projectsExplore = {
         const selectedCityState = h.RedrawStream(null);
         const foundCitiesStateEntries = h.RedrawStream([]);
         const onSearchCities = async (inputText) => {
-            console.log('inputText', inputText);
             foundCitiesStateEntries(await searchCitiesGroupedByState(inputText));
-        }
+        };
 
         const onSelectCityState = (cityState) => {
-            console.log('cityState', cityState);
-            // selectedCityState(cityState);
-        }
+            selectedCityState(cityState);
+        };
         
 
         vnode.state = {
@@ -224,15 +223,11 @@ const projectsExplore = {
         const onSearchCities = state.onSearchCities;
         const onSelectCityState = state.onSelectCityState;
 
-        const categoryColumn = (categories, start, finish) => _.map(categories.slice(start, finish), category =>
-            m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                onclick: () => {
-                    state.categoryToggle(false);
-                    state.changeCategory(category.id);
-                },
-                class: state.selectedCategory().id === category.id ? 'selected' : ''
-            }, category.name)
-        );
+        const cityStateToString = (/** @type {CityState} */ cityState) => {
+            const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
+            const secondPart = `${cityState.city ? `, ${cityState.state.acronym}` : ' (Estado)'}`;
+            return `${firstPart}${secondPart}`;
+        };
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -242,137 +237,59 @@ const projectsExplore = {
                     m(search)
                 ),
                 m('.u-text-center.w-container', [
-                    m('.explore-text-fixed',
-                        'Quero ver'
-                    ),
-                    m('.explore-filter-wrapper', [
-                        m('.explore-span-filter', {
-                            onclick: () => state.modeToggle(!state.modeToggle())
-                        }, [
-                            m('.explore-mobile-label',
-                                'MODALIDADE'
-                            ),
-                            m('.inline-block',
-                                state.currentMode().title
-                            ),
-                            m('.inline-block.fa.fa-angle-down')
-                        ]),
-                        (
-                            state.modeToggle() && 
-                                m('.explore-filter-select', [
-                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                                        onclick: () => {
-                                            state.changeMode('all_modes');
-                                        },
-                                        class: (state.currentMode() === null || state.currentMode().keyName === 'all_modes') ? 'selected' : ''
-                                    },
-                                    'Todos os projetos'
-                                    ),
-                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                                        onclick: () => {
-                                            state.changeMode('not_sub');
-                                        },
-                                        class: state.currentMode().keyName === 'not_sub' ? 'selected' : ''
-                                    },
-                                    'Projetos pontuais'
-                                    ),
-                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                                        onclick: () => {
-                                            state.changeMode('sub');
-                                        },
-                                        class: state.currentMode().keyName === 'sub' ? 'selected' : ''
-                                    },
-                                    'Assinaturas'
-                                    ),
-                                    m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                                        onclick: () => {
-                                            state.changeMode('covid_19');
-                                        },
-                                        class: state.currentMode().keyName === 'covid_19' ? 'selected' : ''
-                                    },
-                                    'Projetos COVID-19'
-                                    ),
-                                    m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                        onclick: () => state.modeToggle(false)
-                                    })
-                                ])
-                        )
-                    ]),
-                    m('.explore-text-fixed',
-                        'de'
-                    ),
-                    m('.explore-filter-wrapper', [
-                        m('.explore-span-filter', {
-                            onclick: () => state.categoryToggle(!state.categoryToggle())
-                        }, [
-                            m('.explore-mobile-label',
-                                'CATEGORIA'
-                            ),
-                            m('.inline-block',
-                                state.selectedCategory().name
-                            ),
-                            m('.inline-block.fa.fa-angle-down')
-                        ]),
-                        (
-                            state.categoryToggle() &&
-                            m('.explore-filter-select.big',
-                                m('.explore-filer-select-row', [
-                                    m('.explore-filter-select-col', [
-                                        m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                                            onclick: () => {
-                                                state.categoryToggle(false);
-                                                state.changeCategory(allCategories.id);
-                                            },
-                                            class: state.selectedCategory().id === null ? 'selected' : ''
-                                        },
-                                        'Todas as categorias'
-                                        ),
-                                        m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                            onclick: () => state.modeToggle(false)
-                                        })
-                                    ])
-                                ])
-                            )
-                        )
-                    ]),
-                    (
-                        state.showFilter() && 
-                        [
-                            m('.explore-text-fixed',
-                                'que são'
-                            ),
-                            m('.explore-filter-wrapper', [
-                                m('.explore-span-filter', {
-                                    onclick: () => state.filterToggle(!state.filterToggle())
-                                }, [
-                                    m('.explore-mobile-label',
-                                        'FILTRO'
-                                    ),
-                                    m('.inline-block',
-                                        state.currentFilter().nicename
-                                    ),
-                                    m('.inline-block.fa.fa-angle-down')
-                                ]),
-                                (
-                                    state.filterToggle() &&
-                                    m('.explore-filter-select', [
-                                        _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m('a.explore-filter-link[href=\'javascript:void(0);\']', {
-                                            onclick: (/** @type {Event} */ event) => {
-                                                event.preventDefault();
-                                                state.changeFilter(pageFilter.keyName);
-                                                state.filterToggle(false);
-                                            },
-                                            class: state.currentFilter() === pageFilter ? 'selected' : ''
-                                        },
-                                        pageFilter.nicename
-                                        )),
-                                        m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                            onclick: () => state.categoryToggle(false)
-                                        })
-                                    ])
-                                )
-                            )
-                        ]),
+
+                    m('div', [
+                        m('.explore-text-fixed',
+                            'Quero ver'
+                        ),
+                        m(ExploreFilterSelect, {
+                            values: [
+                                {
+                                    label: 'Todos os projetos',
+                                    value: 'all_modes',
+                                },
+                                {
+                                    label: 'Projetos pontuais',
+                                    value: 'not_sub',
+                                },
+                                {
+                                    label: 'Assinaturas',
+                                    value: 'sub',
+                                },
+                                {
+                                    label: 'Projetos COVID-19',
+                                    value: 'covid_19',
+                                },                        
+                            ],
+                            mobileLabel: 'MODALIDADE',
+                            itemToString: () => state.currentMode().title,
+                            isSelected: (item) => {
+                                return item.value === 'all_modes' && 
+                                    state.currentMode() === null || 
+                                    state.currentMode().keyName === item.value;
+                            },
+                            onSelect: (item) => state.changeMode(item.value),
+                        }),
+                        m('.explore-text-fixed',
+                            'de'
+                        ),
+
+                        m(ExploreFilterSelect, {
+                            values: [{
+                                label: 'Todas as categorias',
+                                value: null,
+                            }].concat(state.categories().map(category => ({
+                                label: category.name,
+                                value: category.id,
+                            }))),
+                            mobileLabel: 'CATEGORIA',
+                            splitNumberColumns: 2,
+                            itemToString: () => state.selectedCategory().name,
+                            isSelected: (item) => {
+                                return state.selectedCategory().id === item.value ? 'selected' : '';
+                            },
+                            onSelect: (item) => state.changeCategory(item.value),
+                        }),
                     ]),
                     m('div', [
                         m('div.explore-text-fixed', 'localizados em'),
@@ -381,11 +298,9 @@ const projectsExplore = {
                             onSelect: onSelectCityState,
                             selectedItem: selectedCityState,
                             foundItems: foundCitiesStateEntries,
-                            itemToString: (/** @type {CityState} */ cityState) => {
-                                const firstPart = `${cityState.city ? cityState.city.name : cityState.state.state_name}`;
-                                const secondPart = `${cityState.city ? `, ${cityState.state.acronym}` : '(Estado)'}`;
-                                return `${firstPart}${secondPart}`;
-                            }
+                            noneSelected: 'Brasil',
+                            selectedToString: cityStateToString,
+                            itemToString: cityStateToString,
                         }),
                         (
                             state.showFilter() && 
@@ -393,37 +308,20 @@ const projectsExplore = {
                                 m('.explore-text-fixed',
                                     'que são'
                                 ),
-                                m('.explore-filter-wrapper', [
-                                    m('.explore-span-filter', {
-                                        onclick: () => state.filterToggle(!state.filterToggle())
-                                    }, [
-                                        m('.explore-mobile-label',
-                                            'FILTRO'
-                                        ),
-                                        m('.inline-block',
-                                            state.currentFilter().nicename
-                                        ),
-                                        m('.inline-block.fa.fa-angle-down')
-                                    ]),
-                                    (
-                                        state.filterToggle() &&
-                                        m('.explore-filter-select', [
-                                            _.map(state.projectFiltersVM.getContextFilters(), (pageFilter, idx) => m("a.explore-filter-link[href=\'javascript:void(0);\']", {
-                                                    onclick: (/** @type {Event} */ event) => {
-                                                        event.preventDefault();
-                                                        state.changeFilter(pageFilter.keyName);
-                                                        state.filterToggle(false);
-                                                    },
-                                                    class: state.currentFilter() === pageFilter ? 'selected' : ''
-                                                },
-                                                pageFilter.nicename
-                                            )),
-                                            m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
-                                                onclick: () => state.filterToggle(false)
-                                            })
-                                        ])
-                                    )
-                                ])
+                                m(ExploreFilterSelect, {
+                                    values: state.projectFiltersVM.getContextFilters().map(pageFilter => {
+                                        return {
+                                            label: pageFilter.nicename,
+                                            value: pageFilter.keyName,
+                                        }
+                                    }),
+                                    mobileLabel: 'FILTRO',
+                                    itemToString: () => state.currentFilter().nicename,
+                                    isSelected: (item) => {
+                                        return state.currentFilter().keyName === item.value;
+                                    },
+                                    onSelect: (item) => state.changeFilter(item.value),
+                                }),
                             ]
                         )
                     ])
