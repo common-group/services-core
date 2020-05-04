@@ -17,9 +17,10 @@ import search from '../c/search';
 import projectCard from '../c/project-card';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import userVM from '../vms/user-vm';
-import { loadProjectsWithConfiguredParameters, searchCitiesGroupedByState, CityState } from '../vms/projects-explore-vm';
+import { loadProjectsWithConfiguredParameters, searchCitiesGroupedByState, CityState, countProjects } from '../vms/projects-explore-vm';
 import { ExploreSearchFilterSelect } from '../c/explore-search-filter-select';
 import { ExploreFilterSelect } from '../c/explore-filter-select';
+import { ExploreProjectsFoundCounter } from '../c/explore-projects-found-counter';
 
 const I18nScope = _.partial(h.i18nScope, 'pages.explore');
 // TODO Slim down controller by abstracting logic to view-models where it fits
@@ -99,6 +100,7 @@ const projectsExplore = {
         const selectedCityState = h.RedrawStream(null);
         const foundCitiesStateEntries = h.RedrawStream([]);
         const isLoadingSearchCities = h.RedrawStream(false);
+        const projectsFoundOnCity = h.RedrawStream(0);
         const onSearchCities = async (inputText) => {
             let hasLoadedBeforeDisplayLoader = false;
             const waitMSTimeBeforeShowingLoader = 150;
@@ -183,6 +185,7 @@ const projectsExplore = {
                         },
                     });
                 currentCityStateFilter(filter);
+                countProjects(catarse.filtersVM({city_name:'eq'}).city_name(cityName)).then(projectsFoundOnCity);
             } else if (stateAcronym) {
                 const filter = catarse
                     .filtersVM({ state_acronym: 'eq' })
@@ -192,8 +195,7 @@ const projectsExplore = {
                 const filter = catarse
                     .filtersVM({});
                 currentCityStateFilter(filter);
-            }
-
+            }            
         };
 
         // Filter
@@ -268,6 +270,8 @@ const projectsExplore = {
         window.addEventListener('popstate', loadRoute);
         window.addEventListener('pushstate', loadRoute);
 
+        
+
         vnode.state = {
             categories: categoriesCollection,
             changeFilter,
@@ -296,6 +300,7 @@ const projectsExplore = {
             onSearchCities,
             onSelectCityState,
             isLoadingSearchCities,
+            projectsFoundOnCity,
         };
     },
     onremove: function() {
@@ -314,6 +319,7 @@ const projectsExplore = {
         const onSearchCities = state.onSearchCities;
         const onSelectCityState = state.onSelectCityState;
         const isLoadingSearchCities = state.isLoadingSearchCities;
+        const projectsFoundOnCity = state.projectsFoundOnCity;
 
         return m('#explore', {
             oncreate: h.setPageTitle(window.I18n.t('header_html', I18nScope()))
@@ -404,7 +410,7 @@ const projectsExplore = {
                                         return {
                                             label: pageFilter.nicename,
                                             value: pageFilter.keyName,
-                                        }
+                                        };
                                     }),
                                     mobileLabel: 'FILTRO',
                                     itemToString: () => state.currentFilter().nicename,
@@ -417,19 +423,27 @@ const projectsExplore = {
                         )
                     ])
                 ])
-            ]), !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
-                m('div',
-                    m('.w-container',
-                        m('.w-row', [
-                            m('.w-col.w-col-9.w-col-tiny-9.w-col-small-9',
-                                m('.fontsize-large',
-                                    `${state.projects().total()} projetos encontrados`
-                                )
-                            ),
-                            m('.w-col.w-col-3.w-col-tiny-3.w-col-small-3')
-                        ])
-                    )
-                ) : '',
+            ]), 
+            (
+                !state.projects().isLoading() && _.isFunction(state.projects().total) && !_.isUndefined(state.projects().total()) ?
+                    m(ExploreProjectsFoundCounter, {
+                        total: state.projects().total(),
+                        perFilter: (selectedCityState() && selectedCityState().city) ? 
+                            [
+                                {
+                                    icon: m('span.fas.fa-map-marker-check.text-success'),
+                                    label: ` ${projectsFoundOnCity() || 'Nenhum'} em ${selectedCityState().city.name}, ${selectedCityState().state.acronym}  `
+                                },
+                                {
+                                    label: ` ${(state.projects().total() - projectsFoundOnCity()) || 'Nenhum'} em ${selectedCityState().state.state_name} (${selectedCityState().state.acronym})`
+                                }
+                            ]
+                            :
+                            []
+                    })
+                    : 
+                    ''
+            ),
             ((isContributedByFriendsFilter && _.isEmpty(projectsCollection)) ?
                 (!state.hasFBAuth ? m(UnsignedFriendFacebookConnect) : '') :
                 ''),
