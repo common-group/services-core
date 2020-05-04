@@ -42,8 +42,11 @@ const projectMain = {
 
                 hash(window.location.hash);
 
+                
                 if (_.isEmpty(hash()) || hash() === '#_=_' || hash() === '#preview') {
-                    return tabs[h.mobileScreen() ? '#rewards' : '#about'];
+                    const hasRewards = !_.isEmpty(vnode.attrs.rewardDetails());
+                    const mobileDefault = hasRewards ? '#rewards' : '#contribution_suggestions';
+                    return tabs[h.mobileScreen() ? mobileDefault : '#about'];
                 }
 
                 return tabs[hash()];
