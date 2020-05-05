@@ -30,6 +30,8 @@ services:
 
   catarse_redis:
     image: redis
+    ports:
+      - "6379:6379"
     volumes:
       - catarse-redis-data:/var/lib/redis
     command: redis-server --appendonly yes
