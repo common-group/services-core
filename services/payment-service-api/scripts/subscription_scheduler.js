@@ -3,35 +3,12 @@
 
 const { Pool } = require('pg');
 const pagarme = require('pagarme');
-const Raven = require('raven');
+const { handleError } = require('../lib/error_handling');
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     statement_timeout: (process.env.STATEMENT_TIMEOUT || 5000)
 });
-
-
-if(process.env.SENTRY_DSN) {
-    Raven.config(process.env.SENTRY_DSN).install();
-};
-
-const raven_report = (e, context_opts) => {
-    if(process.env.SENTRY_DSN) {
-        Raven.context(function () {
-            if(context_opts) {
-                Raven.setContext(context_opts);
-            };
-
-            Raven.captureException(e, (sendErr, event) => {
-                if(sendErr) {
-                    console.log('error on log to sentry')
-                } else {
-                    console.log('raven logged event', event);
-                }
-            });
-        });
-    };
-};
 
 async function subscriptions_charge() {
     try {
@@ -39,7 +16,7 @@ async function subscriptions_charge() {
             .query(`select payment_service.subscriptions_charge()`);
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };
@@ -51,7 +28,7 @@ async function subscriptions_gateway_error_rescue_charge() {
 
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };
@@ -62,7 +39,7 @@ async function refuse_expired_slip_payments() {
 
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };
@@ -74,7 +51,7 @@ async function notify_expiring_slips() {
 
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };
@@ -86,7 +63,7 @@ async function cancel_canceling_expired_subscriptions() {
 
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };
@@ -98,7 +75,7 @@ async function inactive_invalid_subscriptions() {
 
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };
@@ -110,7 +87,7 @@ async function automatic_recharge_or_inactive_card_subscriptions() {
 
         console.log(res.rows[0]);
     } catch (e) {
-        raven_report(e);
+        handleError(e);
         console.log(e);
     };
 };

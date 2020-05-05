@@ -6,28 +6,8 @@ const R = require('ramda');
 const { processPayment } = require('./lib/payment_process');
 const { processCardCreation } = require('./lib/credit_card_process');
 const { pool } = require('./lib/dal');
-const Raven = require('raven');
+const { handleError } = require('./lib/error_handling');
 
-if(process.env.SENTRY_DSN) {
-    Raven.config(process.env.SENTRY_DSN).install();
-};
-const raven_report = (e, context_opts) => {
-    if(process.env.SENTRY_DSN) {
-        Raven.context(function () {
-            if(context_opts) {
-                Raven.setContext(context_opts);
-            };
-
-            Raven.captureException(e, (sendErr, event) => {
-                if(sendErr) {
-                    console.log('error on log to sentry')
-                } else {
-                    console.log('raven logged event', event);
-                }
-            });
-        });
-    };
-};
 /*
  * receive notification via stdin and process in some module
  * notification example:
@@ -79,7 +59,7 @@ const finishProcessOk = (result) => {
 };
 const finishProcessErr = (result) => {
     console.log('finished with error ', result);
-    raven_report(result);
+    handleError(result);
     process.exitCode = 1;
     process.exit(1);
 };
