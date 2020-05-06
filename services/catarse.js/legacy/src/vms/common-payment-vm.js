@@ -189,6 +189,26 @@ const processCreditCard = (cardHash, fields) => {
     return p;
 };
 
+const kondutoExecute = function () {
+    const customerID = h.getUserCommonID();
+
+    if (customerID) {
+        var period = 300;
+        var limit = 20 * 1e3;
+        var nTry = 0;
+        var intervalID = setInterval(function () {
+            var clear = limit / period <= ++nTry;
+            if ((typeof (Konduto) !== "undefined") && (typeof (Konduto.setCustomerID) !== "undefined")) {
+                window.Konduto.setCustomerID(customerID);
+                clear = true;
+            }
+            if (clear) {
+                clearInterval(intervalID);
+            }
+        }, period);
+    }
+};
+
 const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) => {
 
     if (!fields) {
@@ -251,6 +271,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
         }
 
         const pay = ({ creditCardId }) => {
+            kondutoExecute()
             const p = new Promise((resolve, reject) => {
                 if (creditCardId) {
                     _.extend(payload, {
