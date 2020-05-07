@@ -1113,7 +1113,24 @@ const _dataCache = {},
         } catch (e) {
             Sentry.captureException(e);
         }
-    };
+    },
+    titleCase = (str) => {
+        // remove leading and trailing spaces
+        let newString = str ? str.trim() : '';
+        // remove multiple spaces
+        newString = newString.replace(/\s{2,}/g, ' ');
+        // lowercase
+        newString = newString.toLowerCase();
+
+        return newString.split(' ').map(function(word) {
+            if (['de', 'da', 'do', 'das', 'dos'].includes(word)) {
+                return word.toLowerCase()
+            } else {
+                return word ? word.replace(word[0], word[0].toUpperCase()) : '';
+            }
+        }).join(' ');
+    }
+
 
 /**
  * @param {string} phoneNumberStr
@@ -1357,4 +1374,5 @@ export default {
     isDevEnv,
     trust,
     attachEventsToHistory,
+    titleCase,
 };
