@@ -436,6 +436,10 @@ const _dataCache = {},
         const user = getUser();
         return user == null || user.user_id == null ? null : user.user_id;
     },
+    getUserCommonID = () => {
+        const user = getUser();
+        return user && user.common_id
+    },
     userSignedIn = () => !_.isNull(getUserID()),
     getBlogPosts = () => {
         if (_dataCache.blogPosts) {
@@ -1153,7 +1157,7 @@ function ObservableStream(data) {
     }
 
     /**
-     * @param {T} newData 
+     * @param {T} newData
      * @return {T}
      */
     function set(newData) {
@@ -1163,7 +1167,7 @@ function ObservableStream(data) {
     }
 
     /**
-     * @param {function(T):void} observeFunction 
+     * @param {function(T):void} observeFunction
      */
     function observe(observeFunction) {
         observers.push(observeFunction);
@@ -1201,7 +1205,7 @@ function ObservableRedrawStream(data) {
  * @template T
  */
 function RedrawStream(data, onUpdate = (param) => {}) {
-    
+
     const _data = prop(data);
 
     /**
@@ -1293,6 +1297,7 @@ export default {
     idVM,
     getUser,
     getUserID,
+    getUserCommonID,
     getApiHost,
     getNewsletterUrl,
     getCurrentProject,
