@@ -29,10 +29,10 @@ describe('ProjectMain', () => {
             });
 
             it('should display rewards suggestions of 10, 25, 50, 100', () => {
-                component.should.have('#suggestions .fontsize-larger:contains(10)');
-                component.should.have('#suggestions .fontsize-larger:contains(25)');
-                component.should.have('#suggestions .fontsize-larger:contains(50)');
-                component.should.have('#suggestions .fontsize-larger:contains(100)');
+                component.should.have('#suggestions .fontsize-jumbo:contains(10)');
+                component.should.have('#suggestions .fontsize-jumbo:contains(25)');
+                component.should.have('#suggestions .fontsize-jumbo:contains(50)');
+                component.should.have('#suggestions .fontsize-jumbo:contains(100)');
             });
 
             it('should display rewads list', () => {
