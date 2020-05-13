@@ -1133,6 +1133,18 @@ const _dataCache = {},
                 return word ? word.replace(word[0], word[0].toUpperCase()) : '';
             }
         }).join(' ');
+    },
+    buildCreditCard = (creditCardFields) => {
+        let expirationMonth = String(creditCardFields.expMonth());
+        expirationMonth = (1 === expirationMonth.length ? '0' : '') + expirationMonth;
+        const expirationDate = expirationMonth + String(creditCardFields.expYear());
+
+        return {
+            card_number: creditCardFields.number(),
+            card_holder_name: titleCase(creditCardFields.name()),
+            card_expiration_date: expirationDate,
+            card_cvv: creditCardFields.cvv()
+        }
     }
 
 
@@ -1380,4 +1392,5 @@ export default {
     trust,
     attachEventsToHistory,
     titleCase,
+    buildCreditCard
 };

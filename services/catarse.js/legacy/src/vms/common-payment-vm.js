@@ -49,16 +49,6 @@ const updateUser = user => m.request({
     throw error;
 });
 
-const setNewCreditCard = (creditCardFields) => {
-    const creditCard = new window.PagarMe.creditCard();
-    creditCard.cardHolderName = h.titleCase(creditCardFields.name());
-    creditCard.cardExpirationMonth = creditCardFields.expMonth();
-    creditCard.cardExpirationYear = creditCardFields.expYear();
-    creditCard.cardNumber = creditCardFields.number();
-    creditCard.cardCVV = creditCardFields.cvv();
-    return creditCard;
-};
-
 const userPayload = (customer, address) => ({
     id: h.getUser().id,
     cpf: customer.ownerDocument(),
@@ -220,72 +210,75 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
     const addressState = address.state_id ? _.findWhere(addVM.states(), { id: address.state_id }) : address.address_state;
     const addressCountry = _.findWhere(addVM.countries(), { id: address.country_id }) || {};
 
-    card.generateHash((cardHash) => {
-        const payload = {
-            subscription: true,
-            anonymous: customer.anonymous(),
-            user_id: commonData.userCommonId,
-            project_id: commonData.projectCommonId,
-            amount: commonData.amount,
-            payment_method: 'credit_card',
-            credit_card_owner_document: fields.creditCardFields.cardOwnerDocument(),
-            is_international: address.country_id !== addVM.defaultCountryID,
-            customer: {
-                name: customer.completeName(),
-                document_number: customer.ownerDocument(),
-                address: {
-                    neighborhood: address.address_neighbourhood,
-                    street: address.address_street,
-                    street_number: address.address_number,
-                    zipcode: address.address_zip_code,
-                    country: addressCountry.name,
-                    country_code: addressCountry.code,
-                    state: addressState.acronym ? addressState.acronym : addressState,
-                    city: address.address_city,
-                    complementary: address.address_complement
-                },
-                phone: {
-                    ddi: '55',
-                    ddd: phoneDdd,
-                    number: phoneNumber
+    window.pagarme.client.connect({ encryption_key: encryptionKey })
+        .then(client => client.security.encrypt(card))
+        .then((cardHash) => {
+            const payload = {
+                subscription: true,
+                anonymous: customer.anonymous(),
+                user_id: commonData.userCommonId,
+                project_id: commonData.projectCommonId,
+                amount: commonData.amount,
+                payment_method: 'credit_card',
+                credit_card_owner_document: fields.creditCardFields.cardOwnerDocument(),
+                is_international: address.country_id !== addVM.defaultCountryID,
+                customer: {
+                    name: customer.completeName(),
+                    document_number: customer.ownerDocument(),
+                    address: {
+                        neighborhood: address.address_neighbourhood,
+                        street: address.address_street,
+                        street_number: address.address_number,
+                        zipcode: address.address_zip_code,
+                        country: addressCountry.name,
+                        country_code: addressCountry.code,
+                        state: addressState.acronym ? addressState.acronym : addressState,
+                        city: address.address_city,
+                        complementary: address.address_complement
+                    },
+                    phone: {
+                        ddi: '55',
+                        ddd: phoneDdd,
+                        number: phoneNumber
+                    }
                 }
+            };
+
+            if (commonData.rewardCommonId) {
+                _.extend(payload, { reward_id: commonData.rewardCommonId });
             }
-        };
 
-        if (commonData.rewardCommonId) {
-            _.extend(payload, { reward_id: commonData.rewardCommonId });
-        }
+            if (commonData.subscription_id) {
+                _.extend(payload, { id: commonData.subscription_id });
+            }
 
-        if (commonData.subscription_id) {
-            _.extend(payload, { id: commonData.subscription_id });
-        }
+            const pay = ({ creditCardId }) => {
+                kondutoExecute()
+                const p = new Promise((resolve, reject) => {
+                    if (creditCardId) {
+                        _.extend(payload, {
+                            card_id: creditCardId.id,
+                            credit_card_id: creditCardId.id
+                        });
+                    }
 
-        const pay = ({ creditCardId }) => {
-            kondutoExecute()
-            const p = new Promise((resolve, reject) => {
-                if (creditCardId) {
-                    _.extend(payload, {
-                        card_id: creditCardId.id,
-                        credit_card_id: creditCardId.id
-                    });
-                }
+                    if (commonData.subscription_id) {
+                        sendSubscriptionUpgrade(payload).then(resolve).catch(reject);
+                    } else {
+                        sendPaymentRequest(payload).then(resolve).catch(reject);
+                    }
+                });
 
-                if (commonData.subscription_id) {
-                    sendSubscriptionUpgrade(payload).then(resolve).catch(reject);
-                } else {
-                    sendPaymentRequest(payload).then(resolve).catch(reject);
-                }
-            });
+                return p;
+            };
 
-            return p;
-        };
+            updateUser(userPayload(customer, address))
+                .then(() => processCreditCard(cardHash, fields))
+                .then(pay)
+                .then(getPaymentInfoUntilNoError(payload.payment_method, Boolean(commonData.subscription_id)))
+                .catch(displayError(fields));
 
-        updateUser(userPayload(customer, address))
-            .then(() => processCreditCard(cardHash, fields))
-            .then(pay)
-            .then(getPaymentInfoUntilNoError(payload.payment_method, Boolean(commonData.subscription_id)))
-            .catch(displayError(fields));
-    });
+        });
 };
 
 const sendSlipPayment = (fields, commonData) => {
