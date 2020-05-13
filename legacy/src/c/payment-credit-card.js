@@ -171,10 +171,10 @@ const paymentCreditCard = {
 
         const loadPagarme = (vnode) => {
             const script = document.createElement('script');
-            script.src = '//assets.pagar.me/js/pagarme.min.js';
+            script.src = '//assets.pagar.me/pagarme-js/4.8/pagarme.min.js';
             document.body.appendChild(script);
             script.onload = () => {
-                vm.pagarme(window.PagarMe);
+                vm.pagarme(window.pagarme);
             };
         };
 

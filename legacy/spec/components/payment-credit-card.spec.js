@@ -8,7 +8,7 @@ describe('paymentCreditCard', () => {
     let $output, vm;
     describe('view', () => {
         beforeAll(() => {
-            window.PagarMe = {};
+            window.pagarme = {};
             vm = paymentVM();
             vm.fields.ownerDocument('568.905.638-32');
             spyOn(vm, 'sendPayment').and.returnValue(new Promise(() => {}));
