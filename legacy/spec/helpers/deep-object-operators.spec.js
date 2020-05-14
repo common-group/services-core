@@ -46,21 +46,4 @@ describe('DeepObjectOperator', function () {
             expect(obj2.test).toBeUndefined();
         });
     });
-
-    describe('createObjectFromTemplate', function () {
-        
-        it('should create a deeper object definition if the value is valid', function () {
-            const obj = createObjectFromTemplate({ test: '$1', test1: { test1: '$2'}}, true, true);
-            expect(obj.test).toBeTrue();
-            expect(obj.test1.test1).toBeTrue();
-        });
-
-        it('should create deeper object when not null, undefined or empty string', function() {
-            const obj = createObjectFromTemplate({ test: '$1', test1: '$2', test2: '$3', test3: '$4'}, true, null, undefined, '');
-            expect(obj.test).toBeTrue();
-            expect(obj.test1).toBeUndefined();
-            expect(obj.test2).toBeUndefined();
-            expect(obj.test3).toBeUndefined();
-        });
-    });
 });
