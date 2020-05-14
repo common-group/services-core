@@ -5,7 +5,7 @@ export function defineDeepObject(objectPath = '', value = null, previousObj = {}
 }
 
 function defineDeepObjectRecursive(objectPath = '', deepObject = {}, value = null) {
-    if (value) {
+    if (typeof value !== 'undefined' && value !== null && value !== '') {
         const index = objectPath.indexOf('.');
         const hasDeeperPath = index >= 0;
         const currentKey = objectPath.slice(0, index > 0 ? index : objectPath.length);
