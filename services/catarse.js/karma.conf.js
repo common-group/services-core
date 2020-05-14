@@ -1,5 +1,12 @@
 process.env.CHROME_BIN = require('puppeteer').executablePath()
 
+const webpack = require('./webpack.config');
+
+delete webpack['entry'];
+delete webpack['output'];
+delete webpack['plugins'];
+webpack['mode'] = 'production';
+
 module.exports = (config) => {
     config.set({
         basePath: '',
@@ -30,10 +37,7 @@ module.exports = (config) => {
             'legacy/spec/**/*.spec.js': ['webpack'],
             'legacy/spec/index.spec.js': ['webpack']
         },
-        webpack: {
-            // mode: 'development'
-            mode: 'production'
-        },
+        webpack,
         exclude: [],
         reporters: ['spec'],
         port: 9876,
