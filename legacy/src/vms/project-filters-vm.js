@@ -171,7 +171,9 @@ const projectFiltersVM = () => {
             },
             all_modes: {
                 title: 'Todos os projetos',
-                filter: null,
+                filter: {
+                    parameters: () => ({})
+                },
                 isContextual: false,
                 keyName: 'all_modes'
             },
