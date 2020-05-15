@@ -1,5 +1,4 @@
 import m from 'mithril';
-import prop from 'mithril/stream';
 import h from '../h';
 
 export const ExploreSearchFilterSelect = {
@@ -72,7 +71,7 @@ export const ExploreSearchFilterSelect = {
                                     (
                                         isLoading() ?
                                             h.loader()
-                                        :   
+                                            :
                                             (
                                                 foundItems.length === 0 ?
                                                     (
@@ -86,7 +85,7 @@ export const ExploreSearchFilterSelect = {
                                                             }, noneSelected)
                                                         )
                                                     )
-                                                :
+                                                    :
                                                     (
                                                         foundItems.map(item => {
                                                             return m('div.table-row.fontsize-smallest.fontcolor-secondary',
@@ -110,4 +109,4 @@ export const ExploreSearchFilterSelect = {
             )
         ]);
     }
-}
+};
