@@ -25,7 +25,8 @@ describe('ExploreFilterSelect', () => {
             const attrs = {
                 values,
                 isSelected: (item) => item.value === currentValue.value,
-                itemToString: () => currentValue.label,
+                itemToString: (item) => item.label,
+                selectedItem: () => currentValue,
                 mobileLabel: 'MOBILE_LABEL',
                 onSelect: (item) => currentValue = item,
                 splitNumberColumns: 1,
@@ -83,9 +84,10 @@ describe('ExploreFilterSelect', () => {
             const attrs = {
                 values,
                 isSelected: (item) => item.value === currentValue.value,
-                itemToString: () => currentValue.label,
+                itemToString: (item) => item.label,
                 mobileLabel: 'MOBILE_LABEL',
                 onSelect: (item) => currentValue = item,
+                selectedItem: () => currentValue,
                 splitNumberColumns: 2,
             };
     

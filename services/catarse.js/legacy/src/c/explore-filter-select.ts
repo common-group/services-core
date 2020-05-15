@@ -9,72 +9,64 @@ import _ from 'underscore';
  * @property {string} value
  */
 
-/**
- * @typedef ExploreFilterAttrs
- * @property {ExploreFilterValue[]} values
- * @property {() => boolean} isSelected
- * @property {(item : ExploreFilterValue) => void} onSelect
- * @property {string} mobileLabel
- * @property {() => string} itemToString
- * @property {number} splitNumberColumns
- */
 
- /**
-  * @typedef ExploreFilterState
-  * @property {{(newData:any) => any, toggle() : any}} showFilterSelect
-  */
+type ExploreFilterAttrs = {
+    values: any[];
+    isSelected(item : any): boolean;
+    onSelect(item : any): void;
+    mobileLabel: string;
+    itemToString(item : any): string;
+    selectedItem(): any;
+    splitNumberColumns?: number;
+}
 
- /**
-  * @typedef ExploreFilterViewParams
-  * @property {ExploreFilterAttrs} attrs
-  * @property {ExploreFilterState} state
-  */
+type ExploreFilterState = {
+    showFilterSelect: {(newData?:any): any, toggle() : any}
+}
 
+type ExploreFilterViewParams = {
+    attrs: ExploreFilterAttrs;
+    state: ExploreFilterState;
+}
 
+export const ExploreFilterSelect : m.Component<ExploreFilterAttrs, ExploreFilterState> = {
+    oninit(vnode) {
+        const showFilterSelect = h.RedrawToggleStream(false, true);
 
-export function ExploreFilterSelect(vnode) {
-
-    return {
-        oninit(vnode) {
-            const showFilterSelect = h.RedrawToggleStream(false, true);
-
-            vnode.state = {
-                showFilterSelect,
-            };
-        },
+        vnode.state = {
+            showFilterSelect,
+        };
+    },
     
-        /**
-         * @param {ExploreFilterViewParams} viewParams
-         * @returns {m.Vnode}
-         */
-        view({state, attrs}) {
+    view({state, attrs}) {
     
-            const isSelected = attrs.isSelected;
-            const itemToString = attrs.itemToString;
-            const onSelect = attrs.onSelect;
-            const values = attrs.values;
-            const mobileLabel = attrs.mobileLabel;
-            const splitNumberColumns = attrs.splitNumberColumns || 1;
-            const showFilterSelect = state.showFilterSelect;
-            const onClickExploreFilter = (/** @type {Event} */ event) => {
-                showFilterSelect.toggle();
-                event.stopPropagation();
-            };
+        const isSelected = attrs.isSelected;
+        const itemToString = attrs.itemToString;
+        const onSelect = attrs.onSelect;
+        const selectedItem = attrs.selectedItem;
+        const values = attrs.values;
+        const mobileLabel = attrs.mobileLabel;
+        const splitNumberColumns = attrs.splitNumberColumns || 1;
+        const showFilterSelect = state.showFilterSelect;
+        const onClickExploreFilter = (event : Event) => {
+            showFilterSelect.toggle();
+            event.stopPropagation();
+        };
             
-            return m('.explore-filter-wrapper', [
-                m('.explore-span-filter', {
-                    onclick: onClickExploreFilter
-                }, [
-                    m('div.explore-span-filter-name', [
-                        m('div.explore-mobile-label', mobileLabel),
-                        m('div.inline-block', itemToString()),
-                    ]),
-                    m('.inline-block.fa.fa-angle-down[aria-hidden="true"]', {
-                        onclick: onClickExploreFilter
-                    })
+        return m('.explore-filter-wrapper', [
+            m('.explore-span-filter', {
+                onclick: onClickExploreFilter
+            }, [
+                m('div.explore-span-filter-name', [
+                    m('div.explore-mobile-label', mobileLabel),
+                    m('div.inline-block', itemToString(selectedItem())),
                 ]),
-                (
-                    showFilterSelect() && 
+                m('.inline-block.fa.fa-angle-down[aria-hidden="true"]', {
+                    onclick: onClickExploreFilter
+                })
+            ]),
+            (
+                showFilterSelect() && 
                         (
                             splitNumberColumns > 1 ?
                                 m(ExploreFilterSelectionColumns, {
@@ -83,30 +75,37 @@ export function ExploreFilterSelect(vnode) {
                                     values,
                                     splitNumberColumns,
                                     showFilterSelect,
+                                    itemToString,
                                 })
-                            :
+                                :
                                 m(ExploreFilterSelectionSingleColumn, {
                                     isSelected,
                                     onSelect,
                                     values,
                                     showFilterSelect,
+                                    itemToString,
                                 })
                         )
-                )
-            ]);
-        }
+            )
+        ]);
     }
 };
 
-const ExploreFilterSelectionColumns = {
-        
-    /**
-     * @param {ExploreFilterViewParams} viewParams
-     * @returns {m.Vnode}
-     */
+type ExploreFilterSelectionColumnsViewParams = {
+    showFilterSelect: {(newData?:any): any, toggle() : any};
+    values: any[];
+    isSelected: (item) => boolean;
+    onSelect: (item : any) => void;
+    itemToString: (item) => string;
+    splitNumberColumns?: number;
+}
+
+const ExploreFilterSelectionColumns : m.Component<ExploreFilterSelectionColumnsViewParams> = {
+
     view({attrs}) {
         const isSelected = attrs.isSelected;
         const onSelect = attrs.onSelect;
+        const itemToString = attrs.itemToString;
         const values = attrs.values;
         const splitNumberColumns = attrs.splitNumberColumns || 1;
         const showFilterSelect = attrs.showFilterSelect;
@@ -120,6 +119,7 @@ const ExploreFilterSelectionColumns = {
                 _.range(0, splitNumberColumns).map(columnIndex => {
                     return m('.explore-filter-select-col', [
                         columnSplit(
+                            itemToString,
                             values, 
                             Math.floor(values.length / splitNumberColumns) * columnIndex,
                             Math.floor(values.length / splitNumberColumns) * (columnIndex + 1),
@@ -136,7 +136,15 @@ const ExploreFilterSelectionColumns = {
     }
 };
 
-const ExploreFilterSelectionSingleColumn = {
+type ExploreFilterSingleColumnViewParams = {
+    showFilterSelect: {(newData?:any): any, toggle() : any};
+    values: any[];
+    isSelected: (item) => boolean;
+    onSelect: (item : any) => void;
+    itemToString: (item) => string;
+}
+
+const ExploreFilterSelectionSingleColumn : m.Component<ExploreFilterSingleColumnViewParams> = {
     
     /**
      * @param {ExploreFilterViewParams} viewParams
@@ -145,18 +153,19 @@ const ExploreFilterSelectionSingleColumn = {
     view({attrs}) {
         const isSelected = attrs.isSelected;
         const onSelect = attrs.onSelect;
+        const itemToString = attrs.itemToString;
         const values = attrs.values;
         const showFilterSelect = attrs.showFilterSelect;
 
         return m('.explore-filter-select', [
             values.map(item => {
-                return m(`a.explore-filter-link[href="javascript:void(0);"]`, {
+                return m('a.explore-filter-link[href="javascript:void(0);"]', {
                     onclick: () => {
                         showFilterSelect(false);
                         onSelect(item);
                     },
                     class: isSelected(item) ? 'selected' : ''
-                }, item.label);
+                }, itemToString(item));
             }),
             m('a.modal-close.fa.fa-close.fa-lg.w-hidden-main.w-hidden-medium.w-inline-block', {
                 onclick: () => showFilterSelect(false)
@@ -165,11 +174,11 @@ const ExploreFilterSelectionSingleColumn = {
     }
 };
 
-function columnSplit(values, start, finish, onSelect, isSelected) {
+function columnSplit(itemToString, values, start, finish, onSelect, isSelected) {
     return values.slice(start, finish).map(item => {
-        return m(`a.explore-filter-link[href="javascript:void(0);"]`, {
+        return m('a.explore-filter-link[href="javascript:void(0);"]', {
             onclick: () => onSelect(item),
             class: isSelected(item) ? 'selected' : ''
-        }, item.label);
+        }, itemToString(item));
     });
 }
