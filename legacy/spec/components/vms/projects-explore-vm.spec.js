@@ -1,45 +1,6 @@
 import { ProjectsExploreViewModel } from '../../../src/vms/projects-explore-vm';
 
 describe('ProjectExploreVM', () => {
-    xit('should search projects with input text', () => {
-
-    });
-
-    xit('should search projects mode that are not subscription', () => {
-
-    });
-
-    xit('should search projects mode that are subscription', () => {
-
-    });
-
-    xit('should search projects that are popular', () => {
-
-    });
-
-    xit('should search projects that we love', () => {
-
-    });
-
-    xit('should search projects that were saved', () => {
-
-    });
-
-    xit('should search projects that recent', () => {
-
-    });
-
-    xit('should search projects that are nearly to end', () => {
-
-    });
-
-    xit('should search projects that are ended', () => {
-
-    });
-
-    xit('should retrieve cities state lists', () => {
-
-    });
 
     describe('find projects without city and state parameters', () => {
         beforeAll(() => {

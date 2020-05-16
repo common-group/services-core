@@ -1,9 +1,6 @@
 import mq from 'mithril-query';
-import prop from 'mithril/stream';
-import h from '../../../src/h';
+import m from 'mithril';
 import projectsExplore from '../../../src/root/projects-explore';
-import { loadProjectsWithConfiguredParameters } from '../../../src/vms/projects-explore-vm';
-import projectFilters from '../../../src/vms/project-filters-vm';
 
 describe('ProjectsExplore', () => {
     let $output, project, component;
@@ -23,20 +20,12 @@ describe('ProjectsExplore', () => {
     describe('view', () => {
 
         let $outputWithSubscriptionsSelected, $outputWithAonFlexSelected, $outputAllModes;
-        let $outputSearch;
-        let projectFiltersVM; 
-        let filtersMap;
 
-        beforeAll(() => {            
-            // $outputSearch = mq(m(projectsExplore, { pg_search: 'SEARCH'}));
+        beforeAll(() => {
             $outputAllModes = mq(m(projectsExplore));
-            $outputWithSubscriptionsSelected = mq(m(projectsExplore, { mode: 'sub' }));
-            $outputWithAonFlexSelected = mq(m(projectsExplore, { mode: 'not_sub' }));
+            $outputWithSubscriptionsSelected = mq(m(projectsExplore, { mode: 'sub', filter: 'all' }));
+            $outputWithAonFlexSelected = mq(m(projectsExplore, { mode: 'not_sub', filter: 'all' }));
         });
-
-        // it('should make a search request for projects', () => {
-        //     $outputSearch.should.contain('SEARCH');
-        // });
 
         it('should render explore with all modes', () => {  
             expect($outputAllModes.contains('Todos os projetos')).toBeTrue();
