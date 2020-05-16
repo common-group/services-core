@@ -90,7 +90,7 @@ const _dataCache = {},
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-    reduceSearchString = (callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
+    reduceSearchString = (/** @type {(keyValue:string) => any} */callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
     objectToSearchString = (obj) => '?' + Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&'),
     setParamByName = (name, value) => {        
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
@@ -136,6 +136,22 @@ const _dataCache = {},
         const queryString = objectToSearchString(Object.assign(keysAndValues, setParams));
 
         const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    setAndResetMultParamsArray = (/** @type {{[key : string] : string | number}} */ setParams, /** @type {string[]}*/ removeQuery = []) => {
+        
+        /** @type {Object} */ 
+        const query = m.parseQueryString(window.location.search);
+        
+        removeQuery.forEach(param => {
+            if (param in query) {
+                delete query[param];
+            }
+        });
+
+        const queryString = objectToSearchString(Object.assign(query, setParams));
+
+        const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
         m.route.set(newurl);
     },
     removeParamByName = (name) => {
@@ -1091,47 +1107,46 @@ const _dataCache = {},
         const errorMessage = prop('');
 
         return {
-            isLastPage: vmInstance.isLastPage,
+            isLastPage() {
+                const loadedAmount = Number(vmInstance.collection().length || 0);
+                return loadedAmount >= vmInstance.total();
+            },
             isLoading: vmInstance.isLoading,
             collection: vmInstance.collection,
-            total: vmInstance.total,
+            total() {
+                try {
+                    return Number(vmInstance.total() || 0);
+                } catch(e) {
+                    return 0;
+                }
+            },
             error,
             errorMessage,
-            firstPage: params => {
-                return new Promise((resolve, reject) => {
-                    vmInstance
-                        .firstPage(params)
-                        .then(data => {
-                            error(false);
-                            errorMessage('');
-                            resolve(data);
-                            redraw();
-                        })
-                        .catch(errorString => {
-                            error(true);
-                            errorMessage(errorString);
-                            reject(errorString);
-                            redraw();
-                        });
-                });
+            async firstPage(params = {}) {
+                error(false);
+                errorMessage('');
+                try {
+                    return await vmInstance.firstPage(params);
+                } catch(e) {
+                    error(true);
+                    errorMessage(e);
+                    throw e;
+                } finally {
+                    redraw();
+                }
             },
-            nextPage: () => {
-                return new Promise((resolve, reject) => {
-                    vmInstance
-                        .nextPage()
-                        .then(data => {
-                            error(false);
-                            errorMessage('');
-                            resolve(data);
-                            redraw();
-                        })
-                        .catch(errorString => {
-                            error(true);
-                            errorMessage(errorString);
-                            reject(errorString);
-                            redraw();
-                        });
-                });
+            async nextPage() {
+                error(false);
+                errorMessage('');
+                try {
+                    return await vmInstance.nextPage();
+                } catch(e) {
+                    error(true);
+                    errorMessage(e);
+                    throw e;
+                } finally {
+                    redraw();
+                }
             },
         };
     },
@@ -1397,6 +1412,7 @@ export default {
     setParamByName,
     setMultParams,
     setAndResetMultParams,
+    setAndResetMultParamsArray,
     removeParamByName,
     removeMultParams,
     i18nScope,
