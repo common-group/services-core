@@ -1,0 +1,17 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: catarse-eksctl-test
+  region: us-east-1
+nodeGroups:
+  - name: ng-1
+    instanceType: t3.large
+    desiredCapacity: 2
+    ssh:
+      allow: true
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        certManager: true
+        ebs: true
+        albIngress: true

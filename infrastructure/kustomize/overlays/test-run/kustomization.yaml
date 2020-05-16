@@ -5,6 +5,7 @@ resources:
   - catarse-env-configmap.yaml
   - catarse-api-env-configmap.yaml
   - catarse-data-persistentvolumeclaim.yaml
+  - catarse-redis-data-persistentvolumeclaim.yaml
   - catarse-moment-service-api-env-configmap.yaml
   - catarse-moments-data-persistentvolumeclaim.yaml
   - common-api-env-configmap.yaml
@@ -21,5 +22,6 @@ resources:
   - recommender-service-api-env-configmap.yaml
   - subscriptions-scheduler-env-configmap.yaml
   - catarse-secrets-dec.yaml
+  - ingress.yaml
 patches:
   - deployments.yaml

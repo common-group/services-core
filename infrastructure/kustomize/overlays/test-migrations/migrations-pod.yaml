@@ -12,7 +12,7 @@ spec:
         args:
         - ./scripts/run_migrations.sh
         env:
-        - name: SERVICE_CORE_DB_URI
+        - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
               key: SERVICE_CORE_DB_URI

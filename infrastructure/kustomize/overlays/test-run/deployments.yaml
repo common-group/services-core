@@ -7,7 +7,18 @@ spec:
     spec:
       containers:
         - name: catarse-db
-          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+            - name: PGDATA
+              value: /ebs/data
+          volumeMounts:
+            - mountPath: /ebs
+              name: catarse-data
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -17,8 +28,19 @@ spec:
   template:
     spec:
       containers:
-        - name: catarse-db
+        - name: catarse-moments-db
           image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+            - name: PGDATA
+              value: /ebs/data
+          volumeMounts:
+            - mountPath: /ebs
+              name: catarse-moments-data      
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -117,7 +139,18 @@ spec:
     spec:
       containers:
         - name: service-core-db
-          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+            - name: PGDATA
+              value: /ebs/data
+          volumeMounts:
+            - mountPath: /ebs
+              name: core-data
 ---
 apiVersion: apps/v1
 kind: Deployment

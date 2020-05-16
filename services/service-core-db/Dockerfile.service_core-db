@@ -1,5 +1,4 @@
 FROM library/postgres:10.3-alpine
-
 COPY ./init_catarse.sql /docker-entrypoint-initdb.d/init.sql
 COPY ./sample.seed.sql /sample.seed.sql
 COPY ./setup_fdw_grants.sql /setup_fdw_grants.sql

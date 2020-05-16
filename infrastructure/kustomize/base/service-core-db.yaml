@@ -27,18 +27,13 @@ spec:
         - env:
             - name: POSTGRES_DB
               value: service_core
-            - name: POSTGRES_PASSWORD
-              value: example
             - name: POSTGRES_USER
               value: postgres
-          image: catarse-deploy/catarse-db
+          image: catarse-deploy/core-db
           name: service-core-db
           ports:
             - containerPort: 5432
           resources: {}
-          volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: core-data
       restartPolicy: Always
       volumes:
         - name: core-data

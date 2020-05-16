@@ -51,11 +51,11 @@ You will need the following tools installed:
  - terraform
  - AWS CLI w/ default credentials configured for the account you want to deploy to
 
-Inside `/infrastructure/terraform` run the following commands:
+Inside `/infrastructure/terraform/cluster` run the following commands:
 
 ```
 terraform init
-terraform plan -var provision=true --out plan
+terraform plan --var provision=true --out plan
 terraform apply plan
 ```
 
@@ -80,13 +80,6 @@ terraform plan --out plan
 terraform apply plan
 ```
 
-Enable Amazon EBS for persitent volumes:
-
-```
-curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.4.0/docs/example-iam-policy.json
-aws iam create-policy --policy-name Amazon_EBS_CSI_Driver \--policy-document file://example-iam-policy.json
-```
-
 Next add the metrics server (to enable system monitor dashboards):
 
 ```
@@ -107,6 +100,66 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-b
 kubectl apply -f https://raw.githubusercontent.com/hashicorp/learn-terraform-provision-eks-cluster/master/kubernetes-dashboard-admin.rbac.yaml
 ```
 
+Install AWS storage drivers:
+
+```
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
+```
+
+Install AWS ELB drivers:
+
+Install eksctl if needed: https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html#installing-eksctl
+
+```
+eksctl utils associate-iam-oidc-provider --region $(terraform output region) --cluster $(terraform output cluster_name) --approve
+```
+
+Now some env vars:
+```
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+export OIDC_PROVIDER=$(aws eks describe-cluster --name $(terraform output cluster_name) --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+export ISSUER_URL=$(aws eks describe-cluster \
+                       --name $(terraform output cluster_name) \
+                       --query cluster.identity.oidc.issuer \
+                       --output text)
+export ISSUER_HOSTPATH=$(echo $ISSUER_URL | cut -f 3- -d'/')
+export PROVIDER_ARN="arn:aws:iam::$ACCOUNT_ID:oidc-provider/$ISSUER_HOSTPATH"
+cat > irp-trust-policy.json << EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "$PROVIDER_ARN"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${ISSUER_HOSTPATH}:sub": "system:serviceaccount:kube-system:alb-ingress-controller"
+        }
+      }
+    }
+  ]
+}
+EOF
+export ROLE_NAME=catarse-elb-assume-role
+aws iam create-role \
+  --role-name $ROLE_NAME \
+  --assume-role-policy-document file://irp-trust-policy.json
+aws iam update-assume-role-policy \
+  --role-name $ROLE_NAME \
+  --policy-document file://irp-trust-policy.json
+aws iam attach-role-policy \
+  --role-name $ROLE_NAME \
+  --policy-arn $(terraform output elb_policy_arn)
+export ELB_ROLE_ARN=$(aws iam get-role \
+  --role-name $ROLE_NAME \
+  --query Role.Arn --output text)
+kubectl create -n kube-system sa alb-ingress-controller
+kubectl annotate -n kube-system sa alb-ingress-controller eks.amazonaws.com/role-arn=$ELB_ROLE_ARN
+```
+
 To login, you'll need a token. Generate one:
 
 ```
@@ -119,4 +172,5 @@ To log into the dashboard, you need to create a local proxy:
 kubectl proxy
 ```
 
-While the proxt is running, visist http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ and enter the token retrieved earlier.
+While the proxy is running, visist http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ and enter the token retrieved earlier.
+

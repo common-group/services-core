@@ -28,7 +28,10 @@ spec:
             - 0.0.0.0
           env:
             - name: DATABASE_URL
-              value: postgres://catarse:example@catarse-db:5432/catarse_db
+              valueFrom:
+                secretKeyRef:
+                  key: CATARSE_DB_URI
+                  name: catarse-secrets
             - name: REDIS_URL
               value: redis://catarse-redis:6379
             - name: RAILS_ENV

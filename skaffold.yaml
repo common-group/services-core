@@ -110,6 +110,10 @@ profiles:
         path: infrastructure/kustomize/overlays/local-setup       
   - name: test-run
     build:
+      tagPolicy:
+        dateTime:
+          format: "2006-01-02_15-04-05.999_MST"
+          timezone: "Local"
       artifacts:
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
         context: ./services/service-core-db/
@@ -162,6 +166,10 @@ profiles:
         path: infrastructure/kustomize/overlays/test-run
   - name: test-migrations
     build:
+      tagPolicy:
+        dateTime:
+          format: "2006-01-02_15-04-05.999_MST"
+          timezone: "Local"
       artifacts:
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
         context: ./services/catarse/
