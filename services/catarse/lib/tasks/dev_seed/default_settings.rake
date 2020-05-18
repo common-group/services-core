@@ -109,7 +109,7 @@ namespace :dev_seed do
       common_db_host: 'service-core-db',
       common_db_name: 'service_core',
       common_db_port: '5432',
-			common_db_password: 'example',
+			common_db_password: 'yuHaufubashOorr8',
 			common_db_user: 'catarse_fdw',
 			fdw_user: 'catarse_fdw',
       common_api_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoicGxhdGZvcm1fdXNlciIsInBsYXRmb3JtX3Rva2VuIjoiYTI4YmU3NjYtYmIzNi00ODIxLTgyZWMtNzY4ZDI2MzRkNzhiIiwiZ2VuX2F0IjoxNTA0MTMzNDQwfQ.kDTJb9HVmCMf8PIX0ZSwWr2CtJ0QjZgaNgk2qTJttjg',

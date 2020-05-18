@@ -24,11 +24,6 @@ spec:
     spec:
       containers:
         - env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  key: CATARSE_DB_URI
-                  name: catarse-secrets
             - name: PGRST_DB_ANON_ROLE
               valueFrom:
                 configMapKeyRef:

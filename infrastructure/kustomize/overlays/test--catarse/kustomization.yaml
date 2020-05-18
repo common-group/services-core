@@ -1,4 +1,0 @@
-
-resources:
-  - catarse-env-configmap.yaml
-  - catarse.yaml

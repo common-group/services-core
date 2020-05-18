@@ -139,12 +139,6 @@ profiles:
         context: ./services/hook-service-api/
         docker:
           dockerfile: ./Dockerfile
-      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
-        context: ./services/catarse/
-        docker:
-          buildArgs:
-            NPM_AUTH: '{{ .NPM_AUTH }}'
-          dockerfile: ./Dockerfile  
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/recommender-service-api
         context: ./services/catarse_recommender/
         docker:
@@ -187,12 +181,12 @@ profiles:
   - name: test-catarse
     build:
       artifacts:
-        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
-          context: ./services/catarse/
-          docker:
-            buildArgs:
-              NPM_AUTH: '{{ .NPM_AUTH }}'
-            dockerfile: ./Dockerfile  
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
+        context: ./services/catarse/
+        docker:
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./Dockerfile  
     deploy:
       kustomize:
         path: infrastructure/kustomize/overlays/test-catarse

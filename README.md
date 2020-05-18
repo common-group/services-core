@@ -136,7 +136,8 @@ cat > irp-trust-policy.json << EOF
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "${ISSUER_HOSTPATH}:sub": "system:serviceaccount:kube-system:alb-ingress-controller"
+          "${ISSUER_HOSTPATH}:sub": "system:serviceaccount:kube-system:alb-ingress-controller",
+          "${ISSUER_HOSTPATH}:aud": "sts.amazonaws.com"
         }
       }
     }

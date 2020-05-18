@@ -45,17 +45,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catarse-redis
-spec:
-  template:
-    spec:
-      containers:
-        - name: catarse-db
-          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-redis
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: common-api
 spec:
   template:

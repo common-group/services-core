@@ -22,6 +22,5 @@ resources:
   - recommender-service-api-env-configmap.yaml
   - subscriptions-scheduler-env-configmap.yaml
   - catarse-secrets-dec.yaml
-  - ingress.yaml
 patches:
   - deployments.yaml

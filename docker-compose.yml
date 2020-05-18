@@ -192,7 +192,7 @@ services:
       dockerfile: dev.Dockerfile
     environment:
       RAILS_ENV: development
-      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
+      DATABASE_URL: postgres://catarse:example@catarse-db:5432/catarse_db
       REDIS_URL: redis://catarse_redis:6379
     restart: 'no'
     command: ['bundle', 'exec', 'rake', 'db:migrate']
