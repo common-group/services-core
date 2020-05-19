@@ -82,7 +82,7 @@ export type Category = {
     id: number;
 }
 
-const ALL_CATEGORIES = { name: 'Todas as categorias', id: null };
+const ALL_CATEGORIES : Category = { name: 'Todas as categorias', id: null };
 const filtersMap = projectFiltersVM.filters;
 const filters = catarse.filtersVM;
 
@@ -156,13 +156,21 @@ export class ProjectsExploreViewModel {
         this.executeSearch();
     }
 
-    search(params : ProjectsExploreVMSearchParams) {
+    async search(params : ProjectsExploreVMSearchParams) {
         this._mode = params.mode || 'all_modes';
         this._category_id = params.category_id || null;
         this._filter = params.filter || 'all';
         this._cityState = params.cityState || null;
-        this._searchParam = params.searchParam || '';
-
+        this._searchParam = params.searchParam || '';        
+        if (this._category_id) {
+            try {
+                this._category = await this.getCategoryById(this._category_id);
+                h.redraw();
+            } catch(e) {
+                this.category = ALL_CATEGORIES;
+                this.dispatchNewQuery();                
+            }
+        }
         this.executeSearch();
     }
 
@@ -228,6 +236,7 @@ export class ProjectsExploreViewModel {
         this._category = category;
         this._category_id = category.id;
         this.dispatchNewQuery();
+        h.redraw();
     }
 
     get category() : Category {
@@ -236,22 +245,13 @@ export class ProjectsExploreViewModel {
 
     set category_id(category_id : number) {
         this._category_id = category_id;
-        const category = this._categories.find(c => c.id === category_id);
-        if (category) {
-            this.category = category;
-        } else {
-            const intervalWaitingCategoriesToLoad = setInterval(() => {
-                if (this._categories.length > 1) {
-                    const category = this._categories.find(c => c.id === category_id);
-                    if (category) {
-                        this.category = category;
-                    }
-                    clearInterval(intervalWaitingCategoriesToLoad);
-                }
-            }, 500);
-        }
-
-        this.dispatchNewQuery();
+        (async () => {
+            try {
+                this.category = await this.getCategoryById(category_id);
+            } catch(e) {
+                this.category = ALL_CATEGORIES;
+            }
+        })();
     }
 
     get category_id() {
@@ -290,6 +290,31 @@ export class ProjectsExploreViewModel {
 
     get filters() : Filter[] {
         return projectFiltersVM.getContextFilters();
+    }
+
+    private async getCategoryById(category_id : number) : Promise<Category> {
+        return new Promise<Category>((resolve, reject) => {
+            const category = this.findCagetoryById(category_id);
+            if (category) {
+                resolve(category);
+            } else {
+                const intervalWaitingCategoriesToLoad = setInterval(() => {
+                    if (this._categories.length > 1) {
+                        const category = this.findCagetoryById(category_id);
+                        if (category) {
+                            resolve(category);
+                        } else {
+                            reject(new Error('Category not found'));
+                        }
+                        clearInterval(intervalWaitingCategoriesToLoad);
+                    }
+                }, 100);
+            }
+        });
+    }
+
+    private findCagetoryById(category_id : number) : Category {
+        return this._categories.find(c => c.id === category_id);
     }
 
     private async loadCategories() {
@@ -357,7 +382,7 @@ export class ProjectsExploreViewModel {
         const parameters = this.getParametersBaserOnFilter();
         this._projectsView = this.loadProjects(model, parameters);
         this.countProjectsOnCity(model, parameters);
-
+        this._lastQuery = this.mountQuery();
         h.redraw();
     }
 
