@@ -114,15 +114,23 @@ const ExploreFilterSelectionColumns : m.Component<ExploreFilterSelectionColumnsV
             onSelect(item);                
         };
 
+        const splitPartAmount = values.length / splitNumberColumns;
+        const splitPartAmountRounded = Math.floor(splitPartAmount);
+        let displayedElementsCount = 0;
+
         return m('.explore-filter-select.big',
             m('.explore-filer-select-row', [
                 _.range(0, splitNumberColumns).map(columnIndex => {
+                    const startIndex = splitPartAmountRounded * columnIndex;
+                    const endPartIndex = splitPartAmountRounded * (columnIndex + 1);
+                    displayedElementsCount += (endPartIndex - startIndex);
+                    const endIndex = endPartIndex + (displayedElementsCount >= values.length ? 0 : 1);
                     return m('.explore-filter-select-col', [
                         columnSplit(
                             itemToString,
                             values, 
-                            Math.floor(values.length / splitNumberColumns) * columnIndex,
-                            Math.floor(values.length / splitNumberColumns) * (columnIndex + 1),
+                            startIndex,
+                            endIndex,
                             onSelectWithClose,
                             isSelected
                         )
@@ -174,7 +182,7 @@ const ExploreFilterSelectionSingleColumn : m.Component<ExploreFilterSingleColumn
     }
 };
 
-function columnSplit(itemToString, values, start, finish, onSelect, isSelected) {
+function columnSplit(itemToString : (item : any) => string, values : any[], start : number, finish : number, onSelect : (item : any) => void, isSelected : (item : any) => boolean) {
     return values.slice(start, finish).map(item => {
         return m('a.explore-filter-link[href="javascript:void(0);"]', {
             onclick: () => onSelect(item),
