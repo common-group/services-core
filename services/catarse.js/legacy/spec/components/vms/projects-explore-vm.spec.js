@@ -5,7 +5,7 @@ describe('ProjectExploreVM', () => {
     describe('find projects without city and state parameters', () => {
         beforeAll(() => {
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online`
+                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&open_for_contributions=eq.true`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-2/2',
@@ -35,7 +35,7 @@ describe('ProjectExploreVM', () => {
 
             beforeAll(() => {
                 jasmine.Ajax.stubRequest(
-                    `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&category_id=eq.1`
+                    `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&category_id=eq.1&open_for_contributions=eq.true`
                 ).andReturn({
                     responseHeaders: {
                         'Content-Range': '0-2/2',
@@ -68,7 +68,7 @@ describe('ProjectExploreVM', () => {
             
             beforeAll(() => {
                 jasmine.Ajax.stubRequest(
-                    `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&mode=eq.sub`
+                    `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&mode=eq.sub&open_for_contributions=eq.true`
                 ).andReturn({
                     responseHeaders: {
                         'Content-Range': '0-2/2',
@@ -77,7 +77,7 @@ describe('ProjectExploreVM', () => {
                 });
 
                 jasmine.Ajax.stubRequest(
-                    `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&mode=eq.not.sub`
+                    `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&mode=eq.not.sub&open_for_contributions=eq.true`
                 ).andReturn({
                     responseHeaders: {
                         'Content-Range': '0-2/2',
@@ -129,7 +129,7 @@ describe('ProjectExploreVM', () => {
     describe('projects from search params', () => {
         beforeAll(() => {
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&mode=eq.sub&state=eq.online&or=(full_text_index.plfts.test%2Cproject_name.plfts.test)`
+                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&mode=eq.sub&state=eq.online&or=(full_text_index.plfts.test%2Cproject_name.plfts.test)&open_for_contributions=eq.true`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-2/2',
@@ -161,7 +161,7 @@ describe('ProjectExploreVM', () => {
 
         beforeAll(() => {
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&city_name=eq.CITY_NAME&select=project_id`
+                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&city_name=eq.CITY_NAME&select=project_id&open_for_contributions=eq.true`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-0/0',
@@ -170,7 +170,7 @@ describe('ProjectExploreVM', () => {
             });
 
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&city_name=eq.CITY_NAME_2&select=project_id`
+                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&state=eq.online&city_name=eq.CITY_NAME_2&select=project_id&open_for_contributions=eq.true`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-1/1'
