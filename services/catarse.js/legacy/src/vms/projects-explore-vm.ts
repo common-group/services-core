@@ -486,7 +486,7 @@ export class ProjectsExploreViewModel {
     }
 
     private setOpenForContribution() {
-        if (this._filter === 'finished') {
+        if (this._filter !== 'finished') {
             return filters({ open_for_contributions: 'eq' }).open_for_contributions(true).parameters();
         } else {
             return {};
