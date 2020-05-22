@@ -90,10 +90,9 @@ const _dataCache = {},
             results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     },
-    reduceSearchString = (callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
+    reduceSearchString = (/** @type {(keyValue:string) => any} */callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
     objectToSearchString = (obj) => '?' + Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&'),
-    setParamByName = (name, value) => {
-        const originalHash = window.location.hash;
+    setParamByName = (name, value) => {        
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
             const [key, value] = keyValue.split('=');
             if (key) {
@@ -109,6 +108,52 @@ const _dataCache = {},
         const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
         m.route.set(newurl);
     },
+    setMultParams = (/** @type {{[key : string] : string}} */ objectParams) => {
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+            const [key, value] = keyValue.split('=');
+            if (key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+
+        const queryString = objectToSearchString(Object.assign(keysAndValues, objectParams));
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    setAndResetMultParams = function (/** @type {{[key : string] : string}} */ setParams) {
+        const argumentsArray = Array.from(arguments);
+        const resetParams = argumentsArray.length > 1 ? argumentsArray.slice(1) : [];
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+            const [key, value] = keyValue.split('=');
+            if (!resetParams.includes(key) && key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+
+        const queryString = objectToSearchString(Object.assign(keysAndValues, setParams));
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    setAndResetMultParamsArray = (/** @type {{[key : string] : string | number}} */ setParams, /** @type {string[]}*/ removeQuery = []) => {
+        
+        /** @type {Object} */ 
+        const query = m.parseQueryString(window.location.search);
+        
+        removeQuery.forEach(param => {
+            if (param in query) {
+                delete query[param];
+            }
+        });
+
+        const queryString = objectToSearchString(Object.assign(query, setParams));
+
+        const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
     removeParamByName = (name) => {
 
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
@@ -120,6 +165,23 @@ const _dataCache = {},
             return finalQueryObject;
         }, {});
 
+        const queryString = objectToSearchString(keysAndValues);
+
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
+        m.route.set(newurl);
+    },
+    removeMultParams = function () {
+        const paramsNamesToRemove = Array.from(arguments);
+
+        const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
+
+            const [key, value] = keyValue.split('=');            
+            if (!paramsNamesToRemove.includes(key) && key) {
+                finalQueryObject[key] = value;
+            }
+            return finalQueryObject;
+        }, {});
+        
         const queryString = objectToSearchString(keysAndValues);
 
         const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
@@ -467,7 +529,7 @@ const _dataCache = {},
     },
     useAvatarOrDefault = avatarPath => avatarPath || '/assets/catarse_bootstrap/user.jpg',
     // Templates
-    loader = () => m('.u-text-center.u-margintop-30 u-marginbottom-30', [m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')]),
+    loader = () => m('.u-text-center.u-margintop-30.u-marginbottom-30', [m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')]),
     loaderWithSize = (width, height) => m(`img[alt="Loader"][width=${width}][height=${height || width}][src="https://s3.amazonaws.com/catarse.files/loader.gif"]`),
     newFeatureBadge = () => m('span.badge.badge-success.margin-side-5', window.I18n.t('projects.new_feature_badge')),
     fbParse = () => {
@@ -1049,47 +1111,46 @@ const _dataCache = {},
         const errorMessage = prop('');
 
         return {
-            isLastPage: vmInstance.isLastPage,
+            isLastPage() {
+                const loadedAmount = Number(vmInstance.collection().length || 0);
+                return loadedAmount >= vmInstance.total();
+            },
             isLoading: vmInstance.isLoading,
             collection: vmInstance.collection,
-            total: vmInstance.total,
+            total() {
+                try {
+                    return Number(vmInstance.total() || 0);
+                } catch(e) {
+                    return 0;
+                }
+            },
             error,
             errorMessage,
-            firstPage: params => {
-                return new Promise((resolve, reject) => {
-                    vmInstance
-                        .firstPage(params)
-                        .then(data => {
-                            error(false);
-                            errorMessage('');
-                            resolve(data);
-                            redraw();
-                        })
-                        .catch(errorString => {
-                            error(true);
-                            errorMessage(errorString);
-                            reject(errorString);
-                            redraw();
-                        });
-                });
+            async firstPage(params = {}) {
+                error(false);
+                errorMessage('');
+                try {
+                    return await vmInstance.firstPage(params);
+                } catch(e) {
+                    error(true);
+                    errorMessage(e);
+                    throw e;
+                } finally {
+                    redraw();
+                }
             },
-            nextPage: () => {
-                return new Promise((resolve, reject) => {
-                    vmInstance
-                        .nextPage()
-                        .then(data => {
-                            error(false);
-                            errorMessage('');
-                            resolve(data);
-                            redraw();
-                        })
-                        .catch(errorString => {
-                            error(true);
-                            errorMessage(errorString);
-                            reject(errorString);
-                            redraw();
-                        });
-                });
+            async nextPage() {
+                error(false);
+                errorMessage('');
+                try {
+                    return await vmInstance.nextPage();
+                } catch(e) {
+                    error(true);
+                    errorMessage(e);
+                    throw e;
+                } finally {
+                    redraw();
+                }
             },
         };
     },
@@ -1254,6 +1315,32 @@ function RedrawStream(data, onUpdate = (param) => {}) {
     return streamAccessor;
 }
 
+/**
+ * @param {T} data
+ * @template T
+ * @returns {{ (newData : T) => T, toggle() : T }}
+ */
+function RedrawToggleStream(firstState, secondState) {
+    const _data = prop(firstState);
+
+    /**
+     * @param {T} newData
+     * @returns {T}
+     */
+    function streamAccessor(newData) {
+        if (newData !== undefined) {
+            _data(newData);
+            redraw();
+            return newData;
+        }
+        return _data();
+    }
+
+    streamAccessor.toggle = () => streamAccessor(_data() === firstState ? secondState : firstState);
+
+    return streamAccessor;   
+}
+
 function createPropAcessors(obj) {
     return Object.keys(obj).reduce((curObject, prop) => {
         return Object.assign(curObject, {
@@ -1295,6 +1382,7 @@ export default {
     ObservableStream,
     ObservableRedrawStream,
     RedrawStream,
+    RedrawToggleStream,
     extractPhoneDDD,
     extractPhoneNumber,
     SentryInitSDK,
@@ -1356,7 +1444,11 @@ export default {
     capitalize,
     paramByName,
     setParamByName,
+    setMultParams,
+    setAndResetMultParams,
+    setAndResetMultParamsArray,
     removeParamByName,
+    removeMultParams,
     i18nScope,
     RDTracker,
     selfOrEmpty,

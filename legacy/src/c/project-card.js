@@ -25,7 +25,7 @@ const projectCard = {
                     title: '.fontweight-semibold.u-text-center-small-only.lineheight-tight.u-marginbottom-10.fontsize-base',
                     author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
                     headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
-                    city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
+                    city: '.card-project-author.altt'
                 },
                 medium: {
                     wrapper: '.w-col.w-col-6',
@@ -36,7 +36,7 @@ const projectCard = {
                     title: '.fontsize-large.fontweight-semibold.u-marginbottom-10',
                     author: '.w-hidden-small.w-hidden-tiny.fontsize-smallest.fontcolor-secondary.u-marginbottom-20',
                     headline: '.w-hidden-small.w-hidden-tiny.fontcolor-secondary.fontsize-smaller',
-                    city: '.w-hidden-small.w-hidden-tiny.card-project-author.altt'
+                    city: '.card-project-author.altt'
                 },
                 big: {
                     wrapper: '.card.u-radius.card-project',
@@ -86,13 +86,23 @@ const projectCard = {
         };
     },
     view: function({state, attrs}) {
-        const project = attrs.project,
-            projectOwnerName = (project.user ? (
-                  project.user.public_name || project.user.name
-              ) : (project.owner_public_name || project.owner_name)),
-            projectAddress = (project.address ? (
-                  `${project.address.city} - ${project.address.state_acronym}`
-              ) : (`${project.city_name} - ${project.state_acronym}`));
+        const project = attrs.project;
+        const projectOwnerName = project.user ? (project.user.public_name || project.user.name) : (project.owner_public_name || project.owner_name);
+        
+        const projectLocalizationObject = {
+            filter: 'all',
+            city_name: project.address ? project.address.city : project.city_name,
+            state_acronym: project.address ? project.address.state_acronym : project.state_acronym,
+        };        
+        const projectLocalizationSearchUrl = `/explore?${m.buildQueryString(projectLocalizationObject)}`
+        const projectLocalizationName = project.address ? `${project.address.city}, ${project.address.state_acronym}` : `${project.city_name}, ${project.state_acronym}`;
+
+        const projectCategoryObject = {
+            filter: 'all',
+            category_id: project.category_id,
+        };
+        const projectCategorySearchUrl = `/explore?${m.buildQueryString(projectCategoryObject)}`;
+        const projectCategoryName = project.category_name;
 
         return m(state.css().wrapper, [
             m(state.css().innerWrapper, [
@@ -125,12 +135,6 @@ const projectCard = {
                             }, project.headline)
                         ])
                     ]),
-                    m(state.css().city, [
-                        m('.fontsize-smallest.fontcolor-secondary', [
-                            m('span.fa.fa-fw.fa-map-marker.fa-1', ' '),
-                            projectAddress
-                        ])
-                    ]),
                     m(progressMeter, { progress: state.progress, project }),
                     m('.card-project-stats', [
                         m('.w-row', [
@@ -144,6 +148,32 @@ const projectCard = {
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', state.cardCopy(project)),
                         ])
                     ]),
+                    m(state.css().city, 
+                        m('div', [
+                            m('div',
+                                m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectLocalizationSearchUrl}"]`, {
+                                    onclick: (/** @type {Event} */ event) => {
+                                        event.preventDefault();
+                                        m.route.set(projectLocalizationSearchUrl);
+                                    }
+                                }, [
+                                    m('span.fa.fa-map-marker.fa-sm', ' '),
+                                    ` ${projectLocalizationName}`
+                                ])
+                            ),
+                            m('div',
+                                m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectCategorySearchUrl}"]`, {
+                                    onclick: (/** @type {Event} */ event) => {
+                                        event.preventDefault();
+                                        m.route.set(projectCategorySearchUrl);
+                                    }
+                                }, [
+                                    m('span.fa.fa-tag.fa-sm', ' '),
+                                    ` ${projectCategoryName}`
+                                ])
+                            )
+                        ])
+                    ),
                 ]),
                 (attrs.showFriends && state.type === 'big' ?
                  m('.w-col.w-col-4.w-col-medium-6', [m(projectFriends, { project })]) : '')
