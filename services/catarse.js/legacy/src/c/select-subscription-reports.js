@@ -13,16 +13,14 @@ export const SelectSubscriptionReports = {
             selectReportType: (report_type, checked) => {
                 const indexIn = selectedReportTypes.indexOf(report_type);
                 const isInside = indexIn >= 0;
-                if (checked) {
-                    if (!isInside) {
-                        selectedReportTypes.push(report_type);
-                    }
+                if (checked && !isInside) {
+                    selectedReportTypes.push(report_type);
                 } else if (isInside) {
                     selectedReportTypes.splice(indexIn, 1);
                 }
             },
             reportsExtension,
-        }
+        };
     },
 
     view({ state, attrs }) {
