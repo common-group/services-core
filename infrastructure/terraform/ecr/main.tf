@@ -124,3 +124,12 @@ resource "aws_ecr_repository" "payments" {
     scan_on_push = false
   }
 }
+
+resource "aws_ecr_repository" "builder" {
+  name                 = "catarse-deploy/builder"
+  image_tag_mutability = "IMMUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+}
