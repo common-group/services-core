@@ -43,3 +43,5 @@ eksctl create iamserviceaccount \
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.4/docs/examples/alb-ingress-controller.yaml
 
 kubectl patch deployment.apps/alb-ingress-controller -n kube-system --type json -p '[{ "op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--cluster-name=${CLUSTER_NAME}" }]'
+
+eksctl create iamidentitymapping --cluster ${CLUSTER_NAME} --arn arn:aws:iam::892910702142:user/catarse-github-action --group system:masters --username github-actions
