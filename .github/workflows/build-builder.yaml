@@ -11,11 +11,12 @@ jobs:
     name: Build the builder
     runs-on: ubuntu-latest
     steps:
-    - name: Build, tag, and push image
+    - name: Login to Dockerhub
       uses: azure/docker-login@v1
       with:
         username: soapbubble
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build, tag, and push image
       env:
         IMAGE_TAG: ${{ github.sha }}
       run: |
