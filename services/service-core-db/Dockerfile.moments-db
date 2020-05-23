@@ -1,0 +1,8 @@
+FROM library/postgres:10.3-alpine
+ARG POSTGREST_USER_PASSWORD=example
+ARG CATARSE_FDW_USER_PASSWORD=example
+COPY ./init_catarse_moments.sql /docker-entrypoint-initdb.d/init.sql
+RUN sed -i \
+  -e "s/{{\s*\.POSTGREST_USER_PASSWORD\s*}}/${POSTGREST_USER_PASSWORD}/g" \
+  -e "s/{{\s*\.CATARSE_FDW_USER_PASSWORD\s*}}/${CATARSE_FDW_USER_PASSWORD}/g" \
+  /docker-entrypoint-initdb.d/init.sql

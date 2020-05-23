@@ -333,6 +333,12 @@ a:hover {
   padding-top: 3px;
 }
 
+.login-bundle {
+  margin-top: 0px;
+  margin-bottom: 6px;
+  padding-top: 3px;
+}
+
 .form-login {
   margin-top: 0px;
 }
@@ -4631,6 +4637,12 @@ html.w-mod-js *[data-ix="display-0-on-load"] {
     padding-right: 0px;
     padding-left: 0px;
   }
+  .login-bundle {
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
   .project-stats {
     height: 408px;
   }
@@ -5152,6 +5164,10 @@ html.w-mod-js *[data-ix="display-0-on-load"] {
     border-width: 0px;
   }
   .login-fb {
+    margin-top: -25px;
+    padding-top: 18px;
+  }
+  .login-bundle {
     margin-top: -25px;
     padding-top: 18px;
   }

@@ -1,0 +1,88 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: common-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: common-api
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/common-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: common-docs
+spec:
+  template:
+    spec:
+      containers:
+        - name: common-docs
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/common-docs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: common-proxy
+spec:
+  template:
+    spec:
+      containers:
+        - name: common-proxy
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/common-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hook-service-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: hook-service-api
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/hook-service-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-dispatcher
+spec:
+  template:
+    spec:
+      containers:
+        - name: notification-dispatcher
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/notification-dispatcher
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-stream-processor
+spec:
+  template:
+    spec:
+      containers:
+        - name: payment-stream-processor
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/payments
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommender-service-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: recommender-service-api
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/recommender-service-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriptions-scheduler
+spec:
+  template:
+    spec:
+      containers:
+        - name: subscriptions-scheduler
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/payments

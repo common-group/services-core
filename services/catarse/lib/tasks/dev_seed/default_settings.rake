@@ -37,6 +37,13 @@ namespace :dev_seed do
 
   desc 'setup demo configurations'
   task demo_settings: :environment do |t, args|
+    bundle = OauthProvider.where(name: 'bundle').first_or_initialize
+    bundle.update_attributes(
+      key: 'testclient',
+      secret: 'testpass',
+      path: 'bundle',
+      strategy: 'bundle'
+    )
     raise 'only run in development' unless Rails.env.development?
     rewrite = ENV['REWRITE_ALL'].present? && ENV['REWRITE_ALL'] == 'true'
 
@@ -99,7 +106,7 @@ namespace :dev_seed do
 			common_proxy_service_api: 'http://proxy',
       common_platform_token: 'a28be766-bb36-4821-82ec-768d2634d78b',
       common_platform_id: '8187a11e-6fa5-4561-a5e5-83329236fbd6',
-      common_db_host: 'service_core_db',
+      common_db_host: 'service-core-db',
       common_db_name: 'service_core',
       common_db_port: '5432',
 			common_db_password: 'example',

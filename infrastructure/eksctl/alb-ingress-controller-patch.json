@@ -1,0 +1,17 @@
+{                                           
+  "spec": {                                 
+    "template": {                           
+      "spec": {                             
+        "containers": [{
+          "name": "alb-ingress-controller",
+          "args": [
+            "--cluster-name=catarse-eksctl-test"
+          ]
+        }]
+      }
+    }
+  }
+}
+
+
+[{ "op": "add", "path": "/spec/template/spec/containers/0/args", "value": "--cluster-name=catarse-eksctl-test" }]

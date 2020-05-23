@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  SECRET_KEY: "notaverygoodsecret"
+  RAILS_ENV: "development"
+  BUNDLE_SITE_URL: "http://localhost:3000"
+  BUNDLE_AUTHORIZE_URL: "http://local.bundlesites.com/oauth/authorize"
+  OAUTH_DEBUG: "true"
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: catarse-env
+  name: catarse-env

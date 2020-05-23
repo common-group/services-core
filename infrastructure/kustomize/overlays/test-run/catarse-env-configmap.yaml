@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  RAILS_ENV: "development"
+  BUNDLE_SITE_URL: "https://catarse-test.bundlesites.com"
+  BUNDLE_AUTHORIZE_URL: "https://test.bundlesites.com/oauth/authorize"
+  OAUTH_DEBUG: "true"
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: catarse-env
+  name: catarse-env

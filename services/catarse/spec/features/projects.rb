@@ -25,7 +25,7 @@ RSpec.describe 'Projects', type: :feature do
       4.times { create(:project, name: 'Foo', category: category_1, state: 'online', online_days: 30, recommended: true) }
       18.times { create(:project, name: 'Bar', category: category_2, state: 'online', online_days: 30, recommended: true) }
       create(:project, category: category_2, name: 'Lorem', state: 'online', online_days: 30, recommended: false)
-      visit explore_path(locale: :pt)
+      visit explore_path(locale: :en)
       sleep FeatureHelpers::TIME_TO_SLEEP
     end
 

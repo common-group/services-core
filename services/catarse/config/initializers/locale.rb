@@ -6,8 +6,8 @@ I18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
 
 # set available locales from config/locales files
 # uncomment to enable en translations
-# I18n.available_locales = [:pt, :en]
-I18n.available_locales = [:pt]
+I18n.available_locales = [:en]
+# I18n.available_locales = [:pt]
 
 # set default locale to something other than :en
-I18n.default_locale = :pt
+I18n.default_locale = :en

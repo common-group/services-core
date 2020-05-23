@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-prime
+spec:
+  template:
+    spec:
+      containers:
+        - name: fdw-grants
+          env: 
+            - name: PGPASSWORD
+              value: example
+          image: catarse-deploy/core-db
+          command: [ 'sh', '-c', 'psql -d service_core -h service-core-db -U postgres < /setup_fdw_grants.sql']
+      restartPolicy: Never
+  backoffLimit: 0

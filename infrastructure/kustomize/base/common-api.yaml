@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  
+  labels:
+    io.kompose.service: common-api
+  name: common-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: common-api
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -o k83/
+        kompose.version: 1.19.0 (f63a961c)
+      labels:
+        io.kompose.service: common-api
+    spec:
+      containers:
+        - args:
+            - bundle
+            - exec
+            - rails
+            - s
+            - -b
+            - 0.0.0.0
+            - -p
+            - '3000'
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  key: SERVICE_CORE_DB_URI
+                  name: catarse-secrets
+            - name: GATEWAY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: GATEWAY_API_KEY
+                  name: catarse-secrets
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: JWT_SECRET
+                  name: catarse-secrets
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PORT
+                  name: common-api-compose-env
+          image: catarse-deploy/common-api
+          name: common-api
+          ports:
+            - containerPort: 3000
+          resources: {}
+          stdin: true
+          tty: true
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -o k83/
+    kompose.version: 1.19.0 (f63a961c)
+  
+  labels:
+    io.kompose.service: common-api
+  name: common-api
+spec:
+  ports:
+  - name: "3014"
+    port: 3014
+    targetPort: 3000
+  selector:
+    io.kompose.service: common-api
+status:
+  loadBalancer: {}
+  

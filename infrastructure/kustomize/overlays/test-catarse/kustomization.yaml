@@ -1,0 +1,5 @@
+
+resources:
+  - catarse-env-configmap.yaml
+  - catarse.yaml
+  - ingress.yaml

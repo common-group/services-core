@@ -1,0 +1,4 @@
+resources:
+ - service-core-db.yaml
+ - catarse-db.yaml
+ - catarse-moments-db.yaml

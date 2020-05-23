@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    io.kompose.service: migrations
+  name: migrations
+spec:
+  template:
+    spec:
+      containers:
+      - name: migrations
+        args:
+        - ./scripts/run_migrations.sh
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              key: SERVICE_CORE_DB_URI
+              name: catarse-secrets
+        image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/migrations
+      restartPolicy: OnFailure

@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  DISPATCHER_CHANNEL: payment_stream
+  DISPATCHER_EXEC: ./main.js
+  DISPATCHER_MODE: both
+  DISPATCHER_REDIS_URL: redis://dispatcher-redis:6379
+  DISPATCHER_WORKERS: "2"
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: payment-stream-processor-env
+  name: payment-stream-processor-env

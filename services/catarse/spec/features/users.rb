@@ -5,7 +5,7 @@ require 'rails_helper'
 
 RSpec.describe 'Users', type: :feature do
   before do
-    I18n.locale = :pt
+    I18n.locale = :en
     OauthProvider.create! name: 'facebook', key: 'dummy_key', secret: 'dummy_secret'
   end
 

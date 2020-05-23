@@ -1,0 +1,3 @@
+resources:
+  - catarse-migrations-pod.yaml
+  - migrations-pod.yaml

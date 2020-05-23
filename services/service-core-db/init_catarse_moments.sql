@@ -1,5 +1,5 @@
-create user postgrest with login password 'example';
-create user catarse_fdw with login password 'example';
+create user postgrest with login password '{{ .POSTGREST_USER_PASSWORD }}';
+create user catarse_fdw with login password '{{ .CATARSE_FDW_USER_PASSWORD }}';
 create role admin with nologin;
 create role web_user with nologin;
 create role anonymous with nologin;
@@ -14,8 +14,8 @@ create server catarse_db
 
 create user mapping for catarse_fdw
     server catarse_db
-    options (user 'catarse_fdw', password 'example');
+    options (user 'catarse_fdw', password '{{ .POSTGREST_USER_PASSWORD }}');
 
 create user mapping for postgres
     server catarse_db
-    options (user 'catarse_fdw', password 'example');
+    options (user 'catarse_fdw', password '{{ .CATARSE_FDW_USER_PASSWORD }}');

@@ -25,8 +25,8 @@ m.trust = (text) => h.trust(text);
     Chart.defaults.global.scaleFontFamily = 'proxima-nova';
 
     // NOTE: comment when need to use multilanguage i18n support
-    window.I18n.defaultLocale = 'pt';
-    window.I18n.locale = 'pt';
+    // window.I18n.defaultLocale = 'en';
+    // window.I18n.locale = 'en';
 
     const adminRoot = document.getElementById('new-admin');
 

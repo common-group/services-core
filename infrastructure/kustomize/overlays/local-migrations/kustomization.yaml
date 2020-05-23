@@ -1,0 +1,4 @@
+resources:
+  - catarse-migrations-pod.yaml
+  - migrations-env-configmap.yaml
+  - migrations-pod.yaml

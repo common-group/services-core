@@ -46,6 +46,7 @@ puts 'Seeding the database...'
    })
  end
 
+ puts ENV["DB_PASSWORD"] || "example"
 
 {
   company_name: 'Catarse',
@@ -76,7 +77,12 @@ puts 'Seeding the database...'
   instagram_url: 'http://instagram.com/catarse_',
   blog_url: "http://blog.catarse.me",
   github_url: 'http://github.com/catarse',
-  contato_url: 'http://suporte.catarse.me/'
+  contato_url: 'http://suporte.catarse.me/',
+  fdw_user: 'postgres'
+  common_db_user: 'postgres'
+  common_db_port: '5432'
+  common_db_password: ENV["DB_PASSWORD"] || "example"
+  common_db_name: 'service_core'
 }.each do |name, value|
    conf = CatarseSettings.find_or_initialize_by(name: name)
    conf.update_attributes({
@@ -84,11 +90,11 @@ puts 'Seeding the database...'
    }) if conf.new_record?
 end
 
-OauthProvider.find_or_create_by!(name: 'facebook') do |o|
-  o.key = 'your_facebook_app_key'
-  o.secret = 'your_facebook_app_secret'
-  o.path = 'facebook'
-end
+# OauthProvider.find_or_create_by!(name: 'facebook') do |o|
+#   o.key = 'your_facebook_app_key'
+#   o.secret = 'your_facebook_app_secret'
+#   o.path = 'facebook'
+# end
 
 puts
 puts '============================================='

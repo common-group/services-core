@@ -1,7 +1,7 @@
 FROM ruby:2.4.4-alpine
 #FROM alpine:3.7
-MAINTAINER Catarse <contato@catarse.me>
-
+LABEL MAINTAINER Catarse <contato@catarse.me>
+ARG NPM_AUTH
 ENV BUILD_PACKAGES postgresql-dev libxml2-dev libxslt-dev imagemagick imagemagick-dev openssl libpq libffi-dev bash curl-dev libstdc++ tzdata bash ca-certificates build-base ruby-dev libc-dev linux-headers postgresql-client postgresql git
 ENV RUBY_PACKAGES ruby ruby-io-console ruby-bundler ruby-irb ruby-bigdecimal ruby-json nodejs nodejs-npm zlib-dev yaml-dev readline-dev ruby-dev ncurses
 #
@@ -19,9 +19,15 @@ COPY Gemfile /usr/app/
 COPY Gemfile.lock /usr/app/
 #
 RUN bundle install
+RUN echo "${NPM_AUTH}" > ./.npmrc
+COPY package*json ./
+COPY patchDeps.js ./
+COPY deps-patch.json ./
+RUN node patchDeps
+RUN npm install
 
 COPY . /usr/app
-RUN npm install
+
 
 #
 #RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo "America/Sao_Paulo" >  /etc/timezone
@@ -32,8 +38,7 @@ RUN npm install
 RUN set -ex \
   && mkdir -p /usr/app/tmp/cache \
   && mkdir -p /usr/app/tmp/pids \
-  && mkdir -p /usr/app/tmp/sockets \
-  && chown -R nobody /usr/app
+  && mkdir -p /usr/app/tmp/sockets
 #
 ## ==================================================================================================
 ## 8: Set the container user to 'nobody':

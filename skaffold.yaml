@@ -1,0 +1,290 @@
+apiVersion: skaffold/v1
+kind: Config
+
+profiles:
+  - name: local-run
+    build:
+      local:
+        push: false
+      artifacts:
+      - image: catarse-deploy/notification-dispatcher
+        context: ./services/notification-service-api/
+        docker:
+          dockerfile: ./Dockerfile
+      - image: catarse-deploy/payments
+        context: ./services/payment-service-api/
+        docker:
+          dockerfile: ./Dockerfile
+      - image: catarse-deploy/hook-service-api
+        context: ./services/hook-service-api/
+        docker:
+          dockerfile: ./Dockerfile
+      - image: catarse-deploy/catarse
+        context: ./services/catarse/
+        docker:
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./dev.Dockerfile  
+      - image: catarse-deploy/recommender-service-api
+        context: ./services/catarse_recommender/
+        docker:
+          dockerfile: ./catarse_recommender/Dockerfile 
+      - image: catarse-deploy/common-docs
+        context: ./services/common/
+        docker:
+          dockerfile: ./Dockerfile 
+      - image: catarse-deploy/common-proxy
+        context: ./services/proxy/
+        docker:
+          dockerfile: ./Dockerfile 
+      - image: catarse-deploy/common-api
+        context: ./services/common-api/
+        docker:
+          dockerfile: ./Dockerfile         
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-run
+  - name: local-migrations
+    build:
+      artifacts:
+      - image: catarse-deploy/catarse
+        context: ./services/catarse/
+        docker:
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./dev.Dockerfile        
+      - image: catarse-deploy/migrations
+        context: ./services/service-core-db/
+        docker:
+          dockerfile: ./Dockerfile     
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-migrations
+  - name: local-catarse
+    build:
+      artifacts:
+        - image: catarse-deploy/catarse
+          context: ./services/catarse/
+          docker:
+            network: 'host'
+            buildArgs:
+              NPM_AUTH: '{{ .NPM_AUTH }}'
+            dockerfile: ./dev.Dockerfile  
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-catarse
+  - name: local-db-init
+    build:
+      artifacts:
+        - image: catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.catarse-db       
+        - image: catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.moments-db
+        - image: catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.service_core-db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-db
+  - name: local-db
+    build:
+      artifacts:
+        - image: catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db       
+        - image: catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+        - image: catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-db
+  - name: local-prime
+    build:
+      artifacts:
+        - image: catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.service_core-db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-prime
+  - name: local-setup
+    build:
+      artifacts:
+        - image: catarse-deploy/catarse
+          context: ./services/catarse/
+          docker:
+            network: 'host'
+            buildArgs:
+              NPM_AUTH: '{{ .NPM_AUTH }}'
+            dockerfile: ./dev.Dockerfile 
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-setup       
+  - name: test-run
+    build:
+      tagPolicy:
+        dateTime:
+          format: "2006-01-02_15-04-05.999_MST"
+          timezone: "Local"
+      artifacts:
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+        context: ./services/service-core-db/
+        docker:
+          dockerfile: ./Dockerfile.db       
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+        context: ./services/service-core-db/
+        docker:
+          dockerfile: ./Dockerfile.db
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+        context: ./services/service-core-db/
+        docker:
+          dockerfile: ./Dockerfile.db
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/notification-dispatcher
+        context: ./services/notification-service-api/
+        docker:
+          dockerfile: ./Dockerfile
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/payments
+        context: ./services/payment-service-api/
+        docker:
+          dockerfile: ./Dockerfile
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/hook-service-api
+        context: ./services/hook-service-api/
+        docker:
+          dockerfile: ./Dockerfile
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/recommender-service-api
+        context: ./services/catarse_recommender/
+        docker:
+          dockerfile: ./catarse_recommender/Dockerfile 
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/common-docs
+        context: ./services/common/
+        docker:
+          dockerfile: ./Dockerfile 
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/common-proxy
+        context: ./services/proxy/
+        docker:
+          dockerfile: ./Dockerfile 
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/common-api
+        context: ./services/common-api/
+        docker:
+          dockerfile: ./Dockerfile         
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-run
+  - name: test-migrations
+    build:
+      tagPolicy:
+        dateTime:
+          format: "2006-01-02_15-04-05.999_MST"
+          timezone: "Local"
+      artifacts:
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
+        context: ./services/catarse/
+        docker:
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./Dockerfile        
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/migrations
+        context: ./services/service-core-db/
+        docker:
+          buildArgs: 
+            POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+            PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+            CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+          dockerfile: ./Dockerfile     
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-migrations
+  - name: test-catarse
+    build:
+      artifacts:
+      - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
+        context: ./services/catarse/
+        docker:
+          buildArgs:
+            NPM_AUTH: '{{ .NPM_AUTH }}'
+          dockerfile: ./Dockerfile  
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-catarse
+  - name: test-db-init
+    build:
+      artifacts:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.catarse-db      
+            buildArgs: 
+              POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+              PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+              CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.moments-db
+            buildArgs: 
+              POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+              PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+              CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.service_core-db
+            buildArgs: 
+              POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+              PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+              CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-db
+  - name: test-db
+    build:
+      artifacts:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db    
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-db
+  - name: test-prime
+    build:
+      artifacts:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.service_core-db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-prime
+  - name: test-setup
+    build:
+      artifacts:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse
+          context: ./services/catarse/
+          docker:
+            buildArgs:
+              NPM_AUTH: '{{ .NPM_AUTH }}'
+            dockerfile: ./Dockerfile 
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-setup         

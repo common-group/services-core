@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-prime
+spec:
+  template:
+    spec:
+      containers:
+        - name: fdw-grants
+          env: 
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+          image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          command: [ 'sh', '-c', 'psql -d service_core -h service-core-db -U postgres < /setup_fdw_grants.sql']
+      restartPolicy: Never
+  backoffLimit: 0
