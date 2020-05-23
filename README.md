@@ -27,22 +27,23 @@ After generating an ~/.npmrc file, add it to the env for the build:
 `export NPM_AUTH=$(cat ~/.npmrc)`
 
 Start with running the base profile:
-`skaffold run`
+`skaffold run -p local-run,local-db-init`
 
 Start the migration job:
-`skaffold run -p migrations`
+`skaffold run -p local-migrations`
 
 Now seed the DB:
-`skaffold run -p prime`
+`skaffold run -p local-prime`
 
 Next load default/demo settings
-`skaffold run -p setup`
+`skaffold run -p local-setup`
 
-Wait for migrations job to re-run and be succesful, or force start it. To check the status of the migration run `kubectl logs job/catarse-migrations`
+Wait for migrations job to re-run and be succesful. To check the status of the migration run `kubectl logs job/catarse-migrations`. 
 
-Restart catarse:
-`kubectl scale deploy/catarse --replicas=0`
-`kubectl scale deploy/catarse --replicas=1`
+Run catarse:
+`skaffold dev -p local-catarse --port-forward`
+
+Catarse is now running at http://localhost:3000
 
 # Provisioning
 

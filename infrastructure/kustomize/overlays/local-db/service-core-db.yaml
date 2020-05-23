@@ -36,6 +36,9 @@ spec:
           ports:
             - containerPort: 5432
           resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: core-data
       restartPolicy: Always
       volumes:
         - name: core-data

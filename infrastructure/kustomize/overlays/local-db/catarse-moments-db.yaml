@@ -29,6 +29,9 @@ spec:
           ports:
             - containerPort: 5432
           resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: catarse-moments-data
       restartPolicy: Always
       volumes:
         - name: catarse-moments-data

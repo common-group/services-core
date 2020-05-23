@@ -7,6 +7,7 @@ resources:
   - catarse-data-persistentvolumeclaim.yaml
   - catarse-moment-service-api-env-configmap.yaml
   - catarse-moments-data-persistentvolumeclaim.yaml
+  - catarse-redis-data-persistentvolumeclaim.yaml
   - common-api-env-configmap.yaml
   - common-proxy-env-configmap.yaml
   - community-service-api-env-configmap.yaml
