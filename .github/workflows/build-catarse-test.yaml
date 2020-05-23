@@ -1,0 +1,32 @@
+name: Build test environment
+on: 
+  pull_request:
+    branches:
+    - develop
+jobs:
+  build:
+    name: Build the builder
+    runs-on: soapbubble/aws-cloud-builder
+    steps:    
+    - name: Checkout
+      uses: actions/checkout@v2 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Init NPM
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+        registry-url: 'https://npm.pkg.github.com'
+    - name: Build
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        bash -c "NPM_AUTH=$(cat ~/.npmrc) skaffold build -p test-run,test-db,test-catarse,test-migrations,test-prime,test-setup"
