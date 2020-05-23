@@ -3,6 +3,7 @@ on:
   push:
     paths:
     - 'infrastructure/builder/**'
+    - '.github/workflows/build-builder.yaml'
     branches:
     - develop  
 
