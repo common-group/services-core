@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: catarse-moments-db
+  name: catarse-moments-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: catarse-moments-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: catarse-moments-db
+    spec:
+      containers:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: catarse-secrets
+            - name: PGDATA
+              value: /ebs/data
+            - name: POSTGRES_DB
+              value: catarse_moments
+            - name: POSTGRES_USER
+              value: postgres
+          name: catarse-moments-db
+          volumeMounts:
+            - mountPath: /ebs
+              name: catarse-moments-data      
+          ports:
+            - containerPort: 5432
+          resources: {}
+      restartPolicy: Always
+      volumes:
+        - name: catarse-moments-data
+          persistentVolumeClaim:
+            claimName: catarse-moments-data
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    io.kompose.service: catarse-moments-db
+  name: catarse-moments-db
+spec:
+  ports:
+  - port: 5432
+  selector:
+    io.kompose.service: catarse-moments-db
+status:
+  loadBalancer: {}
+  

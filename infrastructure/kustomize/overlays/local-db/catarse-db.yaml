@@ -29,6 +29,8 @@ spec:
               value: catarse_db
             - name: POSTGRES_USER
               value: catarse
+            - name: PGPASSWORD
+              value: example
           image: catarse-deploy/catarse-db
           name: catarse-db
           ports:

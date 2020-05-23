@@ -1,6 +1,6 @@
-create user postgrest with login password 'example';
-create user proxy_server with login password 'example';
-create user catarse_fdw with login password 'example';
+create user postgrest with login password '{{ .POSTGREST_USER_PASSWORD }}';
+create user proxy_server with login password '{{ .PROXY_USER_PASSWORD }}';
+create user catarse_fdw with login password '{{ .CATARSE_FDW_USER_PASSWORD }}';
 create role admin with nologin;
 create role scoped_user with nologin;
 create role platform_user with nologin;

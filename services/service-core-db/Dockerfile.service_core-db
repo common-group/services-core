@@ -1,4 +1,14 @@
 FROM library/postgres:10.3-alpine
+
+ARG POSTGREST_USER_PASSWORD=example
+ARG PROXY_USER_PASSWORD=example
+ARG CATARSE_FDW_USER_PASSWORD=example
+
 COPY ./init.sql /docker-entrypoint-initdb.d/init.sql
-COPY ./sample.seed.sql /sample.seed.sql
-COPY ./setup_fdw_grants.sql /setup_fdw_grants.sql
+COPY ./setup_fdw_grants.sql .
+
+RUN sed -i \
+  -e "s/{{\s*\.POSTGREST_USER_PASSWORD\s*}}/${POSTGREST_USER_PASSWORD}/g" \
+  -e "s/{{\s*\.PROXY_USER_PASSWORD\s*}}/${PROXY_USER_PASSWORD}/g" \
+  -e "s/{{\s*\.CATARSE_FDW_USER_PASSWORD\s*}}/${CATARSE_FDW_USER_PASSWORD}/g" \
+  /docker-entrypoint-initdb.d/init.sql

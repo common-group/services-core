@@ -7,18 +7,6 @@ profiles:
       local:
         push: false
       artifacts:
-      - image: catarse-deploy/catarse-db
-        context: ./services/service-core-db/
-        docker:
-          dockerfile: ./Dockerfile.db       
-      - image: catarse-deploy/moments-db
-        context: ./services/service-core-db/
-        docker:
-          dockerfile: ./Dockerfile.moments-db
-      - image: catarse-deploy/core-db
-        context: ./services/service-core-db/
-        docker:
-          dockerfile: ./Dockerfile.service_core-db
       - image: catarse-deploy/notification-dispatcher
         context: ./services/notification-service-api/
         docker:
@@ -85,6 +73,42 @@ profiles:
     deploy:
       kustomize:
         path: infrastructure/kustomize/overlays/local-catarse
+  - name: local-db-init
+    build:
+      artifacts:
+        - image: catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.catarse-db       
+        - image: catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.moments-db
+        - image: catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.service_core-db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-db
+  - name: local-db
+    build:
+      artifacts:
+        - image: catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db       
+        - image: catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+        - image: catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/local-db
   - name: local-prime
     build:
       artifacts:
@@ -122,11 +146,11 @@ profiles:
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
         context: ./services/service-core-db/
         docker:
-          dockerfile: ./Dockerfile.moments-db
+          dockerfile: ./Dockerfile.db
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
         context: ./services/service-core-db/
         docker:
-          dockerfile: ./Dockerfile.service_core-db
+          dockerfile: ./Dockerfile.db
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/notification-dispatcher
         context: ./services/notification-service-api/
         docker:
@@ -174,6 +198,10 @@ profiles:
       - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/migrations
         context: ./services/service-core-db/
         docker:
+          buildArgs: 
+            POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+            PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+            CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
           dockerfile: ./Dockerfile     
     deploy:
       kustomize:
@@ -190,6 +218,54 @@ profiles:
     deploy:
       kustomize:
         path: infrastructure/kustomize/overlays/test-catarse
+  - name: test-db-init
+    build:
+      artifacts:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.catarse-db      
+            buildArgs: 
+              POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+              PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+              CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.moments-db
+            buildArgs: 
+              POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+              PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+              CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.service_core-db
+            buildArgs: 
+              POSTGREST_USER_PASSWORD: '{{ .POSTGREST_USER_PASSWORD }}'
+              PROXY_USER_PASSWORD: '{{ .PROXY_USER_PASSWORD }}'
+              CATARSE_FDW_USER_PASSWORD: '{{ .CATARSE_FDW_USER_PASSWORD }}'
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-db
+  - name: test-db
+    build:
+      artifacts:
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/catarse-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db    
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/moments-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+        - image: 892910702142.dkr.ecr.us-east-1.amazonaws.com/catarse-deploy/core-db
+          context: ./services/service-core-db/
+          docker:
+            dockerfile: ./Dockerfile.db
+    deploy:
+      kustomize:
+        path: infrastructure/kustomize/overlays/test-db
   - name: test-prime
     build:
       artifacts:

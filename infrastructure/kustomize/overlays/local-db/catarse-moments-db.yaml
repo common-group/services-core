@@ -22,6 +22,8 @@ spec:
               value: catarse_moments
             - name: POSTGRES_USER
               value: postgres
+            - name: PGPASSWORD
+              value: example
           image: catarse-deploy/moments-db
           name: catarse-moments-db
           ports:

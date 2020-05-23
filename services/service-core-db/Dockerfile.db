@@ -1,2 +1,1 @@
 FROM library/postgres:10.3-alpine
-COPY ./init_catarse.sql /docker-entrypoint-initdb.d/init.sql
