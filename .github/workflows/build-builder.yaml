@@ -5,8 +5,7 @@ on:
     - 'infrastructure/builder/**'
     - '.github/workflows/build-builder.yaml'
     branches:
-    - develop  
-
+    - develop
 jobs:
   build:
     name: Build the builder
