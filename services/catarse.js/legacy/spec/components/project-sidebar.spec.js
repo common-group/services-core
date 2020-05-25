@@ -53,6 +53,29 @@ describe('ProjectSidebar', () => {
             expect(output.find('#flex').length).toEqual(1);
         });
 
+        it('should show recommended tag', () => {
+            let {
+                output, projectDetail
+            } = generateContextByNewState({
+                recommended: true
+            });
+
+            expect(output.contains('Projeto que Amamos')).toBeTrue();
+        });
+
+        it('should show recommended tag darker', () => {
+            let {
+                output, projectDetail
+            } = generateContextByNewState({
+                recommended: true,
+                mode: 'sub',
+                city: 'City',
+                state_acronym: 'ST'
+            });
+
+            output.should.have.at.least(3, '.fontcolor-negative');
+            expect(output.contains('Projeto que Amamos')).toBeTrue();
+        });
         describe('reminder', () => {
             it('should render reminder when project is open_for_contributions and user signed in and is in_reminder', () => {
                 let {
