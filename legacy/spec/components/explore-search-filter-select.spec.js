@@ -63,7 +63,7 @@ describe('ExploreFilterSelect', () => {
             component.click(`a.fontsize-smallest.link-hidden-light:contains("${values[0].label}")`,  new Event('click'));
             component.should.not.have(`a.fontsize-smallest.link-hidden-light`);
             expect(currentValue.value).toBe(values[0].value);
-            component.click('.inline-block.fa.fa-times', new Event('click'));
+            component.click('.inline-block.fa.far-times', new Event('click'));
             component.should.have(`.explore-span-filter-name > .inline-block:contains("${attrs.noneSelected}")`);
         });
 
