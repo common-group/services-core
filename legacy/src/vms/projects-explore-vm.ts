@@ -134,7 +134,7 @@ export class ProjectsExploreViewModel {
         this._mode = params.mode || 'all_modes';
         this._category = this._categories[0];
         this._category_id = params.category_id || null;
-        this._filter = params.filter || 'all';
+        this._filter = params.filter || 'projects_we_love';
         this._cityState = params.cityState || null;
         this._searchParam = params.searchParam || '';
         this._amountFoundOnLocation = 0;
@@ -159,9 +159,10 @@ export class ProjectsExploreViewModel {
     async search(params : ProjectsExploreVMSearchParams) {
         this._mode = params.mode || 'all_modes';
         this._category_id = params.category_id || null;
-        this._filter = params.filter || 'all';
+        this._filter = params.filter || 'projects_we_love';
         this._cityState = params.cityState || null;
-        this._searchParam = params.searchParam || '';        
+        this._searchParam = params.searchParam || '';
+
         if (this._category_id) {
             try {
                 this._category = await this.getCategoryById(this._category_id);
@@ -170,6 +171,9 @@ export class ProjectsExploreViewModel {
                 this.category = ALL_CATEGORIES;
                 this.dispatchNewQuery();                
             }
+        } else {
+            this._category = ALL_CATEGORIES;
+            h.redraw();
         }
         this.executeSearch();
     }
