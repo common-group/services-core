@@ -39,7 +39,7 @@ export const ExploreSearchFilterSelect = {
                     m('div.explore-mobile-label', mobileLabel),
                     m('div.inline-block', selectedItem)
                 ]),
-                m(`.inline-block.fa${ hasItemSelected ? '.fa-times' : '.fa-angle-down'}[aria-hidden="true"]`, {
+                m(`.inline-block${ hasItemSelected ? '.far.fa-times' : '.fa.fa-angle-down'}[aria-hidden="true"]`, {
                     onclick: (/** @type {Event} */ event) => {
                         if (hasItemSelected) {
                             onSelect(null);
