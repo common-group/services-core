@@ -170,8 +170,8 @@ const projectSidebar = {
                 m(`div[class="fontsize-smaller u-marginbottom-30 ${displayCardClass()}"]`, displayStatusText())
             ]),
             m('.project-share.w-hidden-main.w-hidden-medium', [
-                m(addressTag, { project }),
-                m(categoryTag, { project }),
+                m(addressTag, { project, isDark: isSub }),
+                m(categoryTag, { project, isDark: isSub }),
                 project().recommended && m(ProjectWeLovedTag, { project, isDark: isSub }),
                 m('.u-marginbottom-30.u-text-center-small-only',
                     m(`button.btn.btn-inline.btn-medium.btn-terciary${projectVM.isSubscription(project) ? '.btn-terciary-negative' : ''}`, {
