@@ -430,12 +430,18 @@ export class ProjectsExploreViewModel {
     }
 
     private async countProjectsOnCity(model, filterParameters : Object = {}) {
-        if (this._cityState?.city?.name) {
-            const parametersWithOnlyCityNotState = _.extend(
-                filterParameters,
-                filters({ city_name: 'eq' }).city_name(this._cityState.city.name).parameters()
-            );
-            this._amountFoundOnLocation = await this.countProjects(model, parametersWithOnlyCityNotState);
+        try {
+            if (this._cityState?.city?.name) {
+                const parametersWithOnlyCityNotState = _.extend(
+                    filterParameters,
+                    filters({ city_name: 'eq' }).city_name(this._cityState.city.name).parameters()
+                );
+                this._amountFoundOnLocation = await this.countProjects(model, parametersWithOnlyCityNotState);
+            }
+        } catch(e) {
+            this._amountFoundOnLocation = 0;
+        } finally {
+            h.redraw();
         }
     }
 
