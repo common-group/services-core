@@ -51,3 +51,4 @@ export { default as ProjectEditGoal } from './root/project-edit-goal';
 export { default as ProjectEditGoals } from './root/project-edit-goals';
 export { default as ProjectEditCard } from './root/project-edit-card';
 export { default as CopyTextInput } from './c/copy-text-input';
+export { default as ProjectsPublishBySteps } from './root/projects/publish-by-steps';

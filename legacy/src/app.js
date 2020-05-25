@@ -13,6 +13,19 @@ m.trust = (text) => h.trust(text);
     
     window.m = m;
 
+    /*
+    const simplifiedPublishRoutes = {
+        '/projects/:id/publish-by-steps/card': 
+        '/projects/:id/publish/description': 
+        '/projects/:id/publish/ask-about-reward': 
+        '/projects/:id/publish/rewards': 
+        '/projects/:id/publish/user': 
+        '/projects/:id/publish/to-do': 
+        '/projects/:id/publish/share': 
+        '/projects/:id/publish/share-reminder': 
+
+    };
+    */
     h.SentryInitSDK();
 
     history.pushState = h.attachEventsToHistory('pushState');
