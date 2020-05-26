@@ -10,6 +10,7 @@ import projectFriends from './project-friends';
 import addressTag from './address-tag';
 import categoryTag from './category-tag';
 import projectVM from '../vms/project-vm';
+import { ProjectWeLovedTag } from './project-we-loved-tag';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.project_sidebar');
 
@@ -169,8 +170,9 @@ const projectSidebar = {
                 m(`div[class="fontsize-smaller u-marginbottom-30 ${displayCardClass()}"]`, displayStatusText())
             ]),
             m('.project-share.w-hidden-main.w-hidden-medium', [
-                m(addressTag, { project }),
-                m(categoryTag, { project }),
+                m(addressTag, { project, isDark: isSub }),
+                m(categoryTag, { project, isDark: isSub }),
+                project().recommended && m(ProjectWeLovedTag, { project, isDark: isSub }),
                 m('.u-marginbottom-30.u-text-center-small-only',
                     m(`button.btn.btn-inline.btn-medium.btn-terciary${projectVM.isSubscription(project) ? '.btn-terciary-negative' : ''}`, {
                         onclick: state.displayShareBox.toggle

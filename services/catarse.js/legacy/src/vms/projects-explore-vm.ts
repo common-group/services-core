@@ -134,7 +134,7 @@ export class ProjectsExploreViewModel {
         this._mode = params.mode || 'all_modes';
         this._category = this._categories[0];
         this._category_id = params.category_id || null;
-        this._filter = params.filter || 'all';
+        this._filter = params.filter || 'projects_we_love';
         this._cityState = params.cityState || null;
         this._searchParam = params.searchParam || '';
         this._amountFoundOnLocation = 0;
@@ -159,9 +159,10 @@ export class ProjectsExploreViewModel {
     async search(params : ProjectsExploreVMSearchParams) {
         this._mode = params.mode || 'all_modes';
         this._category_id = params.category_id || null;
-        this._filter = params.filter || 'all';
+        this._filter = params.filter || 'projects_we_love';
         this._cityState = params.cityState || null;
-        this._searchParam = params.searchParam || '';        
+        this._searchParam = params.searchParam || '';
+
         if (this._category_id) {
             try {
                 this._category = await this.getCategoryById(this._category_id);
@@ -170,6 +171,9 @@ export class ProjectsExploreViewModel {
                 this.category = ALL_CATEGORIES;
                 this.dispatchNewQuery();                
             }
+        } else {
+            this._category = ALL_CATEGORIES;
+            h.redraw();
         }
         this.executeSearch();
     }
@@ -430,12 +434,18 @@ export class ProjectsExploreViewModel {
     }
 
     private async countProjectsOnCity(model, filterParameters : Object = {}) {
-        if (this._cityState?.city?.name) {
-            const parametersWithOnlyCityNotState = _.extend(
-                filterParameters,
-                filters({ city_name: 'eq' }).city_name(this._cityState.city.name).parameters()
-            );
-            this._amountFoundOnLocation = await this.countProjects(model, parametersWithOnlyCityNotState);
+        try {
+            if (this._cityState?.city?.name) {
+                const parametersWithOnlyCityNotState = _.extend(
+                    filterParameters,
+                    filters({ city_name: 'eq' }).city_name(this._cityState.city.name).parameters()
+                );
+                this._amountFoundOnLocation = await this.countProjects(model, parametersWithOnlyCityNotState);
+            }
+        } catch(e) {
+            this._amountFoundOnLocation = 0;
+        } finally {
+            h.redraw();
         }
     }
 

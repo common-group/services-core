@@ -307,6 +307,19 @@ const generateDalContext = (client) => {
         return await findSubscription(subscriptionId);
     };
 
+    const insertAntifraudAnalysis = async (paymentId, data) => {
+        const query = `
+            insert into
+                payment_service.antifraud_analyses(catalog_payment_id, data, cost)
+            VALUES(
+                $1,
+                $2,
+                (SELECT value::numeric FROM core.core_settings WHERE name = 'antifraud_cost')
+            )
+        `
+        return await client.query(query, [paymentId, data])
+    };
+
     return {
         findCard,
         findPayment,
@@ -321,6 +334,7 @@ const generateDalContext = (client) => {
         notificationServiceNotify,
         paymentTransitionTo,
         subscriptionTransitionTo,
+        insertAntifraudAnalysis
     }
 };
 
