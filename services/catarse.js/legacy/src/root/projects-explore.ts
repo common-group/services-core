@@ -43,6 +43,9 @@ const projectsExplore = {
 
         projectsExploreVM.subscribe({
             next(query) {
+                
+                h.scrollTop();
+
                 const removeQueryParams = [
                     'mode',
                     'category_id',

@@ -27,9 +27,9 @@ const projectHighlight = {
                     m('.project-image', { style: `background-image:url('${project().original_image || project().project_img}');` })
             ),
             m('.w-hidden-small.w-hidden-tiny', [
-                project().recommended && m(ProjectWeLovedTag, { project, isDark: isSub }),
                 m(addressTag, { project, isDark: isSub }),
-                m(categoryTag, { project, isDark: isSub })
+                m(categoryTag, { project, isDark: isSub }),
+                project().recommended && m(ProjectWeLovedTag, { project, isDark: isSub }),
             ]),
             !isSub ? m('.project-blurb', project().headline) : null,
             m('.project-share.w-hidden-small.w-hidden-tiny',
