@@ -36,7 +36,6 @@ export function wrap(component, customAttr) {
                     userParam = m.route.param('user_id') || app.getAttribute('data-userid') || parameters.user_id,
                     rewardIdParam = m.route.param('reward_id'),
                     surveyIdParam = m.route.param('survey_id'),
-                    filterParam = m.route.param('filter'),
                     thankYouParam = app && JSON.parse(app.getAttribute('data-contribution'));
     
                 const addToAttr = function (newAttr) {
@@ -65,10 +64,6 @@ export function wrap(component, customAttr) {
     
                 if (rewardIdParam) {
                     addToAttr({ reward_id: rewardIdParam });
-                }
-    
-                if (filterParam) {
-                    addToAttr({ filter: filterParam });
                 }
     
                 if (thankYouParam) {
