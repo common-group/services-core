@@ -100,6 +100,8 @@ const authorizeAnalyzeAndCapturePayment = async (paymentContext, dalContext) => 
         const antifraudResponse = await sendToTransactionAntifraud(paymentContext, { shouldAnalyze, transaction })
 
         if (shouldAnalyze) {
+            await dalContext.insertAntifraudAnalysis(paymentContext.payment.id, antifraudResponse.data)
+
             if (antifraudResponse.data.order.recommendation === 'APPROVE') {
                 transaction = await client.withVersion('2019-09-01').transactions.capture({ id: transaction.id })
             } else if (antifraudResponse.data.order.recommendation === 'DECLINE') {
