@@ -200,7 +200,7 @@ const sendCreditCardPayment = (selectedCreditCard, fields, commonData, addVM) =>
     const meta = _.first(document.querySelectorAll('[name=pagarme-encryption-key]'));
     const encryptionKey = meta.getAttribute('content');
 
-    window.PagarMe.encryption_key = encryptionKey;
+    window.pagarme.encryption_key = encryptionKey;
     const card = setNewCreditCard(fields.creditCardFields);
 
     const customer = fields.fields;
