@@ -302,6 +302,7 @@ const SubscribeEvent = () => {
     }
 }
 
+
 const projectVM = {
     userDetails,
     getCurrentProject,
@@ -326,7 +327,7 @@ const projectVM = {
     ViewContentEvent,
     AddToCartEvent,
     PurchaseEvent,
-    SubscribeEvent
+    SubscribeEvent,
 };
 
 export default projectVM;
