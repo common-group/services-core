@@ -3,7 +3,6 @@ import h from './h';
 import _ from 'underscore';
 import c from './c';
 import Chart from 'chart.js';
-import { isNumber } from 'util';
 import { wrap } from './wrap';
 
 m.originalTrust = m.trust;
@@ -12,20 +11,6 @@ m.trust = (text) => h.trust(text);
 (function () {
     
     window.m = m;
-
-    /*
-    const simplifiedPublishRoutes = {
-        '/projects/:id/publish-by-steps/card': 
-        '/projects/:id/publish/description': 
-        '/projects/:id/publish/ask-about-reward': 
-        '/projects/:id/publish/rewards': 
-        '/projects/:id/publish/user': 
-        '/projects/:id/publish/to-do': 
-        '/projects/:id/publish/share': 
-        '/projects/:id/publish/share-reminder': 
-
-    };
-    */
     h.SentryInitSDK();
 
     history.pushState = h.attachEventsToHistory('pushState');
@@ -181,6 +166,8 @@ m.trust = (text) => h.trust(text);
 
             [urlWithLocale('/projects/:project_id/publish')]: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true }),
             ['/projects/:project_id/publish']: wrap(c.root.Publish, { menuTransparency: false, hideFooter: true, menuShort: true }),
+            [urlWithLocale('/projects/:project_id/publish-by-steps')]: wrap(c.root.ProjectsPublishBySteps, { menuTransparency: false, hideFooter: true, menuShort: true }),
+            ['/projects/:project_id/publish-by-steps']: wrap(c.root.ProjectsPublishBySteps, { menuTransparency: false, hideFooter: true, menuShort: true }),
         });
     }
 })();
