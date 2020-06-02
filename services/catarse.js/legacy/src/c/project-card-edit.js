@@ -15,18 +15,18 @@ const projectCardEdit = {
     oninit: function(vnode) {
         const vm = projectCardVM,
             mapErrors = [
-                  ['uploaded_image', ['uploaded_image']],
-                  ['cover_image', ['cover_image']],
-                  ['headline', ['headline']],
+                ['uploaded_image', ['uploaded_image']],
+                ['cover_image', ['cover_image']],
+                ['headline', ['headline']],
             ],
             showSuccess = h.toggleProp(false, true),
             showError = h.toggleProp(false, true),
             loading = prop(false),
-            onSubmit = (event) => {
+            onSubmit = () => {
                 loading(true);
                 m.redraw();
-                vm.uploadImage(vnode.attrs.projectId).then((uploaded) => {
-                    vm.updateProject(vnode.attrs.projectId).then((data) => {
+                vm.uploadImage(vnode.attrs.projectId).then(() => {
+                    vm.updateProject(vnode.attrs.projectId).then(() => {
                         loading(false);
                         vm.e.resetFieldErrors();
                         if (!showSuccess()) { showSuccess.toggle(); }
@@ -66,7 +66,7 @@ const projectCardEdit = {
             loading
         };
     },
-    view: function({state, attrs}) {
+    view: function({ state }) {
         const vm = state.vm;
         return m('#card-tab', [
             (state.showSuccess() ? m(popNotification, {
@@ -82,28 +82,31 @@ const projectCardEdit = {
             m('form.w-form', { onsubmit: state.onSubmit }, [
                 m('.w-section.section', [
                     m('.w-container', [
-                        (vm.currentProject().mode === 'sub' ?
-                        m('.w-row', [
-                            m('.w-col.w-col-12', [
-                                m(inputCard, {
-                                    label: m.trust(window.I18n.t('cover_image_label', I18nScope())),
-                                    label_hint: window.I18n.t('cover_image_hint', I18nScope()),
-                                    children: [
-                                        m('span.hint',
-                                            (vm.fields.cover_image()
-                                            ? m(`img[alt="Imagem de fundo"][src="${vm.fields.cover_image()}"]`)
-                                            : 'Imagem de fundo')
-                                        ),
-                                        m('input.file.optional.w-input.text-field[id="project_cover_image"][name="project[cover_image]"][type="file"]', {
-                                            class: vm.e.hasError('cover_image') ? 'error' : false,
-                                            onchange: (e) => { vm.prepareForUpload(e, 'cover_image'); }
-                                        }),
-                                        vm.e.inlineError('cover_image')
-                                    ]
-                                })
-                            ])
-                        ])
-                        : ''),
+                        (
+                            vm.currentProject().mode === 'sub' ?
+                                m('.w-row', [
+                                    m('.w-col.w-col-12', [
+                                        m(inputCard, {
+                                            label: m.trust(window.I18n.t('cover_image_label', I18nScope())),
+                                            label_hint: window.I18n.t('cover_image_hint', I18nScope()),
+                                            children: [
+                                                m('span.hint',
+                                                    (vm.fields.cover_image()
+                                                        ? m(`img[alt="Imagem de fundo"][src="${vm.fields.cover_image()}"]`)
+                                                        : 'Imagem de fundo')
+                                                ),
+                                                m('input.file.optional.w-input.text-field[id="project_cover_image"][name="project[cover_image]"][type="file"]', {
+                                                    class: vm.e.hasError('cover_image') ? 'error' : false,
+                                                    onchange: (e) => { vm.prepareForUpload(e, 'cover_image'); }
+                                                }),
+                                                vm.e.inlineError('cover_image')
+                                            ]
+                                        })
+                                    ])
+                                ])
+                                : 
+                                ''
+                        ),
                         m('.w-row', [
                             m('.w-col.w-col-8', [
                                 m(inputCard, {
