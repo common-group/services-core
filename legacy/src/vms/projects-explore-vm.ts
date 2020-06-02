@@ -9,65 +9,10 @@ import h from '../h';
 import projectFilters from './project-filters-vm';
 import userVM from '../vms/user-vm';
 import { SequencePaginationVM } from '../utils/sequence-pagination-vm';
+import { Project } from '../@types/project';
+import { ViewModel } from '../@types/view-model';
 
 const { replaceDiacritics } = window as any as ExtendedWindow;
-
-type TimeDescription = {
-    total: number;
-    unit: "days" | "hours" | "minutes" | "seconds";
-};
-
-type Integration = {
-    id: number;
-    name: string;
-    data: {};
-};
-
-export type Project = {
-    project_id: number;
-    category_id: number;
-    project_name: string;
-    headline: string;
-    permalink: string;
-    mode: string;
-    state: "deleted" | "rejected" | "draft" | "in_analysis" | "approved" | "online" | "waiting_funds" | "failed" | "successful";
-    state_order: "archived" | "created" | "created" | "sent" | "publishable" | "published" | "published" | "finished" | "finished";
-    online_date: string;
-    recommended: boolean;
-    project_img: string;
-    remaining_time:	TimeDescription;
-    expires_at:	string;
-    pledged: number;
-    progress: number;
-    state_acronym: string;
-    owner_name: string;
-    city_name: string;
-    full_text_index: string | null;
-    open_for_contributions:	boolean;
-    elapsed_time: TimeDescription;
-    score: number;
-    contributed_by_friends: boolean;
-    project_user_id: number;
-    video_embed_url: string;
-    updated_at:	string;
-    owner_public_name: string;
-    zone_expires_at: string;
-    common_id: string;
-    is_adult_content: boolean;
-    content_rating:	number;
-    saved_projects: boolean;
-    integrations: Integration[];
-    category_name: string;
-};
-
-export interface ViewModel<T> {
-    collection(data?: T[]) : T[];
-    isLastPage() : boolean;
-    total() : number;
-    isLoading() : boolean;
-    firstPage(parameters: Object) : Promise<T[]>;
-    nextPage() : Promise<T[]>;
-};
 
 interface Observer<T> {
     next(data: T): void;
