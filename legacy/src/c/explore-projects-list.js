@@ -33,7 +33,7 @@ export const ExploreProjectsList = {
                                     ref = 'ctrse_explore_featured_big';
                                     widowProjects = [projectsCount - 1, projectsCount - 2];
                                 } else if (idx === 1 || idx === 2) {
-                                    if (checkForMinScoredProjects(projectsCollection)) {
+                                    if (checkForMinScoredProjects(projects.collection())) {
                                         cardType = 'medium';
                                         ref = 'ctrse_explore_featured_medium';
                                         widowProjects = [];
