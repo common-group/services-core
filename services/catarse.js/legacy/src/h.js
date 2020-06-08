@@ -1220,7 +1220,7 @@ const _dataCache = {},
     buildCreditCard = (creditCardFields) => {
         let expirationMonth = String(creditCardFields.expMonth());
         expirationMonth = (1 === expirationMonth.length ? '0' : '') + expirationMonth;
-        const expirationDate = expirationMonth + String(creditCardFields.expYear());
+        const expirationDate = expirationMonth + String(creditCardFields.expYear()).substr(2, 2);
 
         return {
             card_number: creditCardFields.number(),
