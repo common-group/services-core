@@ -1,14 +1,15 @@
 import m, { VnodeDOM } from 'mithril'
-import { Observable } from 'rxjs'
-import { pluck } from 'rxjs/operators'
 import { ProjectCardSimple } from '../../../c/projects/publish-by-steps/project-card-simple'
 import { ProjectDetails } from '../../../@types/project-details'
-import { Wcol } from '../../../c/std/Wcol'
+import h from '../../../h'
+import InlineError from '../../../c/inline-error'
+import { InlineErrors } from '../../../c/inline-errors'
 
 export type CardEditAttrs = {
     project: ProjectDetails
     isSaving: boolean
-    onSave(): void
+    save(imageFile : File): void
+    getFieldErrors(field : string) : string[]
 }
 
 export type CardEditState = {
@@ -25,6 +26,9 @@ export class CardEdit implements m.Component {
     view({ attrs, state } : m.Vnode<CardEditAttrs, CardEditState>) {
         
         const project = attrs.project
+        const isSaving = attrs.isSaving
+        const save = attrs.save
+        const getFieldErrors = attrs.getFieldErrors
 
         return (
             <div class="section">
@@ -70,6 +74,7 @@ export class CardEdit implements m.Component {
                                                 href="#" class="btn btn-small btn-dark">
                                                 Escolher arquivo
                                             </a>
+                                            <InlineErrors messages={getFieldErrors('uploaded_image')} />
                                         </div>
                                         <div class="w-col w-col-3">
                                             <div class="fontsize-smallest fontcolor-secondary">
@@ -97,8 +102,10 @@ export class CardEdit implements m.Component {
                                                 placeholder="Um resuminho do seu projeto em até 100 caracteres"
                                                 value={project.headline}
                                                 oninput={(event : Event) => project.headline = event.target.value}
-                                                class="text-field positive w-input">
+                                                class="text-field positive w-input"
+                                                required>
                                             </textarea>
+                                            <InlineErrors messages={getFieldErrors('headline')} />
                                         </div>
                                     </div>
                                     <div class="u-marginbottom-40 w-row">
@@ -113,15 +120,24 @@ export class CardEdit implements m.Component {
                                         <div class="w-col w-col-7">
                                             <input 
                                                 oninput={(event : Event) => project.video_url = event.target.value}
-                                                type="text" class="text-field positive w-input" maxlength="3000" name="field-12" data-name="Field 12" placeholder="www.youtube.com/seuvideo" id="field-12" required="" />
+                                                type="text"
+                                                class="text-field positive w-input"
+                                                maxlength="3000"
+                                                placeholder="www.youtube.com/seuvideo"
+                                                value={project.video_url}/>
                                         </div>
                                     </div>
                                     <div class="u-margintop-40 w-row">
                                         <div class="w-col w-col-3"></div>
                                         <div class="w-col w-col-6">
-                                            <a href="/dashboard/solidaria/description" class="btn btn-large">
-                                                Próximo &gt;
-                                            </a>
+                                            {
+                                                isSaving ?
+                                                    h.loader()
+                                                    :
+                                                    <button onclick={() => save(state.selectedImageFile)} class="btn btn-large">
+                                                        Próximo &gt;
+                                                    </button>
+                                            }
                                         </div>
                                         <div class="w-col w-col-3"></div>
                                     </div>
