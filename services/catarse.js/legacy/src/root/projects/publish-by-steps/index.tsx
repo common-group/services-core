@@ -3,6 +3,7 @@ import h from '../../../h';
 import { CardEdit } from './card-edit';
 import { ProjectPublishByStepsVM } from '../../../vms/project-publish-by-steps-vm';
 import { ProjectDetails } from '../../../@types/project-details';
+import { DescriptionEdit } from './description-edit';
 
 // '/projects/:id/publish-by-steps/card': wrap({})
 // '/projects/:id/publish/description': 
@@ -43,7 +44,27 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                         <CardEdit
                             project={projectPublishByStepsVM.project}
                             isSaving={projectPublishByStepsVM.isSaving}
-                            save={coverImageFile => projectPublishByStepsVM.saveCardEdit(coverImageFile)}
+                            save={async coverImageFile => {
+                                const canProceed = await projectPublishByStepsVM.save(['uploaded_image', 'headline', 'video_url'], ['uploaded_image', 'headline'], coverImageFile)
+                                if (canProceed) {
+                                    window.location.hash = '#description'
+                                }
+                            }}
+                            getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
+                    )
+                }
+
+                case '#description': {
+                    return (
+                        <DescriptionEdit 
+                            project={projectPublishByStepsVM.project}
+                            isSaving={projectPublishByStepsVM.isSaving}
+                            save={async => {
+                                // const canProceed = await projectPublishByStepsVM.save(['uploaded_image', 'headline', 'video_url'], ['uploaded_image', 'headline'], coverImageFile)
+                                // if (canProceed) {
+                                //     window.location.hash = '#description'
+                                // }
+                            }}
                             getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
                     )
                 }
@@ -53,7 +74,12 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                         <CardEdit
                             project={projectPublishByStepsVM.project}
                             isSaving={projectPublishByStepsVM.isSaving}
-                            save={coverImageFile => projectPublishByStepsVM.saveCardEdit(coverImageFile)}
+                            save={async coverImageFile => {
+                                const canProceed = await projectPublishByStepsVM.save(['uploaded_image', 'headline', 'video_url'], ['uploaded_image', 'headline'], coverImageFile)
+                                if (canProceed) {
+                                    window.location.hash = '#description'
+                                }
+                            }}
                             getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
                     )
                 }
