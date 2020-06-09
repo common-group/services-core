@@ -31,17 +31,31 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
 
     view({ state } : ProjectsPublishByStepsVnode) {
 
-        if (state.projectPublishByStepsVM.isLoadingProject) {
-            return h.loader();
+        const projectPublishByStepsVM = state.projectPublishByStepsVM
+
+        if (projectPublishByStepsVM.isLoadingProject) {
+            return h.loader()
         } else {
             const hash = window.location.hash;
             switch(hash) {
                 case '#card': {
-                    return <CardEdit project={state.projectPublishByStepsVM.project} />
+                    return (
+                        <CardEdit
+                            project={projectPublishByStepsVM.project}
+                            isSaving={projectPublishByStepsVM.isSaving}
+                            save={coverImageFile => projectPublishByStepsVM.saveCardEdit(coverImageFile)}
+                            getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
+                    )
                 }
     
                 default: {
-                    return <CardEdit project={state.projectPublishByStepsVM.project} />
+                    return (
+                        <CardEdit
+                            project={projectPublishByStepsVM.project}
+                            isSaving={projectPublishByStepsVM.isSaving}
+                            save={coverImageFile => projectPublishByStepsVM.saveCardEdit(coverImageFile)}
+                            getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
+                    )
                 }
             }
         }
