@@ -34,7 +34,6 @@ const search = {
 
                             <div class='w-col w-col-2 w-col-small-2 w-col-tiny-2'>
                                 <input value='' type='submit' alt='Lupa' form='search-form-id' class='btn btn-attached postfix btn-dark w-inline-block' style='background-repeat: no-repeat; background-position: center; background-image: url(/assets/catarse_bootstrap/lupa.png)'/>
-                                {/* <img src='/assets/catarse_bootstrap/lupa.png' class='header-lupa' alt='Lupa' data-pin-nopin={true} /> */}
                             </div>
                         </div>
                     </div>
