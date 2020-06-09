@@ -221,7 +221,7 @@ services:
     volumes:
       # mount volumes for development on catarse / catarse.js
       - ./services/catarse/:/usr/app
-      # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
+      - ./services/catarse.js/:/usr/app/node_modules/catarse.js
     links:
       - service_core_db
       - "catarse_db:localhostcatarse"

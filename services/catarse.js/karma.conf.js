@@ -5,7 +5,7 @@ const webpack = require('./webpack.config');
 delete webpack['entry'];
 delete webpack['output'];
 delete webpack['plugins'];
-webpack['mode'] = 'production';
+webpack['mode'] = 'development';
 
 module.exports = (config) => {
     config.set({
