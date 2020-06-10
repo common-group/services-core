@@ -50,6 +50,7 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                                     window.location.hash = '#description'
                                 }
                             }}
+                            hasErrorOn={(field : string) => projectPublishByStepsVM.hasErrorOn(field)}
                             getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
                     )
                 }
@@ -80,6 +81,7 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                                     window.location.hash = '#description'
                                 }
                             }}
+                            hasErrorOn={(field : string) => projectPublishByStepsVM.hasErrorOn(field)}
                             getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
                     )
                 }

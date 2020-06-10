@@ -9,6 +9,7 @@ export type CardEditAttrs = {
     project: ProjectDetails
     isSaving: boolean
     save(imageFile : File): void
+    hasErrorOn(field : string) : boolean
     getFieldErrors(field : string) : string[]
 }
 
@@ -28,6 +29,7 @@ export class CardEdit implements m.Component {
         const project = attrs.project
         const isSaving = attrs.isSaving
         const save = attrs.save
+        const hasErrorOn = attrs.hasErrorOn
         const getFieldErrors = attrs.getFieldErrors
 
         return (
@@ -102,7 +104,7 @@ export class CardEdit implements m.Component {
                                                 placeholder="Um resuminho do seu projeto em até 100 caracteres"
                                                 value={project.headline}
                                                 oninput={(event : Event) => project.headline = event.target.value}
-                                                class="text-field positive w-input"
+                                                class={`text-field positive w-input ${hasErrorOn('headline') && 'error'}`}
                                                 required>
                                             </textarea>
                                             <InlineErrors messages={getFieldErrors('headline')} />

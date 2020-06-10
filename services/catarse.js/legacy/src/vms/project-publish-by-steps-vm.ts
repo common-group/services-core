@@ -52,6 +52,12 @@ export class ProjectPublishByStepsVM {
             },
             set video_url(value) {
                 self._project.video_url = value
+            },
+            get about_html() {
+                return self._project.about_html
+            },
+            set about_html(value) {
+                self._project.about_html = value
             }
         }
     }
@@ -67,6 +73,11 @@ export class ProjectPublishByStepsVM {
     getErrors(field : string) : string[] {
         return this._errors[field] || []
     }
+
+    hasErrorOn(field : string) : boolean {
+        const errors = this._errors[field] || []
+        return errors.length > 0
+    }
     
     async save(fields : string[], requiredFields : string[], cardImageFile : File | undefined) {
         try {
@@ -79,7 +90,7 @@ export class ProjectPublishByStepsVM {
                 someInvalidation = await this.uploadCardImage(cardImageFile)
             }
             const requiredFieldsWithoutUploadedImage = requiredFields.filter(rf => rf !== 'uploaded_image')
-            return someInvalidation && (await this.saveFields(fields, requiredFieldsWithoutUploadedImage))
+            return (await this.saveFields(fields, requiredFieldsWithoutUploadedImage)) && someInvalidation
         } catch(e) {
             return false
         } finally {
@@ -103,14 +114,16 @@ export class ProjectPublishByStepsVM {
 
         for (const field of requiredFields) {
             if (!projectDataToSave[field]) {
-                this.setErrorOnField('headline', this.conditionalI18n('headline.blank'))
+                this.setErrorOnField(field, this.conditionalI18n(`${field}.blank`))
                 manualErrorsSet = true
             }
         }
 
+        console.log(this._errors)
+
         if (manualErrorsSet) {
             h.redraw()
-            return
+            return false
         }
 
         const requestOptions = {
