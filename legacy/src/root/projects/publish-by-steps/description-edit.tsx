@@ -1,7 +1,24 @@
 import m from 'mithril'
+import h from '../../../h'
+import { ProjectDetails } from '../../../@types/project-details'
+import { DescriptionEditTips } from '../../../c/projects/publish-by-steps/description-edit-tips'
+
+
+export type DescriptionEditAttrs = {
+    project: ProjectDetails
+    isSaving: boolean
+    save(imageFile: File): void
+    getFieldErrors(field: string): string[]
+}
 
 export class DescriptionEdit implements m.Component {
-    view({ attrs }) {
+
+    view({ attrs }: m.Vnode<DescriptionEditAttrs>) {
+
+        const project = attrs.project
+        const isSaving = attrs.isSaving
+        const save = attrs.save
+        const getFieldErrors = attrs.getFieldErrors
 
         return (
             <div class="section">
@@ -29,9 +46,14 @@ export class DescriptionEdit implements m.Component {
                                     <div class="u-marginbottom-30">
                                         <label for="name" class="field-label fontweight-semibold u-marginbottom-10">
                                             Descrição do projeto
-                            </label>
-                                        <textarea maxlength="5000" class="text-field big positive w-input">
-                                        </textarea>
+                                        </label>
+                                        {h.redactor('project[about_html]', (about_html?: string) => {
+                                            if (typeof about_html !== 'undefined') {
+                                                project.about_html = about_html
+                                            }
+
+                                            return project.about_html || ''
+                                        })}
                                     </div>
                                     <div class="u-marginbottom-30 w-row">
                                         <div class="_w-sub-col w-col w-col-5">
@@ -53,7 +75,7 @@ export class DescriptionEdit implements m.Component {
                                             <div class="w-col w-col-5">
                                                 <label for="name-9" class="field-label fontweight-semibold">
                                                     Local do projeto
-                                        <br />
+                                                <br />
                                                 </label>
                                             </div>
                                             <div class="w-col w-col-7">
@@ -66,7 +88,7 @@ export class DescriptionEdit implements m.Component {
                                         <div class="w-col w-col-8">
                                             <a href="/dashboard/solidaria/ask-about-reward" class="btn btn-large">
                                                 Próximo &gt;
-                                </a>
+                                            </a>
                                         </div>
                                         <div class="w-col w-col-2"></div>
                                     </div>
@@ -75,12 +97,12 @@ export class DescriptionEdit implements m.Component {
                                         <div class="w-col w-col-4">
                                             <a href="#" class="btn btn-medium btn-terciary" data-ix="show-modal" style="transition: all 0.5s ease 0s;">
                                                 Ver página
-                                </a>
+                                            </a>
                                         </div>
                                         <div class="w-col w-col-4">
                                             <a href="#" class="btn btn-medium btn-terciary" data-ix="show-modal" style="transition: all 0.5s ease 0s;">
                                                 Salvar
-                                </a>
+                                            </a>
                                         </div>
                                         <div class="w-col w-col-2"></div>
                                     </div>
@@ -94,42 +116,7 @@ export class DescriptionEdit implements m.Component {
                         </div>
 
                         <div class="w-col w-col-4">
-                            <div class="dashboard-column-tips description">
-                                <div class="card card-secondary">
-                                    <div>
-                                        <div class="arrow-left"></div>
-                                        <img src="https://uploads-ssl.webflow.com/57ba58b4846cc19e60acdd5b/57ba58b4846cc19e60acde14_Screen%20Shot%202015-06-28%20at%2011.51.22%20AM.png" alt="" class="thumb small u-round u-right" />
-                                        <div class="fontsize-smallest">
-                                            Dicas do Rafa, nosso especialista
-                            </div>
-                                    </div>
-                                </div>
-                                <div class="card">
-                                    <div class="fontsize-smaller u-marginbottom-20">
-                                        Para arrecadar o máximo em sua campanha, lembre-se de:
-                        </div>
-                                    <div class="fontsize-smaller u-marginbottom-10">
-                                        <span class="fa fa-check fa-fw" aria-hidden="true">&nbsp;</span>
-                            Descreva quem irá se beneficiar
-                        </div>
-                                    <div class="fontsize-smaller u-marginbottom-10">
-                                        <span class="fa fa-check fa-fw" aria-hidden="true">&nbsp;</span>
-                            Dê detalhes de como o dinheiro será usado
-                        </div>
-                                    <div class="fontsize-smaller u-marginbottom-10">
-                                        <span class="fa fa-check fa-fw" aria-hidden="true">&nbsp;</span>
-                            Explique a urgência da sua causa
-                        </div>
-                                    <div class="fontsize-smaller u-marginbottom-10">
-                                        <span class="fa fa-check fa-fw" aria-hidden="true">&nbsp;</span>
-                            Conte para as pessoas o que o suporte delas irá representar para você
-                        </div>
-                                    <div class="fontsize-smaller u-marginbottom-10">
-                                        <span class="fa fa-check fa-fw" aria-hidden="true">&nbsp;</span>
-                            Compartilhe o quão feliz você ficará com o apoio das pessoas
-                        </div>
-                                </div>
-                            </div>
+                            <DescriptionEditTips />
                         </div>
                     </div>
                 </div>
