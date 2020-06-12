@@ -335,7 +335,7 @@ const paymentCreditCard = {
                                  m('.fontsize-smallest.fontcolor-terciary.u-marginbottom-10.field-label-tip.u-marginbottom-10',
                                    window.I18n.t('credit_card.document_tip', state.scope())
                                   ),
-                                 m('input.w-input.text-field[name="credit-card-document"]', {
+                                 m('input.w-input.text-field[name="credit-card-document"][id="credit-card-document"]', {
                                      onfocus: state.vm.resetCreditCardFieldError('cardOwnerDocument'),
                                      class: state.fieldHasError('cardOwnerDocument') ? 'error' : '',
                                      onblur: state.checkCardOwnerDocument,
