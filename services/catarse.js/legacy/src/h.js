@@ -1053,8 +1053,8 @@ const _dataCache = {},
             });
         }
     },
-    redactor = (name, prop) =>
-        m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
+    redactor = (name, prop, aditionalClasses = '') =>
+        m(`textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive${aditionalClasses}`, {
             name,
             oncreate: setRedactor(prop),
         }),
