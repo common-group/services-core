@@ -154,9 +154,8 @@ export class ProjectPublishByStepsVM {
             return true
         } catch(error) {
             const railsError = error as RailsErrors
-            console.log('railsError.errors_json', railsError.errors_json)
             const railsErrorJson = JSON.parse(railsError.errors_json)
-            for (const field of railsErrorJson) {
+            Object.keys(railsErrorJson).forEach(field => {
                 if (typeof railsErrorJson[field] === 'string') {
                     this.setErrorOnField(field, railsErrorJson[field])
                 } else {
@@ -164,7 +163,7 @@ export class ProjectPublishByStepsVM {
                         this.setErrorOnField(field, message)
                     }
                 }
-            }
+            })
             return false
         } finally {
             this._isSavingProject = false
