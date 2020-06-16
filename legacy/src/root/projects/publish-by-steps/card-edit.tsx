@@ -76,7 +76,6 @@ export class CardEdit implements m.Component {
                                                 href="#" class="btn btn-small btn-dark">
                                                 Escolher arquivo
                                             </a>
-                                            <InlineErrors messages={getFieldErrors('uploaded_image')} />
                                         </div>
                                         <div class="w-col w-col-3">
                                             <div class="fontsize-smallest fontcolor-secondary">
@@ -88,7 +87,10 @@ export class CardEdit implements m.Component {
                                                 }
                                             </div>
                                         </div>
+                                        
+                                        <InlineErrors messages={getFieldErrors('uploaded_image')} />
                                     </div>
+
                                     <div class="u-marginbottom-40 w-row">
                                         <div class="_w-sub-col w-col w-col-5">
                                             <label for="name" class="field-label fontweight-semibold">
