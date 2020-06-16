@@ -88,6 +88,7 @@
         "moment": "~> 2.19.3",
         "moment-timezone": "^0.5.16",
         "resolve-cwd": "^3.0.0",
+        "rxjs": "^6.5.5",
         "select": "^1.1.2",
         "underscore": "^1.9.1",
         "webpack-cli": "^3.0.4"
