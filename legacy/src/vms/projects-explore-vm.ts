@@ -2,17 +2,19 @@ type ExtendedWindow = {
     replaceDiacritics(inputText : string): string;
 }
 
-import _ from 'underscore';
-import { catarse } from '../api';
-import models from '../models';
-import h from '../h';
-import projectFilters from './project-filters-vm';
-import userVM from '../vms/user-vm';
-import { SequencePaginationVM } from '../utils/sequence-pagination-vm';
-import { Project } from '../@types/project';
-import { ViewModel } from '../@types/view-model';
-
-const { replaceDiacritics } = window as any as ExtendedWindow;
+import _ from 'underscore'
+import { catarse } from '../api'
+import models from '../models'
+import h from '../h'
+import projectFilters from './project-filters-vm'
+import userVM from '../vms/user-vm'
+import { SequencePaginationVM } from '../utils/sequence-pagination-vm'
+import { Project } from '../@types/project'
+import { ViewModel } from '../@types/view-model'
+import { City } from '../@types/city'
+import { State } from '../@types/state'
+import { CityState } from '../@types/city-state'
+import { searchCitiesGroupedByState } from '../vms/cities-search-vm'
 
 interface Observer<T> {
     next(data: T): void;
@@ -484,77 +486,4 @@ export class ProjectsExploreViewModel {
             return {};
         }
     }
-}
-
-type City = {
-    acronym?: string;
-    id?: string;
-    name: string;
-    search_index?: string;
-    state_id?: string;
-    state_name?: string;
-}
-
-type State = {
-    acronym: string;
-    state_name: string;
-}
-
-export type CityState = {
-    city?: City;
-    state: State;
-}
-
-async function searchCitiesGroupedByState(inputText: string) : Promise<CityState[]> {
-
-    const cities = await searchCities(inputText);
-    const cityGroup : { [key:string] : City[] } = {};
-
-    for (let city of cities) {
-        cityGroup[city.state_name] = [city].concat(cityGroup[city.state_name] || []);
-    }
-
-    return cityGroupToList(cityGroup);
-}
-
-function searchCities(inputText : string) : Promise<City[]> {
-    
-    const filters = catarse.filtersVM({
-        search_index: 'ilike'
-    }).order({ name: 'asc' });
-
-    filters.search_index(replaceDiacritics(inputText));
-
-    return models.city.getPage(filters.parameters());
-}
-
-function cityGroupToList(citiesByStateOnKey: {[key:string] : City[]}) : CityState[] {
-    
-    const cityList : CityState[] = [];
-
-    for (const stateName of Object.keys(citiesByStateOnKey)) {
-        const cities = citiesByStateOnKey[stateName];
-        const firstCity = cities[0];
-        const cityState : CityState = {
-            state: {
-                acronym: firstCity.acronym, 
-                state_name: stateName
-            }
-        };
-
-        cityList.push(cityState);
-
-        for (const city of cities) {
-            const cityState : CityState = {
-                state: {
-                    acronym: firstCity.acronym, 
-                    state_name: stateName
-                },
-                city,
-            };
-            cityList.push(cityState);
-        }
-    }
-
-    return cityList;
 }
