@@ -114,12 +114,14 @@ export class DescriptionEdit implements m.Component {
                                                     </div>
                                                     <div class="w-col w-col-8 w-col-small-6 w-col-tiny-6">
                                                         <InputPermalink 
+                                                            autoResetLastValidValue={false}
                                                             class={`${hasErrorOn('permalink') ? 'error' : ''}`} 
                                                             currentPermalink={project.permalink} 
+                                                            onChange={(newPermalink : string) => project.permalink = newPermalink}
                                                             onValidChange={(newPermalink : string) => project.permalink = newPermalink} />
-                                                        <InlineErrors messages={getFieldErrors('permalink')} />
                                                     </div>
                                                 </div>
+                                                <InlineErrors messages={getFieldErrors('permalink')} />
                                             </div>
                                         </div>
                                         <div class="u-marginbottom-30">
