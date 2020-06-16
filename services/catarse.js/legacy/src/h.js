@@ -1488,6 +1488,7 @@ export default {
     isProjectPage,
     setPageTitle,
     rootUrl,
+    setRedactor,
     redactor,
     setCsrfToken,
     userSignedIn,
