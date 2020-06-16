@@ -1039,7 +1039,18 @@ const _dataCache = {},
             // a hook on the change.callback.redactor event. e.g.:
             // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
             // TODO: workaround to get redactor data
-            window.$('.redactor-editor').on('blur', () => prop($editor.redactor('code.get')));
+            window.$('.redactor-editor').on('blur', (event) => {
+                prop($editor.redactor('code.get'));
+                if (vnode.attrs.onblur) {
+                    vnode.attrs.onblur(event);
+                }
+            });
+
+            window.$('.redactor-editor').on('focus', (event) => {
+                if (vnode.attrs.onfocus) {
+                    vnode.attrs.onfocus(event);
+                }
+            });
         }
     },
     redactor = (name, prop) =>
