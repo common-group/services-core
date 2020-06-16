@@ -103,9 +103,11 @@ export class ProjectPublishByStepsVM {
             this._isSavingProject = true
 
             h.redraw()
-            let someInvalidation = false
-            const projectHasImageUploaded = !this._project.large_image || !this._project.cover_image
-            if (requiredFields.includes('uploaded_image') && projectHasImageUploaded) {
+
+            const projectHasImageUploaded = !!this._project.large_image || !!this._project.small_image || !!this._project.thumb_image
+            let someInvalidation = projectHasImageUploaded
+
+            if (requiredFields.includes('uploaded_image') && !projectHasImageUploaded) {
                 someInvalidation = await this.uploadCardImage(cardImageFile)
             }
             const requiredFieldsWithoutUploadedImage = requiredFields.filter(rf => rf !== 'uploaded_image')
