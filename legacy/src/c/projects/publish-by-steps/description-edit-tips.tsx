@@ -2,17 +2,17 @@ import m from 'mithril'
 
 type DescriptionEditTipsAttrs = {
     focusClass: 'amount' | 'description'
-    shouldShow: boolean
+    show: boolean
 }
 
 export class DescriptionEditTips implements m.Component {
     view({ attrs } : m.Vnode<DescriptionEditTipsAttrs>) {
 
         const focusClass = attrs.focusClass || 'amount'
-        const shouldShow = attrs.shouldShow
+        const show = attrs.show
 
         return (
-            <div class={`dashboard-column-tips ${focusClass}`} style={`display: ${shouldShow ? 'block' : 'none'}`}>
+            <div class={`dashboard-column-tips ${focusClass}`} style={`display: ${show ? 'block' : 'none'}`}>
                 <div class="card card-secondary">
                     <div>
                         <div class="arrow-left"></div>
