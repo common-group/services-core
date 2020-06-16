@@ -15,11 +15,11 @@ import { DescriptionEdit } from './description-edit';
 // '/projects/:id/publish/share-reminder': 
 
 type ProjectsPublishByStepsAttrs = {
-    project_id: number;
+    project_id: number
 }
 
 type ProjectsPublishByStepsState = {
-    projectPublishByStepsVM: ProjectPublishByStepsVM;
+    projectPublishByStepsVM: ProjectPublishByStepsVM
 }
 
 type ProjectsPublishByStepsVnode = m.Vnode<ProjectsPublishByStepsAttrs, ProjectsPublishByStepsState>;
@@ -27,7 +27,7 @@ type ProjectsPublishByStepsVnode = m.Vnode<ProjectsPublishByStepsAttrs, Projects
 class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs, ProjectsPublishByStepsState> {
     
     oninit({attrs, state} : ProjectsPublishByStepsVnode) {
-        state.projectPublishByStepsVM = new ProjectPublishByStepsVM(attrs.project_id);
+        state.projectPublishByStepsVM = new ProjectPublishByStepsVM(attrs.project_id)
     }
 
     view({ state } : ProjectsPublishByStepsVnode) {
@@ -37,7 +37,9 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
         if (projectPublishByStepsVM.isLoadingProject) {
             return h.loader()
         } else {
-            const hash = window.location.hash;
+            
+            const hash = window.location.hash
+
             switch(hash) {
                 case '#card': {
                     return (
@@ -60,13 +62,21 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                         <DescriptionEdit 
                             project={projectPublishByStepsVM.project}
                             isSaving={projectPublishByStepsVM.isSaving}
-                            save={async => {
-                                // const canProceed = await projectPublishByStepsVM.save(['uploaded_image', 'headline', 'video_url'], ['uploaded_image', 'headline'], coverImageFile)
-                                // if (canProceed) {
-                                //     window.location.hash = '#description'
-                                // }
+                            save={async (goNext : boolean) => {
+                                const fieldsToSave = ['goal', 'about_html', 'permalink', 'city_id']
+                                const canProceed = await projectPublishByStepsVM.save(fieldsToSave, fieldsToSave)
+                                if (canProceed && goNext) {
+                                    window.location.hash = '#ask-about-reward'
+                                }
                             }}
+                            hasErrorOn={(field : string) => projectPublishByStepsVM.hasErrorOn(field)}
                             getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
+                    )
+                }
+
+                case '#ask-about-reward': {
+                    return (
+                        <div>UNDER CONSTRUCTION</div>
                     )
                 }
     
@@ -88,6 +98,6 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
             }
         }
     }
-};
+}
 
-export default ProjectsPublishBySteps;
+export default ProjectsPublishBySteps

@@ -53,11 +53,29 @@ export class ProjectPublishByStepsVM {
             set video_url(value) {
                 self._project.video_url = value
             },
+            get goal() {
+                return self._project.goal
+            },
+            set goal(value) {
+                self._project.goal = value
+            },
             get about_html() {
-                return self._project.about_html
+                return self._project.about_html || ''
             },
             set about_html(value) {
                 self._project.about_html = value
+            },
+            get permalink() {
+                return self._project.permalink
+            },
+            set permalink(value) {
+                self._project.permalink = value
+            },
+            get city_id() {
+                return self._project.city_id
+            },
+            set city_id(value) {
+                self._project.city_id = value
             }
         }
     }
@@ -79,7 +97,7 @@ export class ProjectPublishByStepsVM {
         return errors.length > 0
     }
     
-    async save(fields : string[], requiredFields : string[], cardImageFile : File | undefined) {
+    async save(fields : string[], requiredFields : string[], cardImageFile? : File | undefined) {
         try {
             this.clearErrors()
             this._isSavingProject = true
@@ -118,8 +136,6 @@ export class ProjectPublishByStepsVM {
                 manualErrorsSet = true
             }
         }
-
-        console.log(this._errors)
 
         if (manualErrorsSet) {
             h.redraw()
