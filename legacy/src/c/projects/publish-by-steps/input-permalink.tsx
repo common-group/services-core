@@ -6,7 +6,9 @@ import h from '../../../h'
 export type InputPermalinkAttrs = {
     currentPermalink: string
     onValidChange(permalink : string): void
+    onChange(permalink : string): void
     class: string
+    autoResetLastValidValue: boolean
 }
 
 export type InputPermalinkState = {
@@ -21,6 +23,7 @@ export class InputPermalink implements m.Component {
         state.class = attrs.class
         state.currentPermalink = attrs.currentPermalink
         state.checkPermalinkAvailable = async (inputText) => {
+            let lastValidValue = state.currentPermalink
             state.currentPermalink = inputText
             try {
                 const projectBySlugRequestConfig = {
@@ -34,16 +37,38 @@ export class InputPermalink implements m.Component {
                 if (state.currentPermalink !== attrs.currentPermalink) {
                     state.class = 'error'
                 }
+
+                if (attrs.autoResetLastValidValue) {
+                    state.currentPermalink = lastValidValue
+                    h.redraw()
+                }
             } catch(e) {
                 state.class = ''
-                attrs.onValidChange(state.currentPermalink)
+
+                if (typeof attrs.onValidChange === 'function') {
+                    attrs.onValidChange(state.currentPermalink)
+                }
+
+                if (typeof attrs.onChange === 'function') {
+                    attrs.onChange(state.currentPermalink)
+                }
+            }
+
+            if (typeof attrs.onChange === 'function') {
+                attrs.onChange(state.currentPermalink)
             }
         }
     }
 
     oncreate({ state, attrs, dom} : m.VnodeDOM<InputPermalinkAttrs, InputPermalinkState>) {
         const oninput = fromEvent(dom, 'input')
-        const wait1s = oninput.pipe(debounceTime(1000))
+        const oneveryinput = oninput.pipe()
+        const wait1s = oneveryinput.pipe(debounceTime(1000))
+
+        oneveryinput.subscribe(event => {
+            state.class = ''
+        })
+        
         wait1s.subscribe(event => {
             state.checkPermalinkAvailable(event.target.value)
         })
