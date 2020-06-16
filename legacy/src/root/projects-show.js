@@ -83,6 +83,8 @@ const projectsShow = {
 
         const hasSubscription = () => !_.isEmpty(userProjectSubscriptions()) && _.find(userProjectSubscriptions(), sub => sub.project_id === projectVM.currentProject().common_id);
 
+        const query = m.parseQueryString(window.location.search);
+
         vnode.state = {
             loadUserSubscriptions,
             projectOwner,
@@ -90,6 +92,7 @@ const projectsShow = {
             hasSubscription,
             userProjectSubscriptions,
             displayAdultContentPopup,
+            shouldDisplayDashboardMenu: !!query['is_preview_without_dashboard_menu']
         };
     },
     view: function({state, attrs}) {
@@ -99,6 +102,7 @@ const projectsShow = {
         const displayAdultContentPopup = state.displayAdultContentPopup;
         const shouldDisplayAdultContentPopup = project() && project().is_adult_content && displayAdultContentPopup() && !project().is_owner_or_admin;
         const blurredScreenConditionalStyle = shouldDisplayAdultContentPopup ? { filter: 'blur(7px)' } : { };
+        const shouldDisplayDashboardMenu = project() && project().is_owner_or_admin && !attrs.hideDashboardMenu && !state.shouldDisplayDashboardMenu;
 
         return m('.project-show', {
             oncreate: projectVM.setProjectPageTitle(),
@@ -148,7 +152,7 @@ const projectsShow = {
                 userDetails: projectVM.userDetails,
                 projectContributions: projectVM.projectContributions
             }),
-            (project() && project().is_owner_or_admin ? m(projectDashboardMenu, {
+            (shouldDisplayDashboardMenu ? m(projectDashboardMenu, {
                 project
             }) : '')
         ] : h.loader())
