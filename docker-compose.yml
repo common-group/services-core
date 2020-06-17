@@ -40,7 +40,7 @@ services:
         ipv4_address: 10.0.1.41
 
   catarse_db:
-    image: library/postgres:9.4-alpine
+    image: library/postgres:11.5-alpine
     volumes:
       - ./services/service-core-db/init_catarse.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-catarse-data:/var/lib/postgresql/data
