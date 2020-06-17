@@ -9,12 +9,13 @@ import dashboardRewardCard from '../../dashboard-reward-card'
 import editRewardCard from '../../edit-reward-card'
 import userVM from '../../../vms/user-vm'
 import { ProjectDetails } from '../../../@types/project-details'
+import { RewardsEditListCard } from './rewards-edit-list-card'
 
 type ExtendedWindow = {
     $(...params: any[]): any
     I18n: {
         locale: string
-        t(path : string, ...params: any[])
+        t(path: string, ...params: any[])
     }
 }
 
@@ -36,7 +37,7 @@ export type RewardsEditListAttrs = {
 
 export type RewardsEditListState = {
     rewards: StreamType<StreamType<RewardDetailsStream>[]>
-    newReward() : RewardDetailsStream
+    newReward(): RewardDetailsStream
     user: StreamType<{}>
     setSorting(localVnode: m.VnodeDOM<{}, {}>): void
     showImageToUpload(reward: any, imageFileToUpload: any, imageInputElementFile: any): void
@@ -46,13 +47,13 @@ export type RewardsEditListState = {
 
 export class RewardsEditList implements m.Component {
 
-    oninit({attrs, state} : m.Vnode<RewardsEditListAttrs, RewardsEditListState>) {
+    oninit({ attrs, state }: m.Vnode<RewardsEditListAttrs, RewardsEditListState>) {
         const rewards = prop<StreamType<RewardDetailsStream>[]>([])
         const loading = attrs.loading
         const error = attrs.error
         const errors = attrs.errors
         const showSuccess = attrs.showSuccess
-        function newReward() : RewardDetailsStream {
+        function newReward(): RewardDetailsStream {
             return {
                 id: prop(null),
                 minimum_value: prop(null),
@@ -83,7 +84,7 @@ export class RewardsEditList implements m.Component {
             }
         });
 
-        function setSorting(localVnode : m.VnodeDOM) {
+        function setSorting(localVnode: m.VnodeDOM) {
             if (jQuery) {
                 jQuery(localVnode.dom).sortable({
                     update(event, ui) {
@@ -97,13 +98,13 @@ export class RewardsEditList implements m.Component {
         async function loadRewards() {
 
             await rewardVM.fetchRewards(attrs.project_id)
-            
+
             rewards([]);
 
             for (const reward of rewardVM.rewards()) {
 
                 const limited = reward.maximum_contributions !== null && !reward.run_out;
-                const rewardDataStreams : RewardDetailsStream = {
+                const rewardDataStreams: RewardDetailsStream = {
                     id: prop(reward.id),
                     deliver_at: prop(reward.deliver_at),
                     description: prop(reward.description),
@@ -120,7 +121,7 @@ export class RewardsEditList implements m.Component {
                     waiting_payment_count: prop(reward.waiting_payment_count),
                     newReward: false,
                 }
-    
+
                 const rewardDataStreamProp = prop<RewardDetailsStream>(rewardDataStreams)
                 rewards(rewards().concat([rewardDataStreamProp]));
             }
@@ -167,7 +168,7 @@ export class RewardsEditList implements m.Component {
 
         const showImageToUpload = (reward, imageFileToUpload, imageInputElementFile) => {
             const reader = new FileReader();
-            reader.onload = function() {
+            reader.onload = function () {
                 imageFileToUpload(imageInputElementFile);
                 var dataURL = reader.result;
                 reward.uploaded_image(dataURL);
@@ -184,11 +185,12 @@ export class RewardsEditList implements m.Component {
         state.setSorting = setSorting
         state.showImageToUpload = showImageToUpload
         state.deleteImage = deleteImage
-        state.uploadImage = uploadImage        
+        state.uploadImage = uploadImage
     }
-    
-    view({attrs, state} : m.Vnode<RewardsEditListAttrs, RewardsEditListState>) {
 
+    view({ attrs, state }: m.Vnode<RewardsEditListAttrs, RewardsEditListState>) {
+
+        const loading = attrs.loading
         const error = attrs.error
         const errors = attrs.errors
         const showSuccess = attrs.showSuccess
@@ -196,64 +198,64 @@ export class RewardsEditList implements m.Component {
         const showImageToUpload = state.showImageToUpload
         const deleteImage = state.deleteImage
         const uploadImage = state.uploadImage
+        const project_id = attrs.project_id
+        const sortedRewards = _.sortBy(state.rewards(), reward => Number(reward().row_order()))
+        const hasRewards = state.rewards().length > 0
+        const shouldShowAddRewardButton = rewardVM.canAdd(project().state, state.user())
 
         return (
-            [
-               m('.w-form', [
-                   state.rewards().length === 0 ? '' : 
-                   m(".ui-sortable[id='rewards']", {
-                       oncreate: state.setSorting
-                   }, [
-                       _.map(_.sortBy(state.rewards(), reward => Number(reward().row_order())), (reward, index) => m(`div[id=${reward().id()}]`, [m('.nested-fields',
-                               m('.reward-card', [
-                                   (!reward().edit() ?
-                                        m(dashboardRewardCard, {
-                                            class: attrs.class,
-                                            reward,
-                                            error,
-                                            errors,
-                                            user: state.user(),
-                                            showSuccess,
-                                            project,
-                                            showImageToUpload,
-                                            deleteImage,
-                                            uploadImage,
-                                            index
-                                        }) 
-                                        :
-                                        m(editRewardCard, {
-                                            class: attrs.class,
-                                            project_id: attrs.project_id,
-                                            error,
-                                            showSuccess,
-                                            errors,
-                                            reward,
-                                            showImageToUpload,
-                                            deleteImage,
-                                            uploadImage,
-                                            index
-                                        }))
-                               ])
-                           ),
-                           m('input.ui-sortable-handle[type=\'hidden\']', {
-                               value: reward().id()
-                           })
-                       ]))
-                   ])
-   
-               ]),
-               rewardVM.canAdd(project().state, state.user()) ? [
-                   m('button.btn.btn-large.btn-message.show_reward_form.new_reward_button.add_fields', {
-                           onclick: () => {
-                               state.rewards().push(prop(state.newReward()));
-                               m.redraw();
-                           }
-                       },
-                       I18n.t('add_reward', I18nScope())
-                   )
-   
-               ] : ''
-            ]
+            <>
+                <div class='w-form'>
+                    {
+                        hasRewards &&
+                        <div oncreate={state.setSorting} id='rewards' class='ui-sortable'>
+                            {sortedRewards.map((reward, index) =>
+                                <RewardsEditListCard
+                                    reward={reward}
+                                    index={index}
+                                    project={project}
+                                    error={error}
+                                    errors={errors}
+                                    user={state.user}
+                                    showSuccess={showSuccess}
+                                    loading={loading}
+                                    showImageToUpload={showImageToUpload}
+                                    deleteImage={deleteImage}
+                                    uploadImage={uploadImage}
+                                    class={attrs.class}
+                                    project_id={project_id}
+                                />
+                            )}
+                        </div>
+                    }
+                </div>
+                <AddRewardButton 
+                    shouldDisplayButton={shouldShowAddRewardButton}
+                    onclick={() => {
+                        state.rewards().push(prop(state.newReward()));
+                        h.redraw();
+                    }} />
+            </>
+        )
+    }
+}
+
+type AddRewardButtonAttrs = {
+    shouldDisplayButton: boolean
+    onclick(event: Event): void
+}
+
+class AddRewardButton implements m.Component {
+    view({attrs} : m.Vnode<AddRewardButtonAttrs>) {
+        const shouldDisplayButton = attrs.shouldDisplayButton
+        const onclick = attrs.onclick
+
+        return (
+            shouldDisplayButton &&
+            <button class='btn btn-large btn-message show_reward_form new_reward_button add_fields'
+            onclick={onclick}>
+                {I18n.t('add_reward', I18nScope())}
+            </button>
         )
     }
 }
