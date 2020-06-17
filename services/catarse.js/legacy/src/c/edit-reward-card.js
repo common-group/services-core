@@ -280,7 +280,9 @@ const editRewardCard = {
             isSavingReward = state.isSavingReward(),
             descriptionError = state.descriptionError;
 
-        return state.destroyed() ? m('div', '') : (isSavingReward ? h.loader() : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
+        return state.destroyed() ? m('div', '') : (isSavingReward ? h.loader() : m('.w-row.card-terciary.u-marginbottom-20.card-edition.medium', {
+            class: attrs.class
+        }, [
             m('.card',
                 m('.w-form', [
                     m('.w-row', [

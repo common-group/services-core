@@ -24,6 +24,7 @@ const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const prop = h.RedrawStream as <T>(data?: T, onUpdate?: (data: T) => void) => (newData?: T) => T
 
 export type RewardsEditListAttrs = {
+    class: string
     project_id: number
     user_id: number
     project: StreamType<ProjectDetails>
@@ -207,6 +208,7 @@ export class RewardsEditList implements m.Component {
                                m('.reward-card', [
                                    (!reward().edit() ?
                                         m(dashboardRewardCard, {
+                                            class: attrs.class,
                                             reward,
                                             error,
                                             errors,
@@ -220,6 +222,7 @@ export class RewardsEditList implements m.Component {
                                         }) 
                                         :
                                         m(editRewardCard, {
+                                            class: attrs.class,
                                             project_id: attrs.project_id,
                                             error,
                                             showSuccess,
