@@ -85,7 +85,7 @@ jobs:
   test_catarse:
     docker:
       - image: circleci/ruby:2.4.4-stretch-node-browsers
-      - image: postgres:9.4
+      - image: postgres:11.5
         environment:
           POSTGRES_DB: catarse_test
           POSTGRES_PASSWORD: example
