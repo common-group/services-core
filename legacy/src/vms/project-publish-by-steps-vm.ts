@@ -33,6 +33,12 @@ export class ProjectPublishByStepsVM {
         const self = this
         return {
             ...this._project,
+            get project_id() {
+                return self._project.project_id
+            },
+            set project_id(value) {
+                // won't set project_id
+            },
             set headline(value) {
                 self._project.headline = value
                 self._projectSubject.next(self._project)
