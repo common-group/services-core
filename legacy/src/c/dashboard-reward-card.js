@@ -111,7 +111,7 @@ const dashboardRewardCard = {
             },
             onSelectImageFile = () => {
                 const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${vnode.attrs.index}`);
-                if (rewardImageFile.files.length) {
+                if (rewardImageFile && rewardImageFile.files && rewardImageFile.files.length) {
 
                     imageFileToUpload(rewardImageFile.files[0]);
                     isUploadingRewardImage(true);

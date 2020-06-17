@@ -4,6 +4,8 @@ import { CardEdit } from './card-edit';
 import { ProjectPublishByStepsVM } from '../../../vms/project-publish-by-steps-vm';
 import { ProjectDetails } from '../../../@types/project-details';
 import { DescriptionEdit } from './description-edit';
+import { AskAboutReward } from './ask-about-reward';
+import { RewardsEdit } from './rewards-edit';
 
 // '/projects/:id/publish-by-steps/card': wrap({})
 // '/projects/:id/publish/description': 
@@ -76,7 +78,13 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
 
                 case '#ask-about-reward': {
                     return (
-                        <div>UNDER CONSTRUCTION</div>
+                        <AskAboutReward project={projectPublishByStepsVM.project} />
+                    )
+                }
+
+                case '#rewards': {
+                    return (
+                        <RewardsEdit project={projectPublishByStepsVM.project} />
                     )
                 }
     
