@@ -197,7 +197,9 @@ const dashboardRewardCard = {
         const isEditingDescription = descriptionEdit();
         const isSaving = state.isSaving();
 
-        return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
+        return m('.w-row.cursor-move.card-persisted.card-terciary.u-marginbottom-20.medium.sortable', {
+            class: attrs.class
+        }, [
             (
                 isSaving ?
                     m('.card', [h.loader()])

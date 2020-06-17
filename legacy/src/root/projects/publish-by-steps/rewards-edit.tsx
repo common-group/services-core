@@ -30,6 +30,16 @@ export class RewardsEdit implements m.Component {
                                     errors={h.RedrawStream('')}
                                     showSuccess={h.RedrawStream(false)}
                                     loading={h.RedrawStream(false)} />
+
+                                <div class="u-margintop-40 u-marginbottom-20 w-row">
+                                    <div class="w-col w-col-2"></div>
+                                    <div class="w-col w-col-8">
+                                        <a href="#user" class="btn btn-large">
+                                            Próximo &gt;
+                                        </a>
+                                    </div>
+                                    <div class="w-col w-col-2"></div>
+                                </div>
                             </div>
                             <div class="u-text-center u-margintop-20 fontsize-smaller">
                                 <a href="#ask-about-reward" class="link-hidden-dark">
