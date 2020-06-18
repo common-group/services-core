@@ -1,3 +1,4 @@
 export interface RailsErrors extends Error {
-    errors_json : string
+    errors: string[]
+    errors_json: string
 }
