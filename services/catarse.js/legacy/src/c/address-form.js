@@ -33,6 +33,7 @@ const addressForm = {
                     url: `https://api.pagar.me/1/zipcodes/${zipCode}`,
                 })
                 .then(response => {
+                    console.log('fields', fields);
                     fields.addressState(response.state);
                     fields.addressStreet(response.street);
                     fields.addressNeighbourhood(response.neighborhood);

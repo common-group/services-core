@@ -1,4 +1,7 @@
 export type State = {
-    acronym: string;
-    state_name: string;
+    id: number
+    name: string
+    acronym: string
+    created_at: string
+    updated_at: string
 }

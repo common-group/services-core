@@ -31,7 +31,7 @@ const addressFormInternational = {
                         m("input.positive.text-field.w-input[required='required'][type='text']", {
                             class: errors.addressStreet() ? 'error' : '',
                             value: fields.addressStreet(),
-                            onchange: m.withAttr('value', fields.addressStreet)
+                            oninput: m.withAttr('value', fields.addressStreet)
                         }),
                         errors.addressStreet() ? m(inlineError, {
                             message: 'Please fill in an address.'
@@ -46,7 +46,7 @@ const addressFormInternational = {
                             m("input.positive.text-field.w-input[required='required'][type='text']", {
                                 class: errors.addressZipCode() ? 'error' : '',
                                 value: fields.addressZipCode(),
-                                onchange: m.withAttr('value', fields.addressZipCode)
+                                oninput: m.withAttr('value', fields.addressZipCode)
                             }),
                             errors.addressZipCode() ? m(inlineError, {
                                 message: 'ZipCode is required'
@@ -59,7 +59,7 @@ const addressFormInternational = {
                             m("input.positive.text-field.w-input[required='required'][type='text']", {
                                 class: errors.addressCity() ? 'error' : '',
                                 value: fields.addressCity(),
-                                onchange: m.withAttr('value', fields.addressCity)
+                                oninput: m.withAttr('value', fields.addressCity)
                             }),
                             errors.addressCity() ? m(inlineError, {
                                 message: 'City is required'
@@ -72,7 +72,7 @@ const addressFormInternational = {
                             m("input#address-state.positive.text-field.w-input[required='required'][type='text']", {
                                 class: errors.addressState() ? 'error' : '',
                                 value: fields.addressState(),
-                                onchange: m.withAttr('value', fields.addressState)
+                                oninput: m.withAttr('value', fields.addressState)
                             }),
                             errors.addressState() ? m(inlineError, {
                                 message: 'State is required'
