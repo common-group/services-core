@@ -63,7 +63,7 @@ const addressFormNational = {
                         m("input.positive.text-field.w-input[maxlength='50'][required='required'][type='text']", {
                             class: errors.addressStreet() ? 'error' : '',
                             value: fields.addressStreet(),
-                            onchange: m.withAttr('value', fields.addressStreet),
+                            oninput: m.withAttr('value', fields.addressStreet),
                         }),
                         errors.addressStreet()
                             ? m(inlineError, {
@@ -77,7 +77,7 @@ const addressFormNational = {
                             m("input.positive.text-field.w-input[required='required'][type='text']", {
                                 class: errors.addressNumber() ? 'error' : '',
                                 value: fields.addressNumber(),
-                                onchange: m.withAttr('value', fields.addressNumber),
+                                oninput: m.withAttr('value', fields.addressNumber),
                             }),
                             errors.addressNumber()
                                 ? m(inlineError, {
@@ -89,7 +89,7 @@ const addressFormNational = {
                             m('.field-label.fontweight-semibold', window.I18n.t('address_complement', I18nScope())),
                             m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
                                 value: fields.addressComplement(),
-                                onchange: m.withAttr('value', fields.addressComplement),
+                                oninput: m.withAttr('value', fields.addressComplement),
                             }),
                         ]),
                         m('.w-col.w-col-4', [
@@ -97,7 +97,7 @@ const addressFormNational = {
                             m("input.positive.text-field.w-input[maxlength='30'][required='required'][type='text']", {
                                 class: errors.addressNeighbourhood() ? 'error' : '',
                                 value: fields.addressNeighbourhood(),
-                                onchange: m.withAttr('value', fields.addressNeighbourhood),
+                                oninput: m.withAttr('value', fields.addressNeighbourhood),
                             }),
                             errors.addressNeighbourhood()
                                 ? m(inlineError, {
@@ -112,7 +112,7 @@ const addressFormNational = {
                             m("input.positive.text-field.w-input[required='required'][type='text']", {
                                 class: errors.addressCity() ? 'error' : '',
                                 value: fields.addressCity(),
-                                onchange: m.withAttr('value', fields.addressCity),
+                                oninput: m.withAttr('value', fields.addressCity),
                             }),
                             errors.addressCity()
                                 ? m(inlineError, {
@@ -126,7 +126,7 @@ const addressFormNational = {
                                 'select#address-state.positive.text-field.w-select',
                                 {
                                     class: errors.stateID() ? 'error' : '',
-                                    onchange: (event) => {
+                                    oninput: (event) => {
                                         const stateSelectedID = Number(event.target.value);
                                         fields.stateID(stateSelectedID);
                                         
