@@ -6,6 +6,8 @@ import { ProjectDetails } from '../../../@types/project-details';
 import { DescriptionEdit } from './description-edit';
 import { AskAboutReward } from './ask-about-reward';
 import { RewardsEdit } from './rewards-edit';
+import { UserInfoEdit } from './user-info-edit';
+import { UserInfoEditViewModel } from '../../../vms/user-info-edit-vm';
 
 // '/projects/:id/publish-by-steps/card': wrap({})
 // '/projects/:id/publish/description': 
@@ -22,6 +24,7 @@ type ProjectsPublishByStepsAttrs = {
 
 type ProjectsPublishByStepsState = {
     projectPublishByStepsVM: ProjectPublishByStepsVM
+    userInfoEditVM: UserInfoEditViewModel
 }
 
 type ProjectsPublishByStepsVnode = m.Vnode<ProjectsPublishByStepsAttrs, ProjectsPublishByStepsState>;
@@ -30,13 +33,15 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
     
     oninit({attrs, state} : ProjectsPublishByStepsVnode) {
         state.projectPublishByStepsVM = new ProjectPublishByStepsVM(attrs.project_id)
+        state.userInfoEditVM = new UserInfoEditViewModel(h.getUserID())
     }
 
     view({ state } : ProjectsPublishByStepsVnode) {
 
         const projectPublishByStepsVM = state.projectPublishByStepsVM
+        const userInfoEditVM = state.userInfoEditVM
 
-        if (projectPublishByStepsVM.isLoadingProject) {
+        if (projectPublishByStepsVM.isLoadingProject || userInfoEditVM.isLoading) {
             return h.loader()
         } else {
             
@@ -85,6 +90,30 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                 case '#rewards': {
                     return (
                         <RewardsEdit project={projectPublishByStepsVM.project} />
+                    )
+                }
+
+                case '#user': {
+                    return (
+                        <UserInfoEdit 
+                            user={userInfoEditVM.user}
+                            isSaving={userInfoEditVM.isSaving}
+                            hasErrorOn={(field : string) => userInfoEditVM.hasErrorOn(field)}
+                            getErrorsOn={(field : string) => userInfoEditVM.getErrors(field)}
+                            save={async (profileImage? : File) => {
+                                const requiredFields = [
+                                    'public_name',
+                                    'account_types', 
+                                    'name',
+                                    'owner_document',
+                                    'birth_date',
+                                    'address'
+                                ]
+                                const canProceed = await userInfoEditVM.save(requiredFields, profileImage)
+                                if (canProceed) {
+                                    //TODO: publish project
+                                }
+                            }} />
                     )
                 }
     
