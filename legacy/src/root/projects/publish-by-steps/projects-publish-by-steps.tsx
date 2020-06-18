@@ -8,6 +8,9 @@ import { AskAboutReward } from './ask-about-reward';
 import { RewardsEdit } from './rewards-edit';
 import { UserInfoEdit } from './user-info-edit';
 import { UserInfoEditViewModel } from '../../../vms/user-info-edit-vm';
+import { Todo } from './todo';
+import { Share } from './share';
+import { ShareReminder } from './share-reminder';
 
 // '/projects/:id/publish-by-steps/card': wrap({})
 // '/projects/:id/publish/description': 
@@ -33,7 +36,7 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
     
     oninit({attrs, state} : ProjectsPublishByStepsVnode) {
         state.projectPublishByStepsVM = new ProjectPublishByStepsVM(attrs.project_id)
-        state.userInfoEditVM = new UserInfoEditViewModel(h.getUserID())
+        state.userInfoEditVM = new UserInfoEditViewModel(attrs.project_id, h.getUserID())
     }
 
     view({ state } : ProjectsPublishByStepsVnode) {
@@ -41,11 +44,25 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
         const projectPublishByStepsVM = state.projectPublishByStepsVM
         const userInfoEditVM = state.userInfoEditVM
 
+        
         if (projectPublishByStepsVM.isLoadingProject || userInfoEditVM.isLoading) {
             return h.loader()
         } else {
-            
             const hash = window.location.hash
+            const project = projectPublishByStepsVM.project
+            const publishedNotPermittedSteps = [
+                '#card',
+                '#description',
+                '#ask-about-reward',
+                '#rewards',
+                '#user',
+            ]
+            const isNotAllowedToPublishedProjects = publishedNotPermittedSteps.includes(hash)
+
+            if (project.is_published && (isNotAllowedToPublishedProjects || hash === '')) {
+                window.location.hash = '#to-do'
+                h.redraw()
+            }
 
             switch(hash) {
                 case '#card': {
@@ -97,40 +114,43 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
                     return (
                         <UserInfoEdit 
                             user={userInfoEditVM.user}
-                            isSaving={userInfoEditVM.isSaving}
+                            isSaving={userInfoEditVM.isSaving || projectPublishByStepsVM.isSaving}
                             hasErrorOn={(field : string) => userInfoEditVM.hasErrorOn(field)}
                             getErrorsOn={(field : string) => userInfoEditVM.getErrors(field)}
                             save={async (profileImage? : File) => {
-                                const requiredFields = [
-                                    'public_name',
-                                    'account_types', 
-                                    'name',
-                                    'owner_document',
-                                    'birth_date',
-                                    'address'
-                                ]
-                                const canProceed = await userInfoEditVM.save(requiredFields, profileImage)
+                                const canProceed = await userInfoEditVM.save(profileImage)
                                 if (canProceed) {
-                                    //TODO: publish project
+                                    await projectPublishByStepsVM.publish()
+                                    window.location.hash = '#to-do'
                                 }
                             }} />
                     )
                 }
+
+                case '#to-do': {
+                    return (
+                        <Todo />
+                    )
+                }
+
+                case '#share': {
+                    return (
+                        <Share project={project} />
+                    )
+                }
+
+                case '#share-reminder': {
+                    return (
+                        <ShareReminder project={project} />
+                    )
+                }
     
                 default: {
-                    return (
-                        <CardEdit
-                            project={projectPublishByStepsVM.project}
-                            isSaving={projectPublishByStepsVM.isSaving}
-                            save={async coverImageFile => {
-                                const canProceed = await projectPublishByStepsVM.save(['uploaded_image', 'headline', 'video_url'], ['uploaded_image', 'headline'], coverImageFile)
-                                if (canProceed) {
-                                    window.location.hash = '#description'
-                                }
-                            }}
-                            hasErrorOn={(field : string) => projectPublishByStepsVM.hasErrorOn(field)}
-                            getFieldErrors={(field : string) => projectPublishByStepsVM.getErrors(field)} />
-                    )
+                    if (project.is_published) {
+                        window.location.hash = '#to-do'
+                    } else {
+                        window.location.hash = '#card'
+                    }
                 }
             }
         }

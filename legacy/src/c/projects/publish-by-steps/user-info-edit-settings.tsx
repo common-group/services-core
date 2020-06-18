@@ -11,53 +11,6 @@ import UserSettingsAddress from '../../user-settings-address';
 import UserSettingsResponsible from '../../user-settings-responsible';
 import { UserAddress } from '../../../@types/user-address';
 
-
-function defineGetSetOnObject<FieldType>(obj = {}, fieldName : string, getFunc: () => FieldType, setFunc: (newData : FieldType) => void) {
-    return {
-        ...obj,
-        ...{
-            get [fieldName]() : FieldType {
-                return getFunc()
-            },
-            set [fieldName](value : FieldType) {
-                setFunc(value)
-            }
-        }
-    }
-}
-
-function propFromField<T>(obj = {}, field : string) {
-    return (newData? : T) => {
-        if (typeof newData !== 'undefined') {
-            obj[field] = newData
-        }
-
-        return obj[field] as T
-    }
-}
-
-function objectOfStreamsFromPOJO(obj = {}, fields : string[]) {
-    const objStreams = {}
-
-    for (const field of fields) {
-        // objStreams[field] = propFromField(obj, field)
-        objStreams[field] = (newData? : any) => {
-            if (typeof newData !== 'undefined') {
-                objStreams[field]._value = newData
-                console.log('setting value on ', field, newData)
-            }
-    
-            return objStreams[field]._value
-        }
-
-        objStreams[field]._value = obj[field]
-    }
-
-    return objStreams
-}
-
-type MaskFunction = (newData : string) => string
-
 export type UserInfoEditSettingsAttrs = {
     hasErrorOn(field : string): boolean
     getErrorsOn(field : string): string[]
@@ -88,10 +41,116 @@ export class UserInfoEditSettings implements m.Component {
         const hasErrorOn = attrs.hasErrorOn
         const getErrorsOn = attrs.getErrorsOn
         const user = attrs.user
+        user.address = user.address || {
+            address_number: '',
+            address_complement: '',
+            address_neighbourhood: '',
+            phone_number: '',
+            country_id: 36,
+            address_street: '',
+            address_city: '',
+            address_state: '',
+            address_zip_code: '',
+        } as UserAddress
+        const errors = {
+            addressStreet: prop(false),
+            addressNeighbourhood: prop(false),
+            addressCity: prop(false),
+            stateID: prop(false),
+            addressZipCode: prop(false),
+            phoneNumber: prop(false),
+            addressState: prop(false),
+            countryID: prop(false),
+            addressNumber: prop(false),
+            addressComplement: prop(false),
+        }
 
         const parsedErrors = {
-            hasError: (field : string) => hasErrorOn(field),
-            inlineError: (field : string) => <InlineErrors messages={getErrorsOn(field)} />
+            hasError: (field : string) => {
+                switch(field) {
+                    case 'address_zip_code': {
+                        errors.addressZipCode(hasErrorOn(field))
+                        break;
+                    }
+                    case 'phone_number': {
+                        errors.phoneNumber(hasErrorOn(field))
+                        break;
+                    }
+                    case 'address_state': {
+                        errors.addressState(hasErrorOn(field))
+                        break;
+                    }
+                    case 'address_street': {
+                        errors.addressStreet(hasErrorOn(field))
+                        break;
+                    }
+                    case 'address_neighbourhood': {
+                        errors.addressNeighbourhood(hasErrorOn(field))
+                        break;
+                    }
+                    case 'address_city': {
+                        errors.addressCity(hasErrorOn(field))
+                        break;
+                    }
+                    case 'state_id': {
+                        errors.stateID(hasErrorOn(field))
+                        break;
+                    }
+                    case 'country_id': {
+                        errors.countryID(hasErrorOn(field))
+                        break;
+                    }
+                    case 'address_number': {
+                        errors.addressNumber(hasErrorOn(field))
+                        break;
+                    }
+                    case 'address_complement': {
+                        errors.addressComplement(hasErrorOn(field))
+                        break;
+                    }
+
+                    case 'owner_document': {
+                        return hasErrorOn('cpf')
+                    }
+                    case 'state': {
+                        errors.addressState(hasErrorOn('address_state'))
+                        return hasErrorOn('address_state')
+                    }
+                    case 'street': {
+                        errors.addressStreet(hasErrorOn('address_street'))
+                        return hasErrorOn('address_street')
+                    }
+                    case 'number': {
+                        errors.addressNumber(hasErrorOn('address_number'))
+                        return hasErrorOn('address_number')
+                    }
+                    case 'neighbourhood': {
+                        errors.addressNeighbourhood(hasErrorOn('address_neighbourhood'))
+                        return hasErrorOn('address_neighbourhood')
+                    }
+                    case 'city': {
+                        errors.addressCity(hasErrorOn('address_city'))
+                        return hasErrorOn('address_city')
+                    }
+                    case 'zipcode': {
+                        errors.addressZipCode(hasErrorOn('address_zip_code'))
+                        return hasErrorOn('address_zip_code')
+                    }
+                    case 'phonenumber': {
+                        errors.phoneNumber(hasErrorOn('phone_number'))
+                        return hasErrorOn('phone_number')
+                    }
+                }
+
+                return hasErrorOn(field)
+            },
+            inlineError: (field : string) => {
+                switch(field) {
+                    case 'owner_document':
+                        return <InlineErrors messages={getErrorsOn('cpf')} />        
+                }
+                return <InlineErrors messages={getErrorsOn(field)} />
+            }
         }
 
         const userFieldsNames = [
@@ -125,21 +184,6 @@ export class UserInfoEditSettings implements m.Component {
 
             return fields().owner_document()
         }
-
-        
-
-        // const userAddress = attrs.user.address || {}
-        // const addVMRaw = addressVM({ 
-        //     data: userAddress, 
-        //     onStatesLoaded() {
-        //         addVMRaw.setFields(attrs.user.address || {})
-        //     },
-        //     onUpdate() {
-        //         attrs.user.address = addVMRaw.getFields() as UserAddress
-        //         console.log(addVMRaw.getFields())
-        //     }
-        // })
-        // const addVM = prop(addVMRaw)
         
         state.parsedErrors = parsedErrors
         state.fields = fields
@@ -151,15 +195,6 @@ export class UserInfoEditSettings implements m.Component {
         function addViewModel() {
 
             const statesProp = prop<State[]>([])
-
-            const errors = {
-                addressStreet: prop(false),
-                addressNeighbourhood: prop(false),
-                addressCity: prop(false),
-                stateID: prop(false),
-                addressZipCode: prop(false),
-                phoneNumber: prop(false),
-            }
 
             const fieldsMap = {
                 addressZipCode: 'address_zip_code',
@@ -229,6 +264,25 @@ export class UserInfoEditSettings implements m.Component {
     }
 }
 
+function objectOfStreamsFromPOJO(obj = {}, fields : string[]) {
+    const objStreams = {}
+
+    for (const field of fields) {
+        // objStreams[field] = propFromField(obj, field)
+        objStreams[field] = (newData? : any) => {
+            if (typeof newData !== 'undefined') {
+                objStreams[field]._value = newData
+                obj[field] = newData
+            }
+    
+            return objStreams[field]._value
+        }
+
+        objStreams[field]._value = obj[field]
+    }
+
+    return objStreams
+}
 
 function WhenChangeNationality(user : UserDetails, states: prop<State[]>) : UserAddress {
     const defaultCountryID = 36 // Brasil
