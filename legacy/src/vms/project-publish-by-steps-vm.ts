@@ -10,7 +10,6 @@ import _ from 'underscore'
 const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models');
 
 export class ProjectPublishByStepsVM {
-
     private _project : ProjectDetails | null
     private _projectSubject : Subject<ProjectDetails>
     private _isLoadingProject : boolean
@@ -102,6 +101,24 @@ export class ProjectPublishByStepsVM {
         const errors = this._errors[field] || []
         return errors.length > 0
     }
+
+    async publish() {
+        try {
+            this._isSavingProject = true
+            this._isLoadingProject = true
+            const configPublishRequest = {
+                method: 'GET',
+                url: `/projects/${this.project_id}/push_to_online`,
+                config: h.setCsrfToken
+            }
+            await m.request(configPublishRequest)
+        } catch(e) {
+
+        } finally {
+            this._isSavingProject = false
+            this._isLoadingProject = false
+        }
+    }
     
     async save(fields : string[], requiredFields : string[], cardImageFile? : File | undefined) {
         try {
@@ -110,11 +127,16 @@ export class ProjectPublishByStepsVM {
 
             h.redraw()
 
-            const projectHasImageUploaded = !!this._project.large_image || !!this._project.small_image || !!this._project.thumb_image
-            let someInvalidation = projectHasImageUploaded
+            this._project.content_rating = 1
+            this._project.budget = '.'
+            fields.push('content_rating')
+            fields.push('budget')
 
-            if (requiredFields.includes('uploaded_image') && !projectHasImageUploaded) {
+            const projectHasImageUploaded = !_.isEmpty(this._project.small_image) || !_.isEmpty(this._project.thumb_image)
+            let someInvalidation = projectHasImageUploaded
+            if ((requiredFields.includes('uploaded_image') && !projectHasImageUploaded) || typeof cardImageFile !== 'undefined') {
                 someInvalidation = await this.uploadCardImage(cardImageFile)
+                this._project.thumb_image = this._project.small_image = this._project.large_image
             }
             const requiredFieldsWithoutUploadedImage = requiredFields.filter(rf => rf !== 'uploaded_image')
             return (await this.saveFields(fields, requiredFieldsWithoutUploadedImage)) && someInvalidation
@@ -162,17 +184,7 @@ export class ProjectPublishByStepsVM {
             await m.request(requestOptions)
             return true
         } catch(error) {
-            const railsError = error as RailsErrors
-            const railsErrorJson = JSON.parse(railsError.errors_json)
-            Object.keys(railsErrorJson).forEach(field => {
-                if (typeof railsErrorJson[field] === 'string') {
-                    this.setErrorOnField(field, railsErrorJson[field])
-                } else {
-                    for (const message of railsErrorJson[field]) {
-                        this.setErrorOnField(field, message)
-                    }
-                }
-            })
+            this.mapRailsErrors(error as RailsErrors)
             return false
         } finally {
             this._isSavingProject = false
@@ -196,6 +208,19 @@ export class ProjectPublishByStepsVM {
             await m.request(requestOptions)
             return true
         }
+    }
+
+    private mapRailsErrors(error : RailsErrors) {
+        const railsErrorJson = JSON.parse(error.errors_json)
+        Object.keys(railsErrorJson).forEach(field => {
+            if (typeof railsErrorJson[field] === 'string') {
+                this.setErrorOnField(field, railsErrorJson[field])
+            } else {
+                for (const message of railsErrorJson[field]) {
+                    this.setErrorOnField(field, message)
+                }
+            }
+        })
     }
 
     private setErrorOnField(field : string, message : string) {
