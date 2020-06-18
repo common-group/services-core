@@ -1,4 +1,27 @@
-version: "3"
+version: "3.7"
+
+x-ctrse-service: &ctrse-service
+    build:
+      context: ./services/catarse
+      dockerfile: dev.Dockerfile
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
+      REDIS_URL: redis://catarse_redis:6379
+    volumes:
+      # mount volumes for development on catarse / catarse.js
+      - ./services/catarse/:/usr/app
+     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
+    links:
+      - service_core_db
+      - "catarse_db:localhostcatarse"
+      - "catarse_redis:catarse_redis"
+    depends_on:
+      - catarse_db
+      - catarse_redis
+    networks:
+      - cluster
+
 volumes:
   postgres-data:
     driver: local
@@ -187,48 +210,12 @@ services:
         ipv4_address: 10.0.1.47
 
   catarse_migrations:
-    build:
-      context: ./services/catarse
-      dockerfile: dev.Dockerfile
-    environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
-      REDIS_URL: redis://catarse_redis:6379
+    <<: *ctrse-service
     command: ["bundle", "exec", "rake", "db:migrate"]
-    volumes:
-      # mount volumes for development on catarse / catarse.js
-      - ./services/catarse/:/usr/app
-     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
-    links:
-      - service_core_db
-      - "catarse_db:localhostcatarse"
-      - "catarse_redis:catarse_redis"
-    depends_on:
-      - catarse_db
-      - catarse_redis
-    networks:
-      - cluster
 
   catarse:
-    build:
-      context: ./services/catarse
-      dockerfile: dev.Dockerfile
-    environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db
-      REDIS_URL: redis://catarse_redis:6379
+    <<: *ctrse-service
     command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
-    volumes:
-      # mount volumes for development on catarse / catarse.js
-      - ./services/catarse/:/usr/app
-      - ./services/catarse.js/:/usr/app/node_modules/catarse.js
-    links:
-      - service_core_db
-      - "catarse_db:localhostcatarse"
-      - "catarse_redis:catarse_redis"
-    depends_on:
-      - catarse_db
-      - catarse_redis
     ports:
       - "3000:3000"
     networks:
@@ -440,25 +427,10 @@ services:
 #### TEST ENV services
 
   catarse_specs:
-    build:
-      context: ./services/catarse
-      dockerfile: dev.Dockerfile
+    <<: *ctrse-service
     environment:
       RAILS_ENV: test
       DATABASE_URL: postgres://catarse:example@localhostcatarse:5432/catarse_db_test
       REDIS_URL: redis://catarse_redis:6379
     command: "bash run_specs"
-    volumes:
-      # mount volumes for development on catarse / catarse.js
-      - ./services/catarse/:/usr/app
-     # - ./services/catarse.js/:/usr/app/node_modules/catarse.js
-    links:
-      - service_core_db
-      - "catarse_db:localhostcatarse"
-      - "catarse_redis:catarse_redis"
-    depends_on:
-      - catarse_db
-      - catarse_redis
-    networks:
-      - cluster
 
