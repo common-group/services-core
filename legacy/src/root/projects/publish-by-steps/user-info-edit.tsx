@@ -35,6 +35,8 @@ export class UserInfoEdit implements m.Component {
                         <div class="w-col w-col-8">
                             <UserInfoEditPublicProfile 
                                 user={user} 
+                                hasErrorOn={hasErrorOn}
+                                getErrorsOn={getErrorsOn}
                                 onSelectProfileImage={(profileImageFile : File) => {
                                     state.selectedProfileImageFile = profileImageFile
                                 }}/>
