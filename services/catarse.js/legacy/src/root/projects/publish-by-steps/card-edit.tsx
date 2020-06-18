@@ -4,6 +4,7 @@ import { ProjectDetails } from '../../../@types/project-details'
 import h from '../../../h'
 import InlineError from '../../../c/inline-error'
 import { InlineErrors } from '../../../c/inline-errors'
+import { InputImageFile } from '../../../c/std/input-image-file'
 
 export type CardEditAttrs = {
     project: ProjectDetails
@@ -53,35 +54,27 @@ export class CardEdit implements m.Component {
                                             </label>
                                         </div>
                                         <div class="_w-sub-col w-col w-col-4">
-                                            <input 
-                                                oncreate={(vnode : VnodeDOM) => state.inputFileElement = vnode.dom as HTMLInputElement}
+                                            <InputImageFile 
+                                                class='btn btn-small btn-dark'
                                                 oninput={(event : Event) => {
-                                                    if (state.inputFileElement.files.length > 0) {
+                                                    const files = (event.target as HTMLInputElement).files
+                                                    if (files.length > 0) {
                                                         if (project.large_image && project.large_image.indexOf('blob') >= 0) {
                                                             URL.revokeObjectURL(project.large_image)
                                                         }
 
-                                                        state.selectedImageFile = state.inputFileElement.files[0]
+                                                        state.selectedImageFile = files[0]
                                                         project.large_image = URL.createObjectURL(state.selectedImageFile)
                                                     }
-                                                }}
-                                                type="file" accept="image/*" style="display: none;"></input>
-                                            <a 
-                                                onclick={(event : Event) => {
-                                                    event.preventDefault()
-                                                    if (state.inputFileElement) {
-                                                        state.inputFileElement.click()
-                                                    }
-                                                }}
-                                                href="#" class="btn btn-small btn-dark">
+                                            }}>
                                                 Escolher arquivo
-                                            </a>
+                                            </InputImageFile>
                                         </div>
                                         <div class="w-col w-col-3">
-                                            <div class="fontsize-smallest fontcolor-secondary">
+                                            <div class="fontsize-smallest fontcolor-secondary" style='padding-left: 4px;'>
                                                 {
                                                     state.selectedImageFile !== null ?
-                                                        state.selectedImageFile.name
+                                                        `${state.selectedImageFile.name}`
                                                         :
                                                         'Nenhum arquivo escolhido'
                                                 }
