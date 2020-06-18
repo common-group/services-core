@@ -1393,6 +1393,10 @@ function attachEventsToHistory(type) {
     };
 };
 
+function isMobile() {
+    return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+}
+
 /**
  * @typedef VNode
  * @property {Object} attrs
@@ -1507,5 +1511,6 @@ export default {
     trust,
     attachEventsToHistory,
     titleCase,
-    buildCreditCard
+    buildCreditCard,
+    isMobile,
 };
