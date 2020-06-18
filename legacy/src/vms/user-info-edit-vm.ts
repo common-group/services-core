@@ -3,6 +3,9 @@ import { UserDetails } from '../@types/user-details'
 import h from '../h'
 import userVM from './user-vm'
 import { RailsErrors } from '../@types/rails-errors'
+import _ from 'underscore'
+
+const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models');
 
 type PublicProfileImageResponse = {
     cover_image: string | null
@@ -16,7 +19,7 @@ export class UserInfoEditViewModel {
     private _user : UserDetails
     private _errors : { [field:string] : string[] }
 
-    constructor(private user_id : number) {
+    constructor(private project_id : number, private user_id : number) {
         this._isLoading = true
         this._isSaving = false
         this._errors = {}
@@ -44,14 +47,15 @@ export class UserInfoEditViewModel {
         return errors.length > 0
     }
 
-    async save(requiredFields : string[], profileImage? : File) : Promise<boolean> {
+    async save(profileImage? : File) : Promise<boolean> {
         
         try {
+            this.clearErrors()
             this._isSaving = true
             h.redraw()
 
             if (profileImage) {
-                this.uploadImage(profileImage)
+                await this.uploadImage(profileImage)
             }
 
             const userSaveAttributes = {
@@ -66,23 +70,32 @@ export class UserInfoEditViewModel {
                 publishing_user_settings: true
             }
 
-            console.log('userSaveAttributes', userSaveAttributes)
+            const requiredFields = [
+                'public_name',
+                'account_type', 
+                'name',
+                'cpf',
+                'birth_date',
+            ]
 
-            // TODO: save updates
-            return true
+            let hasEmptyField = false
 
-        } catch(e) {
-            const railsError = e as RailsErrors
-            const railsErrorJson = JSON.parse(railsError.errors_json)
-            Object.keys(railsErrorJson).forEach(field => {
-                if (typeof railsErrorJson[field] === 'string') {
-                    this.setErrorOnField(field, railsErrorJson[field])
-                } else {
-                    for (const message of railsErrorJson[field]) {
-                        this.setErrorOnField(field, message)
-                    }
+            requiredFields.forEach(field => {
+                if (_.isEmpty(userSaveAttributes[field])) {
+                    this.setErrorOnField(field, this.blankError(field))
+                    hasEmptyField = true
                 }
             })
+
+            if (hasEmptyField) {
+                console.log(this._errors)
+                return false
+            }
+
+            await this.trySaveUserAttributesAndValidatePublishProject(userSaveAttributes)
+            return true
+        } catch(e) {
+            this.mapRailsErrors(e as RailsErrors)
             return false
         } finally {
             this._isSaving = false
@@ -107,8 +120,9 @@ export class UserInfoEditViewModel {
 
             const response : PublicProfileImageResponse = await m.request(requestConfig)
             this._user.profile_img_thumbnail = response.uploaded_image
+            return true
         } catch(e) {
-            // TODO: add errors response
+            throw e
         }
     }
 
@@ -126,6 +140,81 @@ export class UserInfoEditViewModel {
         }
     }
 
+    private async trySaveUserAttributesAndValidatePublishProject(userAttributes : any) {
+        const saveRequestConfig = {
+            method: 'PUT',
+            url: `/users/${this.user_id}.json`,
+            data: {
+                user: userAttributes
+            },
+            config: h.setCsrfToken
+        }
+
+        const validatePublishRequestConfig = {
+            method: 'GET',
+            url: `/projects/${this.project_id}/validate_publish`,
+            config: h.setCsrfToken
+        }
+
+        const address_state = this.blankError('address_state')
+        const hasStateError = this._user.address.state_id === 0 || _.isEmpty(this._user.address.address_state)
+        let hasThrown = false
+
+        if (hasStateError) {
+            delete userAttributes.address_attributes['state_id']
+            delete userAttributes.address_attributes['address_state']
+        }
+
+        try {
+            await m.request(saveRequestConfig)
+            await m.request(validatePublishRequestConfig)
+            if (hasStateError) {
+                const errors = {
+                    errors: [address_state],
+                    errors_json: JSON.stringify({ address_state })
+                }
+                hasThrown = true
+                throw errors
+            }
+        } catch(error) {
+            const railsErrors = error as RailsErrors
+            if (hasStateError && !hasThrown) {
+                let errors_json = { address_state }
+                let errors = []
+
+                try {
+                    errors_json = JSON.parse(railsErrors.errors_json)
+                    errors_json.address_state = address_state
+                    errors = (railsErrors.errors instanceof Array && railsErrors.errors) || []
+                } catch(e) {
+                    errors_json = { address_state }
+                    errors = []
+                }
+
+                throw {
+                    errors: errors.concat([address_state]),
+                    errors_json: JSON.stringify(errors_json),
+                }
+            } else {
+                throw railsErrors
+            }
+        }
+
+    }
+
+    private mapRailsErrors(error : RailsErrors) {
+        const railsErrorJson = JSON.parse(error.errors_json)
+        Object.keys(railsErrorJson).forEach(field => {
+            if (typeof railsErrorJson[field] === 'string') {
+                this.setErrorOnField(field, railsErrorJson[field])
+            } else {
+                for (const message of railsErrorJson[field]) {
+                    this.setErrorOnField(field, message)
+                }
+            }
+        })
+    }
+
     private setErrorOnField(field : string, message : string) {
         this._errors[field] = (this._errors[field] || []).concat(message)
     }
@@ -133,4 +222,9 @@ export class UserInfoEditViewModel {
     private clearErrors() {
         this._errors = {}
     }
+
+    private blankError(field : string) {
+        return I18n.t(`user.attributes.${field}.blank`, I18nScope())
+    }
+
 }
