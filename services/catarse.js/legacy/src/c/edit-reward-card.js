@@ -242,26 +242,24 @@ const editRewardCard = {
             }
         });
 
-        vnode.state = {
-            minimumValueError,
-            minimumValue,
-            deliverAtError,
-            descriptionError,
-            confirmDelete,
-            acceptNumeric,
-            updateOptions,
-            saveReward,
-            destroyed,
-            states,
-            project,
-            reward,
-            fees,
-            tryDeleteImage,
-            onSelectImageFile,
-            isUploadingImage,
-            isDeletingImage,
-            isSavingReward
-        };
+        vnode.state.minimumValueError = minimumValueError;
+        vnode.state.minimumValue = minimumValue;
+        vnode.state.deliverAtError = deliverAtError;
+        vnode.state.descriptionError = descriptionError;
+        vnode.state.confirmDelete = confirmDelete;
+        vnode.state.acceptNumeric = acceptNumeric;
+        vnode.state.updateOptions = updateOptions;
+        vnode.state.saveReward = saveReward;
+        vnode.state.destroyed = destroyed;
+        vnode.state.states = states;
+        vnode.state.project = project;
+        vnode.state.reward = reward;
+        vnode.state.fees = fees;
+        vnode.state.tryDeleteImage = tryDeleteImage;
+        vnode.state.onSelectImageFile = onSelectImageFile;
+        vnode.state.isUploadingImage = isUploadingImage;
+        vnode.state.isDeletingImage = isDeletingImage;
+        vnode.state.isSavingReward = isSavingReward;
     },
     view: function({
         state,
@@ -279,10 +277,12 @@ const editRewardCard = {
             isUploadingImage = state.isUploadingImage(),
             isDeletingImage = state.isDeletingImage(),
             shouldAppearLoaderOnImageUploading = isUploadingImage || isDeletingImage,
-              isSavingReward = state.isSavingReward(),
-              descriptionError = state.descriptionError;
+            isSavingReward = state.isSavingReward(),
+            descriptionError = state.descriptionError;
 
-        return state.destroyed() ? m('div', '') : (isSavingReward ? h.loader() : m('.w-row.card.card-terciary.u-marginbottom-20.card-edition.medium', [
+        return state.destroyed() ? m('div', '') : (isSavingReward ? h.loader() : m('.w-row.card-terciary.u-marginbottom-20.card-edition.medium', {
+            class: attrs.class
+        }, [
             m('.card',
                 m('.w-form', [
                     m('.w-row', [
@@ -322,7 +322,7 @@ const editRewardCard = {
                             ]),
                             state.minimumValueError() ? inlineError(`Valor deve ser igual ou superior a R$${state.minimumValue}.`) : '',
 
-                            m(".fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for='reward_minimum_value']",
+                            m('.fontsize-smaller.text-error.u-marginbottom-20.fa.fa-exclamation-triangle.w-hidden[data-error-for=\'reward_minimum_value\']',
                                 'Informe um valor mínimo maior ou igual a 10'
                             )
                         ])

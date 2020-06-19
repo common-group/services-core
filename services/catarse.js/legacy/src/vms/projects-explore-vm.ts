@@ -2,72 +2,19 @@ type ExtendedWindow = {
     replaceDiacritics(inputText : string): string;
 }
 
-import _ from 'underscore';
-import { catarse } from '../api';
-import models from '../models';
-import h from '../h';
-import projectFilters from './project-filters-vm';
-import userVM from '../vms/user-vm';
-import { SequencePaginationVM } from '../utils/sequence-pagination-vm';
-
-const { replaceDiacritics } = window as any as ExtendedWindow;
-
-type TimeDescription = {
-    total: number;
-    unit: "days" | "hours" | "minutes" | "seconds";
-};
-
-type Integration = {
-    id: number;
-    name: string;
-    data: {};
-};
-
-export type Project = {
-    project_id: number;
-    category_id: number;
-    project_name: string;
-    headline: string;
-    permalink: string;
-    mode: string;
-    state: "deleted" | "rejected" | "draft" | "in_analysis" | "approved" | "online" | "waiting_funds" | "failed" | "successful";
-    state_order: "archived" | "created" | "created" | "sent" | "publishable" | "published" | "published" | "finished" | "finished";
-    online_date: string;
-    recommended: boolean;
-    project_img: string;
-    remaining_time:	TimeDescription;
-    expires_at:	string;
-    pledged: number;
-    progress: number;
-    state_acronym: string;
-    owner_name: string;
-    city_name: string;
-    full_text_index: string | null;
-    open_for_contributions:	boolean;
-    elapsed_time: TimeDescription;
-    score: number;
-    contributed_by_friends: boolean;
-    project_user_id: number;
-    video_embed_url: string;
-    updated_at:	string;
-    owner_public_name: string;
-    zone_expires_at: string;
-    common_id: string;
-    is_adult_content: boolean;
-    content_rating:	number;
-    saved_projects: boolean;
-    integrations: Integration[];
-    category_name: string;
-};
-
-export interface ViewModel<T> {
-    collection(data?: T[]) : T[];
-    isLastPage() : boolean;
-    total() : number;
-    isLoading() : boolean;
-    firstPage(parameters: Object) : Promise<T[]>;
-    nextPage() : Promise<T[]>;
-};
+import _ from 'underscore'
+import { catarse } from '../api'
+import models from '../models'
+import h from '../h'
+import projectFilters from './project-filters-vm'
+import userVM from '../vms/user-vm'
+import { SequencePaginationVM } from '../utils/sequence-pagination-vm'
+import { Project } from '../@types/project'
+import { ViewModel } from '../@types/view-model'
+import { City } from '../@types/city'
+import { State } from '../@types/state'
+import { CityState } from '../@types/city-state'
+import { searchCitiesGroupedByState } from '../vms/cities-search-vm'
 
 interface Observer<T> {
     next(data: T): void;
@@ -539,77 +486,4 @@ export class ProjectsExploreViewModel {
             return {};
         }
     }
-}
-
-type City = {
-    acronym?: string;
-    id?: string;
-    name: string;
-    search_index?: string;
-    state_id?: string;
-    state_name?: string;
-}
-
-type State = {
-    acronym: string;
-    state_name: string;
-}
-
-export type CityState = {
-    city?: City;
-    state: State;
-}
-
-async function searchCitiesGroupedByState(inputText: string) : Promise<CityState[]> {
-
-    const cities = await searchCities(inputText);
-    const cityGroup : { [key:string] : City[] } = {};
-
-    for (let city of cities) {
-        cityGroup[city.state_name] = [city].concat(cityGroup[city.state_name] || []);
-    }
-
-    return cityGroupToList(cityGroup);
-}
-
-function searchCities(inputText : string) : Promise<City[]> {
-    
-    const filters = catarse.filtersVM({
-        search_index: 'ilike'
-    }).order({ name: 'asc' });
-
-    filters.search_index(replaceDiacritics(inputText));
-
-    return models.city.getPage(filters.parameters());
-}
-
-function cityGroupToList(citiesByStateOnKey: {[key:string] : City[]}) : CityState[] {
-    
-    const cityList : CityState[] = [];
-
-    for (const stateName of Object.keys(citiesByStateOnKey)) {
-        const cities = citiesByStateOnKey[stateName];
-        const firstCity = cities[0];
-        const cityState : CityState = {
-            state: {
-                acronym: firstCity.acronym, 
-                state_name: stateName
-            }
-        };
-
-        cityList.push(cityState);
-
-        for (const city of cities) {
-            const cityState : CityState = {
-                state: {
-                    acronym: firstCity.acronym, 
-                    state_name: stateName
-                },
-                city,
-            };
-            cityList.push(cityState);
-        }
-    }
-
-    return cityList;
 }

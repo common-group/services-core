@@ -111,7 +111,7 @@ const dashboardRewardCard = {
             },
             onSelectImageFile = () => {
                 const rewardImageFile = window.document.getElementById(`reward_image_file_closed_card_${vnode.attrs.index}`);
-                if (rewardImageFile.files.length) {
+                if (rewardImageFile && rewardImageFile.files && rewardImageFile.files.length) {
 
                     imageFileToUpload(rewardImageFile.files[0]);
                     isUploadingRewardImage(true);
@@ -197,7 +197,9 @@ const dashboardRewardCard = {
         const isEditingDescription = descriptionEdit();
         const isSaving = state.isSaving();
 
-        return m('.w-row.cursor-move.card-persisted.card.card-terciary.u-marginbottom-20.medium.sortable', [
+        return m('.w-row.cursor-move.card-persisted.card-terciary.u-marginbottom-20.medium.sortable', {
+            class: attrs.class
+        }, [
             (
                 isSaving ?
                     m('.card', [h.loader()])

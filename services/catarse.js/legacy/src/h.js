@@ -829,10 +829,21 @@ const _dataCache = {},
         );
     },
     applyMonetaryMask = number => {
-        let onlyNumbers = String(number).replace(/[^0-9]|[.]/g, ''),
-            integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2),
-            decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
+        let onlyNumbers = String(number).replace(/[^0-9]|[.]/g, '');
+        let integerPart = onlyNumbers.slice(0, onlyNumbers.length - 2);
+        let decimalPart = onlyNumbers.slice(onlyNumbers.length - 2);
+        let i = 0;
+        for (i = 0; i < integerPart.length; i += 1) {
+            if (integerPart.charAt(i) !== '0') {
+                break;
+            }
+        }
 
+        if (i > 0) {
+            integerPart = integerPart.slice(i, integerPart.length);
+        }
+
+        integerPart = integerPart.length === 0 ? '0' : integerPart;
         integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
         return `${integerPart},${decimalPart}`;
@@ -1039,11 +1050,22 @@ const _dataCache = {},
             // a hook on the change.callback.redactor event. e.g.:
             // $editor.on('change.callback.redactor', () => prop($editor.redactor('code.get')) );
             // TODO: workaround to get redactor data
-            window.$('.redactor-editor').on('blur', () => prop($editor.redactor('code.get')));
+            window.$('.redactor-editor').on('blur', (event) => {
+                prop($editor.redactor('code.get'));
+                if (vnode.attrs.onblur) {
+                    vnode.attrs.onblur(event);
+                }
+            });
+
+            window.$('.redactor-editor').on('focus', (event) => {
+                if (vnode.attrs.onfocus) {
+                    vnode.attrs.onfocus(event);
+                }
+            });
         }
     },
-    redactor = (name, prop) =>
-        m('textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive', {
+    redactor = (name, prop, aditionalClasses = '') =>
+        m(`textarea.input_field.redactor.w-input.text-field.bottom.jumbo.positive${aditionalClasses}`, {
             name,
             oncreate: setRedactor(prop),
         }),
@@ -1371,6 +1393,10 @@ function attachEventsToHistory(type) {
     };
 };
 
+function isMobile() {
+    return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+}
+
 /**
  * @typedef VNode
  * @property {Object} attrs
@@ -1477,6 +1503,7 @@ export default {
     isProjectPage,
     setPageTitle,
     rootUrl,
+    setRedactor,
     redactor,
     setCsrfToken,
     userSignedIn,
@@ -1484,5 +1511,6 @@ export default {
     trust,
     attachEventsToHistory,
     titleCase,
-    buildCreditCard
+    buildCreditCard,
+    isMobile,
 };
