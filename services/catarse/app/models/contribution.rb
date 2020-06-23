@@ -123,12 +123,17 @@ class Contribution < ActiveRecord::Base
   def pending?
     payments.with_state('pending').exists?
   end
+
   def balance_refunded?
     balance_transactions.where(event_name: 'contribution_refund').exists?
   end
 
   def chargedback_on_balance?
     balance_transactions.where(event_name: 'contribution_chargedback').exists?
+  end
+
+  def contribution_payment_on_balance?
+    balance_transactions.where(event_name: 'contribution_payment').exists?
   end
 
 	def project_owner_has_balance_to_cover_chargeback?

@@ -120,7 +120,7 @@ class BalanceTransaction < ActiveRecord::Base
 
     return unless payment.chargeback?
     return if contribution.chargedback_on_balance?
-    return unless project.successful_pledged_transaction.present?
+    return unless project.successful?
 
     create!(
       user_id: contribution.project.user_id,
@@ -205,9 +205,11 @@ class BalanceTransaction < ActiveRecord::Base
     contribution = Contribution.find contribution_id
     project = contribution.project
     return unless contribution.confirmed?
+    return unless contribution.contribution_payment_on_balance?
+    return unless project.successful?
     return if project.project_cancelation.present?
 
-    if project.successful? && project.successful_pledged_transaction.present?
+    if project.successful?
       transaction do
         contribution.notify_once(
           :project_contribution_refunded_after_successful_pledged,
@@ -254,24 +256,27 @@ class BalanceTransaction < ActiveRecord::Base
     return unless project.successful?
     return unless project.project_total.present?
     transaction do
-      default_params = { project_id: project_id, user_id: project.user_id }
+      project.payments.paid.find_each do |payment|
+        insert_contribution_payment(payment.id)
+      end
+    end
+  end
 
-      create!(default_params.merge(
-        event_name: 'successful_project_pledged',
-        amount: project.paid_pledged
-      ))
-      create!(default_params.merge(
-        event_name: 'catarse_project_service_fee',
-        amount: (project.total_catarse_fee * -1)
-      ))
+  def self.insert_contribution_payment(payment_id)
+    transaction do 
+      payment  = Payment.find payment_id
+      project = payment.project
+      contribution = payment.contribution
+      return unless payment.paid?
 
-      # uncomment to use irrf tax
-      # if project.irrf_tax > 0
-      #   create!(default_params.merge(
-      #     event_name: 'irrf_tax_project',
-      #     amount: project.irrf_tax
-      #   ))
-      # end
+      default_params = { project_id: project.id, user_id: project.user_id, contribution_id: contribution.id}
+
+      create(default_params.merge(
+        event_name: 'contribution_payment',
+        amount: contribution.value))
+      create(default_params.merge(
+        event_name: 'catarse_contribution_fee',
+        amount: (contribution.value * project.service_fee) * -1))
     end
   end
 

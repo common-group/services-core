@@ -547,13 +547,15 @@ class Project < ActiveRecord::Base
   def all_pledged_kind_transactions
     balance_transactions.where(
       event_name: %w[successful_project_pledged
-                     project_contribution_confirmed_after_finished]
+                     project_contribution_confirmed_after_finished
+                     contribution_payment]
     )
   end
 
-  def successful_pledged_transaction
-    balance_transactions.where(event_name: 'successful_project_pledged').last
-  end
+  # TODO: change all references to check all_pledged_kind
+  # def successful_pledged_transaction
+  #   balance_transactions.where(event_name: 'successful_project_pledged').last
+  # end
 
   def total_amount_tax_included
     pluck_from_database("total_amount_tax_included")

@@ -81,19 +81,14 @@ class PaymentObserver < ActiveRecord::Observer
       ProjectScoreStorageRefreshWorker.perform_async(project.id)
       ProjectMetricStorageRefreshWorker.perform_async(project.id)
       RewardMetricStorageRefreshWorker.perform_async(contribution.reward_id) if contribution.reward_id.present?
-      if project.successful? && project.successful_pledged_transaction
-        transfer_diff = (
-          project.paid_pledged - project.all_pledged_kind_transactions.sum(:amount))
-
-        if transfer_diff >= contribution.value
-          BalanceTransaction.insert_contribution_confirmed_after_project_finished(
-            project.id, contribution.id
-          )
-          contribution.notify(
-            :project_contribution_confirmed_after_finished,
-            project.user,
-            contribution)
-        end
+      if project.successful? #&& project.successful_pledged_transaction
+        BalanceTransaction.insert_contribution_confirmed_after_project_finished(
+          project.id, contribution.id
+        )
+        contribution.notify(
+          :project_contribution_confirmed_after_finished,
+          project.user,
+          contribution)
       end
     end
   end

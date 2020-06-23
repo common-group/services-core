@@ -65,10 +65,12 @@ RSpec.describe BalanceTransaction, type: :model do
   end
 
   describe 'insert_revert_chargeback' do
-    let!(:confirmed_contribution) { create(:confirmed_contribution) }
+    let(:project) { create(:project, goal: 30)}
+    let!(:confirmed_contribution) { create(:confirmed_contribution, value: 300, project: project) }
     let!(:payment) { confirmed_contribution.payments.last }
     before do
-      allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return({id: 'mock'})
+      project.update_column(:expires_at, 2.days.ago)
+      project.finish
       payment.chargeback
     end
 
@@ -88,8 +90,14 @@ RSpec.describe BalanceTransaction, type: :model do
   end
 
   describe 'insert_contribution_chargeback' do
-    let!(:confirmed_contribution) { create(:confirmed_contribution) }
+    let(:project) { create(:project, goal: 30)}
+    let!(:confirmed_contribution) { create(:confirmed_contribution, value: 300, project: project) }
     let!(:payment) { confirmed_contribution.payments.last }
+
+    before do
+      project.update_column(:expires_at, 2.days.ago)
+      project.finish
+    end
 
     subject { BalanceTransaction.insert_contribution_chargeback(payment.id) }
 
@@ -102,7 +110,6 @@ RSpec.describe BalanceTransaction, type: :model do
     context 'when payment is chargeback' do
       subject { payment.contribution.balance_transactions.last }
       before do
-        allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return({id: 'mock'})
         payment.chargeback
       end
       it 'should create a balance transaction with negative amount' do
@@ -118,7 +125,6 @@ RSpec.describe BalanceTransaction, type: :model do
     context 'when already have event generated' do
       subject { payment.contribution.balance_transactions.last }
       before do
-        allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return({id: 'mock'})
         payment.chargeback
       end
       it 'should not create a new transaction' do
@@ -132,7 +138,6 @@ RSpec.describe BalanceTransaction, type: :model do
       subject { BalanceTransaction.insert_contribution_chargeback(payment.id) }
 
       before do
-        allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return(nil)
       end
 
       it { is_expected.to be_nil }
@@ -146,7 +151,7 @@ RSpec.describe BalanceTransaction, type: :model do
 
   describe '#insert_successful_project_transactions' do
     let(:project) { create(:project, goal: 30, state: 'online') }
-    let!(:contribution) { create(:confirmed_contribution, value: 20_000, project: project) }
+    let!(:contribution) { create(:confirmed_contribution, value: 10_000, project: project) }
 
     context 'when given project is finished' do
       before do
@@ -156,12 +161,13 @@ RSpec.describe BalanceTransaction, type: :model do
         project.reload
       end
 
-      it 'should create successful_project_pledged transaction' do
-        expect(BalanceTransaction.find_by(event_name: 'successful_project_pledged', project_id: project.id, user_id: project.user_id, amount: project.paid_pledged)).not_to be_nil
+      it 'should create contribution_payment transaction' do
+        expect(BalanceTransaction.find_by(event_name: 'contribution_payment', project_id: project.id, user_id: project.user_id, contribution_id: contribution.id, amount: contribution.value)).not_to be_nil
       end
 
       it 'should create catarse_project_service_fee transaction' do
-        expect(BalanceTransaction.find_by(event_name: 'catarse_project_service_fee', project_id: project.id, user_id: project.user_id, amount: project.total_catarse_fee * -1)).not_to be_nil
+        _amount = (contribution.value * project.service_fee) * -1
+        expect(BalanceTransaction.find_by(event_name: 'catarse_contribution_fee', project_id: project.id, user_id: project.user_id, contribution_id: contribution.id, amount: _amount)).not_to be_nil
       end
     end
 
@@ -184,6 +190,24 @@ RSpec.describe BalanceTransaction, type: :model do
       it 'should return nothing' do
         is_expected.to eq(nil)
       end
+    end
+  end
+
+  describe '#insert_contribution_payment' do
+    let(:project) { create(:project, goal: 30, state: 'online') }
+    let!(:contribution) { create(:confirmed_contribution, value: 10_000, project: project) }
+
+    before do
+      BalanceTransaction.insert_contribution_payment(contribution.payments.first.id)
+    end
+
+    it 'should create contribution_payment transaction' do
+      expect(BalanceTransaction.find_by(event_name: 'contribution_payment', project_id: project.id, user_id: project.user_id, contribution_id: contribution.id, amount: contribution.value)).not_to be_nil
+    end
+
+    it 'should create catarse_project_service_fee transaction' do
+      _amount = (contribution.value * project.service_fee) * -1
+      expect(BalanceTransaction.find_by(event_name: 'catarse_contribution_fee', project_id: project.id, user_id: project.user_id, contribution_id: contribution.id, amount: _amount)).not_to be_nil
     end
   end
 
@@ -232,11 +256,12 @@ RSpec.describe BalanceTransaction, type: :model do
     let(:project) { create(:project, goal: 30, state: 'online') }
     let!(:contribution) { create(:confirmed_contribution, value: 200, project: project) }
 
+    before do
+      project.update_column(:expires_at, 2.days.ago)
+      project.finish
+    end
+
     context 'when project already received the successful pledged' do
-      before do
-        allow_any_instance_of(Project).to receive(:successful?).and_return(true)
-        allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return([1])
-      end
 
       it 'should generate a negative transaction on project owner balance' do
         BalanceTransaction.insert_contribution_refunded_after_successful_pledged(contribution.id)
@@ -255,8 +280,6 @@ RSpec.describe BalanceTransaction, type: :model do
 
     context 'when project have cancelation request' do
       before do
-        allow_any_instance_of(Project).to receive(:successful?).and_return(true)
-        allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return([1])
         allow_any_instance_of(Project).to receive(:project_cancelation).and_return({id: '123'})
       end
 
