@@ -209,10 +209,15 @@ RSpec.describe Contribution, type: :model do
   end
 
   describe 'chargedback_on_balance?' do
-    let!(:confirmed_contribution) { create(:confirmed_contribution) }
+    let!(:confirmed_contribution) { create(:confirmed_contribution, value: 10_000) }
     let!(:payment) { confirmed_contribution.payments.last }
 
     subject { confirmed_contribution.chargedback_on_balance? }
+
+    before do
+      payment.project.update_column(:expires_at, 2.days.ago)
+      payment.project.finish
+    end
 
     context 'when payment not have chargeback event on balance' do
       it { is_expected.to eq(false) }
@@ -220,7 +225,6 @@ RSpec.describe Contribution, type: :model do
 
     context 'when payment is chargeback with balance' do
       before do
-        allow_any_instance_of(Project).to receive(:successful_pledged_transaction).and_return({id: 'mock'})
         payment.chargeback
         BalanceTransaction.insert_contribution_chargeback(payment.id) 
       end
