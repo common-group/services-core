@@ -15,27 +15,23 @@ export class RewardsEditTips implements m.Component {
                 </div>
                 <div class="card">
                     <div class="fontsize-smaller u-marginbottom-20">
-                        Para arrecadar o máximo em sua campanha, lembre-se de:
+                        Algumas dicas valiosas para a criação de recompensas:
                     </div>
                     <div class="fontsize-smaller u-marginbottom-10">
                         <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        &nbsp;Descreva quem irá se beneficiar
+                        &nbsp;Prefira sempre recompensas virtuais, como participação em grupos de discussão, mensagem de agradecimento, foto digital, etc
                     </div>
                     <div class="fontsize-smaller u-marginbottom-10">
                         <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        &nbsp;Dê detalhes de como o dinheiro será usado
+                        &nbsp;Tente não ultrapassar 5 a 7 recompensas ofertadas. Muitas opções podem causar confusão para seus apoiadores
                     </div>
                     <div class="fontsize-smaller u-marginbottom-10">
                         <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        &nbsp;Explique a urgência da sua causa
+                        &nbsp;Ofereça recompensas variadas, com valores justos e realistas. Um exemplo poderia ser R$10, R$30, R$50, R$100, R$500 e acima de R$1.000
                     </div>
                     <div class="fontsize-smaller u-marginbottom-10">
                         <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        &nbsp;Conte para as pessoas o que o suporte delas irá representar para você
-                    </div>
-                    <div class="fontsize-smaller u-marginbottom-10">
-                        <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        &nbsp;Compartilhe o quão feliz você ficará com o apoio das pessoas
+                        &nbsp;Se for optar por oferecer recompensas físicas, tenha certeza de que o processo de produção e orçamento estão bem mapeados.  
                     </div>
                 </div>
             </div>

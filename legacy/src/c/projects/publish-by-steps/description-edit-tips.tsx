@@ -24,7 +24,7 @@ export class DescriptionEditTips implements m.Component {
                 </div>
                 <div class="card">
                     <div class="fontsize-smaller u-marginbottom-20">
-                        Para arrecadar o máximo em sua campanha, lembre-se de:
+                        Para alcançar o maior número de apoios:
                     </div>
                     <div class="fontsize-smaller u-marginbottom-10">
                         <span class="fa fa-check fa-fw" aria-hidden="true"></span> 
