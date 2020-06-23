@@ -15,7 +15,7 @@ export class UserInfoEditPublicProfileTips implements m.Component {
                 </div>
                 <div class="card">
                     <div class="fontsize-smallest">
-                        Quanto você precisa arrecadar para ter sucesso no seu projeto? Defina uma meta coerente com o que seu projeto propõe. Não esqueça de considerar a taxa do Catarse em seu cálculo!
+                    Apoiadores querem conhecer melhor quem está por trás do projeto. Links que ajudam a contar sua história são sempre bem vindos (seu site, perfis em mídias sociais, alguma matéria legal sobre você, uma entrevista). Procure informar no máximo 3 links, para ficar sucinto!
                     </div>
                     </div>
                 </div>
