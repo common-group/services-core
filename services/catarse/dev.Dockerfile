@@ -1,4 +1,4 @@
-FROM ruby:2.4.4-alpine
+FROM ruby:2.4.9-alpine3.11
 #FROM alpine:3.7
 MAINTAINER Catarse <contato@catarse.me>
 
