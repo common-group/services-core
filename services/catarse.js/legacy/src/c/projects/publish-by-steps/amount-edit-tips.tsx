@@ -1,16 +1,16 @@
 import m from 'mithril'
 
-type DescriptionEditTipsAttrs = {
+type AmountEditTipsAttrs = {
     show: boolean
 }
 
-export class DescriptionEditTips implements m.Component {
-    view({ attrs } : m.Vnode<DescriptionEditTipsAttrs>) {
+export class AmountEditTips implements m.Component {
+    view({ attrs } : m.Vnode<AmountEditTipsAttrs>) {
 
         const show = attrs.show
 
         return (
-            <div class='dashboard-column-tips description' style={`display: ${show ? 'block' : 'none'}`}>
+            <div class='dashboard-column-tips amount' style={`display: ${show ? 'block' : 'none'}`}>
                 <div class="card card-secondary">
                     <div>
                         <div class="arrow-left"></div>
