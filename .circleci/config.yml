@@ -84,7 +84,8 @@ jobs:
 
   test_catarse:
     docker:
-      - image: circleci/ruby:2.4.9-stretch-node-browsers
+      #- image: circleci/ruby:2.4.9-stretch-node-browsers
+      - image: ruby:2.4.9-alpine3.11
       - image: postgres:11.5
         environment:
           POSTGRES_DB: catarse_test
@@ -93,19 +94,28 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-      - run: |
-          sudo tee /etc/apt/sources.list.d/pgdg.list <<END 
-            deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
-          END
-      - run: sudo wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && sudo apt-key add ACCC4CF8.asc
-      - run: sudo apt update
-      - run: sudo apt install postgresql-client-11
+          #- run: |
+          #    sudo tee /etc/apt/sources.list.d/pgdg.list <<END 
+          #      deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
+          #    END
+          #- run: sudo wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && sudo apt-key add ACCC4CF8.asc
+          #- run: sudo apt update
+          #- run: sudo apt install postgresql-client-11
+      - run: 
+          name: Run deps install
+          command: |
+            set ex && \
+            apk update && \
+            apk upgrade && \
+            apk --update add --virtual build_deps postgresql-dev libxml2-dev libxslt-dev imagemagick imagemagick-dev openssl libpq libffi-dev bash curl-dev libstdc++ tzdata bash ca-certificates build-base ruby-dev libc-dev linux-headers postgresql-client postgresql git && \
+            apk --update add ruby ruby-io-console ruby-bundler ruby-irb ruby-bigdecimal ruby-json nodejs nodejs-npm zlib-dev yaml-dev readline-dev ruby-dev ncurses
       - run:
           name: Run catarse installs
           command: |
             set -ex \
             && cd services/catarse \
-            && bundle install
+            && bundle install \
+            && npm install
       - run:
           name: Run catarse migration
           command: |
