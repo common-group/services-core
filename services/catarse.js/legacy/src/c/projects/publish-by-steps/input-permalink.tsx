@@ -86,7 +86,7 @@ export class InputPermalink implements m.Component {
                 type="text" 
                 id="project-parmalink-id" 
                 maxlength="256" 
-                placeholder="tragediacarioca" 
+                placeholder="seu_link_no_catarse" 
                 class={`text-field postfix positive w-input ${state.class}`} />
         )
     }

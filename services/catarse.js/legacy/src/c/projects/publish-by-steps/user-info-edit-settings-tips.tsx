@@ -15,7 +15,7 @@ export class UserInfoEditSettingsTips implements m.Component {
                 </div>
                 <div class="card">
                     <div class="fontsize-smallest">
-                        Quanto você precisa arrecadar para ter sucesso no seu projeto? Defina uma meta coerente com o que seu projeto propõe. Não esqueça de considerar a taxa do Catarse em seu cálculo!
+                        Os dados do responsável pelo projeto precisam ser os mesmos dados do dono da conta bancária que irá receber o dinheiro arrecadado. Esses dados não podem ser alterados após a publicação do projeto!
                     </div>
                 </div>
             </div>
