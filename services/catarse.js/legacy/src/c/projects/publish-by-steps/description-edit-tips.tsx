@@ -1,18 +1,16 @@
 import m from 'mithril'
 
 type DescriptionEditTipsAttrs = {
-    focusClass: 'amount' | 'description'
     show: boolean
 }
 
 export class DescriptionEditTips implements m.Component {
     view({ attrs } : m.Vnode<DescriptionEditTipsAttrs>) {
 
-        const focusClass = attrs.focusClass || 'amount'
         const show = attrs.show
 
         return (
-            <div class={`dashboard-column-tips ${focusClass}`} style={`display: ${show ? 'block' : 'none'}`}>
+            <div class='dashboard-column-tips description' style={`display: ${show ? 'block' : 'none'}`}>
                 <div class="card card-secondary">
                     <div>
                         <div class="arrow-left"></div>
@@ -24,7 +22,7 @@ export class DescriptionEditTips implements m.Component {
                 </div>
                 <div class="card">
                     <div class="fontsize-smaller u-marginbottom-20">
-                        Para arrecadar o máximo em sua campanha, lembre-se de:
+                        Para alcançar o maior número de apoios:
                     </div>
                     <div class="fontsize-smaller u-marginbottom-10">
                         <span class="fa fa-check fa-fw" aria-hidden="true"></span> 

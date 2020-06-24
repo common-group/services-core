@@ -171,7 +171,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                     ]);
 
                     // check if has subscription and last_payment is the same of payment to perform subscription transition
-                    if(!R.isEmpty(subscription) && subscription != null && last_payment.id === payment.id) {
+                    if(!R.isEmpty(subscription) && subscription != null && last_payment.id === payment.id && !['canceling', 'canceled'].includes(subscription.status)) {
                         const subscription_transition_sql = `
                         select
                             payment_service.transition_to(s, ($2)::payment_service.subscription_status, $3::json)

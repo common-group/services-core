@@ -9,6 +9,7 @@ import { InputFindLocation } from '../../../c/std/input-find-location'
 import { City } from '../../../@types/city'
 import { PreviewProjectPage } from '../../../c/projects/publish-by-steps/preview-project-page'
 import { InputPermalink } from '../../../c/projects/publish-by-steps/input-permalink'
+import { AmountEditTips } from '../../../c/projects/publish-by-steps/amount-edit-tips'
 
 
 export type DescriptionEditAttrs = {
@@ -21,16 +22,16 @@ export type DescriptionEditAttrs = {
 
 export type DescriptionEditState = {
     showPreview(newValue?: boolean) : boolean
-    showTips(newValue?: boolean) : boolean
-    tipsFocusClass(newValue?: string) : string
+    showDescriptionTips(newValue?: boolean) : boolean
+    showAmountTips(newValue?: boolean) : boolean
 }
 
 export class DescriptionEdit implements m.Component {
 
     oninit({ attrs, state } : m.Vnode<DescriptionEditAttrs, DescriptionEditState> ) {
         state.showPreview = h.RedrawStream(false)
-        state.showTips = h.RedrawStream(false)
-        state.tipsFocusClass = h.RedrawStream('')
+        state.showDescriptionTips = h.RedrawStream(false)
+        state.showAmountTips = h.RedrawStream(false)
     }
 
     view({ attrs, state }: m.Vnode<DescriptionEditAttrs, DescriptionEditState>) {
@@ -41,8 +42,8 @@ export class DescriptionEdit implements m.Component {
         const getFieldErrors = attrs.getFieldErrors
         const hasErrorOn = attrs.hasErrorOn
         const showPreview = state.showPreview
-        const showTips = state.showTips
-        const tipsFocusClass = state.tipsFocusClass
+        const showAmountTips = state.showAmountTips
+        const showDescriptionTips = state.showDescriptionTips
 
         return (
             <>            
@@ -72,12 +73,10 @@ export class DescriptionEdit implements m.Component {
                                                         placeholder='0,00'
                                                         onValueChange={newValue => project.goal = newValue} 
                                                         onfocus={(event : Event) => {
-                                                            tipsFocusClass('amount')
-                                                            showTips(true)
+                                                            showAmountTips(true)
                                                         }}
                                                         onblur={(event : Event) => {
-                                                            tipsFocusClass('')
-                                                            showTips(false)
+                                                            showAmountTips(false)
                                                         }}
                                                         />
                                                     <InlineErrors messages={getFieldErrors('goal')} />
@@ -95,12 +94,10 @@ export class DescriptionEdit implements m.Component {
                                                     project.about_html = newHtml
                                                 }}
                                                 onfocus={(event : Event) => {
-                                                    tipsFocusClass('description')
-                                                    showTips(true)
+                                                    showDescriptionTips(true)
                                                 }}
                                                 onblur={(event : Event) => {
-                                                    tipsFocusClass('')
-                                                    showTips(false)
+                                                    showDescriptionTips(false)
                                                 }} />
                                             <InlineErrors messages={getFieldErrors('about_html')} />
                                         </div>
@@ -185,7 +182,8 @@ export class DescriptionEdit implements m.Component {
                             </div>
 
                             <div class="w-col w-col-4">
-                                <DescriptionEditTips show={showTips()} focusClass={tipsFocusClass()}/>
+                                <AmountEditTips show={showAmountTips()} />
+                                <DescriptionEditTips show={showDescriptionTips()} />
                             </div>
                         </div>
                     </div>

@@ -10,6 +10,7 @@ import { InlineErrors } from '../../inline-errors';
 import UserSettingsAddress from '../../user-settings-address';
 import UserSettingsResponsible from '../../user-settings-responsible';
 import { UserAddress } from '../../../@types/user-address';
+import moment from 'moment';
 
 export type UserInfoEditSettingsAttrs = {
     hasErrorOn(field : string): boolean
@@ -170,7 +171,10 @@ export class UserInfoEditSettings implements m.Component {
         const documentMask = _.partial(h.mask, '999.999.999-99') as (newData : string) => string
         const documentCompanyMask = _.partial(h.mask, '99.999.999/9999-99') as (newData : string) => string
         
-        fields().birth_date(h.momentify(fields().birth_date()))
+        const hasBirthDate = !!fields().birth_date()
+        if (hasBirthDate) {
+            fields().birth_date(h.momentify(fields().birth_date() || moment()))
+        }
 
         const applyBirthDateMask = _.compose(fields().birth_date, birthDayMask) as (newData : string) => string
         const applyDocumentMask = (value : string) => {
