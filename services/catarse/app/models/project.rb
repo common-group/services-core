@@ -556,6 +556,9 @@ class Project < ActiveRecord::Base
   # def successful_pledged_transaction
   #   balance_transactions.where(event_name: 'successful_project_pledged').last
   # end
+  def has_old_successful_pledged_transaction_event?
+    balance_transactions.where(event_name: 'successful_project_pledged').exists?
+  end
 
   def total_amount_tax_included
     pluck_from_database("total_amount_tax_included")

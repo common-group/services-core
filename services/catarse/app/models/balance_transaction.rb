@@ -255,6 +255,7 @@ class BalanceTransaction < ActiveRecord::Base
     project = Project.find project_id
     return unless project.successful?
     return unless project.project_total.present?
+    return unless project.has_old_successful_pledged_transaction_event?
     transaction do
       project.payments.paid.find_each do |payment|
         insert_contribution_payment(payment.id)
@@ -268,6 +269,7 @@ class BalanceTransaction < ActiveRecord::Base
       project = payment.project
       contribution = payment.contribution
       return unless payment.paid?
+      return unless project.has_old_successful_pledged_transaction_event?
 
       default_params = { project_id: project.id, user_id: project.user_id, contribution_id: contribution.id}
 
