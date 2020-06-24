@@ -105,8 +105,7 @@ jobs:
           command: |
             set -ex \
             && cd services/catarse \
-            && bundle install \
-            && npm install
+            && bundle install
       - run:
           name: Run catarse migration
           command: |
