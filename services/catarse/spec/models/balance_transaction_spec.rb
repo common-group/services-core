@@ -153,6 +153,25 @@ RSpec.describe BalanceTransaction, type: :model do
     let(:project) { create(:project, goal: 30, state: 'online') }
     let!(:contribution) { create(:confirmed_contribution, value: 10_000, project: project) }
 
+    context 'when project already finihed with a successful_project_pledged event' do
+      before do
+        allow(project).to receive(:successful?).and_return(true)
+        allow(project).to receive(:has_old_successful_pledged_transaction_event?).and_return(true)
+
+        expect(BalanceTransaction).not_to receive(:insert_successful_project_transactions).with(project.id).and_call_original
+        BalanceTransaction.insert_successful_project_transactions(project.id)
+      end
+
+      it 'should create contribution_payment transaction' do
+        expect(BalanceTransaction.find_by(event_name: 'contribution_payment', project_id: project.id, user_id: project.user_id, contribution_id: contribution.id, amount: contribution.value)).to be_nil
+      end
+
+      it 'should create catarse_project_service_fee transaction' do
+        _amount = (contribution.value * project.service_fee) * -1
+        expect(BalanceTransaction.find_by(event_name: 'catarse_contribution_fee', project_id: project.id, user_id: project.user_id, contribution_id: contribution.id, amount: _amount)).to be_nil
+      end
+    end
+
     context 'when given project is finished' do
       before do
         project.update_attributes(expires_at: 2.minutes.ago)
