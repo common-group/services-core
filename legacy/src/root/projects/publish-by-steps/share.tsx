@@ -23,11 +23,11 @@ export class Share implements m.Component {
         }
 
         const projectUrlEncoded = encodeURIComponent(projectUrl)
-        const facebookShareLink = `${projectUrl}?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`
-        const messengerShareLink = `${projectUrl}?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share`
-        const whatsappShareLink = h.isMobile() ? `whatsapp://send?text=${projectUrlEncoded}` : `https://api.whatsapp.com/send?text=${projectUrlEncoded}`
-        const twitterShareLink = `https://twitter.com/intent/tweet?original_referer=${projectUrlEncoded}&ref_src=twsrc%5Etfw&text=${encodeURIComponent(`Confira o projeto ${project.name} no @catarse`)}&tw_p=tweetbutton&url=${projectUrlEncoded}%3Fref%3Dtwitter%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share&via=catarse`
-        const emailShareLink = `mailto:?subject=${encodeURIComponent(`Confira o projeto ${project.name} no Catarse`)}&body=${projectUrlEncoded}.`
+        const facebookShareLink = `${projectUrl}&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share_simplified`
+        const messengerShareLink = `${projectUrl}&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share_simplified`
+        const whatsappShareLink = h.isMobile() ? `whatsapp://send?text=${encodeURIComponent(`Eu adoraria se você pudesse dar uma olhada no meu projeto no Catarse. Sua ajuda significaria muito pra mim:${projectUrlEncoded}&utm_source=whatsapp&utm_medium=social&utm_campaign=project_share_simplified`)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(`Eu adoraria se você pudesse dar uma olhada no meu projeto no Catarse. Sua ajuda significaria muito pra mim: ${projectUrlEncoded}&utm_source=whatsapp&utm_medium=social&utm_campaign=project_share_simplified`)}`
+        const twitterShareLink = `https://twitter.com/intent/tweet?original_referer=${projectUrlEncoded}&ref_src=twsrc%5Etfw&text=${encodeURIComponent(`Ajude meu projeto ${project.name} no @catarse`)}&tw_p=tweetbutton&url=${projectUrlEncoded}%26utm_source%3Dtwitter.com%26utm_medium%3Dsocial%26utm_campaign%3Dproject_share_simplified&via=catarse`
+        const emailShareLink = `mailto:?subject=${encodeURIComponent(`Ajude meu projeto ${project.name} no Catarse`)}&body=${encodeURIComponent(`Eu adoraria se você pudesse dar uma olhada no meu projeto no Catarse. Sua ajuda significaria muito pra mim: ${projectUrlEncoded}&utm_source=email&utm_medium=social&utm_campaign=project_share_simplified.`)}`
 
         const facebookShare = () => shareSocial(false, facebookShareLink)
         const messengerShare = () => shareSocial(true, messengerShareLink)
