@@ -16,7 +16,7 @@ export class ProjectCardSimple implements m.Component<ProjectCardSimpleAttrs> {
         const image = attrs.image
         
         const cardThumbStyle = {
-            'background-image' : image ? `url(${image})` : 'url(https://uploads-ssl.webflow.com/57ba58b4846cc19e60acdd5b/5ec4b270e12f5449bd8df782_thumb-padrao.jpg)'
+            'background-image' : image ? `url(${image})` : 'url(https://s3.amazonaws.com/cdn.catarse/assets/thumb_generico_solidaria.png)'
         }
 
         return (

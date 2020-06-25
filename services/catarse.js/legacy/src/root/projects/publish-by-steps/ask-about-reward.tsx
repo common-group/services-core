@@ -24,13 +24,13 @@ export class AskAboutReward implements m.Component {
                                     <br/>
                                 </div>
                                 <div class="w-row">
-                                    <div class="w-col w-col-2"></div>
-                                    <div class="w-col w-col-8">
-                                        <div class="fontsize-base">
+                                    <div class="w-col w-col-1"></div>
+                                    <div class="w-col w-col-10">
+                                        <div class="fontsize-base u-text-center">
                                             Recompensas são uma funcionalidade opcional do Catarse, onde você pode oferecer algo em troca do apoio feito pelas pessoas. Se você quiser, pode publicar seu projeto sem recompensas e adicioná-las depois.
                                         </div>
                                     </div>
-                                    <div class="w-col w-col-2"></div>
+                                    <div class="w-col w-col-1"></div>
                                 </div>
                                 <div class="u-margintop-40 u-marginbottom-20 w-row">                            
                                     <div class="w-col w-col-6 w-sub-col u-marginbottom-20">
