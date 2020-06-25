@@ -4,6 +4,7 @@
 const { Pool } = require('pg');
 const pagarme = require('pagarme');
 const { handleError } = require('../lib/error_handling');
+const { importMissingPayables } = require('./import_missing_payables')
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -160,13 +161,22 @@ const recursive_calls = () => {
         }, (process.env.SET_INTERVAL || 60000));
     };
 
+    const missingPayables = () => {
+        setTimeout(async () => {
+            console.log('Importing missing payables')
+            const client = await pool.connect();
+            importMissingPayables(client)
+        }, 3600000) // 1 HOUR
+    }
+
     rec_charge();
     rec_errors_charge();
     refuse_expired();
     cancel_expired_subscriptions();
     inactive_invalid_subs();
     notify_expiring();
-	recharge_or_inactive_card_subscriptions();
+    recharge_or_inactive_card_subscriptions();
+    missingPayables();
 };
 
 recursive_calls();

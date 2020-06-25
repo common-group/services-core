@@ -21,28 +21,8 @@ export class AmountEditTips implements m.Component {
                     </div>
                 </div>
                 <div class="card">
-                    <div class="fontsize-smaller u-marginbottom-20">
-                        Para alcançar o maior número de apoios:
-                    </div>
-                    <div class="fontsize-smaller u-marginbottom-10">
-                        <span class="fa fa-check fa-fw" aria-hidden="true"></span> 
-                        <span> Descreva quem irá se beneficiar</span>
-                    </div>
-                    <div class="fontsize-smaller u-marginbottom-10">
-                        <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        <span> Dê detalhes de como o dinheiro será usado</span>
-                    </div>
-                    <div class="fontsize-smaller u-marginbottom-10">
-                        <span class="fa fa-check fa-fw" aria-hidden="true"></span> 
-                        <span> Explique a urgência da sua causa</span>
-                    </div>
-                    <div class="fontsize-smaller u-marginbottom-10">
-                        <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        <span> Conte para as pessoas o que o suporte delas irá representar para você</span>
-                    </div>
-                    <div class="fontsize-smaller u-marginbottom-10">
-                        <span class="fa fa-check fa-fw" aria-hidden="true"></span>
-                        <span> Compartilhe o quão feliz você ficará com o apoio das pessoas</span>
+                    <div class="fontsize-smallest">
+                        Quanto você precisa arrecadar para ter sucesso no seu projeto? Defina uma meta coerente com o que seu projeto propõe e não esqueça de considerar a taxa do Catarse quando for definir sua meta!
                     </div>
                 </div>
             </div>
