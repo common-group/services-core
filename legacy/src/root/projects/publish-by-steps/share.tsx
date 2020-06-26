@@ -43,6 +43,7 @@ export class Share implements m.Component {
             }
         }
 
+        const projectCopyUrl = `${projectUrl}?utm_source=project_dashboard&utm_medium=copy_link&utm_campaign=project_share_simplified`
         const copyLinkText = state.copyLinkText || 'Copiar'
         const onClickToCopyProjectUrl = () => {
             state.copyLinkText = 'Link copiado!'
@@ -116,9 +117,9 @@ export class Share implements m.Component {
                                                         <input 
                                                             oncreate={vnode => state.projectUrlElement = vnode.dom as HTMLInputElement}
                                                             style='cursor: text;'
-                                                            value={projectUrl} 
+                                                            value={projectCopyUrl} 
                                                             oninput={(event : Event) => {
-                                                                event.target.value = projectUrl
+                                                                event.target.value = projectCopyUrl
                                                             }}
                                                             type="text" 
                                                             class="text-field medium positive w-input" 
