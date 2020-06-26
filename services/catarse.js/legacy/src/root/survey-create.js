@@ -12,8 +12,6 @@ import dashboardMultipleChoiceQuestion from '../c/dashboard-multiple-choice-ques
 import dashboardOpenQuestion from '../c/dashboard-open-question';
 import inlineError from '../c/inline-error';
 
-const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
-
 const surveyCreate = {
     oninit: function(vnode) {
         const
@@ -69,12 +67,8 @@ const surveyCreate = {
         };
 
         const setQuestionType = (question, type) => () => {
-            console.log('before question type', question.type);
             question.type = type;
-            console.log('after question type', question.type);
             surveyVM.updateDashboardQuestion(question);
-
-            console.log(surveyVM.dashboardQuestions());
         };
 
         const choiceDropdown = question => {
