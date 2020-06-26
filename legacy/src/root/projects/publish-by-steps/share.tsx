@@ -106,7 +106,6 @@ export class Share implements m.Component {
                                                 </div>
                                                 <div class="w-row">
                                                     <div class="w-col w-col-8">
-                                                        {/* <input type='hidden' value={projectUrl}/> */}
                                                         <input 
                                                             oncreate={vnode => state.projectUrlElement = vnode.dom as HTMLInputElement}
                                                             style='cursor: text;'
