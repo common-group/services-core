@@ -32,7 +32,6 @@ export class Share implements m.Component {
         const facebookShare = () => shareSocial(false, facebookShareLink)
         const messengerShare = () => shareSocial(true, messengerShareLink)
         const shareSocial = (messager : boolean, url : string) => {
-            console.log(FB)
             if (FB) {
                 FB.ui({
                     method: messager ? 'send' : 'share',
