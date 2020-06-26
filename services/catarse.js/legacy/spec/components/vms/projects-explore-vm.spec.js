@@ -129,7 +129,7 @@ describe('ProjectExploreVM', () => {
     describe('projects from search params', () => {
         beforeAll(() => {
             jasmine.Ajax.stubRequest(
-                `${apiPrefix}/projects?order=open_for_contributions.desc%2Cstate_order.asc%2Cstate.desc%2Cscore.desc%2Cpledged.desc&mode=eq.sub&state=eq.online&or=(full_text_index.plfts.test%2Cproject_name.plfts.test)&open_for_contributions=eq.true`
+                `${apiPrefix}/rpc/project_search`
             ).andReturn({
                 responseHeaders: {
                     'Content-Range': '0-2/2',
