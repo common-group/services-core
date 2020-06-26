@@ -42,46 +42,67 @@ const surveyCreate = {
         l.load().then(projectDetails);
         rewardVM.load().then(reward);
 
-        const choice = {
-            multiple: [
-                m('span.fa.fa-dot-circle-o'),
-                '  Múltipla escolha'
-            ],
-            open: [
-                m('span.fa.fa-align-left'),
-                '  Resposta aberta'
-            ]
+        const choice = (type) => {
+
+            switch(type) {
+            case 'multiple': {
+                return [
+                    m('span.fa.fa-dot-circle-o'),
+                    '  Múltipla escolha'
+                ];
+            }
+
+            case 'open': {
+                return [
+                    m('span.fa.fa-align-left'),
+                    '  Resposta aberta'
+                ];
+            }
+
+            default: {
+                return [
+                    m('span.fa.fa-align-left'),
+                    '  Resposta aberta'
+                ];
+            }
+            }
         };
 
         const setQuestionType = (question, type) => () => {
+            console.log('before question type', question.type);
             question.type = type;
-
+            console.log('after question type', question.type);
             surveyVM.updateDashboardQuestion(question);
+
+            console.log(surveyVM.dashboardQuestions());
         };
 
-        const choiceDropdown = question => m('.w-col.w-col-4.w-sub-col',
-            m('.text-field.w-dropdown', {
-                onclick: () => {
-                    question.toggleDropdown.toggle();
-                    surveyVM.updateDashboardQuestion(question);
-                }
-            }, [
-                m('.dropdown-toggle.w-dropdown-toggle', [
-                    choice[question.type],
-                    m('span.fa.fa-chevron-down.u-right')
-                ]),
-                m('.card.dropdown-list.w-dropdown-list', {
-                    class: question.toggleDropdown() ? 'w--open' : null
+        const choiceDropdown = question => {
+            console.log('question to drop down', question);
+            return m('.w-col.w-col-4.w-sub-col',
+                m('.text-field.w-dropdown', {
+                    onclick: () => {
+                        question.toggleDropdown.toggle();
+                        surveyVM.updateDashboardQuestion(question);
+                    }
                 }, [
-                    m('span.dropdown-link.w-dropdown-link', {
-                        onclick: setQuestionType(question, surveyVM.openQuestionType)
-                    }, choice.open),
-                    m('span.dropdown-link.w-dropdown-link', {
-                        onclick: setQuestionType(question, surveyVM.multipleQuestionType)
-                    }, choice.multiple)
+                    m('.dropdown-toggle.w-dropdown-toggle', [
+                        choice(question.type),
+                        m('span.fa.fa-chevron-down.u-right')
+                    ]),
+                    m('.card.dropdown-list.w-dropdown-list', {
+                        class: question.toggleDropdown() ? 'w--open' : null
+                    }, [
+                        m('span.dropdown-link.w-dropdown-link', {
+                            onclick: setQuestionType(question, surveyVM.openQuestionType)
+                        }, choice('open')),
+                        m('span.dropdown-link.w-dropdown-link', {
+                            onclick: setQuestionType(question, surveyVM.multipleQuestionType)
+                        }, choice('multiple'))
+                    ])
                 ])
-            ])
-        );
+            );
+        }
 
         const addDashboardQuestion = () => {
             surveyVM.addDashboardQuestion();
@@ -133,7 +154,7 @@ const surveyCreate = {
         return project ? m('.project-surveys', (project.is_owner_or_admin ? m(projectDashboardMenu, {
             project: prop(project)
         }) : ''),
-            state.showPreview() ? m(surveyCreatePreview, { confirmAddress: state.confirmAddress(), showPreview: state.showPreview, surveyVM, reward, sendQuestions: state.sendQuestions }) : [
+        state.showPreview() ? m(surveyCreatePreview, { confirmAddress: state.confirmAddress(), showPreview: state.showPreview, surveyVM, reward, sendQuestions: state.sendQuestions }) : [
             (reward ?
                 m('.card-terciary.section.u-text-center',
                     m('.w-container',
@@ -149,9 +170,9 @@ const surveyCreate = {
                         ])
                     )
                 )
-              : ''),
-                m('.divider'),
-                m('.section',
+                : ''),
+            m('.divider'),
+            m('.section',
                 m('.w-row', [
                     m('.w-col.w-col-10.w-col-push-1', [
                         m('.card.card-terciary.medium.u-marginbottom-20.u-text-center', [
@@ -203,14 +224,14 @@ const surveyCreate = {
                     ])
                 ])
             ),
-                m('.section',
+            m('.section',
                 m('.w-container',
                     m('.w-row', [
                         m('.w-col.w-col-4.w-col-push-4',
                             m('a.btn.btn-large[href=\'javascript:void(0);\']', {
                                 onclick: state.toggleShowPreview
                             },
-                                'Pré-visualizar'
+                            'Pré-visualizar'
                             ),
                             state.showError()
                                 ? m('.u-text-center.u-margintop-10', m(inlineError, { message: 'Erro ao salvar formulário.' }))
