@@ -47,9 +47,9 @@ export const ExploreProjectsList = {
                                 }
                             }
                         } else if (filterKeyName === 'saved_projects') {
-                            ref = 'ctrse_explore_saved_project'
+                            ref = 'ctrse_explore_saved_project';
                         } else if (filterKeyName === 'projects_we_love') {
-                            ref = 'ctrse_explore_projects_we_love'
+                            ref = 'ctrse_explore_projects_we_love';
                         }
 
                         return (_.indexOf(widowProjects, idx) > -1 && !projects.isLastPage()) ? '' : m(projectCard, {
@@ -64,4 +64,4 @@ export const ExploreProjectsList = {
             ])
         ]);
     }
-}
+};
