@@ -8,6 +8,7 @@ export type ShareAttrs = {
 
 export type ShareState = {
     projectUrlElement: HTMLInputElement
+    copyLinkText: string
 }
 
 export class Share implements m.Component {
@@ -42,6 +43,12 @@ export class Share implements m.Component {
             }
         }
 
+        const copyLinkText = state.copyLinkText || 'Copiar'
+        const onClickToCopyProjectUrl = () => {
+            state.copyLinkText = 'Link copiado!'
+            copyToClipboard(state.projectUrlElement)
+            h.redraw()
+        }
         return (
             <div class="section">
                 <div class="w-container">
@@ -118,8 +125,8 @@ export class Share implements m.Component {
                                                             id="permalink-campain-id" />
                                                     </div>
                                                     <div class="w-col w-col-4">
-                                                        <span onclick={() => copyToClipboard(state.projectUrlElement)} class="btn btn-large">
-                                                            Copiar
+                                                        <span onclick={onClickToCopyProjectUrl} class="btn btn-large">
+                                                            {copyLinkText}
                                                         </span>
                                                     </div>
                                                 </div>
