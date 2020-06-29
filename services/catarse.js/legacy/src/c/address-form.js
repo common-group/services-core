@@ -32,22 +32,22 @@ const addressForm = {
                     method: 'GET',
                     url: `https://api.pagar.me/1/zipcodes/${zipCode}`,
                 })
-                .then(response => {
-                    fields.addressState(response.state);
-                    fields.addressStreet(response.street);
-                    fields.addressNeighbourhood(response.neighborhood);
-                    fields.addressCity(response.city);
-                    fields.stateID(_.find(states(), state => state.acronym === response.state).id);
-                    fields.errors.addressStreet(false);
-                    fields.errors.addressNeighbourhood(false);
-                    fields.errors.addressCity(false);
-                    fields.errors.stateID(false);
-                    fields.errors.addressZipCode(false);
-                })
-                .catch(err => {
-                    zipCodeErrorMessage(err.errors[0].message);
-                    fields.errors.addressZipCode(true);
-                });
+                    .then(response => {
+                        fields.addressState(response.state);
+                        fields.addressStreet(response.street);
+                        fields.addressNeighbourhood(response.neighborhood);
+                        fields.addressCity(response.city);
+                        fields.stateID(_.find(states(), state => state.acronym === response.state).id);
+                        fields.errors.addressStreet(false);
+                        fields.errors.addressNeighbourhood(false);
+                        fields.errors.addressCity(false);
+                        fields.errors.stateID(false);
+                        fields.errors.addressZipCode(false);
+                    })
+                    .catch(err => {
+                        zipCodeErrorMessage(err.errors[0].message);
+                        fields.errors.addressZipCode(true);
+                    });
             }
         };
 
@@ -106,40 +106,41 @@ const addressForm = {
         return m('#address-form.u-marginbottom-30.w-form', [
             !hideNationality
                 ? m(
-                      '.u-marginbottom-30',
-                      m(nationalityRadio, {
-                          fields,
-                          defaultCountryID,
-                          defaultForeignCountryID,
-                          international,
-                      })
-                  )
+                    '.u-marginbottom-30',
+                    m(nationalityRadio, {
+                        fields,
+                        defaultCountryID,
+                        defaultForeignCountryID,
+                        international,
+                    })
+                )
                 : '',
             international()
                 ? m(addressFormInternational, {
-                      fields,
-                      disableInternational,
-                      addVM: attrs.addVM,
-                      international,
-                      defaultCountryID,
-                      defaultForeignCountryID,
-                      errors,
-                      applyPhoneMask,
-                  })
+                    countryName,
+                    fields,
+                    disableInternational,
+                    addVM: attrs.addVM,
+                    international,
+                    defaultCountryID,
+                    defaultForeignCountryID,
+                    errors,
+                    applyPhoneMask,
+                })
                 : m(addressFormNational, {
-                      disableInternational,
-                      countryName,
-                      fields,
-                      international,
-                      defaultCountryID,
-                      defaultForeignCountryID,
-                      errors,
-                      applyZipcodeMask,
-                      lookupZipCode,
-                      zipCodeErrorMessage,
-                      countryStates,
-                      applyPhoneMask,
-                  }),
+                    disableInternational,
+                    countryName,
+                    fields,
+                    international,
+                    defaultCountryID,
+                    defaultForeignCountryID,
+                    errors,
+                    applyZipcodeMask,
+                    lookupZipCode,
+                    zipCodeErrorMessage,
+                    countryStates,
+                    applyPhoneMask,
+                }),
         ]);
     },
 };
