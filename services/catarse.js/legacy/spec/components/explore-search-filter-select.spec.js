@@ -1,7 +1,7 @@
 import m from 'mithril';
 import mq from 'mithril-query';
 import mr from 'mithril-node-render';
-import { ExploreSearchFilterSelect } from '../../src/c/explore-search-filter-select';
+import { ExploreSearchFilterSelect } from '../../src/c/explore/explore-search-filter-select';
 
 describe('ExploreFilterSelect', () => {
 
