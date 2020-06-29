@@ -7,3 +7,7 @@ export type FileEventTarget = EventTarget & {
         files: FileList
     }
 }
+
+export type HTMLInputEvent = Event & {
+    target: HTMLInputElement
+}

@@ -1,5 +1,5 @@
 import m from 'mithril';
-import h from '../h';
+import h from '../../h';
 
 export const ExploreSearchFilterSelect = {
     oninit(vnode) {

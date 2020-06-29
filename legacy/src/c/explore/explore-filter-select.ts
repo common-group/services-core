@@ -1,6 +1,6 @@
 import m from 'mithril';
 import prop from 'mithril/stream';
-import h from '../h';
+import h from '../../h';
 import _ from 'underscore';
 
 /**
