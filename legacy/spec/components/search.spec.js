@@ -1,5 +1,5 @@
 import mq from 'mithril-query';
-import search from '../../src/c/search';
+import ExploreMobileSearch from '../../src/c/explore/explore-mobile-search';
 
 describe('Search', () => {
     let $output,
@@ -8,7 +8,7 @@ describe('Search', () => {
 
     describe('view', () => {
         beforeEach(() => {
-            $output = mq(search.view({attrs: {action: action, method: method}}));
+            $output = mq(m(ExploreMobileSearch, { action: action, method: method }));
         });
 
         it('should render the search form', () => {
