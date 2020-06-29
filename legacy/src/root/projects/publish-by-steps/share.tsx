@@ -8,6 +8,7 @@ export type ShareAttrs = {
 
 export type ShareState = {
     projectUrlElement: HTMLInputElement
+    copyLinkText: string
 }
 
 export class Share implements m.Component {
@@ -32,7 +33,6 @@ export class Share implements m.Component {
         const facebookShare = () => shareSocial(false, facebookShareLink)
         const messengerShare = () => shareSocial(true, messengerShareLink)
         const shareSocial = (messager : boolean, url : string) => {
-            console.log(FB)
             if (FB) {
                 FB.ui({
                     method: messager ? 'send' : 'share',
@@ -43,6 +43,13 @@ export class Share implements m.Component {
             }
         }
 
+        const projectCopyUrl = `${projectUrl}?utm_source=project_dashboard&utm_medium=copy_link&utm_campaign=project_share_simplified`
+        const copyLinkText = state.copyLinkText || 'Copiar'
+        const onClickToCopyProjectUrl = () => {
+            state.copyLinkText = 'Link copiado!'
+            copyToClipboard(state.projectUrlElement)
+            h.redraw()
+        }
         return (
             <div class="section">
                 <div class="w-container">
@@ -107,21 +114,20 @@ export class Share implements m.Component {
                                                 </div>
                                                 <div class="w-row">
                                                     <div class="w-col w-col-8">
-                                                        {/* <input type='hidden' value={projectUrl}/> */}
                                                         <input 
                                                             oncreate={vnode => state.projectUrlElement = vnode.dom as HTMLInputElement}
                                                             style='cursor: text;'
-                                                            value={projectUrl} 
+                                                            value={projectCopyUrl} 
                                                             oninput={(event : Event) => {
-                                                                event.target.value = projectUrl
+                                                                event.target.value = projectCopyUrl
                                                             }}
                                                             type="text" 
                                                             class="text-field medium positive w-input" 
                                                             id="permalink-campain-id" />
                                                     </div>
                                                     <div class="w-col w-col-4">
-                                                        <span onclick={() => copyToClipboard(state.projectUrlElement)} class="btn btn-large">
-                                                            Copiar
+                                                        <span onclick={onClickToCopyProjectUrl} class="btn btn-large">
+                                                            {copyLinkText}
                                                         </span>
                                                     </div>
                                                 </div>
