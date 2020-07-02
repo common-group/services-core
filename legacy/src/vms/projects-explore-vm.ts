@@ -15,6 +15,9 @@ import { City } from '../@types/city'
 import { State } from '../@types/state'
 import { CityState } from '../@types/city-state'
 import { searchCitiesGroupedByState } from '../vms/cities-search-vm'
+import { SinglePageViewModel } from '../utils/single-page-vm'
+
+const { replaceDiacritics } = window as any as ExtendedWindow;
 
 interface Observer<T> {
     next(data: T): void;
@@ -159,6 +162,11 @@ export class ProjectsExploreViewModel {
 
     get isTextSearch() : boolean {
         return this._searchParam !== '' && this._searchParam.length > 0;
+    }
+
+    set searchParam(value : string) {
+        this._searchParam = value
+        this.dispatchNewQuery();
     }
 
     get searchParam() : string {
@@ -346,8 +354,13 @@ export class ProjectsExploreViewModel {
 
     private loadProjects(model, parameters : Object = {}) : ViewModel<Project> {
         model.pageSize(9);
-
-        if (this._cityState?.city?.name) {
+        if (this._searchParam) {
+            return new SinglePageViewModel(async () => {
+                const projectsFound = await this.makeProjectsSearch()
+                h.redraw()
+                return projectsFound
+            });
+        } else if (this._cityState?.city?.name) {
             
             const cityOnlyVmInstance = catarse.paginationVM(model, null, { Prefer: 'count=exact' });
             const stateOnlyVmInstance = catarse.paginationVM(model, null, { Prefer: 'count=exact' });
@@ -380,9 +393,20 @@ export class ProjectsExploreViewModel {
         }
     }
 
+    private async makeProjectsSearch() : Promise<Project[]> {
+        try {
+            const response = await models.projectSearch.postWithToken({ query: replaceDiacritics(this._searchParam) })
+            return response as Project[]
+        } catch(e) {
+            if (this._observer) {
+                this._observer.error(e)
+            }
+        }
+    }
+
     private async countProjectsOnCity(model, filterParameters : Object = {}) {
         try {
-            if (this._cityState?.city?.name) {
+            if (this._cityState?.city?.name && _.isEmpty(this._searchParam)) {
                 const parametersWithOnlyCityNotState = _.extend(
                     filterParameters,
                     filters({ city_name: 'eq' }).city_name(this._cityState.city.name).parameters()
