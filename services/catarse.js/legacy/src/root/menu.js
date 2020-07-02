@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import menuSearch from '../c/menu-search';
+import HeaderMenuSearch from '../c/header-menu-search';
 import menuProfile from '../c/menu-profile';
 import models from '../models';
 import { catarse } from '../api';
@@ -77,7 +77,7 @@ const menu = {
                             m(`a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/${window.I18n.locale}/explore?ref=ctrse_header\']`, { onclick: exploreButtonBehavoir() }, 
                                 'Explore'
                             ),
-                            m(menuSearch)
+                            m(HeaderMenuSearch)
                         ])
                     ]
                 ),
