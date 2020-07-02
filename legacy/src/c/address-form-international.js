@@ -3,7 +3,7 @@ import inlineError from '../c/inline-error';
 import countrySelect from '../c/country-select';
 
 const addressFormInternational = {
-    view: function({state, attrs}) {
+    view: function({ attrs }) {
         const fields = attrs.fields;
         const disableInternational = attrs.disableInternational;
         const addVM = attrs.addVM;
@@ -28,7 +28,7 @@ const addressFormInternational = {
                         m('.field-label.fontweight-semibold',
                             'Address *'
                         ),
-                        m("input.positive.text-field.w-input[required='required'][type='text']", {
+                        m('input.positive.text-field.w-input[required="required"][type="text"]', {
                             class: errors.addressStreet() ? 'error' : '',
                             value: fields.addressStreet(),
                             oninput: m.withAttr('value', fields.addressStreet)
@@ -43,7 +43,7 @@ const addressFormInternational = {
                             m('.field-label.fontweight-semibold',
                                 'Zip Code *'
                             ),
-                            m("input.positive.text-field.w-input[required='required'][type='text']", {
+                            m('input.positive.text-field.w-input[required=\'required\'][type=\'text\']', {
                                 class: errors.addressZipCode() ? 'error' : '',
                                 value: fields.addressZipCode(),
                                 oninput: m.withAttr('value', fields.addressZipCode)
@@ -56,7 +56,7 @@ const addressFormInternational = {
                             m('.field-label.fontweight-semibold',
                                 'City *'
                             ),
-                            m("input.positive.text-field.w-input[required='required'][type='text']", {
+                            m('input.positive.text-field.w-input[required=\'required\'][type=\'text\']', {
                                 class: errors.addressCity() ? 'error' : '',
                                 value: fields.addressCity(),
                                 oninput: m.withAttr('value', fields.addressCity)
@@ -69,7 +69,7 @@ const addressFormInternational = {
                             m('.field-label.fontweight-semibold',
                                 'State *'
                             ),
-                            m("input#address-state.positive.text-field.w-input[required='required'][type='text']", {
+                            m('input#address-state.positive.text-field.w-input[required=\'required\'][type=\'text\']', {
                                 class: errors.addressState() ? 'error' : '',
                                 value: fields.addressState(),
                                 oninput: m.withAttr('value', fields.addressState)
@@ -81,8 +81,8 @@ const addressFormInternational = {
                     ])
                 )
             ])
-        ])
+        ]);
     }
-}
+};
 
 export default addressFormInternational;
