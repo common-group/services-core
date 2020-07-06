@@ -41,7 +41,7 @@ export class UserInfoEdit implements m.Component {
                                     state.selectedProfileImageFile = profileImageFile
                                 }}/>
                         </div>
-                        <div class="w-col w-col-4">
+                        <div class="w-col w-col-4 w-hidden-small w-hidden-tiny">
                             <UserInfoEditPublicProfileTips />
                         </div>
                     </div>
@@ -75,7 +75,7 @@ export class UserInfoEdit implements m.Component {
                                 </a>
                             </div>
                         </div>
-                        <div class="w-col w-col-4">
+                        <div class="w-col w-col-4  w-hidden-small w-hidden-tiny">
                             <UserInfoEditSettingsTips />
                         </div>
                     </div>

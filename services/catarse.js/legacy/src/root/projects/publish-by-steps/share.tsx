@@ -52,7 +52,7 @@ export class Share implements m.Component {
         }
         return (
             <div class="section">
-                <div class="w-container">
+                <div class="w-container u-marginbottom-80">
                     <div class="w-row">
                         <div class="w-col w-col-2"></div>
                         <div class="w-col w-col-8">
@@ -72,19 +72,19 @@ export class Share implements m.Component {
                                         </div>
                                         <div class="divider u-margintop-20 u-marginbottom-20"></div>
                                         <div class="u-text-center u-marginbottom-30 w-row">
-                                            <div class="w-col w-col-4">
+                                            <div class="w-col w-col-4 w-col-tiny-4">
                                                 <a href='#share' onclick={facebookShare} class="link-hidden-dark fontsize-small w-inline-block">
                                                     <div class="fa fa-facebook-square fa-2x" aria-hidden="true"></div>
                                                     <div>Facebook</div>
                                                 </a>
                                             </div>
-                                            <div class="w-col w-col-4">
+                                            <div class="w-col w-col-4 w-col-tiny-4">
                                                 <a href='#share' onclick={messengerShare} class="link-hidden-dark fontsize-small w-inline-block">
                                                     <div class="fab fa-2x fa-facebook-messenger" aria-hidden="true"></div>
                                                     <div>Messenger</div>
                                                 </a>
                                             </div>
-                                            <div class="w-col w-col-4">
+                                            <div class="w-col w-col-4 w-col-tiny-4">
                                                 <a target='_blank' href={whatsappShareLink} data-action="share/whatsapp/share" class="link-hidden-dark fontsize-small w-inline-block">
                                                     <div class="fa fa-2x fa-whatsapp" aria-hidden="true"></div>
                                                     <div>Whatsapp</div>
@@ -92,19 +92,19 @@ export class Share implements m.Component {
                                             </div>
                                         </div>
                                         <div class="u-text-center w-row">
-                                            <div class="w-col w-col-4">
+                                            <div class="w-col w-col-4 w-col-tiny-4">
                                                 <a target='_blank' href={twitterShareLink} class="link-hidden-dark fontsize-small w-inline-block">
                                                     <div class="fa fa-2x fa-twitter" aria-hidden="true"></div>
                                                     <div>Twitter</div>
                                                 </a>
                                             </div>
-                                            <div class="w-col w-col-4">
+                                            <div class="w-col w-col-4 w-col-tiny-4">
                                                 <a target='_blank' href={emailShareLink} class="link-hidden-dark fontsize-small w-inline-block">
                                                     <div class="far fa-2x fa-envelope" aria-hidden="true"></div>
                                                     <div>Email</div>
                                                 </a>
                                             </div>
-                                            <div class="w-col w-col-4"></div>
+                                            <div class="w-col w-col-4 w-col-tiny-4"></div>
                                         </div>
                                         <div class="divider u-margintop-20 u-marginbottom-20"></div>
                                         <div class="w-form">
