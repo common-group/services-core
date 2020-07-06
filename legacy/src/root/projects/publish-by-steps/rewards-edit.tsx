@@ -47,7 +47,7 @@ export class RewardsEdit implements m.Component {
                                 </a>
                             </div>
                         </div>
-                        <div class="w-col w-col-4">
+                        <div class="w-col w-col-4 w-hidden-small w-hidden-tiny">
                             <RewardsEditTips />
                         </div>
                     </div>
