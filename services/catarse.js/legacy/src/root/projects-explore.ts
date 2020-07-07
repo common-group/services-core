@@ -168,16 +168,13 @@ const projectsExplore : m.Component<ProjectExploreAttrs, ProjectExploreState> = 
                         hasSeachParam ?
                             [
                                 m('div', [
-                                    m('.explore-text-fixed', 'Busca pelo termo'),
+                                    m('.explore-text-fixed', 'Busca por'),
                                     m(ExploreSearchParam, {
                                         mobileLabel: 'BUSCA',
                                         searchParam,
-                                        onClose: () => m.route.set('/pt/explore')
+                                        onClose: () => m.route.set('/pt/explore?filter=all')
                                     })
-                                ]),
-                                m('div', {
-                                    style: (h.isMobile() ? 'height: 240px' : 'height: 80px'),
-                                })
+                                ])
                             ]
                             :
                             [
