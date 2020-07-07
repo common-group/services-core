@@ -172,7 +172,7 @@ const projectsExplore : m.Component<ProjectExploreAttrs, ProjectExploreState> = 
                                     m(ExploreSearchParam, {
                                         mobileLabel: 'BUSCA',
                                         searchParam,
-                                        onClose: () => m.route.set('/pt/explore')
+                                        onClose: () => m.route.set('/pt/explore?filter=all')
                                     })
                                 ])
                             ]
