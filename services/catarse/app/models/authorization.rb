@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class Authorization < ActiveRecord::Base
-  attr_accessible :oauth_provider, :oauth_provider_id, :uid, :user_id, :user
+class Authorization < ApplicationRecord
   belongs_to :user
   belongs_to :oauth_provider
 
@@ -21,7 +20,9 @@ class Authorization < ActiveRecord::Base
   end
 
   def self.create_from_hash(hash, user = nil)
-    user ||= User.create_from_hash(hash)
+    user ||= User.create_from_hash(
+      hash.to_h.with_indifferent_access(:oauth_provider, :oauth_provider_id, :uid, :user_id, :user)
+    )
     create!(user: user, uid: hash['uid'], oauth_provider: OauthProvider.find_by_name(hash['provider']))
   end
 end

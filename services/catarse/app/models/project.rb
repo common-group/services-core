@@ -1,12 +1,12 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-class Project < ActiveRecord::Base
+class Project < ApplicationRecord
   include I18n::Alchemy
   PUBLISHED_STATES = %w[online waiting_funds successful failed].freeze
   HEADLINE_MAXLENGTH = 100
   NAME_MAXLENGTH = 50
-  
+
 
   include Statesman::Adapters::ActiveRecordQueries
   include PgSearch
@@ -46,7 +46,7 @@ class Project < ActiveRecord::Base
   has_many :goals, foreign_key: :project_id
   has_many :tags, through: :taggings
   has_many :public_tags, through: :taggings
-  has_many :rewards
+  has_many :rewards, inverse_of: :project
   has_many :contributions
   has_many :project_errors
   has_many :contribution_details
@@ -162,7 +162,7 @@ class Project < ActiveRecord::Base
   scope :of_current_week, -> {
     between_dates('online_at', 7.days.ago, Time.current)
   }
-  
+
   scope :by_permalink, ->(p) { without_state('deleted').where('lower(permalink) = lower(?)', p) }
   scope :recommended, -> { where(recommended: true) }
   scope :in_funding, -> { not_expired.with_states(['online']) }
@@ -199,9 +199,9 @@ class Project < ActiveRecord::Base
 
   scope :with_deliveries_approaching, -> {
     successful.where("exists(
-        select true from rewards r 
-        where r.project_id = projects.id 
-        AND (deliver_at > now()) 
+        select true from rewards r
+        where r.project_id = projects.id
+        AND (deliver_at > now())
         AND (deliver_at <= now() + '1 month'::interval))")
   }
 
@@ -522,7 +522,6 @@ class Project < ActiveRecord::Base
   end
 
   def set_adult_content_tag
-    
     return if !should_include_adult_content_tag?
     return if has_adult_content_tag? && content_rating >= 18
 
@@ -532,7 +531,7 @@ class Project < ActiveRecord::Base
     else
       _all_tags = _all_tags.reject{|tag| tag == adult_content_admin_tag}
     end
-        
+
     self.tags = _all_tags.map do |name|
       Tag.find_or_create_by(slug: name.parameterize) do |tag|
         tag.name = name.strip
@@ -593,7 +592,7 @@ class Project < ActiveRecord::Base
     pluck_from_database('refresh_project_metric_storage')
   end
 
-  def adult_content_admin_tag 
+  def adult_content_admin_tag
     I18n.t('project.adult_content_admin_tag')
   end
 
@@ -612,8 +611,8 @@ class Project < ActiveRecord::Base
   # Init all or nothing machine
   def state_machine
     @state_machine ||= AonProjectMachine.new(self, {
-                                               transition_class: ProjectTransition
-                                             })
+      transition_class: ProjectTransition
+    })
   end
 
   %w[

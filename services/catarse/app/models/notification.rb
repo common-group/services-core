@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Notification < ActiveRecord::Base
+class Notification < ApplicationRecord
   belongs_to :user
 
   def self.notify_once(template_name, user, params = {})

@@ -1,10 +1,10 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   include I18n::Alchemy
   acts_as_token_authenticatable
-  include User::OmniauthHandler
+  include Users::OmniauthHandler
   include Shared::CommonWrapper
   has_notifications
   # Include default devise modules. Others available are:
@@ -20,13 +20,6 @@ class User < ActiveRecord::Base
   delegate :bank, to: :bank_account
 
   delegate :address_city, :country_id, :state_id, :phone_number, :country, :state, :address_complement, :address_neighbourhood, :address_zip_code, :address_street, :address_number, :address_state, to: :address, allow_nil: true
-
-  # FIXME: Please bitch...
-  attr_accessible :email, :password, :address_attributes, :password_confirmation, :remember_me, :name, :permalink,
-                  :image_url, :uploaded_image, :newsletter, :cpf, :state_inscription, :locale, :twitter, :facebook_link, :other_link, :moip_login, :deactivated_at, :reactivate_token,
-                  :bank_account_attributes, :country_id, :zero_credits, :links_attributes, :about_html, :cover_image, :category_followers_attributes, :category_follower_ids,
-                  :subscribed_to_project_posts, :subscribed_to_new_followers, :subscribed_to_friends_contributions, :whitelisted_at, :confirmed_email_at, :public_name,
-                  :birth_date, :account_type, :mail_marketing_users_attributes
 
   attr_accessor :publishing_project, :publishing_user_settings, :publishing_user_about, :reseting_password
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ContributionDetail < ActiveRecord::Base
+class ContributionDetail < ApplicationRecord
   self.table_name = '"1".contribution_details'
   include I18n::Alchemy
   TRANSITION_DATES = %i[refused_at paid_at pending_refund_at refunded_at].freeze

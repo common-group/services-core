@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require File.expand_path('../boot', __FILE__)
+require 'rails'
 require 'rails/all'
 require 'sitemap_generator/tasks'
 
@@ -65,13 +66,13 @@ module Catarse
 
     config.active_record.dump_schema_after_migration = true
 
-    # TODO: remove
-    config.active_record.whitelist_attributes = false
-
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
     # Custom webpack-dev-server. Set it to true to use webpack-dev-server
     config.webpack_dev_server = false
+
+    # TODO remove after finish rails upgrade. Added when upgrading 4.2 > 5.0
+    ActiveSupport.halt_callback_chains_on_return_false = false
   end
 end

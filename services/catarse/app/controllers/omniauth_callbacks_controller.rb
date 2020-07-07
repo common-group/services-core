@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  skip_before_filter :set_locale
+  skip_before_action :set_locale
 
   def self.add_providers
     OauthProvider.all.each do |p|

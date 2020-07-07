@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Payment < ActiveRecord::Base
+class Payment < ApplicationRecord
   include Shared::StateMachineHelpers
   include Payment::PaymentEngineHandler
   include Payment::RequestRefundHandler

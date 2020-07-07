@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BalanceTransaction < ActiveRecord::Base
+class BalanceTransaction < ApplicationRecord
   EVENT_NAMES = %w[
     catarse_contribution_fee
     project_contribution_confirmed_after_finished

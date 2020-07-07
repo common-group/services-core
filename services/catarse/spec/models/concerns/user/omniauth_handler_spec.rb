@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe User::OmniauthHandler, type: :model do
+RSpec.describe Users::OmniauthHandler, type: :model do
   let(:user) { create(:user) }
   let(:facebook_provider) { create :oauth_provider, name: 'facebook' }
 

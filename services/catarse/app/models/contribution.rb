@@ -1,7 +1,7 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-class Contribution < ActiveRecord::Base
+class Contribution < ApplicationRecord
   has_notifications
 
   include I18n::Alchemy
@@ -44,6 +44,7 @@ class Contribution < ActiveRecord::Base
   begin
     attr_protected :state, :user_id
   rescue Exception => e
+    # TODO: CHECK IF THIS IS A PROBLEM
     puts "problem while using attr_protected in Contribution model:\n '#{e.message}'"
   end
 
@@ -252,7 +253,7 @@ class Contribution < ActiveRecord::Base
   end
 
   def banned_user_validation
-  
+
     if self.user.cpf.present?
       document = BlacklistDocument.find_document self.user.cpf
       unless document.nil?
