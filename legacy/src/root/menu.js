@@ -12,7 +12,7 @@ const menu = {
     oninit: function(vnode) {
         const exploreButtonBehavoir = h.RedrawStream((/** @type {Event} */ event) => {
             event.preventDefault();
-            m.route.set('/explore?ref=ctrse_header&utm_source=catarse&utm_medium=ctrse_header&utm_campaign=testeAB_original');
+            m.route.set('/explore?ref=ctrse_header');
         });
         const displayLightBox = h.RedrawStream(false);
         const user = h.getUser();
