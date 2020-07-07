@@ -181,7 +181,7 @@ export class DescriptionEdit implements m.Component {
                                 </div>
                             </div>
 
-                            <div class="w-col w-col-4">
+                            <div class="w-col w-col-4  w-hidden-tiny w-hidden-small">
                                 <AmountEditTips show={showAmountTips()} />
                                 <DescriptionEditTips show={showDescriptionTips()} />
                             </div>

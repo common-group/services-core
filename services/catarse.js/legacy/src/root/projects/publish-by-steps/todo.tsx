@@ -37,7 +37,7 @@ export class Todo implements m.Component {
                                         </ul>
                                         <div class="card u-radius u-margintop-40 card-secondary">
                                             <div class="w-row">
-                                                <div class="fal fa-hand-holding-usd fa-2x w-col w-col-2" aria-hidden="true"></div>
+                                                <div class="fal fa-hand-holding-usd fa-2x w-col w-col-2 u-marginbottom-10" aria-hidden="true"></div>
                                                 <div class="w-col w-col-10">
                                                     <div>
                                                         Você poderá enviar as doações para sua conta bancária quando encerrar sua campanha.
