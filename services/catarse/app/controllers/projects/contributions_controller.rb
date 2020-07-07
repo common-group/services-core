@@ -4,10 +4,10 @@ class Projects::ContributionsController < ApplicationController
   DEFAULT_AMOUNT = 10
   inherit_resources
   actions :index, :show, :new, :update, :review, :create
-  skip_before_filter :verify_authenticity_token, only: [:moip]
-  after_filter :verify_authorized, except: [:index]
+  skip_before_action :verify_authenticity_token, only: [:moip]
+  after_action :verify_authorized, except: [:index]
   belongs_to :project
-  before_filter :detect_old_browsers, only: %i[new create]
+  before_action :detect_old_browsers, only: %i[new create]
 
   helper_method :engine
 

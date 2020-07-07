@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Category < ActiveRecord::Base
+class Category < ApplicationRecord
   has_notifications
   has_many :projects
   has_many :category_followers

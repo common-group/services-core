@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ProjectPost < ActiveRecord::Base
+class ProjectPost < ApplicationRecord
   include I18n::Alchemy
   include Shared::CommonWrapper
   has_notifications

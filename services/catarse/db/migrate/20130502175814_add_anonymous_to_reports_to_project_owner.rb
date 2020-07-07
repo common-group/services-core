@@ -1,7 +1,7 @@
 class AddAnonymousToReportsToProjectOwner < ActiveRecord::Migration
   def up
-    drop_view :backer_reports_for_project_owners
     execute "
+    DROP VIEW IF EXISTS backer_reports_for_project_owners;
     CREATE OR REPLACE VIEW backer_reports_for_project_owners AS
     SELECT
       b.project_id,
@@ -32,6 +32,6 @@ class AddAnonymousToReportsToProjectOwner < ActiveRecord::Migration
   end
 
   def down
-    drop_view :backer_reports_for_project_owners
+    execute "DROP VIEW IF EXISTS backer_reports_for_project_owners;"
   end
 end

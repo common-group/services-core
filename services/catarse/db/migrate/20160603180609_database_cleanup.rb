@@ -1,8 +1,11 @@
 class DatabaseCleanup < ActiveRecord::Migration
   def change
+    if foreign_key_exists?(:users, :channels)
+      remove_foreign_key :users, :channels
+    end
+
     execute <<-SQL
       DROP VIEW  subscriber_reports;
-      ALTER TABLE users DROP CONSTRAINT fk_users_channel_id;
       DROP TABLE public.channel_partners;
       DROP TABLE public.channel_post_notifications;
       DROP TABLE public.channel_posts;

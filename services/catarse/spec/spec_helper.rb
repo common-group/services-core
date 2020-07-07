@@ -27,7 +27,6 @@ RSpec.configure do |config|
     )
     current_user = con.execute('SELECT current_user;')[0]['current_user']
     con.execute %(ALTER USER #{current_user} SET search_path TO "$user", public, "1", "postgrest";)
-    DatabaseCleaner.clean_with :truncation
     I18n.locale = :pt
     I18n.default_locale = :pt
 
@@ -39,33 +38,27 @@ RSpec.configure do |config|
     REFRESH MATERIALIZED VIEW statistics;
     REFRESH MATERIALIZED VIEW user_totals;
     )
-    con.execute %{
-    INSERT INTO public.project_states (state, state_order) VALUES
-    ('deleted', 'archived'),
-    ('rejected', 'created'),
-    ('draft', 'created'),
-    ('online', 'published'),
-    ('waiting_funds', 'published'),
-    ('failed', 'finished'),
-    ('successful', 'finished');
-    }
+    con.execute <<-SQL
+      INSERT INTO
+        public.project_states (state, state_order)
+      VALUES
+        ('deleted', 'archived'),
+        ('rejected', 'created'),
+        ('draft', 'created'),
+        ('online', 'published'),
+        ('waiting_funds', 'published'),
+        ('failed', 'finished'),
+        ('successful', 'finished')
+      ON CONFLICT DO NOTHING;
+    SQL
   end
 
   config.before(:each) do
-    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:type] == :feature
-                                 :truncation
-                               else
-                                 :transaction
-                               end
-    DatabaseCleaner.start
     ActionMailer::Base.deliveries.clear
     RoutingFilter.active = false # Because this issue: https://github.com/svenfuchs/routing-filter/issues/36
     Sidekiq::Testing.fake!
   end
 
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
 
   %i[controller feature].each do |spec_type|
     config.before(:each, type: spec_type) do

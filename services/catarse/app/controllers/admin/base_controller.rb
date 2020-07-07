@@ -8,7 +8,7 @@ module Admin
   class BaseController < ApplicationController
     inherit_resources
 
-    before_filter do
+    before_action do
       authorize Admin, :access?
     end
 

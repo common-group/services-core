@@ -2,22 +2,22 @@
 
 .w-section
   .w-container
-    = render 'devise/shared/header'     
+    = render 'devise/shared/header'
     #signup.w-row
       .w-col.w-col-6.box-login.w-col-push-3
         .fontweight-semibold.u-text-center.fontsize-large.u-marginbottom-30= t '.titles.header'
         .login-fb
-          = link_to t('.form.inputs.facebook'), user_omniauth_authorize_path(provider: :facebook, locale: nil), class: 'btn btn-medium btn-fb'
+          = link_to t('.form.inputs.facebook'), user_facebook_omniauth_authorize_path(locale: nil), class: 'btn btn-medium btn-fb'
         .separator
           .text.or = t('or')
         .w-form
           = simple_form_for resource, as: resource_name, html: {novalidate: true}, url: sign_up_path  do |form|
             = render 'devise/shared/alert'
-            = form.input :email, as: :email, wrapper_html: { class: 'no-asterisk' }, input_html: { class: 'w-input text-field' }, required: false
+            = form.input :email, as: :email, wrapper_html: { class: 'no-asterisk' }, input_html: { class: 'w-input text-field', autocomplete: 'email' }, required: false
             .u-right
               = form.input_field :show_password, as: :boolean, boolean_style: :inline, class: 'checkbox-fix', checked: false
               label.w-form-label.fontsize-smallest= t('.form.labels.show_password')
-            = form.input :password, as: :password, label: t('.form.labels.password'), input_html: { class: 'w-input text-field' }
+            = form.input :password, as: :password, label: t('.form.labels.password'), input_html: { class: 'w-input text-field', autocomplete: 'new-password' }
             .u-marginbottom-20
               = form.input_field :newsletter, as: :boolean, boolean_style: :inline, class: 'checkbox-fix', checked: false
               label.w-form-label.fontsize-smallest= t('.form.labels.newsletter')

@@ -2,7 +2,8 @@
 
 ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
+
 require 'rspec/rails'
 require 'shoulda/matchers'
 require 'sidekiq/testing'
@@ -23,7 +24,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.include ActionView::Helpers::TextHelper
   config.include FactoryGirl::Syntax::Methods

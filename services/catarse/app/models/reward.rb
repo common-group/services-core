@@ -1,7 +1,7 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-class Reward < ActiveRecord::Base
+class Reward < ApplicationRecord
   include I18n::Alchemy
   include RankedModel
   include ERB::Util

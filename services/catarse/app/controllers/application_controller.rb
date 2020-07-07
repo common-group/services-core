@@ -23,12 +23,12 @@ class ApplicationController < ActionController::Base
   layout 'catarse_bootstrap'
   protect_from_forgery
 
-  before_filter :configure_permitted_parameters, if: :devise_controller?
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   helper_method :referral, :render_projects, :is_projects_home?,
                 :render_feeds, :public_settings
 
-  before_filter :set_locale
+  before_action :set_locale
 
   before_action :force_www
 
@@ -150,9 +150,7 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) do |u|
-      u.permit(:name, :email, :password, :newsletter)
-    end
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[name email password newsletter])
   end
 
   def after_sign_in_path_for(resource)
