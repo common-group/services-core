@@ -1,25 +1,23 @@
-import m from 'mithril';
-import h from '../../../h';
-import { CardEdit } from './card-edit';
-import { ProjectPublishByStepsVM } from '../../../vms/project-publish-by-steps-vm';
-import { ProjectDetails } from '../../../@types/project-details';
-import { DescriptionEdit } from './description-edit';
-import { AskAboutReward } from './ask-about-reward';
-import { RewardsEdit } from './rewards-edit';
-import { UserInfoEdit } from './user-info-edit';
-import { UserInfoEditViewModel } from '../../../vms/user-info-edit-vm';
-import { Todo } from './todo';
-import { Share } from './share';
-import { ShareReminder } from './share-reminder';
+import m from 'mithril'
+import prop from 'mithril/stream'
+import _ from 'underscore'
+import h from '../../../h'
+import { CardEdit } from './card-edit'
+import { ProjectPublishByStepsVM } from '../../../vms/project-publish-by-steps-vm'
+import { DescriptionEdit } from './description-edit'
+import { AskAboutReward } from './ask-about-reward'
+import { RewardsEdit } from './rewards-edit'
+import { UserInfoEdit } from './user-info-edit'
+import { UserInfoEditViewModel } from '../../../vms/user-info-edit-vm'
+import { Todo } from './todo'
+import { Share } from './share'
+import { ShareReminder } from './share-reminder'
+import PopNotification from '../../../c/pop-notification'
+import { ThisWindow, I18ScopeType } from '../../../@types/window'
 
-// '/projects/:id/publish-by-steps/card': wrap({})
-// '/projects/:id/publish/description': 
-// '/projects/:id/publish/ask-about-reward': 
-// '/projects/:id/publish/rewards': 
-// '/projects/:id/publish/user': 
-// '/projects/:id/publish/to-do': 
-// '/projects/:id/publish/share': 
-// '/projects/:id/publish/share-reminder': 
+declare var window : ThisWindow
+
+const I18nScope = _.partial(h.i18nScope, 'activerecord') as (params? : {}) => I18ScopeType;
 
 type ProjectsPublishByStepsAttrs = {
     project_id: number
@@ -28,6 +26,7 @@ type ProjectsPublishByStepsAttrs = {
 type ProjectsPublishByStepsState = {
     projectPublishByStepsVM: ProjectPublishByStepsVM
     userInfoEditVM: UserInfoEditViewModel
+    showPopError: (newData? : boolean) => boolean
 }
 
 type ProjectsPublishByStepsVnode = m.Vnode<ProjectsPublishByStepsAttrs, ProjectsPublishByStepsState>;
@@ -37,14 +36,35 @@ class ProjectsPublishBySteps implements m.Component<ProjectsPublishByStepsAttrs,
     oninit({attrs, state} : ProjectsPublishByStepsVnode) {
         state.projectPublishByStepsVM = new ProjectPublishByStepsVM(attrs.project_id)
         state.userInfoEditVM = new UserInfoEditViewModel(attrs.project_id, h.getUserID())
+        state.showPopError = h.RedrawStream(false)
+
+        state.projectPublishByStepsVM.error.subscribe(error => {
+            h.scrollTop()
+            state.showPopError(true)
+        })
+
+        state.userInfoEditVM.error.subscribe(error => {
+            h.scrollTop()
+            state.showPopError(true)
+        })
     }
 
-    view({ state } : ProjectsPublishByStepsVnode) {
-
+    view({state} : ProjectsPublishByStepsVnode) {
         const projectPublishByStepsVM = state.projectPublishByStepsVM
         const userInfoEditVM = state.userInfoEditVM
+        const showPopError = state.showPopError
+        const errorMessage = window.I18n.t('publish_by_steps_fields_errors', I18nScope())
 
-        
+        return (
+            <>
+                <PopNotification error={true} message={errorMessage} toggleOpt={showPopError} />
+                {this.renderBody({ projectPublishByStepsVM, userInfoEditVM, showPopError })}
+            </>
+        )
+    }
+
+    private renderBody({ projectPublishByStepsVM, userInfoEditVM, showPopError } : ProjectsPublishByStepsState) {
+
         if (projectPublishByStepsVM.isLoadingProject || userInfoEditVM.isLoading) {
             return h.loader()
         } else {
