@@ -6,26 +6,30 @@ import { ProjectDetails } from "../@types/project-details"
 import h from '../h'
 import { RailsErrors } from '../@types/rails-errors'
 import _ from 'underscore'
+import { ThisWindow, I18ScopeType } from '../@types/window'
 
-const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models');
+declare var window : ThisWindow
+
+const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models') as (params : {}) => I18ScopeType;
+
+export type FieldError = {
+    field: string
+    messages: string[]
+}
 
 export class ProjectPublishByStepsVM {
     private _project : ProjectDetails | null
-    private _projectSubject : Subject<ProjectDetails>
     private _isLoadingProject : boolean
     private _isSavingProject : boolean
     private _errors : { [key:string] : string[] }
+    private _errorObserver : Subject<FieldError>
 
     constructor(private project_id : number) {
         this._project = null
         this._isLoadingProject = true
         this._errors = {}
-        this._projectSubject = new Subject<ProjectDetails>()
+        this._errorObserver = new Subject<FieldError>()
         this.init()
-    }
-
-    get projectObservable() : Observable<ProjectDetails> {
-        return this._projectSubject
     }
 
     get project() : ProjectDetails {
@@ -40,14 +44,12 @@ export class ProjectPublishByStepsVM {
             },
             set headline(value) {
                 self._project.headline = value
-                self._projectSubject.next(self._project)
             },
             get headline() {
                 return self._project.headline
             },
             set large_image(value) {
                 self._project.large_image = value
-                self._projectSubject.next(self._project)
             },
             get large_image() {
                 return self._project.large_image
@@ -91,6 +93,10 @@ export class ProjectPublishByStepsVM {
 
     get isSaving() : boolean {
         return this._isSavingProject
+    }
+
+    get error() : Observable<FieldError> {
+        return this._errorObserver
     }
 
     getErrors(field : string) : string[] {
@@ -143,9 +149,23 @@ export class ProjectPublishByStepsVM {
         } catch(e) {
             return false
         } finally {
+            this.tryDispatchErrorDisplay()
             this._isSavingProject = false
             h.redraw()
         }
+    }
+
+    private tryDispatchErrorDisplay() {
+        if (this.hasError()) {
+            for (const field of Object.keys(this._errors)) {
+                this._errorObserver.next({ field, messages: this._errors[field] })
+                return
+            }
+        }
+    }
+
+    private hasError() {
+        return Object.keys(this._errors).length > 0
     }
 
     private async saveFields(fields : string[], requiredFields : string[]) {
@@ -233,7 +253,6 @@ export class ProjectPublishByStepsVM {
 
     private async init() {
         this._project = await this.fetchProject()
-        this._projectSubject.next(this._project)
     }
 
     private async fetchProject() {
@@ -252,9 +271,9 @@ export class ProjectPublishByStepsVM {
 
     private conditionalI18n(path : string, params = {}) {
         if (this._project.mode === 'flex') {
-            return I18n.t(`flexible_project.attributes.${path}`, I18nScope(params))
+            return window.I18n.t(`flexible_project.attributes.${path}`, I18nScope(params))
         } else {
-            return I18n.t(`project.attributes.${path}`, I18nScope(params))
+            return window.I18n.t(`project.attributes.${path}`, I18nScope(params))
         }
     }
 }
