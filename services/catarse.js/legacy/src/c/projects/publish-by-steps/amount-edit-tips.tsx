@@ -14,7 +14,7 @@ export class AmountEditTips implements m.Component {
                 <div class="card card-secondary">
                     <div>
                         <div class="arrow-left"></div>
-                        <img src="https://uploads-ssl.webflow.com/57ba58b4846cc19e60acdd5b/57ba58b4846cc19e60acde14_Screen%20Shot%202015-06-28%20at%2011.51.22%20AM.png" alt="" class="thumb small u-round u-right" />
+                        <img src="https://s3.amazonaws.com/cdn.catarse/assets/rafa.png" alt="" class="thumb small u-round u-right" />
                         <div class="fontsize-smallest">
                             Dicas do Rafa, nosso especialista
                         </div>
