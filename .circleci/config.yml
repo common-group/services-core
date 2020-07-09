@@ -209,6 +209,20 @@ jobs:
           name: Pushing subtress
           command: |
             ./.circleci/subtrees-push.sh
+#
+#  push_subtree_catarsejs:
+#    docker:
+#      - image: alpine
+#    steps:
+#      - run: apk update && apk add git bash git-subtree openssl openssh less
+#      - checkout
+#      - add_ssh_keys
+#      - setup_remote_docker:
+#          version: 17.05.0-ce
+#      - run:
+#          name: Pushing subtress
+#          command: |
+#            ./.circleci/subtrees-push.sh
 
 workflows:
   version: 2
