@@ -206,6 +206,11 @@ jobs:
       - setup_remote_docker:
           version: 17.05.0-ce
       - run:
+        name: configure git globals
+        command: |
+          git config --global user.email "contato@catarse.me"
+          git config --global user.name "Catarse CircleCi"
+      - run:
           name: Pushing subtress
           command: |
             ./.circleci/subtrees-push.sh
