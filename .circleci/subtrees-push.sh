@@ -3,6 +3,9 @@ set -e
 
 #ssh-keyscan -t rsa ${SUBTREE_PUSH_DOMAIN} >> "${HOME}/.ssh/known_hosts"
 
+git config --global user.email $GIT_USER_EMAIL
+git config --global user.name $GIT_USER_NAME
+
 git remote add catarse.js $CATARSE_JS_SUBTREE_REMOTE
 git remote add catarse $CATARSE_SUBTREE_REMOTE
 git remote add common-api $COMMON_API_SUBTREE_REMOTE
