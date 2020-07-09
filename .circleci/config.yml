@@ -235,15 +235,15 @@ workflows:
       - test_services_core_db
       - test_payment_service_lib
       - test_proxy_config
-      - subtree_pushes:
-        #           requires:
-        #             - test_services_core_db
-        #             - test_common_api
-        #             - test_common_models
-        #             - test_catarse
-        #             - test_catarse_js
-        #             - test_payment_service_lib
-        #             - test_proxy_config
-          filters:
-            branches:
-              only: develop
+#- subtree_pushes:
+#  requires:
+#    - test_services_core_db
+#    - test_common_api
+#    - test_common_models
+#    - test_catarse
+#    - test_catarse_js
+#    - test_payment_service_lib
+#    - test_proxy_config
+#    filters:
+#      branches:
+#        only: develop
