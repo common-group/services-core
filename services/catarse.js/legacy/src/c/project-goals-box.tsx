@@ -16,19 +16,19 @@ export type ProjectGoalsBoxState = {
 }
 
 export default class ProjectGoalsBox implements m.Component<ProjectGoalsBoxAttrs> {
-    oninit({ attrs : { goalDetails, subscriptionData }, state } : m.Vnode<ProjectGoalsBoxAttrs, ProjectGoalsBoxState>) {
+    oninit({ attrs: { goalDetails: goalsDetails, subscriptionData }, state } : m.Vnode<ProjectGoalsBoxAttrs, ProjectGoalsBoxState>) {
         const currentGoalIndex = prop(0)
-        const getCurrentGoalIndex = ({amount_paid_for_valid_period} : {amount_paid_for_valid_period : number}) => {
-            if (goalDetails().length > 0) {
-                const index = _.findIndex(goalDetails(), goal => goal.value > amount_paid_for_valid_period)
-                return index >= 0 ? index : (goalDetails().length - 1)
+        const getCurrentGoalIndex = (goalsDetails : GoalDetails[], {amount_paid_for_valid_period} : {amount_paid_for_valid_period : number}) => {
+            if (goalsDetails.length > 0) {
+                const index = _.findIndex(goalsDetails, goal => goal.value > amount_paid_for_valid_period)
+                return index >= 0 ? index : (goalsDetails.length - 1)
             } else {
                 return 0
             }
         }
 
         subscriptionData.map(updatedData => {
-            currentGoalIndex(getCurrentGoalIndex(updatedData))
+            currentGoalIndex(getCurrentGoalIndex(goalsDetails(), updatedData))
         })
 
         currentGoalIndex.map(() => h.redraw())
@@ -36,12 +36,12 @@ export default class ProjectGoalsBox implements m.Component<ProjectGoalsBoxAttrs
         state.currentGoalIndex = currentGoalIndex
     }
 
-    view({ attrs, state } : m.Vnode<ProjectGoalsBoxAttrs, ProjectGoalsBoxState>) {
+    view({ attrs: { goalDetails: goalsDetails, subscriptionData, style }, state } : m.Vnode<ProjectGoalsBoxAttrs, ProjectGoalsBoxState>) {
 
         const goalsDetailsOrEmpty = () : GoalDetails[] => {
-            const hasGoalsDetails = attrs.goalDetails() && attrs.goalDetails().length > 0
+            const hasGoalsDetails = goalsDetails() && goalsDetails().length > 0
             if (hasGoalsDetails) {
-                return attrs.goalDetails()
+                return goalsDetails()
             } else {
                 return [{
                     title: 'N/A',
@@ -64,15 +64,15 @@ export default class ProjectGoalsBox implements m.Component<ProjectGoalsBoxAttrs
             }
         }
 
-        const subscriptionData = attrs.subscriptionData() || { amount_paid_for_valid_period: 0 }
+        const { amount_paid_for_valid_period: amountPaidForValidPeriod } = subscriptionData() || { amount_paid_for_valid_period: 0 }
         const goals = goalsDetailsOrEmpty()
         const viewingGoal = goals[currentGoalIndex()]
-        const goalPercentage = (subscriptionData.amount_paid_for_valid_period / viewingGoal.value) * 100
-        const viewingValueGoal = `R$${subscriptionData.amount_paid_for_valid_period} de R$${viewingGoal.value} por mês`
+        const goalPercentage = (amountPaidForValidPeriod / viewingGoal.value) * 100
+        const viewingValueGoal = `R$${amountPaidForValidPeriod} de R$${viewingGoal.value} por mês`
         
         return (
             <div>
-                <div class={`card u-marginbottom-30 u-radius ${attrs.style ? attrs.style : ''}`}>
+                <div class={`card u-marginbottom-30 u-radius ${style ? style : ''}`}>
                     <div class='w-clearfix'>
                         <div class='u-right'>
                             <button onclick={previousGoal} class={`btn btn-inline btn-small btn-terciary fa fa-angle-left w-button ${currentGoalIndex() === 0 ? 'btn-desactivated' : ''}`}></button>
