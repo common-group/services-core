@@ -38,7 +38,7 @@ const projectGoalsBox = {
         const goalPercentage = (subscriptionData.amount_paid_for_valid_period / goals[currentGoalIndex()].value) * 100;
 
         return m('div',
-          m(`.card.u-marginbottom-30.u-radius${attrs.style}`, [
+          m(`.card.u-marginbottom-30.u-radius ${attrs.style}`, [
               m('.w-clearfix', [
                   m('.u-right', [
                       m('button.btn.btn-inline.btn-small.btn-terciary.fa.fa-angle-left.w-button', { onclick: state.previousGoal, class: currentGoalIndex() === 0 ? 'btn-desactivated' : '' }),
