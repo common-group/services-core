@@ -5,7 +5,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
-import generativeTrust from './../vendor/mithril-generative-trust';
+import generativeTrust from '../vendor/mithril-generative-trust';
 
 function getCallStack() {
     const callStackStr = new Error().stack;
@@ -1311,20 +1311,15 @@ function ObservableRedrawStream(data) {
     return observableStream;
 }
 
-/**
- * @param {T} data
- * @param {(data : T) => void} onUpdate
- * @template T
- */
-function RedrawStream(data, onUpdate = (param) => {}) {
+function RedrawStream<T>(data : T, onUpdate = (param : T) => {}) {
 
-    const _data = prop(data);
+    const _data = prop<T>(data);
 
     /**
      * @param {T} newData
      * @returns {T}
      */
-    function streamAccessor(newData) {
+    function streamAccessor(newData : T) {
         if (newData !== undefined) {
             _data(newData);
             onUpdate(newData);
@@ -1395,6 +1390,10 @@ function attachEventsToHistory(type) {
 
 function isMobile() {
     return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+}
+
+function clamp(value : number, min : number, max : number) : number {
+    return Math.min(Math.max(value, min), max)
 }
 
 /**
@@ -1513,4 +1512,5 @@ export default {
     titleCase,
     buildCreditCard,
     isMobile,
+    clamp,
 };
