@@ -84,8 +84,7 @@ jobs:
 
   test_catarse:
     docker:
-      #- image: circleci/ruby:2.4.9-stretch-node-browsers
-      - image: ruby:2.4.9-alpine3.10
+      - image: circleci/ruby:2.7.1
       - image: postgres:11.5
         environment:
           POSTGRES_DB: catarse_test
@@ -94,26 +93,21 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
-          #- run: |
-          #    sudo tee /etc/apt/sources.list.d/pgdg.list <<END 
-          #      deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
-          #    END
-          #- run: sudo wget https://www.postgresql.org/media/keys/ACCC4CF8.asc && sudo apt-key add ACCC4CF8.asc
-          #- run: sudo apt update
-          #- run: sudo apt install postgresql-client-11
-      - run: 
+      - run:
           name: Run deps install
           command: |
             set ex && \
-            apk update && \
-            apk upgrade && \
-            apk --update add --virtual build_deps postgresql-dev libxml2-dev libxslt-dev imagemagick imagemagick-dev openssl libpq libffi-dev bash curl-dev libstdc++ tzdata bash ca-certificates build-base ruby-dev libc-dev linux-headers postgresql-client postgresql git && \
-            apk --update add ruby ruby-io-console ruby-bundler ruby-irb ruby-bigdecimal ruby-json nodejs nodejs-npm zlib-dev yaml-dev readline-dev ruby-dev ncurses
+            sudo apt update && \
+            sudo apt upgrade && \
+            sudo apt install imagemagick openssl bash tzdata ca-certificates libpq-dev postgresql-client && \
+            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && \
+            sudo apt install -y nodejs
       - run:
           name: Run catarse installs
           command: |
             set -ex \
             && cd services/catarse \
+            && gem install bundler:2.1.4 \
             && bundle install \
             && npm install
       - run:
@@ -209,7 +203,7 @@ jobs:
     docker:
       - image: alpine
     steps:
-      - run: apk update && apk add git bash git-subtree openssl openssh
+      - run: apk update && apk add git bash git-subtree openssl openssh less
       - checkout
       - add_ssh_keys
       - setup_remote_docker:
@@ -218,6 +212,20 @@ jobs:
           name: Pushing subtress
           command: |
             ./.circleci/subtrees-push.sh
+#
+#  push_subtree_catarsejs:
+#    docker:
+#      - image: alpine
+#    steps:
+#      - run: apk update && apk add git bash git-subtree openssl openssh less
+#      - checkout
+#      - add_ssh_keys
+#      - setup_remote_docker:
+#          version: 17.05.0-ce
+#      - run:
+#          name: Pushing subtress
+#          command: |
+#            ./.circleci/subtrees-push.sh
 
 workflows:
   version: 2
@@ -230,15 +238,15 @@ workflows:
       - test_services_core_db
       - test_payment_service_lib
       - test_proxy_config
-#      - subtree_pushes:
-#          requires:
-#            - test_services_core_db
-#            - test_common_api
-#            - test_common_models
-#            - test_catarse
-#            - test_catarse_js
-#            - test_payment_service_lib
-#            - test_proxy_config
-#          filters:
-#            branches:
-#              only: develop
+#- subtree_pushes:
+#  requires:
+#    - test_services_core_db
+#    - test_common_api
+#    - test_common_models
+#    - test_catarse
+#    - test_catarse_js
+#    - test_payment_service_lib
+#    - test_proxy_config
+#    filters:
+#      branches:
+#        only: develop

@@ -103,7 +103,6 @@ export function wrap(component, customAttr) {
             try {
                 return m('div#app', {key}, [
                     m(c.root.Menu, state.attr),
-                    h.getUserID() ? m(c.root.CheckEmail, state.attr) : '',
                     m(component, state.attr),
                     state.attr.hideFooter ? '' : m(c.root.Footer, state.attr),
                 ]);

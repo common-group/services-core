@@ -41,6 +41,7 @@ const fetchSubData = projectUuid => {
                 returning_percent: 0,
             }
         );
+        h.redraw();
     });
 };
 
@@ -59,6 +60,14 @@ const setProject = project_user_id => data => {
 
 const init = (project_id, project_user_id) => {
     vm.project_id(project_id);
+
+    subscriptionData({
+        amount_paid_for_valid_period: 0,
+        total_subscriptions: 0,
+        total_subscribers: 0,
+        new_percent: 0,
+        returning_percent: 0,
+    });
 
     const lProject = catarse.loaderWithToken(models.projectDetail.getRowOptions(vm.parameters()));
 

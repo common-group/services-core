@@ -12,15 +12,7 @@ const importMissingPayables = async (dbclient) => {
     const pagarmeClient = await gatewayClient();
 
     R.forEach(async (catalogPayment) => {
-      try {
-        const transaction = await pagarmeClient.transactions.find({ id: catalogPayment.gateway_id })
-        const payables = await pagarmeClient.payables.find({ transactionId: catalogPayment.gateway_id });
-        await dalCtx.buildGatewayGeneralDataOnPayment(catalogPayment.id, transaction, payables)
-      } catch (e) {
-        handleError(e)
-        console.log(e)
-        console.log(e.response)
-      }
+      importMissingPayablesForSingleCatalogPayment(catalogPayment, pagarmeClient, dalCtx);
     }, catalogPayments.rows);
   } catch (e) {
     handleError(e)
@@ -33,6 +25,20 @@ const gatewayClient = async () => {
   return await pagarme.client.connect({api_key: process.env.GATEWAY_API_KEY});
 };
 
+const importMissingPayablesForSingleCatalogPayment = async (catalogPayment, pagarmeClient, dalCtx) => {
+  try {
+    console.log('###########', 'importing missing payables for transaction_id:', catalogPayment.gateway_id, '##############')
+    const transaction = await pagarmeClient.transactions.find({ id: catalogPayment.gateway_id })
+    const payables = await pagarmeClient.payables.find({ transactionId: catalogPayment.gateway_id });
+    await dalCtx.buildGatewayGeneralDataOnPayment(catalogPayment.id, transaction, payables)
+  } catch (e) {
+    handleError(e)
+    console.log(e)
+    console.log(e.response)
+  }
+}
+
 module.exports = {
-  importMissingPayables
+  importMissingPayables,
+  importMissingPayablesForSingleCatalogPayment
 }

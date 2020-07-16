@@ -4,8 +4,16 @@ import h from '../h'
 import userVM from './user-vm'
 import { RailsErrors } from '../@types/rails-errors'
 import _ from 'underscore'
+import { Subject, Observable } from 'rxjs'
+import { ThisWindow, I18ScopeType } from '../@types/window'
 
-const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models');
+declare var window : ThisWindow
+const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models') as (params? : {}) => I18ScopeType;
+
+export type FieldError = {
+    field: string
+    messages: string[]
+}
 
 type PublicProfileImageResponse = {
     cover_image: string | null
@@ -18,11 +26,13 @@ export class UserInfoEditViewModel {
     private _isSaving : boolean
     private _user : UserDetails
     private _errors : { [field:string] : string[] }
+    private _errorObserver : Subject<FieldError>
 
     constructor(private project_id : number, private user_id : number) {
         this._isLoading = true
         this._isSaving = false
         this._errors = {}
+        this._errorObserver = new Subject<FieldError>()
         this.fetchUser()
     }
 
@@ -38,6 +48,10 @@ export class UserInfoEditViewModel {
         return this._user
     }
 
+    get error() : Observable<FieldError> {
+        return this._errorObserver
+    }
+    
     getErrors(field : string) : string[] {
         return this._errors[field] || []
     }
@@ -98,9 +112,23 @@ export class UserInfoEditViewModel {
             this.mapRailsErrors(e as RailsErrors)
             return false
         } finally {
+            this.tryDispatchErrorDisplay()
             this._isSaving = false
             h.redraw()
         }
+    }
+
+    private tryDispatchErrorDisplay() {
+        if (this.hasError()) {
+            for (const field of Object.keys(this._errors)) {
+                this._errorObserver.next({ field, messages: this._errors[field] })
+                return
+            }
+        }
+    }
+
+    private hasError() {
+        return Object.keys(this._errors).length > 0
     }
 
     private async uploadImage(profileImage : File) {
@@ -224,7 +252,7 @@ export class UserInfoEditViewModel {
     }
 
     private blankError(field : string) {
-        return I18n.t(`user.attributes.${field}.blank`, I18nScope())
+        return window.I18n.t(`user.attributes.${field}.blank`, I18nScope())
     }
 
 }

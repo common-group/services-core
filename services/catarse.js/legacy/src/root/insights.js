@@ -77,7 +77,7 @@ const insights = {
             project.user.name = project.user.name || 'Realizador';
         }
 
-        return m('.project-insights.u-text-center', state.isProjectNotLoader() ? h.loader() : (
+        return m('.project-insights', state.isProjectNotLoader() ? h.loader() : (
             project.mode === 'sub' ?
                 (
                     state.load() ?

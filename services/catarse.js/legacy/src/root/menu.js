@@ -1,7 +1,7 @@
 import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
-import menuSearch from '../c/menu-search';
+import HeaderMenuSearch from '../c/header-menu-search';
 import menuProfile from '../c/menu-profile';
 import models from '../models';
 import { catarse } from '../api';
@@ -12,7 +12,7 @@ const menu = {
     oninit: function(vnode) {
         const exploreButtonBehavoir = h.RedrawStream((/** @type {Event} */ event) => {
             event.preventDefault();
-            m.route.set('/explore?ref=ctrse_header&utm_source=catarse&utm_medium=ctrse_header&utm_campaign=testeAB_original');
+            m.route.set('/explore?ref=ctrse_header&filter=all');
         });
         const displayLightBox = h.RedrawStream(false);
         const user = h.getUser();
@@ -77,7 +77,7 @@ const menu = {
                             m(`a.w-hidden-small.w-hidden-tiny.header-link.w-nav-link[href=\'/${window.I18n.locale}/explore?ref=ctrse_header\']`, { onclick: exploreButtonBehavoir() }, 
                                 'Explore'
                             ),
-                            m(menuSearch)
+                            m(HeaderMenuSearch)
                         ])
                     ]
                 ),
