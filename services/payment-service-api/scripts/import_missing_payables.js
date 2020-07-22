@@ -13,9 +13,8 @@ const importMissingPayables = async (dbclient) => {
 
     R.forEach(async (catalogPayment) => {
       if (catalogPayment.gateway_id) {
-        setTimeout(async () => {
-          await importMissingPayablesForSingleCatalogPayment(catalogPayment, pagarmeClient, dalCtx);
-        }, 1000);
+        await importMissingPayablesForSingleCatalogPayment(catalogPayment, pagarmeClient, dalCtx);
+        await sleep(1000);
       }
     }, catalogPayments.rows);
   } catch (e) {
@@ -36,12 +35,20 @@ const importMissingPayablesForSingleCatalogPayment = async (catalogPayment, paga
     console.log('transaction', transaction);
     const payables = await pagarmeClient.payables.find({ transactionId: catalogPayment.gateway_id });
     console.log('payables', payables);
+
+    await dalCtx.updateGatewayDataOnPayment(catalogPayment.id, { transaction, payables })
     await dalCtx.buildGatewayGeneralDataOnPayment(catalogPayment.id, transaction, payables)
   } catch (e) {
     console.log(e)
     console.log(e.response)
     handleError(e)
   }
+}
+
+const sleep = async (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 module.exports = {
