@@ -12,12 +12,16 @@ const importMissingPayables = async (dbclient) => {
     const pagarmeClient = await gatewayClient();
 
     R.forEach(async (catalogPayment) => {
-      importMissingPayablesForSingleCatalogPayment(catalogPayment, pagarmeClient, dalCtx);
+      if (catalogPayment.gateway_id) {
+        setTimeout(async () => {
+          await importMissingPayablesForSingleCatalogPayment(catalogPayment, pagarmeClient, dalCtx);
+        }, 1000);
+      }
     }, catalogPayments.rows);
   } catch (e) {
-    handleError(e)
     console.log(e)
     console.log(e.response)
+    handleError(e)
   }
 };
 
@@ -29,12 +33,14 @@ const importMissingPayablesForSingleCatalogPayment = async (catalogPayment, paga
   try {
     console.log('###########', 'importing missing payables for transaction_id:', catalogPayment.gateway_id, '##############')
     const transaction = await pagarmeClient.transactions.find({ id: catalogPayment.gateway_id })
+    console.log('transaction', transaction);
     const payables = await pagarmeClient.payables.find({ transactionId: catalogPayment.gateway_id });
+    console.log('payables', payables);
     await dalCtx.buildGatewayGeneralDataOnPayment(catalogPayment.id, transaction, payables)
   } catch (e) {
-    handleError(e)
     console.log(e)
     console.log(e.response)
+    handleError(e)
   }
 }
 

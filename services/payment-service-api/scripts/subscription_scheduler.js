@@ -166,7 +166,7 @@ const recursive_calls = () => {
             console.log('Importing missing payables')
             const client = await pool.connect();
             importMissingPayables(client)
-        }, 3600000) // 1 HOUR
+        }, 420000) // 7 minutes
     }
 
     rec_charge();
