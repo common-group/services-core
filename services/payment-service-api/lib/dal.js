@@ -328,10 +328,13 @@ const generateDalContext = (client) => {
             FROM
                 payment_service.catalog_payments cp
             WHERE
-                jsonb_array_length(COALESCE(gateway_general_data ->> 'payables', '[]')::jsonb) = 0
-                AND status IN ('paid', 'chargedback', 'refunded')
+                status IN ('paid')
+                AND created_at::date >= '2020-01-01'::date
+                AND jsonb_array_length(COALESCE(gateway_general_data ->> 'payables', '[]')::jsonb) = 0
             ORDER BY
                 created_at DESC
+            LIMIT
+                100
         `
 
         return await client.query(query)
