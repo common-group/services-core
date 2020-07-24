@@ -166,7 +166,7 @@ const recursive_calls = () => {
             try {
                 console.log('Importing missing payables')
                 const client = await pool.connect();
-                importMissingPayables(client).finally(() => { missingPayables() })
+                importMissingPayables(client).then(() => { missingPayables() })
             } catch (e) {
                 handleError(e);
                 console.log(e);
