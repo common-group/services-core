@@ -2,9 +2,7 @@
 'use strict';
 
 const { Pool } = require('pg');
-const pagarme = require('pagarme');
 const { handleError } = require('../lib/error_handling');
-const { importMissingPayables } = require('./import_missing_payables')
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -161,19 +159,6 @@ const recursive_calls = () => {
         }, (process.env.SET_INTERVAL || 60000));
     };
 
-    const missingPayables = () => {
-        setTimeout(async () => {
-            try {
-                console.log('Importing missing payables')
-                const client = await pool.connect();
-                importMissingPayables(client).then(() => { missingPayables() })
-            } catch (e) {
-                handleError(e);
-                console.log(e);
-            }
-        }, 300000) // 5 minutes
-    }
-
     rec_charge();
     rec_errors_charge();
     refuse_expired();
@@ -181,7 +166,6 @@ const recursive_calls = () => {
     inactive_invalid_subs();
     notify_expiring();
     recharge_or_inactive_card_subscriptions();
-    missingPayables();
 };
 
 recursive_calls();

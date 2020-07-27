@@ -334,7 +334,7 @@ const generateDalContext = (client) => {
             ORDER BY
                 created_at DESC
             LIMIT
-                100
+                400
         `
 
         return await client.query(query)
