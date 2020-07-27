@@ -60,6 +60,12 @@ const pool = new Pool({
 });
 
 pool.connect()
-  .then(async (client) => { await importMissingPayables(client) })
-  .catch((e) => { console.log('error', e) })
-  .finally(() => { process.exit() })
+  .then(async (client) => {
+    try {
+      await importMissingPayables(client)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      process.exit()
+    }
+  })
