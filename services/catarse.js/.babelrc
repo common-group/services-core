@@ -1,6 +1,15 @@
 {
   "presets": [
-    "@babel/preset-typescript",
+    [
+      "@babel/preset-typescript",
+      {
+        "allowDeclareFields" : true,
+        "typeRoots": [
+          "./legacy/spec/@types",
+          "./legacy/src/@types"
+        ]
+      }
+    ],
     [
       "@babel/preset-env",
       {
@@ -13,6 +22,17 @@
     ]
   ],
   "plugins": [
+    [
+      "babel-plugin-root-import",
+      {
+        "paths" : [
+          {
+            "rootPathSuffix": "./legacy/src/",
+            "rootPathPrefix": "@/"
+          }
+        ]
+      }
+    ],
     "@babel/plugin-transform-typescript",
     [
       "@babel/plugin-transform-react-jsx",

@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { ProjectDetails } from '../../../@types/project-details'
+import { ProjectDetails } from '../../../entities/project-details'
 
 export type ShareReminderAttrs = {
     project: ProjectDetails

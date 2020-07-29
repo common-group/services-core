@@ -18,6 +18,7 @@ const I18nScope = _.partial(h.i18nScope, 'users.edit.settings_tab');
 
 const userSettings = {
     oninit: function(vnode) {
+        const reloadUserData = vnode.attrs.reloadUserData
         let parsedErrors = userSettingsVM.mapRailsErrors(railsErrorsVM.railsErrors());
         let deleteFormSubmit;
         const user = vnode.attrs.user();
@@ -85,6 +86,7 @@ const userSettings = {
                         showSuccess.toggle();
                     }
                     railsErrorsVM.validatePublish();
+                    reloadUserData();
                     requestRedraw();
                 }).catch((err) => {
                     if (parsedErrors) {

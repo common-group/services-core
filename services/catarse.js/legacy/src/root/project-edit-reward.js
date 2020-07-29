@@ -3,7 +3,7 @@ import prop from 'mithril/stream';
 import _ from 'underscore';
 import h from '../h';
 import popNotification from '../c/pop-notification';
-import { RewardsEditList } from '../c/projects/edit/rewards-edit-list';
+import { RewardsEditList } from './projects/edit/rewards-edit-list';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 
