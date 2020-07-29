@@ -5,7 +5,7 @@ import m from 'mithril'
 import prop from 'mithril/stream'
 import mq from 'mithril-query'
 import _ from 'underscore'
-import { GoalDetails } from '../../src/@types/goal-details'
+import { GoalDetails } from '../../src/entities/goal-details'
 import ProjectGoalsBox from '../../src/c/project-goals-box'
 
 

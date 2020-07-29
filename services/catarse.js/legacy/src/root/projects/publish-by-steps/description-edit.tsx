@@ -1,15 +1,15 @@
 import m from 'mithril'
 import h from '../../../h'
-import { ProjectDetails } from '../../../@types/project-details'
-import { DescriptionEditTips } from '../../../c/projects/publish-by-steps/description-edit-tips'
+import { ProjectDetails } from '@/entities/project-details'
+import { DescriptionEditTips } from './description-edit-tips'
 import { InputCurrency } from '../../../c/std/input-currency'
 import { InlineErrors } from '../../../c/inline-errors'
 import { TextareaHtmlEditor } from '../../../c/std/textarea-html-editor'
 import { InputFindLocation } from '../../../c/std/input-find-location'
-import { City } from '../../../@types/city'
-import { PreviewProjectPage } from '../../../c/projects/publish-by-steps/preview-project-page'
-import { InputPermalink } from '../../../c/projects/publish-by-steps/input-permalink'
-import { AmountEditTips } from '../../../c/projects/publish-by-steps/amount-edit-tips'
+import { City } from '../../../entities/city'
+import { PreviewProjectPage } from './preview-project-page'
+import { InputPermalink } from './input-permalink'
+import { AmountEditTips } from './amount-edit-tips'
 
 
 export type DescriptionEditAttrs = {

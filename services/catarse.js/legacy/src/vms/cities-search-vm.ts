@@ -1,9 +1,9 @@
 import _ from 'underscore'
 import { catarse } from '../api'
 import models from '../models'
-import { City } from '../@types/city'
-import { State } from '../@types/state'
-import { CityState } from '../@types/city-state'
+import { City } from '../entities/city'
+import { State } from '../entities/state'
+import { CityState } from '../entities/city-state'
 
 type ExtendedWindow = {
     replaceDiacritics(inputText : string): string;

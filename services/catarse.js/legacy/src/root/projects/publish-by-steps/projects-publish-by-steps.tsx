@@ -13,7 +13,7 @@ import { Todo } from './todo'
 import { Share } from './share'
 import { ShareReminder } from './share-reminder'
 import PopNotification from '../../../c/pop-notification'
-import { ThisWindow, I18ScopeType } from '../../../@types/window'
+import { ThisWindow, I18ScopeType } from '../../../entities/window'
 
 declare var window : ThisWindow
 
