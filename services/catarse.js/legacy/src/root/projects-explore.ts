@@ -10,7 +10,7 @@ import m from 'mithril';
 import _ from 'underscore';
 import h from '../h';
 import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
-import { CityState } from '../@types/city-state'
+import { CityState } from '../entities/city-state'
 import { Category, Filter, ProjectsExploreViewModel, ProjectsExploreVMSearchParams } from '../vms/projects-explore-vm';
 import { ExploreSearchFilterSelect } from '../c/explore/explore-search-filter-select';
 import { ExploreFilterSelect } from '../c/explore/explore-filter-select';
@@ -20,7 +20,7 @@ import { ProjectsExplorerFooter } from '../c/projects-explore-footer';
 import { ProjectsExploreLoadMoreButton } from '../c/projects-explore-load-more-button';
 import { defineDeepObject } from '../utils/deep-object-operators';
 import { ExploreSearchParam } from '../c/explore/explore-search-param';
-import { ThisWindow } from '../@types/window';
+import { ThisWindow } from '../entities/window';
 import ExploreMobileSearch from '../c/explore/explore-mobile-search';
 
 declare var window : ThisWindow
