@@ -1,6 +1,6 @@
 import m, { VnodeDOM } from 'mithril'
-import { ProjectCardSimple } from '../../../c/projects/publish-by-steps/project-card-simple'
-import { ProjectDetails } from '../../../@types/project-details'
+import { ProjectCardSimple } from './project-card-simple'
+import { ProjectDetails } from '@/entities/project-details'
 import h from '../../../h'
 import InlineError from '../../../c/inline-error'
 import { InlineErrors } from '../../../c/inline-errors'

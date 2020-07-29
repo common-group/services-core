@@ -2,7 +2,7 @@ import m from 'mithril'
 import prop from 'mithril/stream'
 import _ from 'underscore'
 import h from '../h'
-import { GoalDetails } from '../@types/goal-details'
+import { GoalDetails } from '../entities/goal-details'
 
 export type ProjectGoalsBoxAttrs = {
     subscriptionData: prop<{ amount_paid_for_valid_period : number }>
