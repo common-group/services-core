@@ -17,10 +17,10 @@ const projectRowWithHeader = {
             ),
             collectionHeaderComponent = (
                 (!_.isUndefined(collection.title) || !_.isUndefined(collection.hash)) ?
-                    m('.u-marginbottom-40.u-text-center-small-only', [
+                    m('.u-marginbottom-30.u-text-center-small-only', [
                         m('div', _.map(collection.badges, badge => m(`img[src="/assets/catarse_bootstrap/${badge}.png"][width='105']`))),
                         m('.w-row', [
-                            m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title}`)),
+                            m('.w-col.w-col-8', m('.fontsize-larger', `${title}`)),
                             m('.w-col.w-col-4', [
                                 m(`a.btn.btn-small.btn-terciary.btn-inline.u-right-big-only[href="/explore?ref=${ref}&${m.buildQueryString(collection.query)}"]`,
                                     {
