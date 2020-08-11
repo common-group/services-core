@@ -16,11 +16,11 @@ export const HomeBannerSlide = {
                 m('.w-row', [
                     m('.w-col.w-col-8.w-col-push-2', 
                         m('.w-container.u-text-center', [
-                            m('.w-row.u-marginbottom-40', [
-                                m('h1.fontcolor-negative.fontsize-megajumbo.u-marginbottom-20', m.trust(slide.title)),
-                                m('h2.fontcolor-negative.fontsize-large', m.trust(slide.subtitle))
+                            m('.w-row.u-marginbottom-20', [
+                                m('h1.hero-home-title', m.trust(slide.title)),
+                                m('h2.hero-home-subtitle', m.trust(slide.subtitle))
                             ]),
-                            m('a.btn.btn-large.u-marginbottom-10.btn-inline', { href: slide.link }, slide.cta)
+                            m('a.btn.btn-large.btn-inline', { href: slide.link }, slide.cta)
                         ])
                     )
                 ])

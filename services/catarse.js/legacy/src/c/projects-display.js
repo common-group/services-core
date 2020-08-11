@@ -24,7 +24,7 @@ const projectsDisplay = {
             sample3 = _.partial(_.sample, _, 3),
             loader = catarse.loaderWithToken,
             project = models.project,
-            subHomeWith6CollectionsFilters = ['covid_19', 'projects_we_love_not_sub', 'sub', 'contributed_by_friends'],
+            subHomeWith6CollectionsFilters = ['projects_we_love_not_sub', 'sub', 'covid_19', 'contributed_by_friends'],
             windowEventNOTDispatched = true;
 
         project.pageSize(20);
