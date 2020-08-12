@@ -12,7 +12,7 @@ export const HomeBannerSlide = {
         return m(`.slide.w-slide.${slideClass}`, {
             style: `${sliderTransitionStyle} background-image: url(${slide.image});`
         }, [
-            m('hero-home-wrapper', [ 
+            m('hero-slide-wrapper', [ 
                 m('w-container.u-text-center', [
                     m('w-row.u-marginbottom-20', [
                         m('w-col.w-col-8.w-col-push-2', [
