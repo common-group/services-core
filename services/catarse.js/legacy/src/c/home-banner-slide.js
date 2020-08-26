@@ -18,7 +18,7 @@ export const HomeBannerSlide = {
                         m('.w-col.w-col-8.w-col-push-2', [
                             m('h1.hero-home-title', m.trust(slide.title)),
                             m('h2.hero-home-subtitle.u-marginbottom-20', m.trust(slide.subtitle)),
-                            m('a.btn.btn-large.btn-inline', { href: slide.link }, slide.cta)
+                            m('a.btn.btn-medium.btn-inline', { href: slide.link }, slide.cta)
                         ])
                     ])
                 ])
