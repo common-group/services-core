@@ -1035,6 +1035,8 @@ const _dataCache = {},
         imageGetJson: '/redactor_rails/pictures',
         path: '/assets/redactor-rails',
         css: 'style.css',
+        clipboardUpload: false,
+        clipboardUploadUrl: false,
     }),
     setRedactor = (
         prop,
