@@ -26,12 +26,21 @@ export async function searchCitiesGroupedByState(inputText: string) : Promise<Ci
 export async function searchCities(inputText : string) : Promise<City[]> {
     
     const filters = catarse.filtersVM({
-        search_index: 'ilike'
-    }).order({ name: 'asc' });
+        explore_search_index: 'or'
+    }).order({ name: 'asc' })
 
-    filters.search_index(replaceDiacritics(inputText));
+    const searchTextWithoutDiacritics = replaceDiacritics(inputText)
 
-    return await models.city.getPage(filters.parameters());
+    filters.explore_search_index({
+        state_name: {
+            'ilike': `*${searchTextWithoutDiacritics}*`
+        },
+        search_index:  {
+            'ilike': `*${searchTextWithoutDiacritics}*`
+        }
+    })
+
+    return await models.city.getPage(filters.parameters())
 }
 
 export async function getCityById(city_id : number) : Promise<City> {
