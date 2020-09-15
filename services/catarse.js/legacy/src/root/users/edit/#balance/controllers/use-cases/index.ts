@@ -11,44 +11,46 @@ import { LoadUserBalanceTransactions, createUserBalanceTransactionLoader } from 
 import { LoadUserWithdrawRequestHistory, createUserWithdrawRequestHistoryLoader } from './load-user-withdraw-request-history'
 import { WithdrawFunds, createWithdrawRequest } from './withdraw-funds'
 
-export { WithdrawFunds } from './withdraw-funds'
-export { LoadUserBankAccount } from './load-user-bank-account'
-export { LoadBanks } from './load-banks'
-export { UpdateUserBankAccount } from './update-user-bank-account'
-export { LoadUserBalance } from './load-user-balance'
-export { LoadUserBalanceTransactions } from './load-user-balance-transactions'
-export { LoadUserWithdrawRequestHistory } from './load-user-withdraw-request-history'
+export type {
+    WithdrawFunds,
+    LoadUserBankAccount,
+    LoadBanks,
+    UpdateUserBankAccount,
+    LoadUserBalance,
+    LoadUserBalanceTransactions,
+    LoadUserWithdrawRequestHistory,
+}
 
-export const withdrawFunds : WithdrawFunds = createWithdrawRequest({
+export const withdrawFunds = createWithdrawRequest({
     api: catarse,
     balanceTransfer: models.balanceTransfer,
 })
-export const loadUserBankAccount : LoadUserBankAccount = createUserBankAccountLoader({ 
+export const loadUserBankAccount = createUserBankAccountLoader({ 
     api: catarse, 
     bankAccount: models.bankAccount, 
     redraw: h.redraw,
     filter: filterFactory(),
 })
-export const loadBanks : LoadBanks = createBanksLoader({
+export const loadBanks = createBanksLoader({
     loadBanks: () => catarse.loader(models.bank.getPageOptions()).load(),
     redraw: h.redraw
 })
-export const updateUserBankAccount : UpdateUserBankAccount = createUserBankAccountUpdater({
+export const updateUserBankAccount = createUserBankAccountUpdater({
     httpPutRequest,
     redraw: h.redraw
 })
-export const loadUserBalance : LoadUserBalance = createUserBalanceLoader({
+export const loadUserBalance = createUserBalanceLoader({
     filter: filterFactory(),
     balance: models.balance,
     redraw: h.redraw
 })
-export const loadUserBalanceTransactions : LoadUserBalanceTransactions = createUserBalanceTransactionLoader({
+export const loadUserBalanceTransactions = createUserBalanceTransactionLoader({
     api: catarse,
     filter: filterFactory(),
     model: models.balanceTransaction,
     redraw: h.redraw
 })
-export const loadUserWithdrawHistory : LoadUserWithdrawRequestHistory = createUserWithdrawRequestHistoryLoader({
+export const loadUserWithdrawHistory = createUserWithdrawRequestHistoryLoader({
     api: catarse,
     filter: filterFactory(),
     userBalanceTransfers: models.userBalanceTransfers,

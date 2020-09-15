@@ -10,10 +10,24 @@ module Transfeera
         
             email_contact = CatarseSettings[:email_contact]
             access_token = authorization_data['access_token']
-            validation_response = request_validation(email_contact, access_token, account_to_validate)
-            validation = validation_response['_validation']
-            
-            map_to_catarse_bank_account_model validation
+
+            begin
+                validation_response = request_validation(email_contact, access_token, account_to_validate)
+                validation = validation_response['_validation']
+                
+                map_to_catarse_bank_account_model validation
+            rescue StandardError => e
+                Raven.capture_exception(e, level: 'fatal')
+                {
+                    valid: false,
+                    errors: [
+                        {
+                            field: :validation_error,
+                            message: I18n.t('bank_accounts.edit.validation_error')
+                        }
+                    ]
+                }
+            end
         end
 
         private
@@ -35,6 +49,17 @@ module Transfeera
                 account_type: account_type,
                 integration_id: ''
             }
+        end
+
+        def self.request_validation(email_contact, access_token, account_to_validate)
+            contacerta_url = CatarseSettings[:transfeera_contacerta_url]
+            validate_url = "#{contacerta_url}/validate?type=BASICA"
+            headers = {
+                'Authorization' => access_token,
+                'User-Agent' => "Company (#{email_contact})",
+                'Content-Type' => 'application/json'
+            }
+            JSON.parse(Net::HTTP.post(URI(validate_url), account_to_validate.to_json, headers).body).to_h
         end
         
         def self.map_to_catarse_bank_account_model(validation)
@@ -61,15 +86,5 @@ module Transfeera
             }
         end
 
-        def self.request_validation(email_contact, access_token, account_to_validate)
-            contacerta_url = CatarseSettings[:transfeera_contacerta_url]
-            validate_url = "#{contacerta_url}/validate?type=BASICA"
-            headers = {
-                'Authorization' => access_token,
-                'User-Agent' => "Company (#{email_contact})",
-                'Content-Type' => 'application/json'
-            }
-            JSON.parse(Net::HTTP.post(URI(validate_url), account_to_validate.to_json, headers).body).to_h
-        end
     end
 end

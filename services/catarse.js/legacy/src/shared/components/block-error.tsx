@@ -2,8 +2,8 @@ import { Children } from 'mithril'
 import { withHooks } from 'mithril-hooks'
 
 export type BlockErrorProps = {
-    className: string
-    style: string
+    className?: string
+    style?: string
 } & { children?: Children }
 
 export const BlockError = withHooks<BlockErrorProps>(_BlockError)

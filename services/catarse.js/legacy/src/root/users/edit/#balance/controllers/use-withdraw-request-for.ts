@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useLayoutEffect } from 'mithril-hooks'
+import { useState, useEffect, useMemo, useLayoutEffect, MithrilHooks } from 'mithril-hooks'
 import { BankAccount, Bank, UserId } from './use-cases/entities'
 import { ErrorsViewModel, FieldMapper } from '../../../../../shared/services'
 import { LoadBanks, LoadUserBankAccount, UpdateUserBankAccount, WithdrawFunds } from './use-cases'
@@ -24,11 +24,28 @@ const FieldMapperBankAccount : FieldMapper = {
     }
 }
 
-export function useWithdrawRequestFor(user : UserId, deps : UseWithdrawRequestForDependencies) {
+const EmptyBankAccount : BankAccount = {
+    account: '',
+    account_digit: '',
+    account_type: 'conta_corrente',
+    agency: '',
+    agency_digit: '',
+    bank_code: '',
+    bank_id: null,
+    bank_account_id: null,
+    bank_name: '',
+    created_at: null,
+    owner_document: '',
+    owner_name: '',
+    updated_at: null,
+    user_id: null,
+}
+
+export function useWithdrawRequestFor(user : UserId, deps : UseWithdrawRequestForDependencies) : UseWithdrawRequestForReturn {
 
     const errorsVM = useMemo(() => new ErrorsViewModel(FieldMapperBankAccount), [])
     const [ banks, setBanks ] = useState<Bank[]>([])
-    const [ bankAccount, setBankAccount ] = useState<BankAccount>({ account_type: 'conta_corrente' } as BankAccount)
+    const [ bankAccount, setBankAccount ] = useState<BankAccount>(EmptyBankAccount)
     const [ manualBankCode, setManualBankCode ] = useState('')
     const [ isLoading, setIsLoading ] = useState(true)
     const [ stage, setStage ] = useState(WithdrawRequestStage.FILL_FORM)
@@ -68,7 +85,7 @@ export function useWithdrawRequestFor(user : UserId, deps : UseWithdrawRequestFo
 
     useEffect(() => {
         setStage(WithdrawRequestStage.FILL_FORM)
-        const bankAccountLoader = async () => setBankAccount(await deps.loadUserBankAccount(user))
+        const bankAccountLoader = async () => setBankAccount((await deps.loadUserBankAccount(user)) || EmptyBankAccount)
         const banksLoader = async () => setBanks(await deps.loadBanks())
         
         const banksAndAccount = async () => {
@@ -99,4 +116,18 @@ export function useWithdrawRequestFor(user : UserId, deps : UseWithdrawRequestFo
             setStage(WithdrawRequestStage.FILL_FORM)
         }
     }
+}
+
+export type UseWithdrawRequestForReturn = {
+    stage: WithdrawRequestStage
+    isLoading: boolean
+    bankAccountUpdate(): Promise<void>
+    withdraw(): Promise<void>
+    banks: Bank[]
+    manualBankCode: string
+    setManualBankCode: (value: MithrilHooks.ValueOrFn<string>) => void
+    bankAccount: BankAccount
+    setBankAccount: (value: MithrilHooks.ValueOrFn<BankAccount>) => void
+    getErrors: (field: string) => string[]
+    goBackToForm(): void
 }
