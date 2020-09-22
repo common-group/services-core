@@ -20,7 +20,7 @@ export function createUserBalanceLoader(params : BuildParams) : LoadUserBalance 
         } = params
         
         const defaultBalance : Balance = {
-            user_id: user.id,
+            user_id: Number(user.id),
             amount: 0,
             last_transfer_amount: 0,
             last_transfer_created_at: null,

@@ -41,7 +41,8 @@ function _UserBankForm(props : UserBankFormProps) {
     ))
     
     const preFilledBankAccountNotIsPopularOnes = !popularBanks.find(popBank => popBank.id === bankAccount.bank_id)
-    const nonPopularBankPreFilled : Option[] = preFilledBankAccountNotIsPopularOnes && [
+    const shouldDisplayUserBankAccountAsOption = preFilledBankAccountNotIsPopularOnes && bankAccount.bank_code && bankAccount.bank_name && bankAccount.bank_id
+    const nonPopularBankPreFilled : Option[] = shouldDisplayUserBankAccountAsOption && [
         {
             label: `${bankAccount.bank_code} . ${bankAccount.bank_name}`,
             value: `${bankAccount.bank_id}`

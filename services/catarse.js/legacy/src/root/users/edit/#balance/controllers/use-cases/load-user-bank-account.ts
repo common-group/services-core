@@ -1,7 +1,8 @@
+import { UserDetails } from '../../../../../../entities'
 import { Filter, Equal } from '../../../../../../shared/services'
 import { BankAccount, UserId } from './entities'
 
-export type LoadUserBankAccount = (user : UserId) => Promise<BankAccount>
+export type LoadUserBankAccount = (user : UserDetails) => Promise<BankAccount>
 
 type BuildParams = {
     filter: Filter
@@ -26,7 +27,7 @@ export function createUserBankAccountLoader(params : BuildParams) : LoadUserBank
         redraw,
     } = params
 
-    return async function (user : UserId) : Promise<BankAccount> {
+    return async function (user : UserDetails) : Promise<BankAccount> {
         filter.setParam('user_id', Equal(user.id))
         const configOptions = bankAccount.getPageOptions(filter.toParameters())
         
@@ -36,12 +37,39 @@ export function createUserBankAccountLoader(params : BuildParams) : LoadUserBank
             if (hasBankAccount) {
                 return userBankAccountAsArray[0]
             } else {
-                return this.defaultBankAccount
+                return {
+                    ...EmptyBankAccount,
+                    user_id: user.id,
+                    owner_name: user.name,
+                    owner_document: user.owner_document,
+                } as BankAccount
             }
         } catch(e) {
-            return this.defaultBankAccount
+            return {
+                ...EmptyBankAccount,
+                user_id: user.id,
+                owner_name: user.name,
+                owner_document: user.owner_document,
+            } as BankAccount
         } finally {
             redraw()
         }  
     }
+}
+
+export const EmptyBankAccount : BankAccount = {
+    account: '',
+    account_digit: '',
+    account_type: 'conta_corrente',
+    agency: '',
+    agency_digit: '',
+    bank_code: '',
+    bank_id: undefined,
+    bank_account_id: null,
+    bank_name: '',
+    created_at: null,
+    owner_document: '',
+    owner_name: '',
+    updated_at: null,
+    user_id: null,
 }
