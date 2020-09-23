@@ -1035,6 +1035,8 @@ const _dataCache = {},
         imageGetJson: '/redactor_rails/pictures',
         path: '/assets/redactor-rails',
         css: 'style.css',
+        clipboardUpload: false,
+        clipboardUploadUrl: false,
     }),
     setRedactor = (
         prop,
@@ -1342,14 +1344,14 @@ function RedrawStream<T>(data : T, onUpdate = (param : T) => {}) {
  * @template T
  * @returns {{ (newData : T) => T, toggle() : T }}
  */
-function RedrawToggleStream(firstState, secondState) {
-    const _data = prop(firstState);
+function RedrawToggleStream<T>(firstState : T, secondState : T) {
+    const _data = prop<T>(firstState);
 
     /**
      * @param {T} newData
      * @returns {T}
      */
-    function streamAccessor(newData) {
+    function streamAccessor(newData : T) {
         if (newData !== undefined) {
             _data(newData);
             redraw();

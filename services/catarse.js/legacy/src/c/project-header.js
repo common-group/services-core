@@ -19,16 +19,17 @@ const projectHeader = {
 
         if (h.isProjectPage() && currentUser && !_.isUndefined(project())) {
             if (!projectVM.isSubscription(project)) {
+                projectVM.projectContributions([]);
                 contributionVM
                     .getUserProjectContributions(currentUser.user_id, project().project_id, ['paid', 'refunded', 'pending_refund'])
-                    .then(vnode.attrs.projectContributions);
+                    .then(projectVM.projectContributions);
             }
         }
 
         vnode.state = {
             hasSubscription,
             userProjectSubscriptions,
-            projectContributions: vnode.attrs.projectContributions,
+            projectContributions: projectVM.projectContributions,
             showContributions: h.toggleProp(false, true)
         };
     },

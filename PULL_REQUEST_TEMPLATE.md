@@ -1,10 +1,15 @@
-### Why
+### Descrição
 
-Explain what this PR does.
+Descreva o que seu PR faz
 
-### Wrap up checklist
+### Referência
 
-- [ ] All new code has tests
-- [ ] Comments's added to columns / views / functions ([ADD COMMENT](https://www.postgresql.org/docs/9.4/static/sql-comment.html)...) 
-- [ ] Code is documented on docs? link PR from [docs repo](https://github.com/common-group/common)
-- [ ] Code is reviewed
+Referência da atividade/issue
+
+### Antes de criar esse pull request confira se:
+
+- [ ]  Testes estão implementados
+- [ ]  Descreveu o propósito do commit com o emoji no início da mensagem
+- [ ]  Mudanças estão unificadas em um único commit
+- [ ]  Revisou seu próprio código
+- [ ]  A base de conhecimento foi atualizada (Isso para quando tivermos uma)

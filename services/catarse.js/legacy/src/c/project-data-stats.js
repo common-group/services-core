@@ -47,7 +47,7 @@ const projectDataStats = {
                         m('.w-row.u-marginbottom-30.u-margintop-30', [
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
                                 m('.fontsize-larger.fontweight-semibold', `${visitorsTotal}`),
-                                'Visitantes'
+                                'Visitas'
                             ]),
                             m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
                                 m('.bg-triangle-funnel.fontcolor-secondary.fontsize-base', `${h.formatNumber(contributorsByVisitorsValue, 2)}%`)

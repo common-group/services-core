@@ -17,7 +17,7 @@ const projectRowWithHeader = {
             ),
             collectionHeaderComponent = (
                 (!_.isUndefined(collection.title) || !_.isUndefined(collection.hash)) ?
-                    m('.u-marginbottom-40.u-text-center-small-only', [
+                    m('.u-marginbottom-20.u-text-center-small-only', [
                         m('div', _.map(collection.badges, badge => m(`img[src="/assets/catarse_bootstrap/${badge}.png"][width='105']`))),
                         m('.w-row', [
                             m('.w-col.w-col-8', m('.fontsize-larger.u-marginbottom-20', `${title}`)),
