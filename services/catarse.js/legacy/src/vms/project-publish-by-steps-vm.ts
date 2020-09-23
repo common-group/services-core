@@ -2,11 +2,11 @@ import { Subject, Observable } from 'rxjs'
 import m from 'mithril'
 import { catarse } from '../api'
 import models from '../models'
-import { ProjectDetails } from "../@types/project-details"
+import { ProjectDetails } from "../entities/project-details"
 import h from '../h'
-import { RailsErrors } from '../@types/rails-errors'
+import { RailsErrors } from '../entities/rails-errors'
 import _ from 'underscore'
-import { ThisWindow, I18ScopeType } from '../@types/window'
+import { ThisWindow, I18ScopeType } from '../entities/window'
 
 declare var window : ThisWindow
 

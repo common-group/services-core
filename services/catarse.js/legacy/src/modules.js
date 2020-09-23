@@ -29,7 +29,7 @@ export { default as ProjectsSubscriptionCheckout } from './root/projects-subscri
 export { default as ProjectsSubscriptionThankYou } from './root/projects-subscription-thank-you';
 export { default as UsersShow } from './root/users-show';
 export { default as SurveysShow } from './root/surveys-show';
-export { default as UsersEdit } from './root/users-edit';
+export { default as UsersEdit } from './root/users/edit';
 export { default as ProjectEdit } from './root/project-edit';
 export { default as ProjectsPayment } from './root/projects-payment';
 export { default as ProjectsReward } from './root/projects-reward';

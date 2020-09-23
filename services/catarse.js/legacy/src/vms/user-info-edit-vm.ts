@@ -1,11 +1,11 @@
 import m from 'mithril'
-import { UserDetails } from '../@types/user-details'
+import { UserDetails } from '../entities/user-details'
 import h from '../h'
 import userVM from './user-vm'
-import { RailsErrors } from '../@types/rails-errors'
+import { RailsErrors } from '../entities/rails-errors'
 import _ from 'underscore'
 import { Subject, Observable } from 'rxjs'
-import { ThisWindow, I18ScopeType } from '../@types/window'
+import { ThisWindow, I18ScopeType } from '../entities/window'
 
 declare var window : ThisWindow
 const I18nScope = _.partial(h.i18nScope, 'activerecord.errors.models') as (params? : {}) => I18ScopeType;
