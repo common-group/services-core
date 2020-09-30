@@ -1,12 +1,9 @@
 import { useState, useEffect, useMemo, useLayoutEffect, MithrilHooks } from 'mithril-hooks'
 import { BankAccount, Bank, UserId } from './use-cases/entities'
 import { ErrorsViewModel, FieldMapper } from '../../../../../shared/services'
-import { LoadBanks, LoadUserBankAccount, UpdateUserBankAccount, WithdrawFunds, EmptyBankAccount } from './use-cases'
+import { LoadBanks, LoadUserBankAccount, UpdateUserBankAccount, WithdrawFunds } from './use-cases'
 import { WithdrawRequestStage } from './use-cases/entities/withdraw-request-stage'
 import { UserBalanceTransactionsSubject } from './user-withdraw-history-subscription'
-import { UserDetails, ThisWindow } from '../../../../../entities'
-
-declare var window : ThisWindow
 
 export type UseWithdrawRequestForDependencies = {
     loadBanks: LoadBanks
@@ -27,29 +24,39 @@ const FieldMapperBankAccount : FieldMapper = {
     }
 }
 
-export function useWithdrawRequestFor(user : UserDetails, deps : UseWithdrawRequestForDependencies) : UseWithdrawRequestForReturn {
+const EmptyBankAccount : BankAccount = {
+    account: '',
+    account_digit: '',
+    account_type: 'conta_corrente',
+    agency: '',
+    agency_digit: '',
+    bank_code: '',
+    bank_id: null,
+    bank_account_id: null,
+    bank_name: '',
+    created_at: null,
+    owner_document: '',
+    owner_name: '',
+    updated_at: null,
+    user_id: null,
+}
+
+export function useWithdrawRequestFor(user : UserId, deps : UseWithdrawRequestForDependencies) : UseWithdrawRequestForReturn {
 
     const errorsVM = useMemo(() => new ErrorsViewModel(FieldMapperBankAccount), [])
     const [ banks, setBanks ] = useState<Bank[]>([])
-    const [ bankAccount, setBankAccount ] = useState<BankAccount>(bankAccountWithUserDocumentAndName(EmptyBankAccount, user))
+    const [ bankAccount, setBankAccount ] = useState<BankAccount>(EmptyBankAccount)
     const [ manualBankCode, setManualBankCode ] = useState('')
     const [ isLoading, setIsLoading ] = useState(true)
     const [ stage, setStage ] = useState(WithdrawRequestStage.FILL_FORM)
 
-    const hadleUserBankAccountUpdate = async (user : UserDetails, bankAccount : BankAccount) => {
+    const hadleUserBankAccountUpdate = async (user : UserId, bankAccount : BankAccount) => {
         try {
             setIsLoading(true)
             errorsVM.clearErrors()
-            const bankAccountFilled = { ...bankAccount, bank_code: !!manualBankCode ? manualBankCode : bankAccount.bank_code }
-            if (!bankAccountFilled.bank_id) {
-                throw new Error(JSON.stringify({
-                    errors_json: JSON.stringify({
-                        bank_id: window.I18n.t('bank_accounts.edit.select_bank', {} as any)
-                    })
-                }))
-            }
+            const bankAccountFilled = { ...bankAccount, bank_code: !!manualBankCode ? manualBankCode : '' }
             await deps.updateUserBankAccount(user, bankAccountFilled)
-            setBankAccount(bankAccountWithUserDocumentAndName(bankAccountFilled, user))
+            setBankAccount(bankAccountFilled)
             setStage(WithdrawRequestStage.CONFIRM_BANK_ACCOUNT)
         } catch(e) {
             const parsed_error = JSON.parse(e.message)
@@ -78,7 +85,7 @@ export function useWithdrawRequestFor(user : UserDetails, deps : UseWithdrawRequ
 
     useEffect(() => {
         setStage(WithdrawRequestStage.FILL_FORM)
-        const bankAccountLoader = async () => setBankAccount((await deps.loadUserBankAccount(user)) || bankAccountWithUserDocumentAndName(EmptyBankAccount, user))
+        const bankAccountLoader = async () => setBankAccount((await deps.loadUserBankAccount(user)) || EmptyBankAccount)
         const banksLoader = async () => setBanks(await deps.loadBanks())
         
         const banksAndAccount = async () => {
@@ -123,12 +130,4 @@ export type UseWithdrawRequestForReturn = {
     setBankAccount: (value: MithrilHooks.ValueOrFn<BankAccount>) => void
     getErrors: (field: string) => string[]
     goBackToForm(): void
-}
-
-function bankAccountWithUserDocumentAndName(bankAccount : BankAccount, user : UserDetails) : BankAccount {
-    return {
-        ...bankAccount,
-        owner_document: user.owner_document,
-        owner_name: user.name,
-    }    
 }

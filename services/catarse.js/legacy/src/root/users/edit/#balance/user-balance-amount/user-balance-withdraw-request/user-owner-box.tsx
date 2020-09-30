@@ -31,11 +31,9 @@ function _UserOwnerBox({ project, user, hideAvatar, reward, value, getErrors } :
         reward && `&reward_id=${reward.id}`,
         value && `&value=${value}`,
     ]
-
+    
     const notMyAccountUrl = `/not-my-account?${notMyAccountParams.filter(p => !!p).join('&')}`
 
-    const nameErrors = getErrors('owner_name')
-    const documentErrors = getErrors('owner_document')
     const userNameErrors = getErrors('user_name')
     const hasUserNameErrors = userNameErrors.length > 0
 
@@ -58,19 +56,15 @@ function _UserOwnerBox({ project, user, hideAvatar, reward, value, getErrors } :
                     <div class='fontsize-base fontweight-semibold'>
                         {user.name}
                     </div>
-                    <InlineErrors messages={nameErrors} />
                     <label class='field-label'>
                         CPF/CNPJ: {user.owner_document}
                     </label>
-                    <InlineErrors messages={documentErrors} />
                 </div>
             </div>
             {
                 hasUserNameErrors &&
                 <BlockError>
-                    <span>
-                        <I18nText trust={true} scope='bank_accounts.edit.document_owner_mismatch_error' params={{profile_link: `/users/${user.id}/edit#settings`}} />
-                    </span>
+                    <I18nText trust={true} scope='bank_accounts.edit.document_owner_mismatch_error' params={{profile_link: `/users/${user.id}/edit#settings`}} />
                 </BlockError>
             }
         </div>
