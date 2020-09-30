@@ -7,7 +7,7 @@ export function setupCustomHook<CustomHook extends Function, HookParameters exte
     mq(
         <CustomHookHooked>
             {props => {
-                Object.assign(returnControl, customHook.apply(null, hookParameters))
+                Object.assign(returnControl, customHook.call(null, hookParameters))
                 return null
             }}
         </CustomHookHooked>

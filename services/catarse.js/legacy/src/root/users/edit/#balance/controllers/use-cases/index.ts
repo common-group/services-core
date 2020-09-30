@@ -3,7 +3,7 @@ import { catarse } from '../../../../../../api'
 import models from '../../../../../../models'
 import { httpPutRequest, filterFactory } from '../../../../../../shared/services'
 
-import { LoadUserBankAccount, createUserBankAccountLoader, EmptyBankAccount } from './load-user-bank-account'
+import { LoadUserBankAccount, createUserBankAccountLoader } from './load-user-bank-account'
 import { LoadBanks, createBanksLoader } from './load-banks'
 import { UpdateUserBankAccount, createUserBankAccountUpdater } from './update-user-bank-account'
 import { LoadUserBalance, createUserBalanceLoader } from './load-user-balance'
@@ -19,10 +19,6 @@ export type {
     LoadUserBalance,
     LoadUserBalanceTransactions,
     LoadUserWithdrawRequestHistory,
-}
-
-export {
-    EmptyBankAccount
 }
 
 export const withdrawFunds = createWithdrawRequest({

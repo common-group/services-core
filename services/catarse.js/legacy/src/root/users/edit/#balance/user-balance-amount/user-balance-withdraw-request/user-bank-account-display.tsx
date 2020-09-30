@@ -12,6 +12,8 @@ export const UserBankAccountDisplay = withHooks<UserBankAccountDisplayProps>(_Us
 
 function _UserBankAccountDisplay({ bankAccount, balance } : UserBankAccountDisplayProps) {
 
+    const usersBalanceScope = 'users.balance'
+
     const fieldsDisplay : { label : JSX.Element, value : string | JSX.Element }[] = [
         {
             label: <I18nText scope='users.balance.bank.name' />,

@@ -1,10 +1,10 @@
 import mq from 'mithril-query'
 import { UserOwnerBoxProps, UserOwnerBox } from '../../../../../../../src/root/users/edit/#balance/user-balance-amount/user-balance-withdraw-request/user-owner-box'
-import type {} from 'jasmine'
 
 describe('UserOwnerBox', () => {
     describe('view', () => {
         it('should display user data', () => {
+
             // 1. Arrange
             const props : UserOwnerBoxProps = {
                 getErrors: (field : string) => [],
@@ -15,25 +15,23 @@ describe('UserOwnerBox', () => {
                     owner_document: '123.456.789-10',
                 }
             }
-            // 2. Act?
+
             const component = mq(<UserOwnerBox {...props} />)
+
+            // 2. Act?
+
             // 3. Assert
             component.should.contain(props.user.name)
             component.should.contain(props.user.owner_document)
         })
 
-        it('should display error messages', () => {
+        it('should display user name field error message', () => {
             // 1. Arrange
-            const ownerNameError = 'OWNER NAME ERROR'
-            const ownerDocumentError = 'OWNER DOCUMENT ERROR'
+            const userNameError = 'USER NAME FIELD ERROR'
             const props : UserOwnerBoxProps = {
                 getErrors: (field : string) => {
                     if (field === 'user_name') {
-                        return ['_']
-                    } else if (field === 'owner_name') {
-                        return [ownerNameError]
-                    } else if (field === 'owner_document') {
-                        return [ownerDocumentError]
+                        return [userNameError]
                     } else {
                         return []
                     }
@@ -44,12 +42,13 @@ describe('UserOwnerBox', () => {
                     name: 'User Name',
                     owner_document: '123.456.789-10',
                 }
-            }          
-            // 2. Act?
+            }
+
             const component = mq(<UserOwnerBox {...props} />)
+
+            // 2. Act?
+
             // 3. Assert
-            component.should.contain(ownerNameError)
-            component.should.contain(ownerDocumentError)
             component.should.have('[data-component-name="_BlockError"]')
         })
     })
