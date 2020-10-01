@@ -1,4 +1,4 @@
-import { BankAccount } from '../../../../../src/root/users/edit/#balance/controllers/use-cases/entities'
+import { BankAccount } from '../../../../../../src/root/users/edit/#balance/view-models/use-cases/entities'
 
 export function createBankAccount() : BankAccount {
     return {

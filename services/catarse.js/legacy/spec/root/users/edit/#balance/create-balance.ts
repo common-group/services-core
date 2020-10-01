@@ -1,4 +1,4 @@
-import { Balance } from '../../../../../src/root/users/edit/#balance/controllers/use-cases/entities'
+import { Balance } from '../../../../../../src/root/users/edit/#balance/view-models/use-cases/entities'
 
 export function createBalance() : Balance {
     return {
