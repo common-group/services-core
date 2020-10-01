@@ -74,7 +74,7 @@ module.exports = {
     plugins: isProd ? [new UglifyJsPlugin({
         sourceMap: true,
         uglifyOptions: {
-            compress: false
+            compress: true
         }
     })] : [],
 };
