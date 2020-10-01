@@ -4,7 +4,6 @@ import { Balance, BankAccount, Bank } from '../../controllers/use-cases/entities
 import { UserOwnerBox } from './user-owner-box'
 import { UserBankForm } from './user-bank-form'
 import { I18nText } from '../../../../../../shared/components/i18n-text'
-import { CardRounded } from '../../../../../../shared/components/card-rounded'
 import h from '../../../../../../h'
 import { CurrencyFormat } from '../../../../../../shared/components/currency-format'
 
@@ -34,9 +33,6 @@ function _WithdrawRequestForm(props : WithdrawRequestFormProps) {
         getErrors,
         bankAccountUpdate,
     } = props
-
-    const validationError = getErrors('validation_error')
-    const hasValidationError = validationError.length > 0
 
     return (
         <div id='withdraw-request-form'>
@@ -69,16 +65,6 @@ function _WithdrawRequestForm(props : WithdrawRequestFormProps) {
                     />
             </div>
             <div class='modal-dialog-nav-bottom' style='position: relative;'>
-                {
-                    hasValidationError &&
-                    <CardRounded className='card-error u-marginbottom-20'>
-                        {validationError.map((message : string) => (
-                            <span>
-                                {message}
-                            </span>
-                        ))}
-                    </CardRounded>
-                }
                 <div class='w-row'>
                     <div class='w-col w-col-3'></div>
                     <div class='w-col w-col-6'>
