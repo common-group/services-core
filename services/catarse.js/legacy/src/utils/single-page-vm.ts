@@ -1,4 +1,4 @@
-import { ViewModel } from "../entities/view-model";
+import { ViewModel } from "../@types/view-model";
 
 export class SinglePageViewModel<T> implements ViewModel<T> {
     

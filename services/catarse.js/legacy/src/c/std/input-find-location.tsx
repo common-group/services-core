@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { City } from '../../entities/city'
+import { City } from '../../@types/city'
 import { searchCities, getCityById } from '../../vms/cities-search-vm'
 import h from '../../h'
 

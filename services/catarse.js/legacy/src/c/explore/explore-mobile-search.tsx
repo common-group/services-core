@@ -1,7 +1,7 @@
 import m from 'mithril';
 import prop from 'mithril/stream';
 import h from '../../h';
-import { ThisWindow } from '../../entities/window';
+import { ThisWindow } from '../../@types/window';
 
 declare var window : ThisWindow
 
