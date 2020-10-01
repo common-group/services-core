@@ -1,5 +1,5 @@
 import m from 'mithril'
-import { ProjectDetails } from '../../../entities/project-details'
+import { ProjectDetails } from '../../../@types/project-details'
 
 export type AskAboutRewardAttrs = {
     project: ProjectDetails

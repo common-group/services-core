@@ -1,9 +1,9 @@
 import m from 'mithril'
-import { UserInfoEditPublicProfileTips } from './user-info-edit-public-profile-tips'
-import { UserInfoEditSettingsTips } from './user-info-edit-settings-tips'
-import { UserInfoEditPublicProfile } from './user-info-edit-public-profile'
-import { UserDetails } from '@/entities/user-details'
-import { UserInfoEditSettings } from './user-info-edit-settings'
+import { UserInfoEditPublicProfileTips } from '../../../c/projects/publish-by-steps/user-info-edit-public-profile-tips'
+import { UserInfoEditSettingsTips } from '../../../c/projects/publish-by-steps/user-info-edit-settings-tips'
+import { UserInfoEditPublicProfile } from '../../../c/projects/publish-by-steps/user-info-edit-public-profile'
+import { UserDetails } from '../../../@types/user-details'
+import { UserInfoEditSettings } from '../../../c/projects/publish-by-steps/user-info-edit-settings'
 import h from '../../../h'
 
 export type UserInfoEditAttrs = {

@@ -1,8 +1,8 @@
 import m from 'mithril'
 import prop from 'mithril/stream'
 import h from '../h'
-import { ThisWindow } from '../entities/window'
-import { HTMLInputEvent } from '../entities/event-target'
+import { ThisWindow } from '../@types/window'
+import { HTMLInputEvent } from '../@types/event-target'
 
 declare var window : ThisWindow
 

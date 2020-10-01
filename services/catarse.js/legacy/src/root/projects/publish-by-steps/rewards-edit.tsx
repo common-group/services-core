@@ -1,8 +1,8 @@
 import m from 'mithril'
-import { RewardsEditTips } from './rewards-edit-tips'
-import { RewardsEditList } from '../edit/rewards-edit-list'
-import { ProjectDetails } from '@/entities/project-details'
-import h from '@/h'
+import { RewardsEditTips } from '../../../c/projects/publish-by-steps/rewards-edit-tips'
+import { RewardsEditList } from '../../../c/projects/edit/rewards-edit-list'
+import { ProjectDetails } from '../../../@types/project-details'
+import h from '../../../h'
 
 export type RewardsEditAttrs = {
     project: ProjectDetails
