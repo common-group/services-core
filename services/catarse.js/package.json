@@ -65,7 +65,11 @@
         "uglifyjs-webpack-plugin": "^1.2.6",
         "webpack": "^4.43.0"
     },
+    "resolutions": {
+        "graceful-fs": "^4.2.4"
+    },
     "scripts": {
+        "preinstall": "npx npm-force-resolutions",
         "test": "./node_modules/karma/bin/karma start",
         "start": "webpack -d --watch",
         "start-dev": "NODE_OPTIONS=\"--max-old-space-size=512\" webpack -d --watch",
