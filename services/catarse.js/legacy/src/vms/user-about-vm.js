@@ -39,6 +39,7 @@ const mapRailsErrors = (rails_errors) => {
     };
 
     extractAndSetErrorMsg('email', ['email']);
+    extractAndSetErrorMsg('about_html', ['about_html']);
 
     return e;
 };
