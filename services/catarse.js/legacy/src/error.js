@@ -37,10 +37,10 @@ const generateErrorInstance = () => {
     e.displaySubmissionError = () => {
         if (submissionError()) {
             return m('.card.card-error.u-radius.zindex-10.u-marginbottom-30.fontsize-smaller',
-                     m('.u-marginbottom-10.fontweight-bold',
-                       m.trust(submissionErrorMsg())
-                      )
-                    );
+                m('.u-marginbottom-10.fontweight-bold',
+                    m.trust(submissionErrorMsg())
+                )
+            );
         }
 
         return null;
@@ -57,7 +57,7 @@ const generateErrorInstance = () => {
     e.inlineError = (field, flag) => {
         if (_.isUndefined(flag)) {
             if (hasError(field)) {
-                return m(inlineError, { message: getErrorMsg(field) });
+                return m(inlineError, { message: m.trust(getErrorMsg(field)) });
             }
 
             return null;
