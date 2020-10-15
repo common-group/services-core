@@ -13,11 +13,11 @@ const PIXEL = 'PIXEL';
 export class ProjectEditIntegrations {
 
     oninit(/** @type {VNode} */vnode) {
-         
+
         /**
          * @param {string} name
          * @param {ProjectIntegration[]} integrations
-         * @returns {ProjectIntegration} 
+         * @returns {ProjectIntegration}
          * */
         const findIntegrationByName = (name = '', integrations = []) => integrations.find(integration => integration.name === name);
 
@@ -48,15 +48,15 @@ export class ProjectEditIntegrations {
             .catch(error => {
                 loadingIntegrations(false);
             });
-        
+
         /**
-         * @param {Stream<ProjectIntegration>} integration 
+         * @param {Stream<ProjectIntegration>} integration
          */
         async function requestForIntegration(integration) {
             const integrationData = integration();
             const shouldCreate = !!integrationData.id;
 
-            const response = shouldCreate ? 
+            const response = shouldCreate ?
                 await projectVM.updateIntegration(projectId, integrationData)
             :
                 await projectVM.createIntegration(projectId, integrationData);
@@ -73,7 +73,7 @@ export class ProjectEditIntegrations {
 
                 await requestForIntegration(GATracking);
                 await requestForIntegration(FBPixelTracking);
-                
+
                 showSuccess(true);
             } catch(e) {
                 error(true);
@@ -117,7 +117,7 @@ export class ProjectEditIntegrations {
                     toggleOpt: state.showError,
                     error: true
                 }) : ''),
-                
+
                 m('div.section',
                     m('div.w-container',
                         m('div.w-row', [
@@ -130,7 +130,7 @@ export class ProjectEditIntegrations {
                                                 m('label.fontweight-semibold.fontsize-base', 'Google Analytics'),
                                                 m('label.field-label.fontsize-smallest.fontcolor-secondary', [
                                                     'Informe o seu ID de Acompanhamento e comece a enviar informações dos visitantes de sua página para a sua conta do Google Analytics ',
-                                                    m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360038491812"]', 'Saiba mais')
+                                                    m('a.alt-link[target="_blank"][href="https://suporte.catarse.me/hc/pt-br/articles/360040153431-Como-integrar-a-campanha-no-Catarse-com-o-Google-Analytics-"]', 'Saiba mais')
                                                 ]),
                                                 m('img[src="/assets/logo_lockup_analytics_icon_horizontal_black.png"][width="146"][alt=""]')
                                             ]),
@@ -153,7 +153,7 @@ export class ProjectEditIntegrations {
                                                 m('label.fontweight-semibold.fontsize-base', 'Facebook Pixel'),
                                                     m('label.field-label.fontsize-smallest.fontcolor-secondary', [
                                                         'Envia informações dos visitantes de sua página para o seu Facebook Pixel ',
-                                                        m('a.alt-link[href="https://suporte.catarse.me/hc/pt-br/articles/360038491672"]', 'Saiba mais')
+                                                        m('a.alt-link[target="_blank"][href="https://suporte.catarse.me/hc/pt-br/articles/360040152071-Como-integrar-a-campanha-no-Catarse-com-os-an%C3%BAncios-do-Facebook-por-meio-do-Facebook-Pixel-"]', 'Saiba mais')
                                                     ]),
                                                     m('img[src="/assets/facebook-pixel-logotyp.png"][width="146"][alt=""]')
                                             ]),
@@ -169,7 +169,7 @@ export class ProjectEditIntegrations {
                             ),
                         ])
                     ),
-        
+
                     m(projectEditSaveBtn, { loading: state.loading, onSubmit: save }),
                 )
             ]);

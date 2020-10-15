@@ -156,7 +156,7 @@ const projectBasicsEdit = {
     },
     view: function ({ state, attrs }) {
         const vm = state.vm;
-        
+
         return m('#basics-tab', [
             state.showSuccess()
                 ? m(popNotification, {
@@ -264,8 +264,8 @@ const projectBasicsEdit = {
                                                 try {
                                                     const content_rating_value = JSON.parse(event.target.value);
                                                     vm.fields.content_rating(content_rating_value);
-                                                    vm.fields.show_cans_and_cants(content_rating_value === ADULT_CONTENT_AGE);    
-                                                    vm.fields.force_show_cans_and_cants(false);                                                
+                                                    vm.fields.show_cans_and_cants(content_rating_value === ADULT_CONTENT_AGE);
+                                                    vm.fields.force_show_cans_and_cants(false);
                                                 } catch (e) {
                                                     console.log('Error setting content rating:', e);
                                                     h.captureException(e);
@@ -307,7 +307,7 @@ const projectBasicsEdit = {
                                             ])
                                         ]),
                                         m('div.fontsize-small.u-text-center.u-margintop-30.u-marginbottom-20',
-                                            m(`a.alt-link.fontweight-semibold[href="${I18n.t('adult_content_support_url', I18nScope())}"]`,
+                                            m(`a.alt-link.fontweight-semibold[target="_blank"][href="${I18n.t('adult_content_support_url', I18nScope())}"]`,
                                                 I18n.t('adult_content_more_info_link_text', I18nScope())
                                             )
                                         )
