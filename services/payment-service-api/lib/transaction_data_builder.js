@@ -1,5 +1,7 @@
 'use strict';
 
+const { limitStringSize } = require('./limit_string_size')
+
 /*
  * buildTransactionData(context)
  * build a object with transaction attributes
@@ -54,7 +56,7 @@ const bankSlipTransactionData = (context) => {
 
   return {
     customer: {
-      name: customer.name,
+      name: limitStringSize(customer.name, 100),
       type: isIndividual ? 'individual' : 'corporation',
       documents: [{
         type: isIndividual ? 'cpf' : 'cnpj',
