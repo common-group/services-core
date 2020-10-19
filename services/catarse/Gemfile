@@ -163,7 +163,7 @@ group :test do
   gem 'fakeweb', github: 'SamMolokanov/fakeweb', branch: 'ruby-2-4-1-support'
   gem 'poltergeist'
   gem 'launchy'
-  gem 'shoulda'
+  gem 'shoulda-matchers', '4.4.1'
   gem 'factory_girl_rails'
   gem 'capybara'
   gem 'rails-controller-testing'

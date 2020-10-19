@@ -520,10 +520,6 @@ GEM
       ruby_http_client (~> 3.4)
     sentry-raven (3.1.1)
       faraday (>= 1.0)
-    shoulda (4.0.0)
-      shoulda-context (~> 2.0)
-      shoulda-matchers (~> 4.0)
-    shoulda-context (2.0.0)
     shoulda-matchers (4.4.1)
       activesupport (>= 4.2.0)
     sidekiq (4.0.2)
@@ -709,7 +705,7 @@ DEPENDENCIES
   selenium-webdriver
   sendgrid-ruby
   sentry-raven
-  shoulda
+  shoulda-matchers (= 4.4.1)
   sidekiq (~> 4.0.1)
   simple_form
   simple_token_authentication (~> 1.0)
