@@ -655,7 +655,7 @@ DEPENDENCIES
   high_voltage
   http_accept_language
   i18n-js (>= 3.0.0.rc11)
-  i18n_alchemy
+  i18n_alchemy (= 0.3.1)
   inherited_resources
   jasmine-rails
   jquery-rails

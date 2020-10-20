@@ -29,7 +29,7 @@ gem 'dbhero', '>= 1.1.12'
 gem 'postgres-copy'
 gem 'postgres_ext'
 gem 'pg_search'
-gem 'i18n_alchemy'
+gem 'i18n_alchemy', '0.3.1'
 gem "i18n-js", ">= 3.0.0.rc11"
 gem 'whenever'
 
