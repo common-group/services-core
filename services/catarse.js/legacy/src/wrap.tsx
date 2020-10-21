@@ -16,15 +16,17 @@ export function Wrap(Component, customAttr) {
     let firstRun = true
     let loadingUserDetails = false
     
-    function loadUserDetails(userId) {
-        loadingUserDetails = true
-        userVM
-            .fetchUser(userId, false)
-            .then(() => loadingUserDetails = false)
-            .catch(error => {
-                loadingUserDetails = false
-                h.captureMessage(`Could not load the user: ${error.message}`)
-            })
+    async function loadUserDetails(userId) {
+        try {
+            loadingUserDetails = true
+            h.redraw()
+            await userVM.fetchUser(userId, false)
+        } catch(error) {
+            h.captureMessage(`Could not load the user: ${error.message}`)
+        } finally {
+            loadingUserDetails = false
+            h.redraw()
+        }
     }
 
     return {
@@ -48,11 +50,11 @@ export function Wrap(Component, customAttr) {
                 let postParam = m.route.param('post_id') || parameters.post_id
                 let projectParam = m.route.param('project_id') || parameters.project_id
                 let projectUserIdParam = m.route.param('project_user_id') || parameters.user_id || parameters.project_user_id
-                let userParam = m.route.param('user_id') || app.getAttribute('data-userid') || parameters.user_id || customAttr?.user_id
+                let userParam = m.route.param('user_id') || app.getAttribute('data-userid') || parameters.user_id || customAttr?.user_id || h.getUserID()
                 let rewardIdParam = m.route.param('reward_id')
                 let surveyIdParam = m.route.param('survey_id')
                 let thankYouParam = app && JSON.parse(app.getAttribute('data-contribution'))
-    
+
                 const addToAttr = function (newAttr) {
                     attr = _.extend({}, newAttr, attr)
                 }

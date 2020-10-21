@@ -46,24 +46,25 @@ const projectInsights = {
             if (!_.isEmpty(data)) {
                 visitorsPerDay(data);
                 visitorsTotal(_.first(data).total);
+                h.redraw();
             }
         };
 
         const lVisitorsPerDay = catarseMoments.loaderWithToken(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
         lVisitorsPerDay
             .load()
-            .then((visitorsPerDay) => {
-                processVisitors(visitorsPerDay);
+            .then(data => {
+                processVisitors(data);
                 requestRedraw();
-            })
+            });
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
         lContributionsPerDay
             .load()
-            .then((contributionPerDayRaw) => {
-                contributionsPerDay(contributionPerDayRaw);
+            .then(data => {
+                contributionsPerDay(data);
                 requestRedraw();
-            })
+            });
 
         const contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
         const buildPerLocationTable = contributions => (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {
@@ -83,8 +84,10 @@ const projectInsights = {
         const lContributionsPerLocation = loader(models.projectContributionsPerLocation.getRowOptions(filtersVM.parameters()));
         lContributionsPerLocation
             .load()
-            .then(buildPerLocationTable)
-            .then(requestRedraw);
+            .then(data => {
+                buildPerLocationTable(data);
+                requestRedraw();
+            });
 
         const contributionsPerRefTable = [[
             window.I18n.t('ref_table.header.origin', I18nScope()),
@@ -118,8 +121,10 @@ const projectInsights = {
         const lContributionsPerRef = loader(models.projectContributionsPerRef.getRowOptions(filtersVM.parameters()));
         lContributionsPerRef
             .load()
-            .then(buildPerRefTable)
-            .then(requestRedraw);
+            .then(data => {
+                buildPerRefTable(data);
+                requestRedraw();
+            });
 
         function isSolidarityProject() {
             const project = vnode.attrs.project;
