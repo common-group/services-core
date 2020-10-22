@@ -42,6 +42,10 @@ const verifyKondutoSignature = (req) => {
     return hash === req.body.signature
 }
 
+const alreadyProcessed = (error) => {
+    return ['Transação com status \'paid\' não pode ser capturada.', 'Transação já estornada'].includes(error.message);
+}
+
 const server = express();
 
 server.use(bodyParser.json({
@@ -80,8 +84,14 @@ server.post('/webhooks/konduto', async (req, resp) => {
             resp.status(400).send("invalid signature");
         }
     } catch (err) {
-        raven_report(err, {});
-        console.log('Error on konduto webhook processing ', err);
+        if (err.response?.errors?.some(alreadyProcessed)) {
+            resp.setHeader('Content-Type', 'application/json')
+            resp.status(200).send(JSON.stringify({ status: 'ok' }));
+        } else {
+            raven_report(err, {});
+            console.log('Error on konduto webhook processing ', err);
+            resp.status(500).send("Internal Server Error");
+        }
     }
 })
 
