@@ -166,6 +166,7 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     if (!handlePromise) {
         return lUser.load();
     } else {
+        customProp(currentUser()); // first load user from cache
         lUser
             .load()
             .then(

@@ -6,6 +6,7 @@ import prop from 'mithril/stream';
 import { catarse } from './api';
 import contributionVM from './vms/contribution-vm';
 import generativeTrust from '../vendor/mithril-generative-trust';
+import Stream from 'mithril/stream';
 
 function getCallStack() {
     const callStackStr = new Error().stack;
@@ -439,11 +440,15 @@ const _dataCache = {},
         return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
     },
     formatNumber = generateFormatNumber('.', ','),
-    toggleProp = (defaultState, alternateState) => {
+    toggleProp = <T>(defaultState : T, alternateState : T) : {
+        toggle(): void
+    } & Stream<boolean> => {
         const p = prop(defaultState);
-        p.toggle = () => p(p() === alternateState ? defaultState : alternateState);
+        p['toggle'] = () => p(p() === alternateState ? defaultState : alternateState);
 
-        return p;
+        return p as any as {
+            toggle(): void
+        } & Stream<boolean>;
     },
     idVM = catarse.filtersVM({
         id: 'eq',
@@ -1339,14 +1344,14 @@ function RedrawStream<T>(data : T, onUpdate = (param : T) => {}) {
  * @template T
  * @returns {{ (newData : T) => T, toggle() : T }}
  */
-function RedrawToggleStream(firstState, secondState) {
-    const _data = prop(firstState);
+function RedrawToggleStream<T>(firstState : T, secondState : T) {
+    const _data = prop<T>(firstState);
 
     /**
      * @param {T} newData
      * @returns {T}
      */
-    function streamAccessor(newData) {
+    function streamAccessor(newData : T) {
         if (newData !== undefined) {
             _data(newData);
             redraw();

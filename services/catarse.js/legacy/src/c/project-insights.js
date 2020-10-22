@@ -35,10 +35,7 @@ const projectInsights = {
             loader = catarse.loaderWithToken,
             countDownToRedraw = prop(4),
             requestRedraw = () => {
-                countDownToRedraw(Math.max(0, countDownToRedraw() - 1));
-                if (countDownToRedraw() <= 0) {
-                    m.redraw();
-                }
+                h.redraw();
             };
 
         if (h.paramByName('online_success') === 'true') {
@@ -55,14 +52,18 @@ const projectInsights = {
         const lVisitorsPerDay = catarseMoments.loaderWithToken(models.projectVisitorsPerDay.getRowOptions(filtersVM.parameters()));
         lVisitorsPerDay
             .load()
-            .then(processVisitors)
-            .then(requestRedraw);
+            .then((visitorsPerDay) => {
+                processVisitors(visitorsPerDay);
+                requestRedraw();
+            })
 
         const lContributionsPerDay = loader(models.projectContributionsPerDay.getRowOptions(filtersVM.parameters()));
         lContributionsPerDay
             .load()
-            .then(contributionsPerDay)
-            .then(requestRedraw);
+            .then((contributionPerDayRaw) => {
+                contributionsPerDay(contributionPerDayRaw);
+                requestRedraw();
+            })
 
         const contributionsPerLocationTable = [['Estado', 'Apoios', 'R$ apoiados (% do total)']];
         const buildPerLocationTable = contributions => (!_.isEmpty(contributions)) ? _.map(_.first(contributions).source, (contribution) => {

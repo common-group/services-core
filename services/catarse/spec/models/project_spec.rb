@@ -48,6 +48,22 @@ RSpec.describe Project, type: :model do
     it { is_expected.not_to allow_value('agua.sp.01').for(:permalink) }
   end
 
+  describe 'before validations' do
+    let(:xss_string) { "<h1><script>alert('pwned')</script></h1>" }
+
+    it 'sanitizes about_html' do
+      project = Project.new(about_html: xss_string)
+      project.validate
+      expect(project.about_html).to eq "<h1>alert('pwned')</h1>"
+    end
+
+    it 'sanitizes budget' do
+      project = Project.new(budget: xss_string)
+      project.validate
+      expect(project.budget).to eq "<h1>alert('pwned')</h1>"
+    end
+  end
+
   context 'state check methods' do
     all_machine_states.each do |st|
       describe "##{st}? when project state is #{st}" do
@@ -714,6 +730,21 @@ RSpec.describe Project, type: :model do
       expect(event.project_id).to eq(project.id)
       expect(event.user_id).to eq(project.user.id)
       expect(event.event_name).to eq('solidaria_project_draft')
+    end
+  end
+
+  describe 'full_text_index' do
+
+    let(:project) { create(:project, { name: 'Project name', state: 'draft', full_text_index: nil, online_days: 3 }) }
+
+    it 'should update full_text_index from nil when state updates' do
+      expect(project.full_text_index).to eq(nil)
+      
+      project.state = 'online'      
+      project.save
+      project.reload
+
+      expect(project.full_text_index).not_to eq(nil)
     end
   end
 end
