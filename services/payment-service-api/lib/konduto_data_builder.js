@@ -22,8 +22,8 @@ const buildAntifraudData = (context, options) => {
   const sellerData = buildSeller(projectOwner)
 
   return {
-    id: options.transaction.id.toString(),
-    visitor: payment.user_id,
+    id: limitStringSize(options.transaction.id.toString(), 100),
+    visitor: limitStringSize(payment.user_id, 40),
     total_amount: payment.data.amount / 100,
     currency: 'BRL',
     installments: 1,
@@ -47,15 +47,15 @@ const buildAntifraudData = (context, options) => {
  */
 const buildCustomer = (payment, user) => {
   const customer = payment.data.customer
-  const taxId = customer.document_number ? { tax_id: customer.document_number } : {}
+  const taxId = customer.document_number ? { tax_id: limitStringSize(customer.document_number, 100) } : {}
 
   return {
     customer: {
       ...taxId,
-      id: payment.user_id,
-      name: customer.name,
-      phone1: buildPhoneNumber(customer.phone),
-      email: customer.email,
+      id: limitStringSize(payment.user_id, 100),
+      name: limitStringSize(customer.name, 100),
+      phone1: limitStringSize(buildPhoneNumber(customer.phone), 100),
+      email: limitStringSize(customer.email, 100),
       created_at: user.created_at.substr(0, 10),
     }
   }
@@ -92,12 +92,12 @@ const buildBilling = (customer, transaction) => {
 
   return {
     billing: {
-      name: transaction.card.holder_name,
-      address1: address.street,
-      address2: address.complementary,
-      city: address.city,
-      state: address.state,
-      zip: address.zipcode,
+      name: limitStringSize(transaction.card.holder_name, 100),
+      address1: limitStringSize(address.street, 255),
+      address2: limitStringSize(address.complementary, 255),
+      city: limitStringSize(address.city, 100),
+      state: limitStringSize(address.state, 100),
+      zip: limitStringSize(address.zipcode, 100),
       ...countryData
     }
   }
@@ -116,9 +116,9 @@ const buildShoppingCart = (payment, project, subscription) => {
 
   return {
     shopping_cart: [{
-      product_code: subscription.reward_id,
+      product_code: limitStringSize(subscription.reward_id, 100),
       category: 9999,
-      name: productName,
+      name: limitStringSize(productName, 100),
       unit_cost: payment.data.amount / 100.0,
       quantity: 1,
       created_at: subscription.created_at.substr(0, 10)
@@ -135,8 +135,8 @@ const buildShoppingCart = (payment, project, subscription) => {
 const buildSeller = (projectOwner) => {
   return {
     seller: {
-      id: projectOwner.id,
-      name: projectOwner.data.name,
+      id: limitStringSize(projectOwner.id, 100),
+      name: limitStringSize(projectOwner.data.name, 100),
       created_at: projectOwner.created_at.substr(0, 10)
     }
   }
@@ -170,6 +170,17 @@ const buildPhoneNumber = (phone) => {
  */
 const buildExpirationDate = (expirationDate) => {
   return expirationDate.slice(0, 2) + '20' + expirationDate.slice(2, 4)
+}
+
+/*
+ * limitStringSize(experitaionDate)
+ * Limit string size
+ * @param { String } string - String to limit size
+ * @param { String } stringSize - Desired string size
+ * @return { String } - String with size limited
+ */
+const limitStringSize = (string, stringSize) => {
+  return String(string || '').substring(0, stringSize)
 }
 
 module.exports = {
