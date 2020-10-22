@@ -18,7 +18,7 @@ const thankYou = {
             ViewContentEvent,
             PurchaseEvent
         } = projectVM;
-        
+
         projectVM.sendPageViewForCurrentProject(vnode.attrs.project_id, [ ViewContentEvent(), PurchaseEvent() ]);
 
         const recommendedProjects = vnode.attrs.recommended_projects || userVM.getUserRecommendedProjects(),
@@ -134,7 +134,8 @@ const thankYou = {
                                               permalink: attrs.contribution.project.permalink,
                                               name: attrs.contribution.project.name
                                           }),
-                                          displayShareBox: state.displayShareBox
+                                          displayShareBox: state.displayShareBox,
+                                          utm: 'ctrse_thankyou'
                                       }) : ''
                                   ])
                               ]
