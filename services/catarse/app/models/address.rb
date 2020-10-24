@@ -1,4 +1,4 @@
-class Address < ActiveRecord::Base
+class Address < ApplicationRecord
   include Shared::CommonWrapper
 
   REQUIRED_ATTRIBUTES = %i[
