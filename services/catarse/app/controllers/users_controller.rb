@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  after_filter :verify_authorized, except: %i[reactivate]
-  after_filter :redirect_user_back_after_login, only: %i[show]
+  after_action :verify_authorized, except: %i[reactivate]
+  after_action :redirect_user_back_after_login, only: %i[show]
   inherit_resources
   defaults finder: :find_active!
   actions :show, :update, :unsubscribe_notifications, :destroy, :edit
