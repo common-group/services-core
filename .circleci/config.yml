@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   test_services_core_db:
     docker:
@@ -84,7 +84,7 @@ jobs:
 
   test_catarse:
     docker:
-      - image: circleci/ruby:2.7.1
+      - image: cimg/ruby:2.7.2
       - image: postgres:11.5
         environment:
           POSTGRES_DB: catarse_test
@@ -96,32 +96,68 @@ jobs:
       - run:
           name: Run deps install
           command: |
-            set ex && \
-            sudo apt update && \
-            sudo apt upgrade && \
-            sudo apt install imagemagick openssl bash tzdata ca-certificates libpq-dev postgresql-client && \
-            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && \
+            set -ex
+            sudo apt update
+            sudo apt upgrade
+            sudo apt install imagemagick openssl bash tzdata ca-certificates libpq-dev postgresql-client
+            curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
             sudo apt install -y nodejs
+            curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+            echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+            sudo apt-get update && sudo apt-get install yarn
+
+      - restore_cache:
+          name: Restore Bundle Install Cache
+          keys:
+          - bundler-{{ checksum "services/catarse/Gemfile.lock" }}
+
       - run:
-          name: Run catarse installs
+          name: Install gems
           command: |
-            set -ex \
-            && cd services/catarse \
-            && gem install bundler:1.17.3 \
-            && bundle install \
-            && npm install
+            set -ex
+            gem install bundler:2.1.4
+            cd services/catarse
+            bundle config set path 'vendor/bundle'
+            bundle install
+
+      - save_cache:
+          name: Save Bundle Install Cache
+          key: bundler-{{ checksum "services/catarse/Gemfile.lock" }}
+          paths:
+            - services/catarse/vendor/bundle
+
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+          - yarn-packages-{{ checksum "services/catarse/catarse.js/yarn.lock" }}
+
+      - run:
+          name: Install yarn packages
+          command: |
+            set -ex
+            cd services/catarse
+            yarn install --immutable
+
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "services/catarse/catarse.js/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - services/catarse/catarse.js/node_modules
+
       - run:
           name: Run catarse migration
           command: |
-            set -ex \
-            && cd services/catarse \
-            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rake db:migrate \
+            set -ex
+            cd services/catarse
+            RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rails db:migrate
+
       - run:
           name: Run catarse tests
           command: |
-            set -ex \
-            && cd services/catarse \
-            && RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rspec spec
+            set -ex
+            cd services/catarse
+            RAILS_ENV=test DATABASE_URL=postgres://postgres:example@localhost:5432/catarse_test bundle exec rake spec
 
   test_catarse_js:
     parallelism: 1
@@ -130,26 +166,48 @@ jobs:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     docker:
-      - image: circleci/node:10.22-browsers
+      - image: circleci/node:12.20-browsers
     steps:
       - checkout
       - run:
-          name: Catarse.js install & artifacts
+          name: 'Install yarn'
           command: |
-            set -ex \
-            && mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS \
-            && cd services/catarse/catarse.js
+            curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.22.5
+
+      - run:
+          name: Catarse.js artifacts
+          command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+
       - restore_cache:
+          name: Restore Yarn Package Cache
           keys:
-            - v1-dep-{{ .Branch }}-
+          - yarn-packages-{{ checksum "services/catarse/catarse.js/yarn.lock" }}
+
       - run: if [ -z "${NODE_ENV:-}" ]; then export NODE_ENV=test; fi
+
       - run: export PATH="~/project/services/catarse/catarse.js/node_modules/.bin:$PATH"
-      - run: cd services/catarse/catarse.js && npm install
+
+      - run:
+          name: Install packages
+          command: |
+            set -ex
+            cd services/catarse/catarse.js
+            yarn install --immutable
+
       - save_cache:
-          key: v1-dep-{{ .Branch }}-{{ epoch }}
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "services/catarse/catarse.js/yarn.lock" }}
           paths:
-            - ~/project/services/catarse/catarse.js/node_modules
-      - run: cd services/catarse/catarse.js && npm test
+            - ~/.cache/yarn
+            - services/catarse/catarse.js/node_modules
+
+      - run:
+          name: Run tests
+          command: |
+            set -ex
+            cd services/catarse/catarse.js
+            yarn test
+
       - store_test_results:
           path: /tmp/circleci-test-results
       - store_artifacts:
