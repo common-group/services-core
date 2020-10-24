@@ -84,7 +84,7 @@ jobs:
 
   test_catarse:
     docker:
-      - image: circleci/ruby:2.7.1
+      - image: circleci/ruby:2.7.2
       - image: postgres:11.5
         environment:
           POSTGRES_DB: catarse_test
