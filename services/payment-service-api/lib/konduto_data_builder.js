@@ -1,5 +1,7 @@
 'use strict';
 
+const { limitStringSize } = require('./limit_string_size')
+
 /*
  * buildAntifraudData(context, options)
  * build a object with antifraud data
