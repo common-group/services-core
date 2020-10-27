@@ -135,7 +135,8 @@ const thankYou = {
                                               name: attrs.contribution.project.name
                                           }),
                                           displayShareBox: state.displayShareBox,
-                                          utm: 'ctrse_thankyou'
+                                          utm: 'ctrse_thankyou',
+                                          ref: 'ctrse_thankyou'
                                       }) : ''
                                   ])
                               ]
