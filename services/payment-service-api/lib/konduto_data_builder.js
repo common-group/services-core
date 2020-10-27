@@ -174,17 +174,6 @@ const buildExpirationDate = (expirationDate) => {
   return expirationDate.slice(0, 2) + '20' + expirationDate.slice(2, 4)
 }
 
-/*
- * limitStringSize(experitaionDate)
- * Limit string size
- * @param { String } string - String to limit size
- * @param { String } stringSize - Desired string size
- * @return { String } - String with size limited
- */
-const limitStringSize = (string, stringSize) => {
-  return String(string || '').substring(0, stringSize)
-}
-
 module.exports = {
   buildAntifraudData
 }
