@@ -1326,7 +1326,7 @@ function RedrawStream<T>(data : T, onUpdate = (param : T) => {}) {
      * @param {T} newData
      * @returns {T}
      */
-    function streamAccessor(newData : T) {
+    function streamAccessor(newData? : T) {
         if (newData !== undefined) {
             _data(newData);
             onUpdate(newData);
