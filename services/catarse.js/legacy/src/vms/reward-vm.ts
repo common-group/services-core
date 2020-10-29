@@ -1,13 +1,14 @@
-import { catarse, commonProject } from '../api';
-import _ from 'underscore';
-import m from 'mithril';
-import prop from 'mithril/stream';
-import models from '../models';
-import h from '../h';
+import { catarse, commonProject } from '../api'
+import _ from 'underscore'
+import m from 'mithril'
+import prop from 'mithril/stream'
+import models from '../models'
+import h from '../h'
+import { State } from '../entities'
 
 const error = prop(''),
     rewards = prop([]),
-    states = prop([]),
+    states = h.RedrawStream<State[]>([]),
     fees = prop([]),
     noReward = {
         id: null,
@@ -73,7 +74,7 @@ const getSelectedReward = () => {
         const contribution = JSON.parse(data);
 
         selectedReward(contribution.reward);
-        h.redraw(true);
+        h.redraw();
 
         return selectedReward;
     }
@@ -106,11 +107,26 @@ const applyMask = _.compose(
     h.applyMonetaryMask
 );
 
-const statesLoader = catarse.loader(models.state.getPageOptions());
+const statesLoader = catarse.loader(models.state.getPageOptions())
 const getStates = () => {
-    statesLoader.load().then(states);
-    return states;
-};
+    loadStates()
+    return states
+}
+
+let isLoadingStates = false
+const loadStates = async () => {
+    try {
+        const loadedStates = states()
+        if (loadedStates?.length === 0 && !isLoadingStates) {
+            isLoadingStates = true
+            states(await statesLoader.load())
+            isLoadingStates = false
+        }
+    } catch(error) {
+        states([])
+        isLoadingStates = false
+    }
+}
 
 const locationOptions = (reward, destination) => {
     const options = prop([]),
@@ -199,7 +215,7 @@ const feeDestination = (reward, feeId) => {
     if (feeState) {
         return feeState.acronym;
     } else if (reward.shipping_options === 'national' && fee.destination === 'others') {
-        return _.pluck(getOtherNationalStates(fees), 'acronym').join(', ');
+        return _.pluck(getOtherNationalStates(), 'acronym').join(', ');
     }
 
     return fee.destination;
