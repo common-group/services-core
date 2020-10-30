@@ -52,18 +52,20 @@ const projectDataChart = {
     },
     view: function({state, attrs}) {
         const source = state.getSource();
+        const updateGraphics = (vnode) => {
+            if (!_.isEqual(state.lastSource, source)) {
+                state.lastSource = source;
+                state.renderChart(vnode);
+            }
+        }
         return m('.card.u-radius.medium.u-marginbottom-30', [
             m('.fontweight-semibold.u-marginbottom-10.fontsize-large.u-text-center', attrs.label),
             m('.u-text-center.fontsize-smaller.fontcolor-secondary.lineheight-tighter.u-marginbottom-20', attrs.subLabel || ''),
             m('.w-row', [
                 m('.w-col.w-col-12.overflow-auto', [
                     !_.isEmpty(source) ? m('canvas[id="chart"][width="860"][height="300"]', {
-                        onupdate(vnode) {
-                            if (!_.isEqual(state.lastSource, source)) {
-                                state.lastSource = source;
-                                state.renderChart(vnode);
-                            }
-                        }
+                        onupdate: updateGraphics,
+                        oncreate: updateGraphics,
                     }) : m('.w-col.w-col-8.w-col-push-2', m('p.fontsize-base', attrs.emptyState))
                 ]),
             ])
