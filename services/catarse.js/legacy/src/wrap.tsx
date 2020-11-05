@@ -14,23 +14,22 @@ export function Wrap(Component, customAttr) {
     }
 
     let firstRun = true
-    let loadingUserDetails = false
-    
-    async function loadUserDetails(userId) {
-        try {
-            loadingUserDetails = true
-            h.redraw()
-            await userVM.fetchUser(userId, false)
-        } catch(error) {
-            h.captureMessage(`Could not load the user: ${error.message}`)
-        } finally {
-            loadingUserDetails = false
-            h.redraw()
-        }
-    }
 
     return {
         oninit(vnode) {
+            const loadingUserDetails = h.RedrawStream(false)
+            async function loadUserDetails(userId) {
+                try {
+                    loadingUserDetails(true)
+                    await userVM.fetchUser(userId, false)
+                } catch(error) {
+                    h.captureMessage(`Could not load the user: ${error.message}`)
+                } finally {
+                    loadingUserDetails(false)
+                }
+            }
+
+            vnode.state.loadingUserDetails = loadingUserDetails
 
             try {
                 vnode.state.attr = {}
@@ -58,80 +57,61 @@ export function Wrap(Component, customAttr) {
                 const addToAttr = function (newAttr) {
                     attr = _.extend({}, newAttr, attr)
                 }
-    
+
                 if (postParam) {
                     addToAttr({ post_id: postParam })
                 }
-    
+
                 if (projectParam) {
                     addToAttr({ project_id: projectParam })
                 }
-    
+
                 if (userParam) {
                     addToAttr({ user_id: userParam })
                     loadUserDetails(userParam)
                 }
-    
+
                 if (projectUserIdParam) {
                     addToAttr({ project_user_id: projectUserIdParam })
                 }
-    
+
                 if (surveyIdParam) {
                     addToAttr({ survey_id: surveyIdParam })
                 }
-    
+
                 if (rewardIdParam) {
                     addToAttr({ reward_id: rewardIdParam })
                 }
-    
+
                 if (thankYouParam) {
                     addToAttr({ contribution: thankYouParam })
                 }
-    
+
                 if (window.localStorage && window.localStorage.getItem('globalVideoLanding') !== 'true') {
                     addToAttr({ withAlert: false })
                 }
-    
+
                 if (document.getElementById('fixed-alert')) {
                     addToAttr({ withFixedAlert: true })
                 }
-    
+
                 body.className = 'body-project closed'
-    
+
                 vnode.state.attr = attr
             } catch(e) {
                 console.log('Error on wrap.oninit:', e)
             }
         },
-        oncreate(vnode) {
-            const hasUnmanagedRootComponent = app && 
-                app.children.app &&
-                app.children.length > 1
+        view({ state: { attr, loadingUserDetails } }) {
 
-            const removeUnmanagedRootComponentFromDom = () => {
-                app.removeChild(app.children.app)
-            }
-
-            if (hasUnmanagedRootComponent) {
-                removeUnmanagedRootComponentFromDom()
-            }
-        },
-        view({ state: { attr } }) {
-            
             try {
-
                 const Menu = c.root.Menu
                 const Footer = c.root.Footer
                 const notHideFooter = !attr?.hideFooter
                 return (
                     <div id='app'>
                         <Menu {...attr} />
-                        {
-                            loadingUserDetails ?
-                                h.loader()
-                                :
-                                <Component {...attr} />
-                        }
+                        {loadingUserDetails() ? h.loader() : <Component {...attr} />}
                         {notHideFooter && <Footer {...attr} />}
                     </div>
                 )
