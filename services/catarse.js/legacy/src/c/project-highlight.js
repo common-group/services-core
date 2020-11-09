@@ -18,11 +18,12 @@ const projectHighlight = {
     view: function({state, attrs}) {
         const project = attrs.project;
         const isSub = projectVM.isSubscription(project);
-
+        const facebookUrl = `https://www.catarse.me/${project().permalink}?ref=ctrse_project_share&utm_source=facebook.com&utm_medium=social&utm_campaign=ctrse_project_share`;
+        const messengerUrl = `https://www.catarse.me/${project().permalink}?ref=ctrse_project_share&utm_source=facebook_messenger&utm_medium=social&utm_campaign=ctrse_project_share`;
         return m('#project-highlight', [
             (
-                project().video_embed_url ? 
-                    m(projectVideo, { video_embed_url : project().video_embed_url }) 
+                project().video_embed_url ?
+                    m(projectVideo, { video_embed_url : project().video_embed_url })
                 :
                     m('.project-image', { style: `background-image:url('${project().original_image || project().project_img}');` })
             ),
@@ -39,12 +40,12 @@ const projectHighlight = {
                     ),
                     project().permalink ? m(facebookButton, {
                         class: isSub ? 'btn-terciary-negative' : null,
-                        url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=social&utm_campaign=project_share`
+                        url: facebookUrl
                     }) : '',
                     project().permalink ? m(facebookButton, {
                         class: isSub ? 'btn-terciary-negative' : null,
                         messenger: true,
-                        url: `https://www.catarse.me/${project().permalink}?ref=facebook&utm_source=facebook.com&utm_medium=messenger&utm_campaign=project_share`
+                        url: messengerUrl
                     }) : '',
                     m('button#more-share.btn.btn-inline.btn-medium.btn-terciary', {
                         class: isSub ? 'btn-terciary-negative' : null,
@@ -58,7 +59,9 @@ const projectHighlight = {
                     ]),
                     (state.displayShareBox() ? m(projectShareBox, {
                         project,
-                        displayShareBox: state.displayShareBox
+                        displayShareBox: state.displayShareBox,
+                        facebookUrl,
+                        messengerUrl,
                     }) : '')
                 ])
             )
