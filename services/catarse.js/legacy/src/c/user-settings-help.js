@@ -31,12 +31,12 @@ const userSettingsHelp = {
                     m('ul.w-list-unstyled',
                         [
                             m('li.u-marginbottom-10',
-                                m('a.fontsize-smaller.alt-link[href=\'https://suporte.catarse.me/hc/pt-br/articles/217916143-A-transfer%C3%AAncia-do-dinheiro#conta\'][target=\'_blank\']',
+                                m('a.fontsize-smaller.alt-link[href=\'https://suporte.catarse.me/hc/pt-br/articles/360024259231\'][target=\'_blank\']',
                                     'Responsável pelo projeto e Conta bancária para receber o dinheiro'
                                 )
                             ),
                             m('li.u-marginbottom-10',
-                                m('a.fontsize-smaller.alt-link[href=\'https://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\'][target=\'_blank\']',
+                                m('a.fontsize-smaller.alt-link[href=\'https://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a\'][target=\'_blank\']',
                                     'Responsabilidades e Segurança no Catarse'
                                 )
                             )
