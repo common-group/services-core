@@ -14,21 +14,22 @@ export function Wrap(Component, customAttr) {
     }
 
     let firstRun = true
-    let loadingUserDetails = false
-    
-    function loadUserDetails(userId) {
-        loadingUserDetails = true
-        userVM
-            .fetchUser(userId, false)
-            .then(() => loadingUserDetails = false)
-            .catch(error => {
-                loadingUserDetails = false
-                h.captureMessage(`Could not load the user: ${error.message}`)
-            })
-    }
 
     return {
         oninit(vnode) {
+            const loadingUserDetails = h.RedrawStream(false)
+            async function loadUserDetails(userId) {
+                try {
+                    loadingUserDetails(true)
+                    await userVM.fetchUser(userId, false)
+                } catch(error) {
+                    h.captureMessage(`Could not load the user: ${error.message}`)
+                } finally {
+                    loadingUserDetails(false)
+                }
+            }
+
+            vnode.state.loadingUserDetails = loadingUserDetails
 
             try {
                 vnode.state.attr = {}
@@ -48,11 +49,11 @@ export function Wrap(Component, customAttr) {
                 let postParam = m.route.param('post_id') || parameters.post_id
                 let projectParam = m.route.param('project_id') || parameters.project_id
                 let projectUserIdParam = m.route.param('project_user_id') || parameters.user_id || parameters.project_user_id
-                let userParam = m.route.param('user_id') || app.getAttribute('data-userid') || parameters.user_id || customAttr?.user_id
+                let userParam = m.route.param('user_id') || app.getAttribute('data-userid') || parameters.user_id || customAttr?.user_id || h.getUserID()
                 let rewardIdParam = m.route.param('reward_id')
                 let surveyIdParam = m.route.param('survey_id')
                 let thankYouParam = app && JSON.parse(app.getAttribute('data-contribution'))
-    
+
                 const addToAttr = function (newAttr) {
                     attr = _.extend({}, newAttr, attr)
                 }
@@ -101,35 +102,16 @@ export function Wrap(Component, customAttr) {
                 console.log('Error on wrap.oninit:', e)
             }
         },
-        oncreate(vnode) {
-            const hasUnmanagedRootComponent = app && 
-                app.children.app &&
-                app.children.length > 1
-
-            const removeUnmanagedRootComponentFromDom = () => {
-                app.removeChild(app.children.app)
-            }
-
-            if (hasUnmanagedRootComponent) {
-                removeUnmanagedRootComponentFromDom()
-            }
-        },
-        view({ state: { attr } }) {
+        view({ state: { attr, loadingUserDetails } }) {
             
             try {
-
                 const Menu = c.root.Menu
                 const Footer = c.root.Footer
                 const notHideFooter = !attr?.hideFooter
                 return (
                     <div id='app'>
                         <Menu {...attr} />
-                        {
-                            loadingUserDetails ?
-                                h.loader()
-                                :
-                                <Component {...attr} />
-                        }
+                        {loadingUserDetails() ? h.loader() : <Component {...attr} />}
                         {notHideFooter && <Footer {...attr} />}
                     </div>
                 )
