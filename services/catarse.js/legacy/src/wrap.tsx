@@ -57,53 +57,53 @@ export function Wrap(Component, customAttr) {
                 const addToAttr = function (newAttr) {
                     attr = _.extend({}, newAttr, attr)
                 }
-    
+
                 if (postParam) {
                     addToAttr({ post_id: postParam })
                 }
-    
+
                 if (projectParam) {
                     addToAttr({ project_id: projectParam })
                 }
-    
+
                 if (userParam) {
                     addToAttr({ user_id: userParam })
                     loadUserDetails(userParam)
                 }
-    
+
                 if (projectUserIdParam) {
                     addToAttr({ project_user_id: projectUserIdParam })
                 }
-    
+
                 if (surveyIdParam) {
                     addToAttr({ survey_id: surveyIdParam })
                 }
-    
+
                 if (rewardIdParam) {
                     addToAttr({ reward_id: rewardIdParam })
                 }
-    
+
                 if (thankYouParam) {
                     addToAttr({ contribution: thankYouParam })
                 }
-    
+
                 if (window.localStorage && window.localStorage.getItem('globalVideoLanding') !== 'true') {
                     addToAttr({ withAlert: false })
                 }
-    
+
                 if (document.getElementById('fixed-alert')) {
                     addToAttr({ withFixedAlert: true })
                 }
-    
+
                 body.className = 'body-project closed'
-    
+
                 vnode.state.attr = attr
             } catch(e) {
                 console.log('Error on wrap.oninit:', e)
             }
         },
         view({ state: { attr, loadingUserDetails } }) {
-            
+
             try {
                 const Menu = c.root.Menu
                 const Footer = c.root.Footer

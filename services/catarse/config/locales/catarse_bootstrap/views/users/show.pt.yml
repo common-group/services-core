@@ -102,8 +102,7 @@ pt:
       answer_survey: "Responda o questionário"
     subscription_row:
       anonymous_sub: 'Quero que minha assinatura não seja pública'
-      anonymous_sub_title: 'Assinatura anônima'
-      
+      anonymous_sub_title: ' Assinatura anônima'
     card:
       twitter_profile: "Perfil no Twitter"
       facebook_profile: "Perfil no Facebook"
