@@ -101,7 +101,7 @@ services:
         ipv4_address: 10.0.1.59
 
   service_core_db:
-    image: library/postgres:9.6.5-alpine
+    image: library/postgres:9.6.19-alpine
     volumes:
       - ./services/service-core-db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./services/service-core-db/sample.seed.sql:/sample.seed.sql

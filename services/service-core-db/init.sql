@@ -5,6 +5,7 @@ create role admin with nologin;
 create role scoped_user with nologin;
 create role platform_user with nologin;
 create role anonymous with nologin;
+create role comum;
 grant admin to postgrest;
 grant scoped_user to postgrest;
 grant platform_user to postgrest;
