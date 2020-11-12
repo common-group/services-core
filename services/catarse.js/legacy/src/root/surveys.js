@@ -72,9 +72,14 @@ const surveys = {
     },
     view: function({state}) {
 
-        const project = _.first(state.projectDetails());
-        const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
-        const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));
+        const project         = _.first(state.projectDetails());
+        const projectOnline   = project.state === 'online';
+        const runnedOut       = reward => reward.run_out;
+        const surveyNotSent   = reward => !reward.survey_sent_at;
+        const reachedLimit    = reward => (reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions));
+
+        const canBeCreated    = reward => surveyNotSent(reward) && (reachedLimit(reward) || !projectOnline || runnedOut(reward));
+        const cannotBeCreated = reward => surveyNotSent(reward) && projectOnline && !reachedLimit(reward);
         const availableAction = (reward) => {
             if (canBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-small-stack.w-col-tiny-tiny-stack',
