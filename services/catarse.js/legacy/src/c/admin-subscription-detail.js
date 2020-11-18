@@ -12,7 +12,7 @@ import models from '../models';
 const adminSubscriptionDetail = {
     oninit: function(vnode) {
         const loadReward = () => {
-            
+
             const reward = prop({});
 
             if (vnode.attrs.item.reward_id) {
@@ -39,9 +39,9 @@ const adminSubscriptionDetail = {
         // Pagination on notifications
         const notificationsLoader = commonNotification.paginationVM(models.userNotification, 'created_at.desc');
         let isFirstPage = true;
-        
+
         const loadNotifications = () => {
-            const notificationsInternal = prop([]);            
+            const notificationsInternal = prop([]);
             const addNotificationsToInternal = (notifications) => notificationsInternal(notifications);
 
             // First loads the first page and configure the next interactions
@@ -54,10 +54,10 @@ const adminSubscriptionDetail = {
                     }).order({
                         created_at: 'desc'
                     });
-    
+
                 notificationFilterVM.user_id(vnode.attrs.item.user_id);
                 notificationFilterVM.project_id(vnode.attrs.item.project_id);
-    
+
                 notificationsLoader
                     .firstPage(notificationFilterVM.parameters())
                     .then(addNotificationsToInternalData => {
@@ -174,7 +174,7 @@ const adminSubscriptionDetail = {
                     _.map(transitions, transition => m('.fontsize-smallest.lineheight-looser.w-row', [
                         m('.w-col.w-col-6',
                                 m('div',
-                                    h.momentify(transition.created_at, 'DD/MM/YYYY hh:mm')
+                                    h.momentify(transition.created_at, 'DD/MM/YYYY HH:mm')
                                 )
                             ),
                         m('.w-col.w-col-6',
@@ -186,7 +186,7 @@ const adminSubscriptionDetail = {
                     _.map(payments, (payment, i) => m(`.fontsize-smallest.lineheight-looser.w-row${payment.selected() ? '.fontweight-semibold' : ''}`, [
                         m('.w-col.w-col-6',
                                 m('div',
-                                    h.momentify(payment.created_at, 'DD/MM/YYYY hh:mm')
+                                h.momentify(payment.created_at, 'DD/MM/YYYY HH:mm')
                                 )
                             ),
                         m('.w-col.w-col-6',
@@ -206,7 +206,7 @@ const adminSubscriptionDetail = {
                     _.map(notifications, notification => m('.fontsize-smallest.lineheight-looser.w-row', [
                         m('.w-col.w-col-6',
                               m('div',
-                                h.momentify(notification.created_at, 'DD/MM/YYYY hh:mm')
+                                h.momentify(notification.created_at, 'DD/MM/YYYY HH:mm')
                                )
                              ),
                         m('.w-col.w-col-6',
@@ -215,7 +215,7 @@ const adminSubscriptionDetail = {
                             )
                         )
                     ])),
-                    m('.w-inline-block', 
+                    m('.w-inline-block',
                         (state.notificationsLoader.isLastPage() ? ''
                         : m('button.btn-inline.btn.btn-small.btn-terciary', { onclick: state.loadNotifications }, 'Carregar mais')))
                 ])),
@@ -225,9 +225,9 @@ const adminSubscriptionDetail = {
                         'Detalhes do apoio mensal'
                     ),
                     m('.fontsize-smallest.lineheight-loose', currentPayment() ? [
-                        `Início: ${h.momentify(currentPayment().created_at, 'DD/MM/YYYY hh:mm')}`,
+                        `Início: ${h.momentify(currentPayment().created_at, 'DD/MM/YYYY HH:mm')}`,
                         m('br'),
-                        `Confirmação: ${h.momentify(currentPayment().paid_at, 'DD/MM/YYYY hh:mm')}`,
+                        `Confirmação: ${h.momentify(currentPayment().paid_at, 'DD/MM/YYYY HH:mm')}`,
                         m('br'),
                         `Valor: R$${currentPayment().amount / 100}`,
                         m('br'),
