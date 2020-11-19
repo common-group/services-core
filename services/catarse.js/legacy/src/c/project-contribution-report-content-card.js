@@ -230,7 +230,7 @@ const projectContributionReportContentCard = {
                                         ),
                                         m(paymentStatus, { item: { payment_method: contribution.payment_method, state: contribution.state } }),
                                         m('.fontcolor-secondary.fontsize-smallest',
-                                            h.momentify(contribution.created_at, 'DD/MM/YYYY hh:mm')
+                                            h.momentify(contribution.created_at, 'DD/MM/YYYY HH:mm')
                                         )
                                     ]),
                                     m('.fontsize-base.fontweight-semibold',
