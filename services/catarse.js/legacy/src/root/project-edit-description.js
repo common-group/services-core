@@ -2,8 +2,8 @@ import m from 'mithril';
 import h from '../h';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
-import projectDescriptionEdit from '../c/project-description-edit';
-import projectDescriptionVideoEdit from '../c/project-description-video-edit';
+import projectDescriptionEdit from './projects/edit/project-description-edit';
+import projectDescriptionVideoEdit from './projects/edit/project-description-video-edit';
 
 const projectEditDescription = {
     oninit: function(vnode) {
