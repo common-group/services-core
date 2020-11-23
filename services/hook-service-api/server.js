@@ -31,7 +31,7 @@ function raven_report(e, context_opts) {
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    statement_timeout: (process.env.STATEMENT_TIMEOUT || 5000)
+    connectionTimeoutMillis: (process.env.STATEMENT_TIMEOUT || 5000)
 });
 
 const verifyKondutoSignature = (req) => {
@@ -201,8 +201,9 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 resp.status(400).send("invalid signature");
             }
         } catch (err) {
-            raven_report(err, {});
             console.log('Error on get pagarme client ', err);
+            raven_report(err, {});
+            resp.status(500).send("Internal Server Error");
         }
     };
 });
