@@ -12,4 +12,5 @@ Referência da atividade/issue
 - [ ]  Descreveu o propósito do commit com o emoji no início da mensagem
 - [ ]  Mudanças estão unificadas em um único commit
 - [ ]  Revisou seu próprio código
+- [ ]  Adicionou um link para esse PR na atividade do Notion
 - [ ]  A base de conhecimento foi atualizada (Isso para quando tivermos uma)
