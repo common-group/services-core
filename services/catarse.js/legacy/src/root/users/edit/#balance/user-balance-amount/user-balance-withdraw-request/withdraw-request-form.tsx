@@ -54,9 +54,6 @@ function _WithdrawRequestForm(props : WithdrawRequestFormProps) {
                         <CurrencyFormat label='R$' value={balance.amount} />
                     </span>
                 </div>
-                <p class='u-marginbottom-20'>
-                    <I18nText scope="users.balance.withdraw_irrf_message_html" trust={true}/>
-                </p>
                 <UserOwnerBox
                     user={user}
                     hideAvatar={true}
