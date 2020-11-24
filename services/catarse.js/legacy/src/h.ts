@@ -93,7 +93,7 @@ const _dataCache = {},
     },
     reduceSearchString = (/** @type {(keyValue:string) => any} */callback, initial) => window.location.search.replace('?', '').split('&').reduce(callback, initial),
     objectToSearchString = (obj) => '?' + Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&'),
-    setParamByName = (name, value) => {        
+    setParamByName = (name, value) => {
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
             const [key, value] = keyValue.split('=');
             if (key) {
@@ -140,10 +140,10 @@ const _dataCache = {},
         m.route.set(newurl);
     },
     setAndResetMultParamsArray = (/** @type {{[key : string] : string | number}} */ setParams, /** @type {string[]}*/ removeQuery = []) => {
-        
-        /** @type {Object} */ 
+
+        /** @type {Object} */
         const query = m.parseQueryString(window.location.search);
-        
+
         removeQuery.forEach(param => {
             if (param in query) {
                 delete query[param];
@@ -176,13 +176,13 @@ const _dataCache = {},
 
         const keysAndValues = reduceSearchString((finalQueryObject, keyValue) => {
 
-            const [key, value] = keyValue.split('=');            
+            const [key, value] = keyValue.split('=');
             if (!paramsNamesToRemove.includes(key) && key) {
                 finalQueryObject[key] = value;
             }
             return finalQueryObject;
         }, {});
-        
+
         const queryString = objectToSearchString(keysAndValues);
 
         const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryString + (window.location.hash === '#' ? '' : window.location.hash);
@@ -197,6 +197,7 @@ const _dataCache = {},
                 future: 'em %s',
                 past: 'há %s',
                 s: 'segundos',
+                ss: 'segundos',
                 m: 'um minuto',
                 mm: '%d minutos',
                 h: 'uma hora',
@@ -1362,7 +1363,7 @@ function RedrawToggleStream<T>(firstState : T, secondState : T) {
 
     streamAccessor.toggle = () => streamAccessor(_data() === firstState ? secondState : firstState);
 
-    return streamAccessor;   
+    return streamAccessor;
 }
 
 function createPropAcessors(obj) {
