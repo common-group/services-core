@@ -29,7 +29,7 @@ function _UserBalance({user} : UserBalanceProps) {
 const IrrfRetentionMessage = withHooks<UserBalanceProps>(_IrrfRetentionMessage)
 
 function _IrrfRetentionMessage({user}: UserBalanceProps) {
-    if (user.account_type === 'pj') {
+    if (user.account_type === 'pj' || user.account_type === 'mei') {
         return (
             <div class="w-container">
                 <div class="card card-message u-radius fontsize-small">
