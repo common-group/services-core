@@ -1,7 +1,7 @@
 import m from 'mithril';
 
-const bigInputCard = {
-    view: function({attrs}) {
+export default class BigInputCard {
+    view({attrs, children}) {
         const cardClass = attrs.cardClass || '.w-row.u-marginbottom-30.card.card-terciary.padding-redactor-description.text.optional.project_about_html.field_with_hint';
 
         return m(cardClass, { style: (attrs.cardStyle || {}) }, [
@@ -9,9 +9,7 @@ const bigInputCard = {
                 m('label.field-label.fontweight-semibold.fontsize-base', attrs.label),
                 (attrs.label_hint ? m('label.hint.fontsize-smallest.fontcolor-secondary', attrs.label_hint) : '')
             ]),
-            m('div', attrs.children)
+            m('div', attrs.children || children)
         ]);
     }
-};
-
-export default bigInputCard;
+}

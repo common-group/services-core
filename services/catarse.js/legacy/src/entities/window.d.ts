@@ -1,10 +1,9 @@
-export type TranslateScopeFunction = (scope : string) => string
-export type TranslateParamsScopeFunction = (scope : string, scopeObject : I18ScopeType) => string
+export type TranslateParamsScopeFunction = (scope : string, scopeObject? : I18ScopeType) => string
 export type ThisWindow = Window & typeof globalThis & {
     I18n: {
         locale: string
         currentLocale(): string
-        t: TranslateScopeFunction | TranslateParamsScopeFunction,
+        t: TranslateParamsScopeFunction,
         translations: {
             [locales:string]: {
                 projects: {

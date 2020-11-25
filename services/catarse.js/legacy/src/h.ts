@@ -1521,4 +1521,5 @@ export default {
     buildCreditCard,
     isMobile,
     clamp,
+    redactorConfig,
 };
