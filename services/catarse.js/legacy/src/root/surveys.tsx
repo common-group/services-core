@@ -8,6 +8,7 @@ import models from '../models';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import rewardVM from '../vms/reward-vm';
 import projectVM from '../vms/project-vm';
+import { Loader } from '@/shared/components/loader'
 
 const I18nScope = _.partial(h.i18nScope, 'projects.reward_fields');
 const surveyScope = _.partial(h.i18nScope, 'projects.dashboard_surveys');
@@ -71,10 +72,21 @@ const surveys = {
         };
     },
     view: function({state}) {
-
         const project = _.first(state.projectDetails());
-        const canBeCreated = reward => !reward.survey_sent_at && ((reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)) || project.state !== 'online');
-        const cannotBeCreated = reward => !reward.survey_sent_at && project.state === 'online' && (!reward.maximum_contributions || (reward.paid_count < reward.maximum_contributions));
+
+        if (!project) return m(Loader)
+
+        const isProjectOnline = project => project.state === 'online';
+        const isSurveyNotSent = reward => !reward.survey_sent_at;
+        const isSoldOut = (reward) => {
+            const isReallySoldOut = reward.maximum_contributions && (reward.paid_count >= reward.maximum_contributions)
+            const isMarkedAsSoldOut = reward.run_out
+            return isReallySoldOut || isMarkedAsSoldOut;
+        }
+
+        const canBeCreated = reward => isSurveyNotSent(reward) && (isSoldOut(reward) || !isProjectOnline(project))
+        const cannotBeCreated = reward => isSurveyNotSent(reward) && isProjectOnline(project) && !isSoldOut(reward);
+
         const availableAction = (reward) => {
             if (canBeCreated(reward)) {
                 return m('.w-col.w-col-3.w-col-small-small-stack.w-col-tiny-tiny-stack',
