@@ -10,6 +10,7 @@ import BigInputCard from '../../../c/big-input-card';
 import ProjectEditSaveBtn from '../../../c/project-edit-save-btn';
 import { I18nText } from '../../../shared/components/i18n-text';
 import TextEditor from '../../../shared/components/text-editor';
+import { HTMLInputEvent } from '../../../entities';
 
 const projectDescriptionVideoEdit = {
     oninit: function (vnode) {
@@ -98,7 +99,7 @@ const projectDescriptionVideoEdit = {
                                 >
                                     <input
                                         value={vm.fields.video_url()}
-                                        onchange={vm.fields.video_url}
+                                        onchange={(event : HTMLInputEvent) => vm.fields.video_url(event.target.value)}
                                         type="text"
                                         class={`${videoClass} string required w-input text-field positive medium`} />
                                     {videoError}
