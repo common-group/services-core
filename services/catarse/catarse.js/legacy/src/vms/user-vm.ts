@@ -2,6 +2,7 @@ import m from 'mithril';
 import prop from 'mithril/stream';
 import _ from 'underscore';
 import { catarse, commonPayment } from '../api';
+import { UserDetails } from '../entities';
 import h from '../h';
 import models from '../models';
 import projectFilters from './project-filters-vm';
@@ -164,7 +165,10 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
     const lUser = catarse.loaderWithToken(models.userDetail.getRowOptions(idVM.parameters()));
 
     if (!handlePromise) {
-        return lUser.load();
+        return lUser.load().then((userDetailsResult : UserDetails[]) => {
+            customProp(_.first(userDetailsResult))
+            return userDetailsResult
+        });
     } else {
         customProp(currentUser()); // first load user from cache
         lUser
@@ -183,6 +187,14 @@ const fetchUser = (user_id, handlePromise = true, customProp = currentUser) => {
 const getCurrentUser = () => {
     fetchUser(h.getUserID());
     return currentUser;
+};
+
+const firstDisplayName = user => {
+    const name = userVM.displayName(user)
+    if (!!name) {
+        return name.split(' ')[0]
+    }
+    return ''
 };
 
 const displayName = user => {
@@ -299,6 +311,7 @@ const userVM = {
     displayImage,
     displayCover,
     displayName,
+    firstDisplayName,
     fetchUser,
     getCurrentUser,
     currentUser,

@@ -4,6 +4,9 @@ import _ from 'underscore'
 import h from './h'
 import c from './c'
 import userVM from './vms/user-vm'
+import { HeaderMenu } from './root/header-menu'
+import { If } from './shared/components/if'
+import { Loader } from './shared/components/loader'
 
 let app = document.getElementById('application')
 let body = document.body
@@ -57,61 +60,65 @@ export function Wrap(Component, customAttr) {
                 const addToAttr = function (newAttr) {
                     attr = _.extend({}, newAttr, attr)
                 }
-    
+
                 if (postParam) {
                     addToAttr({ post_id: postParam })
                 }
-    
+
                 if (projectParam) {
                     addToAttr({ project_id: projectParam })
                 }
-    
+
                 if (userParam) {
                     addToAttr({ user_id: userParam })
                     loadUserDetails(userParam)
                 }
-    
+
                 if (projectUserIdParam) {
                     addToAttr({ project_user_id: projectUserIdParam })
                 }
-    
+
                 if (surveyIdParam) {
                     addToAttr({ survey_id: surveyIdParam })
                 }
-    
+
                 if (rewardIdParam) {
                     addToAttr({ reward_id: rewardIdParam })
                 }
-    
+
                 if (thankYouParam) {
                     addToAttr({ contribution: thankYouParam })
                 }
-    
+
                 if (window.localStorage && window.localStorage.getItem('globalVideoLanding') !== 'true') {
                     addToAttr({ withAlert: false })
                 }
-    
+
                 if (document.getElementById('fixed-alert')) {
                     addToAttr({ withFixedAlert: true })
                 }
-    
+
                 body.className = 'body-project closed'
-    
+
                 vnode.state.attr = attr
             } catch(e) {
                 console.log('Error on wrap.oninit:', e)
             }
         },
         view({ state: { attr, loadingUserDetails } }) {
-            
+
             try {
-                const Menu = c.root.Menu
                 const Footer = c.root.Footer
                 const notHideFooter = !attr?.hideFooter
                 return (
                     <div id='app'>
-                        <Menu {...attr} />
-                        {loadingUserDetails() ? h.loader() : <Component {...attr} />}
+                        <If condition={loadingUserDetails()}>
+                            <Loader />
+                        </If>
+                        <If condition={!loadingUserDetails()}>
+                            <HeaderMenu {...attr} user={userVM.currentUser()} />
+                            <Component {...attr} />
+                        </If>
                         {notHideFooter && <Footer {...attr} />}
                     </div>
                 )
