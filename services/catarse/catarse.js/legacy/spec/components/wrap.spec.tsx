@@ -42,7 +42,7 @@ describe('Wrap', () => {
             await sleep(1)
             component.redraw()
             // this is a hack to wait redraw execute after promises be resolved
-            await sleep(1)
+            await sleep(0)
             component.redraw()
 
             // 2. act
