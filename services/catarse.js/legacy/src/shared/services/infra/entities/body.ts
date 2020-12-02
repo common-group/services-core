@@ -1,1 +1,0 @@
-export type Body = JSON | Document | Blob | BufferSource | FormData | URLSearchParams | String | string | null 
