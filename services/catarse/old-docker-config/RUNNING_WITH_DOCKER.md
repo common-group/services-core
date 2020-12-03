@@ -13,11 +13,11 @@ This guide will help you get started to setup the project using Docker, and keep
 
 ## Installing Docker
 
-The first thing you need to do before start is to install `Docker` and `docker-compose`. 
+The first thing you need to do before start is to install `Docker` and `docker-compose`.
 
 For Mac/Windows users:
 
-* [https://docs.docker.com/docker-for-mac/](https://docs.docker.com/docker-for-mac/) 
+* [https://docs.docker.com/docker-for-mac/](https://docs.docker.com/docker-for-mac/)
 
 For Linux users:
 
@@ -122,9 +122,9 @@ Run the tests:
 
 ## Debugging
 
-We know you love to use `debugger` or `binding.pry`, and who doesn't, that's why we put together a script to attach the `web` container service into your terminal session. 
+We know you love to use `byebug`, and who doesn't, that's why we put together a script to attach the `web` container service into your terminal session.
 
-What we mean by this, is that if you add a `debugger` or `binding.pry` on a part of the code, you can run:
+What we mean by this, is that if you add a `byebug` on a part of the code, you can run:
 
 ```
 % bin/attach web

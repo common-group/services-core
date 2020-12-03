@@ -73,6 +73,6 @@ services:
       - production.env
   web:
     <<: *app
-    command: bundle exec rails server -p 3000 -b 0.0.0.0 #unicorn_rails -p 3000 -c /usr/src/app/config/unicorn.rb -o 0.0.0.0
+    command: bundle exec rails server -p 3000 -b 0.0.0.0
     ports:
       - 3000:3000

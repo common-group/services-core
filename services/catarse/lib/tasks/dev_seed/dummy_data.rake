@@ -1,5 +1,4 @@
 require 'faker'
-require 'cpf_faker'
 require 'net/http'
 require 'json'
 
@@ -53,14 +52,14 @@ namespace :dev_seed do
 
   desc 'fill cities from states'
   task fill_cities_from_state: :environment do
-    State.all.each do |state| 
+    State.all.each do |state|
       uri_string = "http://educacao.dadosabertosbr.com/api/cidades/#{state.acronym.downcase}"
       uri = URI(uri_string)
       response = Net::HTTP.get(uri)
       cities = JSON.parse(response)
-      
+
       puts "Creating cities from state #{state.name}"
-      
+
       cities.each do |ibge_number_city_name|
         city_name = ibge_number_city_name.split(':')[1]
         city = City.find_or_initialize_by(name: city_name.titleize, state: state)
@@ -86,7 +85,7 @@ namespace :dev_seed do
         name: Faker::Name.name,
         email: _email,
         password: '12345678',
-        cpf: Faker::CPF.numeric,
+        cpf: Faker::IDNumber.brazilian_citizen_number,
         birth_date: Faker::Date.birthday(18, 55),
         account_type: 'pf'
       )
@@ -99,7 +98,7 @@ namespace :dev_seed do
       _city = City.create!(state_id: _state.id, name: _cname)
 
       address = _user.address || _user.build_address
-      address.update_attributes!(
+      address.update!(
         country_id: country_br.id,
         state_id: _state.id,
         address_street: Faker::Address.street_name,

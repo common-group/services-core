@@ -122,6 +122,6 @@ Vagrant::Config.run do |config|
   config.vm.provision :shell, inline: %q(sudo bash -c "echo 'UseDNS no' >> /etc/ssh/sshd_config")
   config.vm.provision :shell, inline: 'cp /vagrant/config/database.sample.yml /vagrant/config/database.yml'
   config.vm.provision :shell, inline: 'cd /vagrant && bundle install'
-  config.vm.provision :shell, inline: 'cd /vagrant && rake db:create db:migrate db:test:prepare db:seed'
+  config.vm.provision :shell, inline: 'cd /vagrant && rails db:create db:migrate db:test:prepare db:seed'
   config.vm.provision :shell, inline: 'cd /vagrant && rails s -d'
 end
