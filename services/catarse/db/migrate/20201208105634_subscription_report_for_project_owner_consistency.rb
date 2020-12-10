@@ -1,9 +1,9 @@
-class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration
+class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration[4.2]
 
   def up
     execute <<-SQL
 
-    CREATE OR REPLACE VIEW "public"."subscription_report_for_project_owners" AS 
+    CREATE OR REPLACE VIEW "public"."subscription_report_for_project_owners" AS
     SELECT s.project_id,
       u.name,
       u.public_name,
@@ -61,14 +61,14 @@ class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration
               reward.title,
               reward.description
           FROM rewards reward
-              WHERE 
+              WHERE
                   (reward.common_id = s.reward_id AND stats.paid_count = 0)
                   OR
                   (reward.common_id = last_paid_payment.reward_id AND stats.paid_count > 0)
               LIMIT 1
       ) r ON true
       LEFT JOIN LATERAL (
-          SELECT 
+          SELECT
               a.id,
               a.address_street AS street,
               a.address_complement AS complement,
@@ -95,7 +95,7 @@ class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration
   def down
     execute <<-SQL
 
-    CREATE OR REPLACE VIEW "public"."subscription_report_for_project_owners" AS 
+    CREATE OR REPLACE VIEW "public"."subscription_report_for_project_owners" AS
     SELECT s.project_id,
        u.name,
        u.public_name,
@@ -150,7 +150,7 @@ class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration
      WHERE (s.status <> 'deleted'::payment_service.subscription_status)
      GROUP BY user_address.street, user_address.complement, user_address.number, user_address.neighborhood, user_address.city, user_address.state, user_address.zipcode, user_address.country, s.project_id, u.name, u.public_name, u.email, s.checkout_data, r.title, r.description, s.status, last_paid_payment.created_at, s.created_at, u.id, last_paid_payment.data;;
    ---
-   
+
 
     SQL
   end
