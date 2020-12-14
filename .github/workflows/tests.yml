@@ -1,0 +1,235 @@
+name: Tests
+on: push
+jobs:
+  catarse:
+    name: Catarse
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/catarse
+    services:
+      postgres:
+        image: postgres:11.5
+        ports: ['5432:5432']
+        env:
+          POSTGRES_DB: catarse_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: example
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+
+      - name: Install postgres client dependencies
+        run: sudo apt-get install libpq-dev
+
+      - name: Cache gems
+        uses: actions/cache@v2
+        with:
+          path: ./services/catarse/vendor/bundle
+          key: ${{ runner.os }}-gems-v3-${{ hashFiles('./services/catarse/Gemfile.lock') }}
+
+      - name: Install Ruby dependencies
+        run: |
+          gem install bundler:2.1.4
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.20.0
+
+      - name: Yarn package cache
+        uses: actions/cache@v2
+        with:
+          path: ./services/catarse/catarse.js/node_modules
+          key: ${{ runner.os }}-yarn-v2-${{ hashFiles('./services/catarse/catarse.js/yarn.lock') }}
+
+      - name: Install Yarn packages
+        run: |
+          yarn policies set-version
+          yarn install --pure-lockfile
+
+      - name: Create database
+        run: |
+          cp config/database.sample.yml config/database.yml
+          RAILS_ENV=test bundle exec rails db:create
+          RAILS_ENV=test bundle exec rails db:migrate
+
+      - name: Run tests
+        run: bundle exec rspec spec
+
+  catarse_js:
+    name: Catarse.js
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/catarse/catarse.js
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.20.0
+
+      - name: Yarn package cache
+        uses: actions/cache@v2
+        with:
+          path: ./services/catarse/catarse.js/node_modules
+          key: ${{ runner.os }}-yarn-v2-${{ hashFiles('./services/catarse/catarse.js/yarn.lock') }}
+
+      - name: Install Yarn packages
+        run: |
+          yarn policies set-version
+          yarn install --pure-lockfile
+
+      - name: Run tests
+        run: yarn test
+
+  services_core_db:
+    name: Service Core DB
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/service-core-db
+    steps:
+      - name: Setup docker container
+        uses: docker://comum/docker-build-env:latest
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Run tests
+        run: ./run_sql_tests_with_docker.sh
+
+  common_api:
+    name: Common API
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/common-api
+    services:
+      postgres:
+        image: postgres:9.6
+        ports: ['5432:5432']
+        env:
+          POSTGRES_DB: services_core_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: example
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup Rust
+        run: |
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          cargo install diesel_cli --no-default-features --features "postgres"
+          sudo ln -s $HOME/.cargo/bin/diesel /usr/local/bin/diesel
+
+      - name: Database Setup
+        env:
+          PGPASSWORD: example
+        run: |
+          cd ../service-core-db
+          touch Cargo.toml
+          psql -U postgres -h localhost -p 5432 services_core_test < ./init.sql
+          psql -U postgres -h localhost -p 5432 -c "alter user postgrest with superuser;"
+          DATABASE_URL=postgres://postgres:example@localhost:5432/services_core_test ./scripts/run_migrations.sh
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.5.1
+
+      - name: Cache gems
+        uses: actions/cache@v2
+        with:
+          path: ./services/common-api/vendor/bundle
+          key: ${{ runner.os }}-gems-common-api-${{ hashFiles('./services/common-api/Gemfile.lock') }}
+
+      - name: Install Ruby dependencies
+        run: |
+          gem install bundler:1.17.3
+          bundle config disable_local_branch_check true
+          bundle config local.common_models ../common_models
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Run tests
+        run: DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true DATABASE_URL=postgres://postgres:example@localhost:5432/services_core_test bundle exec rspec spec
+
+  common_models:
+    name: Common Models
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/service-core-db
+    steps:
+      - name: Setup docker container
+        uses: docker://comum/docker-build-env:latest
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Run tests
+        run: |
+          docker run -e POSTGRES_PASSWORD=example -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
+          docker build -f Dockerfile -t comum/services-core:test .
+          cd ../common-api/vendor/gems/common_models/
+          docker build -f Dockerfile -t comum/common_models:test .
+          cd ../../../../../
+          docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql
+          docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
+          docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres:example@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh
+          docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres:example@localhost.pg:5432/services_core_test" comum/common_models:test bundle exec rspec spec
+
+  payment_service:
+    name: Payment Service
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/service-core-db
+    steps:
+      - name: Setup docker container
+        uses: docker://comum/docker-build-env:latest
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Run tests
+        run: |
+          docker run -e POSTGRES_PASSWORD=example -e POSTGRES_DB=services_core_test --name pg_default -p 5432:5432 -d postgres:9.6
+          docker build -f Dockerfile -t comum/services-core:test .
+          cd ../payment-service-api/
+          docker build -f Dockerfile -t comum/payment-service:test .
+          cd ../../
+          docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 services_core_test < services/service-core-db/init.sql
+          docker run -e PGPASSWORD=example -i --rm --link pg_default:pg_default comum/services-core:test psql -U postgres -h pg_default -p 5432 -c "alter user postgrest with superuser;"
+          docker run -i --rm --link pg_default:pg_default -e="DATABASE_URL=postgres://postgres:example@pg_default:5432/services_core_test" comum/services-core:test ./scripts/run_migrations.sh
+          docker run -i --rm --link pg_default:localhost.pg -e="RAILS_ENV=test" -e="DATABASE_URL=postgres://postgres:example@localhost.pg:5432/services_core_test" comum/payment-service:test npm test -- -v
+
+  proxy_config:
+    name: Proxy Config
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./services/proxy
+    steps:
+      - name: Setup docker container
+        uses: docker://comum/docker-build-env:latest
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Run tests
+        run: ./test.sh
