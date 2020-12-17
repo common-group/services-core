@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
       redirect_to follow_fb_friends_path
     else
       session[:return_to] = follow_fb_friends_path
-      redirect_to('/auth/facebook')
+      redirect_to user_facebook_omniauth_authorize_path
     end
   end
 
