@@ -34,7 +34,11 @@ const projectRewardCard = {
                 ? Number(vm.shippingFeeForCurrentReward(selectedDestination).value)
                 : 0;
             const rewardMinValue = Number(vm.selectedReward().minimum_value);
-            vm.applyMask(`${h.formatNumber(shippingFee + rewardMinValue, 2, 3)}`);
+            const numberValueFloat = h.monetaryToFloat(vm.contributionValue);
+            const valueFloat = _.isNaN(numberValueFloat) ? MINIMUM_VALUE : numberValueFloat;
+            if (valueFloat < rewardMinValue + shippingFee) {
+              vm.applyMask(`${h.formatNumber(shippingFee + rewardMinValue, 2, 3)}`);
+            }
         };
 
         // @TODO: move submit, fee & value logic to VM
@@ -49,7 +53,7 @@ const projectRewardCard = {
                 vm.error(`O valor de apoio para essa recompensa deve ser de no mínimo R$${vm.selectedReward().minimum_value} ${projectVM.isSubscription(projectVM.currentProject()) ? '' : `+ frete R$${h.formatNumber(shippingFee.value, 2, 3)}`} `);
             } else {
                 vm.error('');
-                
+
                 const valueUrl = window.encodeURIComponent(String(valueFloat).replace('.', ','));
 
                 if (projectVM.isSubscription(projectVM.currentProject())) {
