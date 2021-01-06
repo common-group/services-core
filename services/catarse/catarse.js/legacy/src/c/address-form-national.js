@@ -8,6 +8,7 @@ const I18nScope = _.partial(h.i18nScope, 'activerecord.attributes.address');
 
 const addressFormNational = {
     view: function ({ attrs }) {
+        const validateZipCode = attrs.validateZipCode;
         const disableInternational = attrs.disableInternational;
         const countryName = attrs.countryName;
         const fields = attrs.fields;
@@ -49,6 +50,7 @@ const addressFormNational = {
                                 oninput: e => {
                                     lookupZipCode(e.target.value);
                                 },
+                                onblur: validateZipCode,
                             }),
                             errors.addressZipCode()
                                 ? m(inlineError, {
