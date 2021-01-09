@@ -1,7 +1,7 @@
 ### under development
 
 # services core [![CircleCI](https://circleci.com/gh/common-group/services-core.svg?style=svg)](https://circleci.com/gh/common-group/services-core)
-This repo contains docker files to setup the Catarse environment. All dependendent repos are included as git subtrees mounted on the ```services``` folder.
+This repo contains docker files to setup the Wmseed environment. All dependendent repos are included as git subtrees mounted on the ```services``` folder.
 
 ## setup
 For every service described on `docker-compose.yml` we have multiple env_files `compose_env/.*.env.sample`. Just make a copy off all of them on the same directory removing .sample.
@@ -20,10 +20,10 @@ Start services:
 `$ docker-compose up -d`
 
 
-Run migrations of catarse
+Run migrations of wmseed
 ```
-$ docker-compose exec catarse rake db:migrate # will have an error here after some migrations running.
-$ docker-compose exec catarse rake dev_seed:demo_settings # insert host data to configure common_db forward schema
-$ docker-compose exec catarse rake common:generate_fdw # generate forward schemas using config from previous command
-$ docker-compose exec catarse rake db:migrate # run again and should finish migrations
+$ docker-compose exec wmseed rake db:migrate # will have an error here after some migrations running.
+$ docker-compose exec wmseed rake dev_seed:demo_settings # insert host data to configure common_db forward schema
+$ docker-compose exec wmseed rake common:generate_fdw # generate forward schemas using config from previous command
+$ docker-compose exec wmseed rake db:migrate # run again and should finish migrations
 ```
