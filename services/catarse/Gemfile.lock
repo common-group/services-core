@@ -417,7 +417,7 @@ GEM
       ffi (~> 1.0)
     rdstation-ruby-client (0.0.5)
       httparty (~> 0.12)
-    redcarpet (3.5.0)
+    redcarpet (3.5.1)
     redis (4.2.5)
     regexp_parser (2.0.0)
     request_store (1.5.0)
