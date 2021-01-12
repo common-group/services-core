@@ -23,7 +23,13 @@ export default class AddressForm {
             applyZipcodeMask = (value) => fields.addressZipCode(zipcodeMask(value)),
             applyPhoneMask = (value) => fields.phoneNumber(phoneMask(value)),
             internationalProp = vnode.attrs.international ? vnode.attrs.international : prop(false),
-            international = vnode.attrs.disableInternational ? prop(false) : internationalProp;
+            international = vnode.attrs.disableInternational ? prop(false) : internationalProp,
+            validateZipCode = () => {
+                const zipCodeOnlyNumbers = fields.addressZipCode().replace(/\D*/g, '');
+                if (zipCodeOnlyNumbers.length !== 8) {
+                    fields.errors.addressZipCode(true);
+                }
+            };
 
         const lookupZipCode = zipCode => {
             fields.addressZipCode(zipCode);
@@ -59,6 +65,7 @@ export default class AddressForm {
         });
 
         vnode.state = {
+            validateZipCode,
             lookupZipCode,
             zipCodeErrorMessage,
             applyPhoneMask,
@@ -102,7 +109,8 @@ export default class AddressForm {
             countryStates = state.states,
             disableInternational = attrs.disableInternational,
             hideNationality = attrs.hideNationality,
-            applyPhoneMask = state.applyPhoneMask;
+            applyPhoneMask = state.applyPhoneMask,
+            validateZipCode = state.validateZipCode;
 
         return m('#address-form.u-marginbottom-30.w-form', [
             !hideNationality
@@ -129,6 +137,7 @@ export default class AddressForm {
                     applyPhoneMask,
                 })
                 : m(addressFormNational, {
+                    validateZipCode,
                     disableInternational,
                     countryName,
                     fields,
