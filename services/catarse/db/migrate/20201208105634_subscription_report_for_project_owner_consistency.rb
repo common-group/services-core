@@ -1,4 +1,4 @@
-class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration
+class SubscriptionReportForProjectOwnerConsistency < ActiveRecord::Migration[6.1]
 
   def up
     execute <<-SQL
