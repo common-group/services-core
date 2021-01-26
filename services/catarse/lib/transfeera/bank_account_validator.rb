@@ -4,6 +4,9 @@ require 'net/http'
 module Transfeera
     class BankAccountValidator
 
+        @@BANK_CODE_CAIXA = "104"
+        @@BANK_CODE_BB = "001"
+
         def self.validate(catarse_user_bank_account)
             authorization_data = Transfeera::Authorization.request()
             account_to_validate = map_to_transfeera_account_from catarse_user_bank_account
@@ -33,7 +36,13 @@ module Transfeera
         private
 
         def self.map_to_transfeera_account_from(catarse_user_bank_account)
-            account_type = if catarse_user_bank_account.account_type.include?('conta_corrente')
+            account_type = if catarse_user_bank_account.account_type.include?('conta_corrente') && 
+            (
+                catarse_user_bank_account.bank_code === @@BANK_CODE_CAIXA || 
+                catarse_user_bank_account.bank_code === @@BANK_CODE_BB
+            )
+                'CONTA_FACIL'
+            elsif catarse_user_bank_account.account_type.include?('conta_corrente')
                 'CONTA_CORRENTE'
             elsif catarse_user_bank_account.account_type.include?('conta_poupanca')
                 'CONTA_POUPANCA'
