@@ -33,6 +33,8 @@ p
   - if detail.installments > 1
     br/
     | <strong>Número de parcelas:</strong> #{detail.installments}
+  - if detail.payment_method == 'BoletoBancario' && !contribution.project.is_sub?
+    | (inc. custo de boleto: R$2,00)
   br/
   br/
   - if contribution.reward.present?
