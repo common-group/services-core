@@ -1,7 +1,6 @@
 ### under development
 
-# services core [![CircleCI](https://circleci.com/gh/common-group/services-core.svg?style=svg)](https://circleci.com/gh/common-group/services-core)
-
+# Catarse [![Tests](https://github.com/common-group/services-core/workflows/Tests/badge.svg?branch=main)](https://github.com/common-group/services-core/actions?query=workflow%3ATests)
 This repo contains docker files to setup the Catarse environment. All dependendent repos are included as git subtrees mounted on the `services` folder.
 
 ## setup
