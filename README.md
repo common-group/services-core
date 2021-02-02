@@ -4,7 +4,12 @@
 This repo contains docker files to setup the Catarse environment. All dependendent repos are included as git subtrees mounted on the ```services``` folder.
 
 ## setup
-For every service described on `docker-compose.yml` we have multiple env_files `compose_env/.*.env.sample`. Just make a copy off all of them on the same directory removing .sample.
+For every service described on `docker-compose.yml` we have multiple env_files `compose_env/.*.env.sample`. Just make a copy of all of them on the same directory removing .sample.
+Alternatively, you can run the following line:
+
+```bash
+chmod +x ./.commands/copy-env-files.sh && ./commands/copy-env-files.sh
+```
 
 Start Database:
 `$ docker-compose up -d service_core_db`
