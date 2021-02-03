@@ -21,24 +21,15 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          # ruby-version: 3.0.0 # detects from .ruby-version or .tool-versions
+          # bundler: 2.2.8 # detects from BUNDLED_WITH from Gemfile.lock
+          bundler-cache: true # runs bundle install and caches gem automatically
+          working-directory: ./services/catarse # path to detect .ruby-version, tool-versions, Gemfile and Gemfile.lock
 
       - name: Install postgres client dependencies
         run: sudo apt-get install libpq-dev
-
-      - name: Cache gems
-        uses: actions/cache@v2
-        with:
-          path: ./services/catarse/vendor/bundle
-          key: ${{ runner.os }}-gems-v3-${{ hashFiles('./services/catarse/Gemfile.lock') }}
-
-      - name: Install Ruby dependencies
-        run: |
-          gem install bundler:2.1.4
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
 
       - name: Setup Node
         uses: actions/setup-node@v1
