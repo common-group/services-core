@@ -7,7 +7,7 @@ ruby '2.7.2'
 gem 'auto_html', '2.0.0'
 gem 'bootsnap', '1.7.0', require: false
 gem 'browser', '5.3.0'
-gem 'carrierwave', '2.1.0'
+gem 'carrierwave', '2.1.1'
 gem 'catarse_pagarme', path: 'engines/catarse_pagarme'
 gem 'catarse_scripts', path: 'engines/catarse_scripts'
 gem 'catarse_settings_db', '0.2.0'
