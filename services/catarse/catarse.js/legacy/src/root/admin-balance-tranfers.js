@@ -18,6 +18,7 @@ const adminBalanceTranfers = {
     oninit: function(vnode) {
         const listVM = balanceTransferListVM,
             filterVM = balanceTransferFilterVM(),
+            loadingApproveBatchTransfer = h.RedrawStream(false),
             authorizedListVM = balanceTransferListVM,
             authorizedFilterVM = balanceTransferFilterVM(),
             authorizedCollection = prop([]),
@@ -200,6 +201,8 @@ const adminBalanceTranfers = {
                 });
             },
             approveSelectedIDs = () => {
+                loadingApproveBatchTransfer(true);
+                m.redraw();
                 m.request({
                     method: 'POST',
                     url: '/admin/balance_transfers/batch_approve',
@@ -212,6 +215,12 @@ const adminBalanceTranfers = {
                     listVM.firstPage(filterVM.parameters());
                     loadAuthorizedBalances();
                     displayApprovalModal(false);
+                    loadingApproveBatchTransfer(false);
+                    m.redraw();
+                }).catch(error => {
+                    console.error('Error', error);
+                    displayApprovalModal(false);
+                    loadingApproveBatchTransfer(false);
                     m.redraw();
                 });
             },
@@ -305,6 +314,7 @@ const adminBalanceTranfers = {
         loadAuthorizedBalances();
 
         vnode.state = {
+            loadingApproveBatchTransfer,
             displayApprovalModal,
             displayRejectModal,
             displayManualModal,
@@ -345,9 +355,10 @@ const adminBalanceTranfers = {
                 displayModal: state.displayApprovalModal,
                 content: state.generateWrapperModal({
                     modalTitle: 'Aprovar saques',
-                    ctaText: 'Aprovar',
+                    ctaText: 'Criar Lote',
                     displayModal: state.displayApprovalModal,
-                    onClickCallback: state.approveSelectedIDs
+                    onClickCallback: state.approveSelectedIDs,
+                    loading: state.loadingApproveBatchTransfer
                 })
             }) : ''),
             (state.displayManualModal() ? m(modalBox, {
