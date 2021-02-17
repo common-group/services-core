@@ -1,0 +1,23 @@
+name: 'Merge main into sandbox'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  merge_main_into_sandbox:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Nightly Merge
+      uses: robotology/gh-action-nightly-merge@v1.3.1
+      with:
+        stable_branch: 'main'
+        development_branch: 'sandbox'
+        allow_ff: false
+        user_name: Github Action
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
