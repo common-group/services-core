@@ -2,7 +2,7 @@ if Rails.env.test?
   module CarrierWave
     module Downloader
       class Base
-        def skip_ssrf_protection?(uri)
+        def skip_ssrf_protection?(_uri)
           true # SSRF protection isn't necessary because we avoid external requests with webmock
         end
       end

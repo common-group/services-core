@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
@@ -6,8 +8,8 @@ ruby '3.0.0'
 
 gem 'auto_html', '2.0.0'
 gem 'bootsnap', '1.7.2', require: false
-gem 'browser', '5.3.0'
-gem 'carrierwave', '2.1.1'
+gem 'browser', '5.3.1'
+gem 'carrierwave', '2.2.0'
 gem 'catarse_pagarme', path: 'engines/catarse_pagarme'
 gem 'catarse_scripts', path: 'engines/catarse_scripts'
 gem 'catarse_settings_db', '0.2.0'
@@ -20,7 +22,7 @@ gem 'draper', '4.0.1'
 gem 'excelinator', '1.3.1'
 gem 'feedjira', '3.1.2'
 gem 'gridhook', github: 'catarse/gridhook', branch: 'master'
-gem 'has_scope', '0.7.2'
+gem 'has_scope', '0.8.0'
 gem 'high_voltage', '3.1.2'
 gem 'i18n_alchemy', '0.3.1', github: 'stephannv/i18n_alchemy', branch: 'master'
 gem 'i18n-js', '3.8.0'
@@ -40,7 +42,7 @@ gem 'postgres-copy', '1.5.0'
 gem 'puma', '5.2.1'
 gem 'pundit', '2.1.0'
 gem 'rack-cors', '1.1.1'
-gem 'rails', '6.1.2.1'
+gem 'rails', '6.1.3'
 gem 'rails-html-sanitizer', '1.3.0'
 gem 'rails-observers', '0.1.5'
 gem 'ranked-model', '0.4.7'
@@ -51,19 +53,19 @@ gem 'responders', '3.0.1'
 gem 'sass-rails', '6.0.0'
 gem 'sendgrid-ruby', '4.0.6'
 gem 'sentry-raven', '3.1.1'
-gem 'sidekiq',  '6.1.3'
+gem 'sidekiq', '6.1.3'
 gem 'sidekiq-status', '1.1.4'
 gem 'simple_form', '5.1.0'
 gem 'simple_token_authentication', '1.17.0'
 gem 'sitemap_generator', '6.1.2'
 gem 'slim-rails', '3.2.0'
 gem 'sprockets', '3.7.2'
-gem 'statesman', '8.0.1'
 gem 'state_machines-activerecord', '0.8.0'
+gem 'statesman', '8.0.1'
 gem 'typhoeus', '1.4.0'
 gem 'tzinfo-data', '1.2.7', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'user_notifier', '0.4.0', github: 'stephannv/user_notifier', branch: 'master'
-gem 'video_info', '3.0.0'
+gem 'video_info', '3.0.1'
 # REQUIRE DISABLED TO NOT HOOK UP webpacker:compile INTO assets:precompile
 # https://github.com/rails/webpacker/blob/master/docs/deployment.md
 gem 'webpacker', '5.2.1', require: false
@@ -97,7 +99,7 @@ group :test do
 end
 
 group :code_analysis do
-  gem 'rubocop', '1.9.1'
+  gem 'rubocop', '1.10.0'
   gem 'rubocop-performance', '1.9.2'
   gem 'rubocop-rails', '2.9.1'
   gem 'rubocop-rspec', '2.2.0'
