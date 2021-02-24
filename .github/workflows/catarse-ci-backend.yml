@@ -22,10 +22,29 @@ jobs:
       - name: Analyze code
         run: bundle exec rubocop
 
+  brakeman:
+    name: Brakeman
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ./services/catarse
+
+      - name: Install brakeman
+        run: gem install brakeman
+
+      - name: Scan code
+        run: brakeman -A -z -q
+
   rspec:
     name: RSpec
     runs-on: ubuntu-20.04
-    needs: rubocop
+    needs: ['rubocop', 'brakeman']
     env:
       DATABASE_URL: postgres://postgres:example@localhost:5432/catarse_test
     services:
