@@ -43,15 +43,15 @@ const dashboardSubscriptionCardDetailPaymentHistoryEntry = {
 
         return m('.fontsize-smallest.w-row',
             [
-                m('.w-col.w-col-3', m('.fontcolor-secondary', h.momentify(paymentDate, 'DD/MM/YYYY'))),
-                m('.w-col.w-col-9',
-                    m('div',
-                        [
-                            m(`span.fa.fa-circle${state.statusClass[paymentStatus]}`, m.trust('&nbsp;')),
-                            `R$${paymentAmount / 100} ${paymentStatusText} - ${captalize(paymentMethodText)} ${paymentMethodEndText}`,
-                            m.trust('&nbsp;&nbsp;&nbsp;&nbsp;'), m('span.fontcolor-secondary', `( ID ${gatewayId} ) `)
-                        ]
-                    )
+                m('div', [
+                    m('span.fontcolor-secondary', h.momentify(paymentDate, 'DD/MM/YYYY')),
+                    m.trust('&nbsp;&nbsp;&nbsp;&nbsp;'),
+                    m(`span.fa.fa-circle${state.statusClass[paymentStatus]}`, m.trust('&nbsp;')),
+                    `R$${paymentAmount / 100} ${paymentStatusText} - ${captalize(paymentMethodText)} ${paymentMethodEndText}`,
+                    m.trust('&nbsp;&nbsp;&nbsp;&nbsp;'),
+                    m('span.fontcolor-secondary', `( ID ${gatewayId} ) `)
+                    ]
+
                 )
             ]
         );
