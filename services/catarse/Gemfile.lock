@@ -340,7 +340,7 @@ GEM
     multipart-post (2.1.1)
     net_http_timeout_errors (0.3.5)
     netrc (0.11.0)
-    nio4r (2.5.5)
+    nio4r (2.5.7)
     nokogiri (1.11.1)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
@@ -513,7 +513,7 @@ GEM
       sprockets-rails
       tilt
     sax-machine (1.3.2)
-    semantic_range (2.3.1)
+    semantic_range (3.0.0)
     sendgrid-ruby (4.0.6)
       ruby_http_client (~> 3.0.0)
     sentry-raven (3.1.1)
@@ -527,7 +527,7 @@ GEM
     sidekiq-status (1.1.4)
       chronic_duration
       sidekiq (>= 3.0)
-    signet (0.14.1)
+    signet (0.15.0)
       addressable (~> 2.3)
       faraday (>= 0.17.3, < 2.0)
       jwt (>= 1.5, < 3.0)
