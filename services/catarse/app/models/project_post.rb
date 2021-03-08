@@ -17,10 +17,14 @@ class ProjectPost < ApplicationRecord
   after_save :index_on_common
 
   validates_presence_of :user_id, :project_id, :comment_html, :title
-
+  validate :no_base64_images
   before_validation :reference_user
 
   scope :ordered, ->() { order('created_at desc') }
+
+  def no_base64_images
+    errors.add(:comment_html, :base64_images_not_allowed) if comment_html.try(:match?, 'data:image/.*;base64')
+  end
 
   def reference_user
     self.user_id = project.try(:user_id)
