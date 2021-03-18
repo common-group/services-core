@@ -19,7 +19,7 @@ RSpec.describe Project::VideoHandler, type: :model do
     end
 
     it 'should open the video_url and store it in video_thumbnail' do
-      url_regexp = Regexp.new("/uploads/project/video_thumbnail/#{project.id}/#{uuid_regexp}\.png")
+      url_regexp = Regexp.new("/uploads/project/video_thumbnail/#{project.id}/#{uuid_regexp}")
       expect(project.video_thumbnail.url).to match(url_regexp)
     end
   end
