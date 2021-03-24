@@ -7,6 +7,7 @@ import projectShareBox from '../c/project-share-box';
 import projectRow from '../c/project-row';
 import userVM from '../vms/user-vm';
 import projectVM from '../vms/project-vm';
+import pixCard from '../c/pix-card';
 
 const { CatarseAnalytics } = window;
 
@@ -23,6 +24,7 @@ const thankYou = {
 
         const recommendedProjects = vnode.attrs.recommended_projects || userVM.getUserRecommendedProjects(),
             isSlip = vnode.attrs.contribution && !_.isEmpty(vnode.attrs.contribution.slip_url),
+            isPix = vnode.attrs.contribution && !_.isEmpty(vnode.attrs.contribution.pix_qr_code),
             sendContributionCreationData = () => {
                 const analyticsData = {
                     cat: 'contribution_creation',
@@ -41,7 +43,7 @@ const thankYou = {
             CatarseAnalytics.event({
                 cat: 'contribution_finish',
                 act: 'contribution_finished',
-                lbl: isSlip ? 'slip' : 'creditcard',
+                lbl: isSlip ? 'slip' : isPix ? 'pix' : 'creditcard',
                 val: vnode.attrs.contribution.value,
                 extraData: {
                     contribution_id: vnode.attrs.contribution.contribution_id
@@ -62,6 +64,7 @@ const thankYou = {
             setEvents,
             displayShareBox: h.toggleProp(false, true),
             isSlip,
+            isPix,
             recommendedProjects
         };
     },
@@ -77,26 +80,28 @@ const thankYou = {
                         m('.w-col.w-col-10.w-col-push-1',
                             [
                                 m('.u-marginbottom-20.u-text-center',
-                                    m(`img.big.thumb.u-round[src='${attrs.contribution.project.user_thumb}']`)
+                                    m(`img.thumb.u-round[src='${attrs.contribution.project.user_thumb}']`)
                                 ),
-                                m('#thank-you.u-text-center', !state.isSlip ?
+                                m('#thank-you.u-text-center', !state.isSlip?
                                     [
                                         m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
                                             window.I18n.t('thank_you.thank_you', I18nScope())
                                         ),
-                                        m('.fontsize-base.u-marginbottom-40',
-                                            m.trust(
-                                                window.I18n.t('thank_you.thank_you_text_html',
-                                                    I18nScope({
-                                                        total: attrs.contribution.project.total_contributions,
-                                                        email: attrs.contribution.contribution_email,
-                                                        link2: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#contributions`,
-                                                        link_email: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#about_me`
-                                                    })
+                                        (
+                                            m('.fontsize-base.u-marginbottom-40',
+                                                m.trust(
+                                                    window.I18n.t((state.isPix ? 'thank_you.thank_you_pix_html' : 'thank_you.thank_you_text_html'),
+                                                        I18nScope({
+                                                            total: attrs.contribution.project.total_contributions,
+                                                            email: attrs.contribution.contribution_email,
+                                                            link2: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#contributions`,
+                                                            link_email: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#about_me`
+                                                        })
+                                                    )
                                                 )
                                             )
                                         ),
-                                        m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                        state.isPix ? '' : m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
                                             'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
                                         )
                                     ] : [
@@ -109,7 +114,7 @@ const thankYou = {
                                                 }))))
                                     ]
                                 ),
-                                state.isSlip ? '' : m('.w-row',
+                                state.isSlip || state.isPix ? '' : m('.w-row',
                                     [
                                         m('.w-hidden-small.w-hidden-tiny',
                                             [
@@ -122,7 +127,7 @@ const thankYou = {
                                                     big: true,
                                                     url: messengerUrl,
                                                 })),
-                                                m('.w-col.w-col-4', 
+                                                m('.w-col.w-col-4',
                                                     m(`a.btn.btn-large.btn-tweet.u-marginbottom-20[href="${twitterUrl}"][target="_blank"]`, [
                                                         m('span.fa.fa-twitter'),
                                                         ' Twitter'
@@ -164,7 +169,13 @@ const thankYou = {
                                 style: 'overflow: hidden;'
                             })
                         )
-                    ) : [
+                    ) :
+                    (
+                        state.isPix ? m(pixCard, {
+                            pix_qr_code: attrs.contribution.pix_qr_code,
+                            pix_key: attrs.contribution.pix_key
+                        }) :
+                        [
                             m('.fontsize-large.fontweight-semibold.u-marginbottom-30.u-text-center',
                                 window.I18n.t('thank_you.project_recommendations', I18nScope())
                             ),
@@ -173,6 +184,7 @@ const thankYou = {
                                 ref: 'ctrse_thankyou_r'
                             })
                         ]
+                    ),
                 )
             )
         ]);

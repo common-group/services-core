@@ -54,7 +54,7 @@ class ImportMissingPayablesAction
     cost = @transaction.cost.to_f / 100.00
     payables_fee = @payables.to_a.sum(&:fee).to_f / 100.00
 
-    if @payment.is_credit_card?
+    if @payment.is_credit_card? || @payment.pix_payment?
       cost + payables_fee
     elsif @payment.slip_payment?
       payables_fee == 0 ? cost : payables_fee

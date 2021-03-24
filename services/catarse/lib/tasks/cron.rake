@@ -3,7 +3,7 @@
 require 'zendesk_api'
 namespace :cron do
   desc 'Tasks that should run hourly'
-  task hourly: %i[finish_projects second_slip_notification
+  task hourly: %i[finish_projects second_slip_notification second_pix_notification
                   schedule_reminders sync_fb_friends]
 
   desc 'Tasks that should run daily'
@@ -142,6 +142,18 @@ namespace :cron do
     puts 'sending second slip notification'
     ContributionDetail.slips_past_waiting.no_confirmed_contributions_on_project.each do |contribution_detail|
       contribution_detail.contribution.notify_to_contributor(:contribution_canceled_slip)
+    end
+  end
+
+  desc 'Send second pix notification'
+  task second_pix_notification: :environment do
+    puts 'sending second pix notification'
+    ContributionDetail.pixs_past_waiting.no_confirmed_contributions_on_project.find_each do |contribution_detail|
+      if contribution_detail.contribution.count_contribution_canceled_pix.zero?
+        contribution_detail.generate_second_pix
+        contribution_detail.contribution.update(count_contribution_canceled_pix: 1)
+      end
+      contribution_detail.contribution.notify_to_contributor(:contribution_canceled_pix)
     end
   end
 
