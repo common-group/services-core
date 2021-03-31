@@ -27,6 +27,7 @@ class Admin::BalanceTransfersController < Admin::BaseController
     render json: { transfer_ids: processing_transfers.pluck(&:id) }
 
   rescue StandardError => error
+    Raven.capture_exception(error, level: "fatal")
     Transfeera::BatchTransfer.remove(batch_id)
     render json: { transfer_ids: [] }, status: :unprocessable_entity
   end
