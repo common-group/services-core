@@ -79,7 +79,7 @@ const posts = {
             },
             validateCommentImage = () => {
                 const comment = String(fields.comment_html());
-                if (comment.search(/^[a-zA-Z ]*;base64/)) {
+                if (comment.search(/;base64/) > -1) {
                     commentHasError(true);
                 }
                 return !commentHasError();
