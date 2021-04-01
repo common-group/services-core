@@ -50,11 +50,17 @@ Metrics/BlockLength:
     - 'spec/**/*'
     - 'config/environments/*'
 
+Naming/VariableNumber:
+  Enabled: false
+
 Rails/Delegate:
   Enabled: false
 
 Rails/UnknownEnv:
   Environments: ['production', 'test', 'development', 'sandbox', 'cucumber']
+
+RSpec/ExampleLength:
+  CountAsOne: ['array', 'hash', 'heredoc']
 
 RSpec/MessageSpies:
   EnforcedStyle: receive
