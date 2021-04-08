@@ -3,7 +3,7 @@
 require 'net/http'
 
 module Transfeera
-  class BatchTransfer < BaseRequest
+  class BatchTransfer < BasePaymentRequest
     def self.create(catarse_transfers)
       http_request = HttpRequest.new
       BatchTransfer.new(http_request, Webhook.new(http_request)).create catarse_transfers

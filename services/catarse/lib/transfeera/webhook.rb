@@ -1,5 +1,5 @@
 module Transfeera
-  class Webhook < BaseRequest
+  class Webhook < BasePaymentRequest
     def self.validate_request(transfeera_signature, request_body)
       Webhook.new(HttpRequest.new).validate_request(transfeera_signature, request_body)
     end
