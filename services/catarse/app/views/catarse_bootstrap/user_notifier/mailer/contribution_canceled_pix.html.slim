@@ -1,6 +1,4 @@
 - contribution = @notification.contribution
-- detail = contribution.details.ordered.first
-- detail.created_second_pix
 - expiry_date = contribution.payments.last.gateway_data.try(:[], "pix_expiration_date").try(:to_datetime).try(:strftime, '%d/%m')
 - pix_key = contribution.payments.last.gateway_data.try(:[], "pix_qr_code")
 - detail = contribution.details.ordered.first
@@ -20,15 +18,17 @@ p Notamos que você não realizou o pagamento do PIX para o projeto #{link_to co
 
   p Você tem até o dia #{expiry_date} para efetuar o pagamento.
 
-  p Abra o aplicativo ou site do seu banco e informe a chave abaixo:
+  p Use o app do seu banco para escanear o QR Code abaixo:
   br
-  center
-    <strong>#{pix_key}</strong>
+  p
+    center
+      <strong>#{details.decorate.display_pix_qr_code.html_safe}</strong>
   br
-  p Ou se preferir, use o app do banco para escanear o QR Code abaixo.
+  p Ou se preferir, abra o app ou site do seu banco e informe a chave abaixo:
   br
-  center
-    <strong>#{detail.decorate.display_pix_qr_code.html_safe}</strong>
+  p
+    center
+      <strong>#{pix_key}</strong>
   br
 
 = render partial: 'user_notifier/mailer/contact_info'

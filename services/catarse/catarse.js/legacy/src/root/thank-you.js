@@ -82,27 +82,22 @@ const thankYou = {
                                 m('.u-marginbottom-20.u-text-center',
                                     m(`img.thumb.u-round[src='${attrs.contribution.project.user_thumb}']`)
                                 ),
-                                m('#thank-you.u-text-center', !state.isSlip?
+                                m('#thank-you.u-text-center', !state.isSlip && !state.isPix ?
                                     [
                                         m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
                                             window.I18n.t('thank_you.thank_you', I18nScope())
                                         ),
-                                        (
-                                            m('.fontsize-base.u-marginbottom-40',
-                                                m.trust(
-                                                    window.I18n.t((state.isPix ? 'thank_you.thank_you_pix_html' : 'thank_you.thank_you_text_html'),
-                                                        I18nScope({
-                                                            total: attrs.contribution.project.total_contributions,
-                                                            email: attrs.contribution.contribution_email,
-                                                            link2: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#contributions`,
-                                                            link_email: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#about_me`
-                                                        })
-                                                    )
+                                        m('.fontsize-base.u-marginbottom-40',
+                                            m.trust(
+                                                window.I18n.t(('thank_you.thank_you_text_html'),
+                                                    I18nScope({
+                                                        total: attrs.contribution.project.total_contributions,
+                                                        email: attrs.contribution.contribution_email,
+                                                        link2: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#contributions`,
+                                                        link_email: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#about_me`
+                                                    })
                                                 )
                                             )
-                                        ),
-                                        state.isPix ? '' : m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                            'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
                                         )
                                     ] : [
                                         m('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', window.I18n.t('thank_you_slip.thank_you', I18nScope())),
@@ -111,7 +106,13 @@ const thankYou = {
                                                 I18nScope({
                                                     email: attrs.contribution.contribution_email,
                                                     link_email: `/${window.I18n.locale}/users/${h.getUser().user_id}/edit#about_me`
-                                                }))))
+                                                })))
+                                        ),
+                                        (
+                                            state.isPix ? '' : m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
+                                                'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
+                                            )
+                                        )
                                     ]
                                 ),
                                 state.isSlip || state.isPix ? '' : m('.w-row',

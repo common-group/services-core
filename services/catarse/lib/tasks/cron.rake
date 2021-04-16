@@ -151,7 +151,7 @@ namespace :cron do
     ContributionDetail.pixs_past_waiting.no_confirmed_contributions_on_project.find_each do |contribution_detail|
       if contribution_detail.contribution.count_contribution_canceled_pix.zero?
         contribution_detail.generate_second_pix
-        contribution_detail.contribution.update(count_contribution_canceled_pix: 1)
+        contribution_detail.contribution.update_column('count_contribution_canceled_pix', 1)
       end
       contribution_detail.contribution.notify_to_contributor(:contribution_canceled_pix)
     end
@@ -227,6 +227,15 @@ namespace :cron do
   desc 'Refuse boleto payments that are 4 days or more old and not paid'
   task refuse_4_days_more_unpaid_boletos: [:environment] do
     Payment.all_boleto_that_should_be_refused.find_each(batch_size: 20) do |payment|
+      payment.update_column('state', 'refused')
+      payment.update_column('refused_at', Time.current)
+      payment.save!
+    end
+  end
+
+  desc 'Refuse pix payments that are 4 days or more old and not paid'
+  task refuse_4_days_more_unpaid_pixs: [:environment] do
+    Payment.all_pix_that_should_be_refused.find_each(batch_size: 20) do |payment|
       payment.update_column('state', 'refused')
       payment.update_column('refused_at', Time.current)
       payment.save!

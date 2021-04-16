@@ -78,6 +78,7 @@ class AddIsSecondPixFunctionAndAdjustContributionDetails < ActiveRecord::Migrati
           LEFT JOIN rewards r ON ((r.id = c.reward_id)))
           LEFT JOIN "1".surveys su ON ((su.contribution_id = c.id)))
         WHERE is_owner_or_admin(c.user_id);
+        grant select on "1"."user_contributions" to web_user, admin;
       SQL
     end
 
@@ -152,6 +153,7 @@ class AddIsSecondPixFunctionAndAdjustContributionDetails < ActiveRecord::Migrati
           LEFT JOIN rewards r ON ((r.id = c.reward_id)))
           LEFT JOIN "1".surveys su ON ((su.contribution_id = c.id)))
         WHERE is_owner_or_admin(c.user_id);
+        grant select on "1"."user_contributions" to web_user, admin;
       SQL
     end
 end
