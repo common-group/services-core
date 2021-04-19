@@ -47,6 +47,9 @@ Metrics/BlockLength:
     - 'spec/**/*'
     - 'config/environments/*'
 
+Metrics/MethodLength:
+  CountAsOne: ['array', 'hash', 'heredoc']
+
 Naming/VariableNumber:
   Enabled: false
 

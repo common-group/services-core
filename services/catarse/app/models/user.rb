@@ -206,6 +206,10 @@ class User < ApplicationRecord
     end
   end
 
+  def unformatted_document
+    cpf.to_s.gsub(%r{[-./_\s]}, '')
+  end
+
   def fb_parsed_link
     User.where(id: id).pluck('users.fb_parsed_link').first
   end
