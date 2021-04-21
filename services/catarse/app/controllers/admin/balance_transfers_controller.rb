@@ -26,10 +26,10 @@ class Admin::BalanceTransfersController < Admin::BaseController
 
     render json: { transfer_ids: processing_transfers.pluck(&:id) }
 
-  rescue StandardError => error
-    Raven.capture_exception(error, level: "fatal")
+  rescue StandardError => error_message
+    Raven.capture_exception(error_message, level: "fatal")
     Transfeera::BatchTransfer.remove(batch_id) unless batch_id.nil?
-    render json: { transfer_ids: [] }, status: :unprocessable_entity
+    render json: { transfer_ids: [], error_message: error_message }, status: :unprocessable_entity
   end
 
   def batch_manual

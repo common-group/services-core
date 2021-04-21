@@ -25,9 +25,17 @@ module Transfeera
       with_options = { method: 'POST', url: transfeera_batch_api_url, data: batch_with_transfers }
       batch_response = authorized_request with_options
       batch_id = batch_response['id']
-      raise 'Batch transfer not created' if batch_id.nil?
+      error_raiser batch_response if batch_id.nil?
 
       batch_id
+    end
+
+    def error_raiser(batch_response)
+      message = batch_response['message']
+      error_code = batch_response['errorCode']
+      raise "#{message}. CODE: #{error_code}" if message.present? || error_code.present?
+
+      raise "Batch transfer not created #{batch_response.inspect}"
     end
 
     def map_catarse_to_transfeera_transfers(catarse_transfers)
@@ -68,7 +76,7 @@ module Transfeera
 
     def create_transfer_hash(transfer, bank_account, account_type)
       {
-        value: transfer.amount,
+        value: (transfer.amount || 0).round(2),
         integration_id: transfer.id,
         payment_method: 'TRANSFERENCIA',
         destination_bank_account: create_bank_account_hash(bank_account, account_type)

@@ -13,6 +13,7 @@ import filterNumberRange from '../c/filter-number-range';
 import modalBox from '../c/modal-box';
 import adminBalanceTransferItem from '../c/admin-balance-transfer-item';
 import adminBalanceTransferItemDetail from '../c/admin-balance-transfer-item-detail';
+import inlineError from '../c/inline-error';
 
 const adminBalanceTranfers = {
     oninit: function(vnode) {
@@ -94,6 +95,7 @@ const adminBalanceTranfers = {
             ],
             selectedItemsIDs = prop([]),
             displayApprovalModal = h.toggleProp(false, true),
+            createBatchErrorMessage = h.RedrawStream(''),
             displayManualModal = h.toggleProp(false, true),
             displayRejectModal = h.toggleProp(false, true),
             displayProcessTransfer = h.toggleProp(false, true),
@@ -134,6 +136,7 @@ const adminBalanceTranfers = {
             generateWrapperModal = (customAttrs) => {
                 const wrapper = {
                     view: function({state, attrs}) {
+                        const errorMessage = attrs.errorMessage;
                         actionMenuToggle(false);
                         return m('', [
                             m('.modal-dialog-header', [
@@ -177,7 +180,13 @@ const adminBalanceTranfers = {
                                         }, 'Voltar')
                                        ),
                                     m('.w-col.w-col-1')
-                                ])
+                                ]),
+                                (
+                                    errorMessage &&
+                                    m('.w-row.u-margintop-40',
+                                        m(inlineError, { message: errorMessage})
+                                    )
+                                )
                             ])
                         ]);
                     }
@@ -201,6 +210,7 @@ const adminBalanceTranfers = {
                 });
             },
             approveSelectedIDs = () => {
+                createBatchErrorMessage('');
                 loadingApproveBatchTransfer(true);
                 m.redraw();
                 m.request({
@@ -217,29 +227,13 @@ const adminBalanceTranfers = {
                     displayApprovalModal(false);
                     loadingApproveBatchTransfer(false);
                     m.redraw();
-                }).catch(error => {
+                }).catch((error : { error_message : string }) => {
                     console.error('Error', error);
-                    displayApprovalModal(false);
+                    createBatchErrorMessage(error.error_message);
                     loadingApproveBatchTransfer(false);
                     m.redraw();
                 });
             },
-            //processAuthorizedTransfers = () => {
-            //    processingTranfersLoader(true);
-            //    m.redraw();
-            //    m.request({
-            //        method: 'POST',
-            //        url: '/admin/balance_transfers/process_transfers',
-            //        data: {},
-            //        config: h.setCsrfToken
-            //    }).then((data) => {
-            //        listVM.firstPage(filterVM.parameters());
-            //        loadAuthorizedBalances();
-            //        displayProcessTransfer(false);
-            //        processingTranfersLoader(false);
-            //        m.redraw();
-            //    });
-            //},
             rejectSelectedIDs = () => {
                 m.request({
                     method: 'POST',
@@ -283,7 +277,10 @@ const adminBalanceTranfers = {
                            (actionMenuToggle() ?
                             m('.card.dropdown-list.dropdown-list-medium.u-radius.zindex-10[id=\'transfer\']', [
                                 m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
-                                    onclick: event => displayApprovalModal.toggle()
+                                    onclick: event => {
+                                        displayApprovalModal.toggle()
+                                        createBatchErrorMessage('')
+                                    }
                                 }, 'Aprovada'),
                                 m('a.dropdown-link.fontsize-smaller[href=\'javascript:void(0);\']', {
                                     onclick: event => displayManualModal.toggle()
@@ -293,21 +290,6 @@ const adminBalanceTranfers = {
                                 }, 'Recusada')
                             ]) : '')
                        ]) : ''),
-                    //(authorizedCollection().length > 0 ? m('._w-inline-block.u-right', [
-                    //    m('button.btn.btn-small.btn-inline', {
-                    //        onclick: displayProcessTransfer.toggle
-                    //    }, `Repassar saques aprovados (${authorizedCollection().length})`),
-                    //    (displayProcessTransfer() ? m('.dropdown-list.card.u-radius.dropdown-list-medium.zindex-10', [
-                    //        m('.w-form', [
-                    //            (processingTranfersLoader() ? h.loader() : m('form', [
-                    //                m('label.fontsize-smaller.umarginbottom-20', `Tem certeza que deseja repassar ${authorizedCollection().length} saques aprovados (total de R$ ${authorizedSum}) ?`),
-                    //                m('button.btn.btn-small', {
-                    //                    onclick: processAuthorizedTransfers
-                    //                }, 'Repassar saques aprovados')
-                    //            ]))
-                    //        ])
-                    //    ]) : '')
-                    //]) : '')
                 ]);
             };
 
@@ -325,6 +307,7 @@ const adminBalanceTranfers = {
             manualTransferSelectedIDs,
             //processAuthorizedTransfers,
             rejectSelectedIDs,
+            createBatchErrorMessage,
             filterVM,
             filterBuilder,
             listVM: {
@@ -358,7 +341,8 @@ const adminBalanceTranfers = {
                     ctaText: 'Criar Lote',
                     displayModal: state.displayApprovalModal,
                     onClickCallback: state.approveSelectedIDs,
-                    loading: state.loadingApproveBatchTransfer
+                    loading: state.loadingApproveBatchTransfer,
+                    errorMessage: state.createBatchErrorMessage(),
                 })
             }) : ''),
             (state.displayManualModal() ? m(modalBox, {
