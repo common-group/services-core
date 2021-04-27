@@ -1,7 +1,7 @@
 - contribution = @notification.contribution
 - expiry_date = contribution.payments.last.gateway_data.try(:[], "pix_expiration_date").try(:to_datetime).try(:strftime, '%d/%m')
 - pix_key = contribution.payments.last.gateway_data.try(:[], "pix_qr_code")
-- detail = contribution.details.ordered.first
+- details = contribution.details.ordered.first
 
 p Olá, <strong>#{contribution.user.display_name}</strong>!
 
