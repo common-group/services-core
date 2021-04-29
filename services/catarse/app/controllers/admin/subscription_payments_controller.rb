@@ -22,6 +22,10 @@ class Admin::SubscriptionPaymentsController < Admin::BaseController
 
       render json: { success: I18n.t("admin.refund_subscriptions.refund_success") }, status: :created
     rescue => exception
+<<<<<<< HEAD
+=======
+      Raven.capture_exception(exception)
+>>>>>>> feature/reembolso_assinatura_admin
       render json: { errors: [exception.message] }, status: :unprocessable_entity
     end
   end
