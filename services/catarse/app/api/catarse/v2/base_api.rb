@@ -25,6 +25,8 @@ module Catarse
       rescue_from :all do |e|
         raise e unless Rails.env.production?
 
+        Sentry.capture_exception(e)
+
         error!({ error: 'Internal server error' }, 500)
       end
 

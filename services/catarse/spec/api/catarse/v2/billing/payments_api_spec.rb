@@ -20,12 +20,12 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
 
     before do
       allow(User).to receive(:last).and_return(user)
-      allow(Billing::Payments::Create).to receive(:result)
+      allow(Billing::Payments::Checkout).to receive(:result)
         .with(user: user, attributes: payment_params)
         .and_return(ServiceActor::Result.new(payment: payment))
     end
 
-    it 'returns created payment' do
+    it 'returns processed payment' do
       post '/v2/billing/payments', params: { payment: payment_params }
 
       expect(response.body).to eq(payment.to_json)
