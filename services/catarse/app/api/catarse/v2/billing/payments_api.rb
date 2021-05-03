@@ -20,9 +20,11 @@ module Catarse
         end
 
         post '/payments' do
+          # TODO: Receive credit cards identifiers (id or hash)
+          # TODO: Payment in installments
           payment_params = declared(params, include_missing: false)[:payment]
 
-          result = ::Billing::Payments::Create.result(user: User.last, attributes: payment_params)
+          result = ::Billing::Payments::Checkout.result(user: User.last, attributes: payment_params)
 
           result.payment
         end
