@@ -57,7 +57,7 @@ export default class PaymentForm {
                         ),
                     m('img[src=\'https://daks2k3a4ib2z.cloudfront.net/54b440b85608e3f4389db387/57299c6ef96a6e44489a7a07_boleto.png\'][width=\'48\']')
                 ]) : m('.flex-column'),
-                !attrs.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
+                !attrs.isSubscription && !attrs.vm.isInternational() ? m('a.w-inline-block.btn-select.flex-column.u-marginbottom-20.u-text-center[href=\'javascript:void(0);\']', {
                     onclick: () => state.isPix(true) && state.isSlip(false),
                     class: state.isPix() && !state.isSlip() ? 'selected' : ''
                 }, [
@@ -65,14 +65,14 @@ export default class PaymentForm {
                             'Pix'
                         ),
                     m('img[src="/assets/logo_pix.png"][width=\'48\']')
-                ]) : m('.flex-column')
+                ]) : ''
             ]), !state.isSlip() && !state.isPix() ? m('#credit-card-section', [
                 m(paymentCreditCard, attrs)
             ]) : '',
             !attrs.vm.isInternational() && state.isSlip() ? m('#boleto-section', [
                 m(paymentSlip, attrs)
             ]) : '',
-            !attrs.vm.isInternational() && state.isPix() ? m('#pix-section', [
+            !attrs.isSubscription && !attrs.vm.isInternational() && state.isPix() ? m('#pix-section', [
                 m(paymentPix, attrs)
             ]) : ''
         ]);
