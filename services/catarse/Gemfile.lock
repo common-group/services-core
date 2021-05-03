@@ -57,10 +57,10 @@ GIT
 
 GIT
   remote: https://github.com/sunny/actor.git
-  revision: c2998629dcaccabec39369168f8ff3c40d2686b0
+  revision: d6dda05777524793f28f363a53a5fd6f5e83a34e
   branch: main
   specs:
-    service_actor (3.1.0)
+    service_actor (3.1.1)
 
 PATH
   remote: engines/catarse_pagarme
@@ -585,6 +585,13 @@ GEM
       ruby_http_client (~> 3.0.0)
     sentry-raven (3.1.2)
       faraday (>= 1.0)
+    sentry-ruby (4.2.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      faraday (>= 1.0)
+      sentry-ruby-core (= 4.2.2)
+    sentry-ruby-core (4.2.2)
+      concurrent-ruby
+      faraday
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
     sidekiq (6.2.1)
@@ -713,6 +720,7 @@ DEPENDENCIES
   gridhook!
   has_scope (= 0.8.0)
   high_voltage (= 3.1.2)
+  httparty (= 0.18.1)
   i18n-js (= 3.8.3)
   i18n_alchemy (= 0.3.1)!
   inherited_resources (= 1.13.0)
@@ -754,6 +762,7 @@ DEPENDENCIES
   sass-rails (= 6.0.0)
   sendgrid-ruby (= 4.0.6)
   sentry-raven (= 3.1.2)
+  sentry-ruby (= 4.2.2)
   service_actor!
   shoulda-matchers (= 4.5.1)
   sidekiq (= 6.2.1)
