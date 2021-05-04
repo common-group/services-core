@@ -6,15 +6,15 @@ module Billing
       include Helpers::ErrorHandler
 
       input :payment, type: Billing::Payment
-      input :pagarme_client, type: PagarMe::Client, default: -> { PagarMe::Client.new }
+      input :pagar_me_client, type: PagarMe::Client, default: -> { PagarMe::Client.new }
 
       def call
-        response = pagarme_client.create_transaction(transaction_params)
+        response = pagar_me_client.create_transaction(transaction_params)
 
         next_state = evalute_next_state(response)
 
         payment.transition_to!(next_state, response)
-        payment.update!(gateway: 'pagarme', gateway_id: response['id'])
+        payment.update!(gateway: 'pagar_me', gateway_id: response['id'])
         create_credit_card(response)
       end
 

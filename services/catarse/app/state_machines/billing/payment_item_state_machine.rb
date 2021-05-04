@@ -12,8 +12,7 @@ module Billing
     transition from: :pending, to: :paid
 
     after_transition(after_commit: true) do |payment_item, transition|
-      payment_item.state = transition.to_state
-      payment_item.save!
+      payment_item.update!(state: transition.to_state)
     end
   end
 end
