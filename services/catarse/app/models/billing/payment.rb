@@ -14,6 +14,7 @@ module Billing
     has_one :pix, class_name: 'Billing::Pix', dependent: :destroy
 
     has_many :items, class_name: 'Billing::PaymentItem', dependent: :destroy
+    has_many :processing_fees, class_name: 'Billing::ProcessingFee', dependent: :destroy
 
     monetize :total_amount_cents, numericality: { greater_than_or_equal_to: 1 }
 

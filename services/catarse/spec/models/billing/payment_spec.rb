@@ -13,6 +13,7 @@ RSpec.describe Billing::Payment, type: :model do
     it { is_expected.to belong_to(:shipping_address).class_name('Shared::Address').optional }
 
     it { is_expected.to have_many(:items).class_name('Billing::PaymentItem').dependent(:destroy) }
+    it { is_expected.to have_many(:processing_fees).class_name('Billing::ProcessingFee').dependent(:destroy) }
   end
 
   describe 'Configurations' do
