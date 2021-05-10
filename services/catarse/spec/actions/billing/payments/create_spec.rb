@@ -74,6 +74,8 @@ RSpec.describe Billing::Payments::Create, type: :action do
         'gateway' => attributes[:gateway],
         'billing_address_id' => attributes[:billing_address_id],
         'state' => Billing::PaymentStateMachine.initial_state,
+        'amount_cents' => result.payment.items.sum(:amount_cents),
+        'total_shipping_fee_cents' => result.payment.items.sum(&:shipping_fee_cents),
         'total_amount_cents' => result.payment.items.sum(:total_amount_cents)
       )
     end
