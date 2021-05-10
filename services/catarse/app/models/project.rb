@@ -392,6 +392,19 @@ class Project < ApplicationRecord
     end
   end
 
+  def notify_reminder_of_publish(options = {})
+    reminders.each do |reminder|
+      notify_once(
+        'project_coming_soon_published',
+        reminder.user,
+        self,
+        options
+      )
+    end
+
+    reminders.destroy_all
+  end
+
   def delete_from_reminder_queue(user_id)
     notifications.where(template_name: 'reminder', user_id: user_id).destroy_all
   end
