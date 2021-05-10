@@ -8,8 +8,8 @@ RSpec.describe Billing::Payments::CaptureOrRefundTransaction, type: :action do
 
     it { is_expected.to include(payment: { type: Billing::Payment }) }
 
-    it 'injects pagarme_client dependency' do
-      proc = inputs.dig(:pagarme_client, :default)
+    it 'injects pagar_me_client dependency' do
+      proc = inputs.dig(:pagar_me_client, :default)
 
       expect(proc.call).to be_an_instance_of(PagarMe::Client)
     end
@@ -22,9 +22,9 @@ RSpec.describe Billing::Payments::CaptureOrRefundTransaction, type: :action do
   end
 
   describe '#call' do
-    subject(:result) { described_class.result(payment: payment, pagarme_client: pagarme_client) }
+    subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
-    let(:pagarme_client) { PagarMe::Client.new }
+    let(:pagar_me_client) { PagarMe::Client.new }
     let(:gateway_response) do
       { id: Faker::Internet.uuid }
     end
@@ -34,7 +34,7 @@ RSpec.describe Billing::Payments::CaptureOrRefundTransaction, type: :action do
         let(:payment) { create(:billing_payment, :credit_card, payment_state) }
 
         it 'captures transaction on gateway' do
-          expect(pagarme_client).to receive(:capture_transaction).with(payment.gateway_id)
+          expect(pagar_me_client).to receive(:capture_transaction).with(payment.gateway_id)
 
           result
         end
@@ -45,7 +45,7 @@ RSpec.describe Billing::Payments::CaptureOrRefundTransaction, type: :action do
       let(:payment) { create(:billing_payment, :credit_card, :declined_on_antifraud) }
 
       it 'refunds transaction on gateway' do
-        expect(pagarme_client).to receive(:refund_transaction).with(payment.gateway_id)
+        expect(pagar_me_client).to receive(:refund_transaction).with(payment.gateway_id)
 
         result
       end
