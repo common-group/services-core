@@ -18,11 +18,11 @@ module Billing
     state :charged_back
 
     transition from: :created, to: %i[waiting_payment authorized refused]
-    transition from: :authorized, to: %i[approved_on_antifraud declined_on_antifraud waiting_review]
+    transition from: :authorized, to: %i[approved_on_antifraud declined_on_antifraud waiting_review paid]
+    transition from: :paid, to: %i[charged_back refunded]
 
     after_transition(after_commit: true) do |payment, transition|
-      payment.state = transition.to_state
-      payment.save!
+      payment.update!(state: transition.to_state)
     end
   end
 end

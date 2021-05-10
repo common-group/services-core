@@ -8,8 +8,8 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
 
     it { is_expected.to include(payment: { type: Billing::Payment }) }
 
-    it 'injects pagarme_client dependency' do
-      proc = inputs.dig(:pagarme_client, :default)
+    it 'injects pagar_me_client dependency' do
+      proc = inputs.dig(:pagar_me_client, :default)
       expect(proc.call).to be_an_instance_of(PagarMe::Client)
     end
   end
@@ -21,10 +21,10 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
   end
 
   describe '#call' do
-    subject(:result) { described_class.result(payment: payment, pagarme_client: pagarme_client) }
+    subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
     let(:payment) { create(:billing_payment, :created, :pix) }
-    let(:pagarme_client) { PagarMe::Client.new }
+    let(:pagar_me_client) { PagarMe::Client.new }
     let(:transaction_params) { PagarMe::TransactionParamsBuilder.new(payment: payment).build }
     let(:gateway_response) do
       {
@@ -36,11 +36,11 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
     end
 
     before do
-      allow(pagarme_client).to receive(:create_transaction).with(transaction_params).and_return(gateway_response)
+      allow(pagar_me_client).to receive(:create_transaction).with(transaction_params).and_return(gateway_response)
     end
 
     it 'creates transaction' do
-      expect(pagarme_client).to receive(:create_transaction).with(transaction_params)
+      expect(pagar_me_client).to receive(:create_transaction).with(transaction_params)
 
       result
     end
@@ -57,7 +57,7 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
       it 'updates gateway and gateway_id' do
         result
 
-        expect(payment.reload.attributes).to include('gateway' => 'pagarme', 'gateway_id' => gateway_response['id'])
+        expect(payment.reload.attributes).to include('gateway' => 'pagar_me', 'gateway_id' => gateway_response['id'])
       end
 
       it 'creates a new pix' do
@@ -76,7 +76,7 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
       it { is_expected.to be_failure }
 
       it 'handles error as fatal error' do
-        action = described_class.new(payment: payment, pagarme_client: pagarme_client)
+        action = described_class.new(payment: payment, pagar_me_client: pagar_me_client)
 
         expect(action).to receive(:handle_fatal_error)
           .with('Invalid gateway request', { data: gateway_response, payment_id: payment.id, user_id: payment.user_id })

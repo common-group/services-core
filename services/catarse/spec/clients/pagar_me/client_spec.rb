@@ -45,7 +45,7 @@ RSpec.describe PagarMe::Client, type: :client do
     it 'captures transaction' do
       response = client.capture_transaction(transaction_id)
 
-      expect(response).to eq JSON.parse(request_response)
+      expect(response.parsed_response).to eq JSON.parse(request_response)
     end
 
     context 'when request is successfull' do
@@ -87,7 +87,7 @@ RSpec.describe PagarMe::Client, type: :client do
     it 'refunds transaction' do
       response = client.refund_transaction(transaction_id)
 
-      expect(response).to eq JSON.parse(request_response)
+      expect(response.parsed_response).to eq JSON.parse(request_response)
     end
 
     context 'when request is successfull' do

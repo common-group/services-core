@@ -24,6 +24,7 @@ module PagarMe
 
     def base_params
       {
+        reference_key: payment.id,
         payment_method: payment.payment_method,
         amount: payment.total_amount_cents,
         async: false,
