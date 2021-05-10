@@ -30,6 +30,8 @@ FactoryBot.define do
     end
 
     after :build do |payment, evaluator|
+      payment.amount_cents = evaluator.payment_items.sum(&:amount_cents)
+      payment.total_shipping_fee_cents = evaluator.payment_items.sum(&:shipping_fee_cents)
       payment.total_amount_cents = evaluator.payment_items.sum(&:total_amount_cents)
     end
 
