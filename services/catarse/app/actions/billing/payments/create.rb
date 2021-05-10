@@ -30,11 +30,15 @@ module Billing
       def build_payment_attributes(payment_items:)
         replicate_address
         initial_state = Billing::PaymentStateMachine.initial_state
+        amount_cents = payment_items.sum(&:amount_cents)
+        total_shipping_fee_cents = payment_items.sum(&:shipping_fee_cents)
         total_amount_cents = payment_items.sum(&:total_amount_cents)
 
         attributes.except(:payables).merge(
           user_id: user.id,
           state: initial_state,
+          amount_cents: amount_cents,
+          total_shipping_fee_cents: total_shipping_fee_cents,
           total_amount_cents: total_amount_cents
         )
       end
