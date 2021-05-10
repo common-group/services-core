@@ -2,8 +2,7 @@
 
 module Billing
   class Payment < ApplicationRecord
-    # TODO: Improve concern name
-    include Concerns::PaymentStateHelpers
+    include Utils::HasStateMachine
 
     belongs_to :user
 
@@ -22,11 +21,8 @@ module Billing
 
     validates :user_id, presence: true
     validates :billing_address_id, presence: true
-    validates :state, presence: true
     validates :gateway, presence: true
 
     validates :gateway_id, uniqueness: { scope: :gateway }, allow_nil: true
-
-    validates :state, inclusion: { in: Billing::PaymentStateMachine.states }
   end
 end
