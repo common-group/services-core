@@ -17,9 +17,10 @@ RSpec.describe Billing::Payments::Checkout, type: :action do
 
   describe 'Play actors' do
     subject(:play_actors) do
-      described_class.play_actors.map do |play_actor|
-        play_actor[:actor] if play_actor[:if].blank? || play_actor[:if].call(result)
-      end.compact
+      filtered_play_configs = described_class.play_actors.select do |play_config|
+        play_config[:if].blank? || play_config[:if].call(result)
+      end
+      filtered_play_configs.pluck(:actor)
     end
 
     let(:result) { ServiceActor::Result.new(payment: payment) }

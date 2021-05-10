@@ -61,6 +61,22 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
     it 'allows transition to waiting_review' do
       expect { payment.transition_to!(:waiting_review) }.not_to raise_error
     end
+
+    it 'allows transition to paid' do
+      expect { payment.transition_to!(:paid) }.not_to raise_error
+    end
+  end
+
+  context 'when state is paid' do
+    let(:payment) { create(:billing_payment, :paid) }
+
+    it 'allows transition to charged_back' do
+      expect { payment.transition_to!(:charged_back) }.not_to raise_error
+    end
+
+    it 'allows transition to refunded' do
+      expect { payment.transition_to!(:refunded) }.not_to raise_error
+    end
   end
 
   describe '.after_transition' do

@@ -20,7 +20,7 @@ module PagarMe
         Sentry.capture_message('Transaction cannot be captured on gateway', error_options)
       end
 
-      response.parsed_response
+      response
     end
 
     def refund_transaction(transaction_id)
@@ -31,7 +31,7 @@ module PagarMe
         Sentry.capture_message('Transaction cannot be refunded on gateway', error_options)
       end
 
-      response.parsed_response
+      response
     end
 
     private

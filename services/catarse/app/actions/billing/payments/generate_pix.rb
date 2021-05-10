@@ -6,15 +6,15 @@ module Billing
       include Helpers::ErrorHandler
 
       input :payment, type: Billing::Payment
-      input :pagarme_client, type: PagarMe::Client, default: -> { PagarMe::Client.new }
+      input :pagar_me_client, type: PagarMe::Client, default: -> { PagarMe::Client.new }
 
       def call
-        # TODO: check if payment method is boleto
-        response = pagarme_client.create_transaction(transaction_params)
+        # TODO: check if payment method is pix
+        response = pagar_me_client.create_transaction(transaction_params)
 
         if response['status'] == 'waiting_payment'
           payment.transition_to!(:waiting_payment, response)
-          payment.update!(gateway: 'pagarme', gateway_id: response['id'])
+          payment.update!(gateway: 'pagar_me', gateway_id: response['id'])
           create_pix(response)
         else
           handle_fatal_error('Invalid gateway request',

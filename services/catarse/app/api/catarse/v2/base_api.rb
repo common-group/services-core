@@ -6,6 +6,8 @@ module Catarse
       format :json
       version :v2, using: :path
 
+      helpers Catarse::V2::Helpers::RequestHelpers
+
       rescue_from ActiveRecord::RecordInvalid do |e|
         error!({ errors: e.record.errors.messages }, 422)
       end
@@ -31,6 +33,7 @@ module Catarse
       end
 
       mount Catarse::V2::Billing::BaseAPI
+      mount Catarse::V2::Integrations::BaseAPI
       mount Catarse::V2::Shared::BaseAPI
     end
   end
