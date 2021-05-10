@@ -1,5 +1,6 @@
 export * from './user-details'
 export * from './project-details'
+export * from './project-integration'
 export * from './reward-details'
 export * from './event-target'
 export * from './window'
