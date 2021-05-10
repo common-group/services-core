@@ -37,6 +37,36 @@ RSpec.describe Billing::Payments::Create, type: :action do
 
     it { is_expected.to be_success }
 
+    it 'replicates billing address' do
+      original_address = Shared::Address.find(attributes[:billing_address_id])
+      address_replica = Shared::Address.where.not(id: original_address.id).find(result.payment.billing_address_id)
+
+      expect(address_replica.attributes).to include(
+        original_address.attributes.except('updated_at', 'created_at', 'id')
+      )
+    end
+
+    context 'when shipping address is present' do
+      before { attributes[:shipping_address_id] = create(:shared_address).id }
+
+      it 'replicates shipping address' do
+        original_address = Shared::Address.find(attributes[:shipping_address_id])
+        address_replica = Shared::Address.where.not(id: original_address.id).find(result.payment.shipping_address_id)
+
+        expect(address_replica.attributes).to include(
+          original_address.attributes.except('updated_at', 'created_at', 'id')
+        )
+      end
+    end
+
+    context 'when shipping address isn`t present' do
+      before { attributes[:shipping_address_id] = nil }
+
+      it 'doesn`t duplicate shipping address' do
+        expect(result.payment.shipping_address_id).to eq(nil)
+      end
+    end
+
     it 'creates payment' do
       expect(result.payment.reload.attributes).to include(
         'user_id' => user.id,

@@ -28,6 +28,7 @@ module Billing
       end
 
       def build_payment_attributes(payment_items:)
+        replicate_address
         initial_state = Billing::PaymentStateMachine.initial_state
         total_amount_cents = payment_items.sum(&:total_amount_cents)
 
@@ -49,6 +50,17 @@ module Billing
           total_amount_cents: amount_cents + shipping_fee_cents,
           state: Billing::PaymentItemStateMachine.initial_state
         }
+      end
+
+      def replicate_address
+        %i[billing_address_id shipping_address_id].each do |address_attributes|
+          next if attributes[address_attributes].blank?
+
+          address = ::Shared::Address.find(attributes[address_attributes]).dup
+          address_replicate = address.dup
+          address_replicate.save!
+          attributes[address_attributes] = address_replicate.id
+        end
       end
     end
   end
