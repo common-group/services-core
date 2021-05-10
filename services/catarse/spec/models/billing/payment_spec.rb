@@ -33,5 +33,7 @@ RSpec.describe Billing::Payment, type: :model do
     end
 
     it { is_expected.to validate_numericality_of(:total_amount).is_greater_than_or_equal_to(1) }
+    it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
+    it { is_expected.to validate_numericality_of(:total_shipping_fee).is_greater_than_or_equal_to(0) }
   end
 end
