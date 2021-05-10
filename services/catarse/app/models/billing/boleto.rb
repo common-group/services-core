@@ -7,7 +7,7 @@ module Billing
     validates :payment_id, presence: true
     validates :barcode, presence: true
     validates :url, presence: true
-    # TODO: Check if expires at is date or datetime
+    # TODO: Check attribute type. Investigate if expires at is date or datetime
     validates :expires_at, presence: true
   end
 end
