@@ -17,7 +17,7 @@ import projectEditUserSettings from '../root/project-edit-user-settings';
 import projectEditReward from '../root/project-edit-reward';
 import projectEditCard from '../root/project-edit-card';
 import projectEditStart from '../root/project-edit-start';
-import projectPreview from '../root/project-preview';
+import { ProjectPreview } from '../root/project-preview';
 import projectDashboardMenu from '../c/project-dashboard-menu';
 import projectAnnounceExpiration from '../c/project-announce-expiration';
 import projectEditTab from '../c/project-edit-tab';
@@ -118,7 +118,7 @@ const projectEdit = {
                     });
 
                 case '#preview':
-                    return m(projectPreview, _.extend({}, c_opts));
+                    return m(ProjectPreview, _.extend({}, c_opts));
 
                 case '#start':
                     return m(projectEditStart, _.extend({}, c_opts));

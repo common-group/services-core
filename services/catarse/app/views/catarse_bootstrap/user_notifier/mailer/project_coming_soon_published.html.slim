@@ -1,0 +1,14 @@
+- project = @notification.project
+- project_link = project_by_slug_url(project.permalink)
+- company_name = CatarseSettings[:company_name]
+
+| Uhuu, #{project.user.display_name},
+br/
+p Projeto #{project.name} foi publicado!
+p
+  | Acesse o projeto pelo link <a href="#{project_link}?ref=ctrse_coming_soon_email&utm=ctrse_coming_soon_email">#{project.name}</a> para apoiar.
+
+p
+  | Abraços,
+  br/
+  | Equipe #{company_name}
