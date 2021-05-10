@@ -11,6 +11,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
 
       it 'returns credit card transaction params' do
         expect(result).to eq(
+          reference_key: payment.id,
           payment_method: Billing::PaymentMethods::CREDIT_CARD,
           amount: payment.total_amount_cents,
           async: false,
@@ -26,6 +27,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
 
       it 'returns boleto transaction params' do
         expect(result).to eq(
+          reference_key: payment.id,
           payment_method: Billing::PaymentMethods::BOLETO,
           amount: payment.total_amount_cents,
           async: false,
@@ -50,6 +52,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
 
       it 'returns pix transaction params' do
         expect(result).to eq(
+          reference_key: payment.id,
           payment_method: Billing::PaymentMethods::PIX,
           amount: payment.total_amount_cents,
           async: false,
