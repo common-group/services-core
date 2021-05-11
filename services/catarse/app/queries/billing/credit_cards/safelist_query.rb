@@ -14,7 +14,7 @@ module Billing
       end
 
       def call
-        relation.joins(:payment).where(billing_payments: { state: 'paid' })
+        relation.joins(:payments).where(billing_payments: { state: 'paid' })
       end
     end
   end

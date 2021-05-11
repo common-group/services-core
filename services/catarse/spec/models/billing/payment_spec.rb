@@ -11,6 +11,10 @@ RSpec.describe Billing::Payment, type: :model do
     it { is_expected.to belong_to :user }
     it { is_expected.to belong_to(:billing_address).class_name('Shared::Address') }
     it { is_expected.to belong_to(:shipping_address).class_name('Shared::Address').optional }
+    it { is_expected.to belong_to(:credit_card).class_name('Billing::CreditCard').optional }
+
+    it { is_expected.to have_one(:pix).class_name('Billing::Pix').dependent(:destroy) }
+    it { is_expected.to have_one(:boleto).class_name('Billing::Boleto').dependent(:destroy) }
 
     it { is_expected.to have_many(:items).class_name('Billing::PaymentItem').dependent(:destroy) }
   end
