@@ -3,10 +3,10 @@
 module Billing
   class CreditCard < ApplicationRecord
     belongs_to :user
-    belongs_to :payment, class_name: 'Billing::Payment'
+
+    has_many :payments, class_name: 'Billing::Payment', dependent: :nullify
 
     validates :user_id, presence: true
-    validates :payment_id, presence: true
     validates :gateway, presence: true
     validates :gateway_id, presence: true
     validates :holder_name, presence: true
