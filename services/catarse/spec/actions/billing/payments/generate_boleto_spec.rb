@@ -46,6 +46,22 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
       result
     end
 
+    context 'when payment method isn`t boleto' do
+      before { allow(payment).to receive(:boleto?).and_return(false) }
+
+      it 'doesn`t create transaction on gateway' do
+        expect(pagar_me_client).not_to receive(:create_transaction)
+
+        result
+      end
+
+      it 'doesn`t  change payment state' do
+        result
+
+        expect(payment.reload).to be_in_state('created')
+      end
+    end
+
     context 'when gateway response status is waiting_payment' do
       it { is_expected.to be_success }
 
