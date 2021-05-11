@@ -20,7 +20,11 @@ module Billing
 
         response = konduto_client.create_order(build_order_params)
         next_state = evaluate_next_state(response)
-        payment.transition_to!(next_state, response) if next_state
+
+        return if next_state.nil?
+
+        create_processing_fee!
+        payment.transition_to!(next_state, response)
       end
 
       private
@@ -47,6 +51,15 @@ module Billing
         end
 
         MAPPED_RECOMMENDATIONS[recommendation]
+      end
+
+      def create_processing_fee!
+        # TODO: Get antifraud analysis cost from settings
+        antifraud_analysis_cost = (CatarseSettings.get_without_cache(:antifraud_tax).to_f * 100).to_i
+        payment.processing_fees.create!(
+          vendor: Billing::ProcessingFeeVendors::KONDUTO,
+          amount_cents: antifraud_analysis_cost
+        )
       end
     end
   end
