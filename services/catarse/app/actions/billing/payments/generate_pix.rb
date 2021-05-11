@@ -9,7 +9,8 @@ module Billing
       input :pagar_me_client, type: PagarMe::Client, default: -> { PagarMe::Client.new }
 
       def call
-        # TODO: check if payment method is pix
+        validate_payment_method!
+
         response = pagar_me_client.create_transaction(transaction_params)
 
         if response['status'] == 'waiting_payment'
@@ -24,6 +25,10 @@ module Billing
       end
 
       private
+
+      def validate_payment_method!
+        fail!(error: 'Invalid payment method') unless payment.pix?
+      end
 
       def transaction_params
         PagarMe::TransactionParamsBuilder.new(payment: payment).build
