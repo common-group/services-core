@@ -14,6 +14,8 @@ FactoryBot.define do
     gateway { Faker::Lorem.word }
     gateway_id { Faker::Internet.uuid }
 
+    credit_card_hash { Faker::Crypto.sha1 if credit_card? }
+
     trait :with_shipping_address do
       association :shipping_address, factory: :shared_address
     end
