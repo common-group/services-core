@@ -12,7 +12,7 @@ RSpec.describe Catarse::V2::Billing::InstallmentSimulationsAPI, type: :api do
       allow(CatarseSettings).to receive(:get_without_cache).with(:pagarme_max_installments).and_return(6)
       allow(CatarseSettings).to receive(:get_without_cache).with(:pagarme_interest_rate).and_return(2.5)
       allow(CatarseSettings).to receive(:get_without_cache)
-        .with(:pagarme_minimum_value_for_installment).and_return(1500)
+        .with(:pagarme_minimum_value_for_installment).and_return(15)
     end
 
     context 'when the amount is greater than the minimum amount for installation' do

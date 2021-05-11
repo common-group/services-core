@@ -7,7 +7,8 @@ module Billing
     def initialize
       @interest_rate = CatarseSettings.get_without_cache(:pagarme_interest_rate).to_f
       @max_installments = CatarseSettings.get_without_cache(:pagarme_max_installments).to_i
-      @minimum_value_for_installment = CatarseSettings.get_without_cache(:pagarme_minimum_value_for_installment).to_i
+      @minimum_value_for_installment =
+        CatarseSettings.get_without_cache(:pagarme_minimum_value_for_installment).to_i * 100
     end
 
     def calculate(amount)
