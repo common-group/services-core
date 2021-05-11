@@ -14,7 +14,8 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
         'payables' => [
           { 'id' => 123, 'type' => 'Contribution' },
           { 'id' => 456, 'type' => 'Subscription' }
-        ]
+        ],
+        credit_card_hash: Faker::Lorem.word
       }
     end
 
