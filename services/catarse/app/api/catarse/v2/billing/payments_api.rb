@@ -16,11 +16,17 @@ module Catarse
               requires :id, type: Integer
               requires :type, type: String, values: %w[Contribution Subscription]
             end
+
+            optional :credit_card_id, type: String
+            optional :credit_card_hash, type: String
+
+            given payment_method: ->(val) { val == ::Billing::PaymentMethods::CREDIT_CARD } do
+              exactly_one_of :credit_card_id, :credit_card_hash
+            end
           end
         end
 
         post '/payments' do
-          # TODO: Receive credit cards identifiers (id or hash)
           # TODO: Payment in installments
           payment_params = declared(params, include_missing: false)[:payment]
 
