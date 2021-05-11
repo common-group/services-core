@@ -19,8 +19,8 @@ RSpec.describe Konduto::ParamsBuilders::Address, type: :params_builder do
   end
 
   describe '#build' do
-    let(:credit_card) { create(:billing_credit_card) }
-    let(:address) { credit_card.payment.billing_address }
+    let(:credit_card) { build(:billing_credit_card) }
+    let(:address) { build(:shared_address) }
 
     it 'returns all attributes with corresponding methods results' do
       expect(params_builder.build).to eq(

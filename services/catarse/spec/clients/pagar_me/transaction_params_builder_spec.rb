@@ -6,10 +6,10 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
   describe '#build' do
     subject(:result) { described_class.new(payment: payment).build }
 
-    context 'when payment_method is credit_card' do
-      let(:payment) { create(:billing_payment, :credit_card) }
+    context 'when payment_method is credit_card with credit card registered' do
+      let(:payment) { create(:billing_payment, :with_credit_card) }
 
-      it 'returns credit card transaction params' do
+      it 'returns credit card transaction params with card_id' do
         expect(result).to eq(
           reference_key: payment.id,
           payment_method: Billing::PaymentMethods::CREDIT_CARD,
@@ -17,7 +17,23 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
           async: false,
           postback_url: 'https://example.com',
           capture: false,
-          card_id: 'card_123456789'
+          card_id: payment.credit_card.gateway_id
+        )
+      end
+    end
+
+    context 'when payment_method is credit_card without credit card registered' do
+      let(:payment) { create(:billing_payment, :credit_card) }
+
+      it 'returns credit card transaction params with card_hash' do
+        expect(result).to eq(
+          reference_key: payment.id,
+          payment_method: Billing::PaymentMethods::CREDIT_CARD,
+          amount: payment.total_amount_cents,
+          async: false,
+          postback_url: 'https://example.com',
+          capture: false,
+          card_hash: payment.credit_card_hash
         )
       end
     end

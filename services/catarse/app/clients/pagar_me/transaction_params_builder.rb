@@ -2,21 +2,22 @@
 
 module PagarMe
   class TransactionParamsBuilder
-    attr_reader :payment, :user
+    attr_reader :payment, :user, :credit_card
 
     def initialize(payment:)
       @payment = payment
       @user = payment.user
+      @credit_card = payment.credit_card
     end
 
     def build
       case payment.payment_method
       when Billing::PaymentMethods::CREDIT_CARD
-        build_credit_card_params
+        build_credit_card_transaction_params
       when Billing::PaymentMethods::BOLETO
-        build_boleto_params
+        build_boleto_transaction_params
       when Billing::PaymentMethods::PIX
-        build_pix_params
+        build_pix_transaction_params
       end
     end
 
@@ -32,14 +33,11 @@ module PagarMe
       }
     end
 
-    def build_credit_card_params
-      base_params.merge(
-        capture: false,
-        card_id: 'card_123456789'
-      )
+    def build_credit_card_transaction_params
+      base_params.merge(build_credit_card_params).merge(capture: false)
     end
 
-    def build_boleto_params
+    def build_boleto_transaction_params
       # TODO: boleto expiration date calc
       # TODO: limit params characters length
       base_params.merge(
@@ -48,7 +46,7 @@ module PagarMe
       )
     end
 
-    def build_pix_params
+    def build_pix_transaction_params
       # TODO: pix expiration date calc
       base_params.merge(
         pix_expiration_date: 4.days.from_now.to_date.iso8601,
@@ -77,6 +75,14 @@ module PagarMe
           }
         ]
       }
+    end
+
+    def build_credit_card_params
+      if credit_card.present?
+        { card_id: credit_card.gateway_id }
+      else
+        { card_hash: payment.credit_card_hash }
+      end
     end
   end
 end

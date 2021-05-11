@@ -8,8 +8,8 @@ module Billing
 
     belongs_to :billing_address, class_name: 'Shared::Address'
     belongs_to :shipping_address, class_name: 'Shared::Address', optional: true
+    belongs_to :credit_card, class_name: 'Billing::CreditCard', optional: true
 
-    has_one :credit_card, class_name: 'Billing::CreditCard', dependent: :destroy
     has_one :boleto, class_name: 'Billing::Boleto', dependent: :destroy
     has_one :pix, class_name: 'Billing::Pix', dependent: :destroy
 
