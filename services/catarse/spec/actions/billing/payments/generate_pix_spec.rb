@@ -45,6 +45,22 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
       result
     end
 
+    context 'when payment method isn`t pix' do
+      before { allow(payment).to receive(:pix?).and_return(false) }
+
+      it 'doesn`t create transaction on gateway' do
+        expect(pagar_me_client).not_to receive(:create_transaction)
+
+        result
+      end
+
+      it 'doesn`t  change payment state' do
+        result
+
+        expect(payment.reload).to be_in_state('created')
+      end
+    end
+
     context 'when user response status is waiting_payment' do
       it { is_expected.to be_success }
 
