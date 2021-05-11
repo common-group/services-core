@@ -31,6 +31,7 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
 
     before do
       allow(konduto_client).to receive(:create_order).with(order_params).and_return(antifraud_response)
+      allow(CatarseSettings).to receive(:get_without_cache).with(:antifraud_tax).and_return(0.3240)
     end
 
     context 'when payment doesn`t need analysis' do
@@ -73,6 +74,13 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
 
           expect(payment.reload).to be_in_state(next_state)
         end
+
+        it 'creates a processing fee' do
+          payment_processing_fees = payment.processing_fees.where(
+            vendor: Billing::ProcessingFeeVendors::KONDUTO, amount_cents: 32
+          )
+          expect { result }.to change(payment_processing_fees, :count).by(1)
+        end
       end
     end
 
@@ -90,6 +98,10 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
         result
 
         expect(payment.reload).to be_in_state(:refused)
+      end
+
+      it 'doesn`t create a processing fee' do
+        expect { result }.not_to change(payment.processing_fees, :count)
       end
     end
 
