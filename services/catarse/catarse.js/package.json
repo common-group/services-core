@@ -88,7 +88,7 @@
     },
     "dependencies": {
         "@sentry/browser": "^5.7.1",
-        "chart.js": "1.0.2",
+        "chart.js": "2.9.4",
         "mithril": "^1.1.6",
         "mithril-hooks": "https://github.com/grpse/mithril-hooks.git#v0.6.1-root",
         "mithril-postgrest": "https://github.com/catarse/mithril-postgrest.git#4.1.0",
