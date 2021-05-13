@@ -11,7 +11,6 @@ RSpec.describe Billing::PaymentItem, type: :model do
   end
 
   describe 'Validations' do
-    it { is_expected.to validate_presence_of :payment_id }
     it { is_expected.to validate_presence_of :payable_id }
     it { is_expected.to validate_presence_of :payable_type }
 

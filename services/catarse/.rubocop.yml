@@ -45,6 +45,9 @@ Layout/MultilineMethodCallBraceLayout:
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 
+Lint/SuppressedException:
+  AllowComments: true
+
 Lint/UnusedMethodArgument:
   AllowUnusedKeywordArguments: true
 
