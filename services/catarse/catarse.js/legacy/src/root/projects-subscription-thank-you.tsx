@@ -59,15 +59,21 @@ const ProjectsSubscriptionThankYou = {
                 .then(paymentData).catch(() => error(true));
         }
 
-        projectVM
-            .fetchProject(projectId, false)
-            .then(async (projectData) => {
-                project(_.first(projectData));
-                const projectUserDetails = await getUserDetailsWithUserId(projectData.user.id)
+        const loadProjectAndItsUser = async () => {
+            try {
+                const projectsData = await projectVM.fetchProject(projectId, false)
+                const firstProject = _.first(projectsData)
+                project(firstProject);
+                const projectUserDetails = await getUserDetailsWithUserId(firstProject.user.id)
                 projectUser(projectUserDetails)
                 return projectUser
-            })
-            .catch(() => error(true));
+            } catch (error) {
+                h.captureException(error)
+                error(true)
+            }
+        }
+
+        loadProjectAndItsUser().then()
 
         vnode.state = {
             displayShareBox: h.toggleProp(false, true),
