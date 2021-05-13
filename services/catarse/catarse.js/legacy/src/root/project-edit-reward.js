@@ -35,7 +35,7 @@ const projectEditReward = {
 
         return m('[id="dashboard-rewards-tab"]',
             (project() ? [
-                m('.w-section.section',
+                m('.w-section.section.padding-bottom-80',
                     m('.w-container', [
                         (state.showSuccess() ? m(popNotification, {
                             message: 'Recompensa salva com sucesso'

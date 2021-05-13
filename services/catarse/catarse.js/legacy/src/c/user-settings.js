@@ -196,7 +196,7 @@ const userSettings = {
                 : 
                     ''
             ),
-            m('form.w-form', { onsubmit: state.onSubmit }, [
+            m('form.w-form.padding-bottom-80', { onsubmit: state.onSubmit }, [
                 m('div', [
                     m('.w-container',
                         (
