@@ -15,6 +15,7 @@ module Billing
 
     has_many :items, class_name: 'Billing::PaymentItem', dependent: :destroy
     has_many :processing_fees, class_name: 'Billing::ProcessingFee', dependent: :destroy
+    has_many :gateway_payables, class_name: 'Billing::GatewayPayable', dependent: :destroy
 
     monetize :amount_cents, numericality: { greater_than_or_equal_to: 1 }
     monetize :shipping_fee_cents, numericality: { greater_than_or_equal_to: 0 }

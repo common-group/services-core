@@ -18,6 +18,7 @@ RSpec.describe Billing::Payment, type: :model do
 
     it { is_expected.to have_many(:items).class_name('Billing::PaymentItem').dependent(:destroy) }
     it { is_expected.to have_many(:processing_fees).class_name('Billing::ProcessingFee').dependent(:destroy) }
+    it { is_expected.to have_many(:gateway_payables).class_name('Billing::GatewayPayable').dependent(:destroy) }
   end
 
   describe 'Configurations' do
