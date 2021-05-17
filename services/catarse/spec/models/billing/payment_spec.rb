@@ -37,8 +37,23 @@ RSpec.describe Billing::Payment, type: :model do
       expect(payment).to validate_uniqueness_of(:gateway_id).scoped_to(:gateway)
     end
 
-    it { is_expected.to validate_numericality_of(:total_amount).is_greater_than_or_equal_to(1) }
     it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
-    it { is_expected.to validate_numericality_of(:total_shipping_fee).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:shipping_fee).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:payment_method_fee).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:total_amount).is_greater_than_or_equal_to(1) }
+
+    context 'when payment method is credit card' do
+      subject(:payment) { described_class.new(payment_method: Billing::PaymentMethods::CREDIT_CARD) }
+
+      it { is_expected.to validate_numericality_of(:installments_count).is_greater_than(0) }
+    end
+
+    context 'when payment method isn`t credit card' do
+      subject(:payment) { described_class.new(payment_method: payment_methods.sample) }
+
+      let(:payment_methods) { Billing::PaymentMethods.list - [Billing::PaymentMethods::CREDIT_CARD] }
+
+      it { is_expected.to validate_numericality_of(:installments_count).is_equal_to(1) }
+    end
   end
 end

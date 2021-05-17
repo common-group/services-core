@@ -10,7 +10,7 @@ module Catarse
 
         get '/installment_simulations' do
           total_amount_cents = params['total_amount_cents']
-          result = ::Billing::InstallmentSimulator.new.calculate(total_amount_cents)
+          result = ::Billing::InstallmentCalculator.simulations(amount: total_amount_cents)
 
           result
         end
