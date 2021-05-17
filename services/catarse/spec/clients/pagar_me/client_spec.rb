@@ -115,4 +115,21 @@ RSpec.describe PagarMe::Client, type: :client do
       end
     end
   end
+
+  describe '#list_transaction_payables' do
+    let(:transaction_id) { Faker::Lorem.word }
+    let(:request_response) { Hash[*Faker::Lorem.words(number: 4)].to_json }
+
+    before do
+      stub_request(:get, "#{described_class.base_uri}/transactions/#{transaction_id}/payables")
+        .with(body: { api_key: api_key })
+        .to_return(body: request_response, headers: { 'Content-Type' => 'application/json' })
+    end
+
+    it 'returns transaction payables' do
+      response = client.list_transaction_payables(transaction_id)
+
+      expect(response).to eq JSON.parse(request_response)
+    end
+  end
 end
