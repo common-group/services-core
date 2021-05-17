@@ -3,7 +3,7 @@
 module Konduto
   module ParamsBuilders
     class Payment
-      attr_accessor :payment, :credit_card
+      attr_reader :payment, :credit_card
 
       ATTRIBUTES = %i[type status bin last4 amount expiration_date].freeze
 
