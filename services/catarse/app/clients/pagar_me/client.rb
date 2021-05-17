@@ -34,6 +34,11 @@ module PagarMe
       response
     end
 
+    def list_transaction_payables(transaction_id)
+      response = self.class.get("/transactions/#{transaction_id}/payables", body: { api_key: api_key })
+      response.parsed_response
+    end
+
     private
 
     def api_key
