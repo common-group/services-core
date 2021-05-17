@@ -3,7 +3,7 @@
 module Konduto
   module ParamsBuilders
     class ShoppingCartItem
-      attr_accessor :payment_item, :reward, :project, :object
+      attr_reader :payment_item, :reward, :project, :object
 
       ATTRIBUTES = %i[sku product_code created_at category name description unit_cost quantity].freeze
 

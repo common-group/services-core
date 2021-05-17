@@ -28,6 +28,7 @@ module PagarMe
         reference_key: payment.id,
         payment_method: payment.payment_method,
         amount: payment.total_amount_cents,
+        installments: payment.installments_count,
         async: false,
         postback_url: 'https://example.com'
       }
