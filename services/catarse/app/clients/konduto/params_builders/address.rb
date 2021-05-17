@@ -3,7 +3,7 @@
 module Konduto
   module ParamsBuilders
     class Address
-      attr_accessor :address, :credit_card
+      attr_reader :address, :credit_card
 
       ATTRIBUTES = %i[name address1 address2 city state zip country].freeze
 
