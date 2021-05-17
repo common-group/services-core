@@ -17,7 +17,8 @@ module Billing
     has_many :processing_fees, class_name: 'Billing::ProcessingFee', dependent: :destroy
 
     monetize :amount_cents, numericality: { greater_than_or_equal_to: 1 }
-    monetize :total_shipping_fee_cents, numericality: { greater_than_or_equal_to: 0 }
+    monetize :shipping_fee_cents, numericality: { greater_than_or_equal_to: 0 }
+    monetize :payment_method_fee_cents, numericality: { greater_than_or_equal_to: 0 }
     monetize :total_amount_cents, numericality: { greater_than_or_equal_to: 1 }
 
     has_enumeration_for :payment_method, with: Billing::PaymentMethods, required: true, create_helpers: true
@@ -27,5 +28,16 @@ module Billing
     validates :gateway, presence: true
 
     validates :gateway_id, uniqueness: { scope: :gateway }, allow_nil: true
+
+    validates :installments_count, numericality: { greater_than: 0 }, if: :credit_card?
+    validates :installments_count, numericality: { equal_to: 1 }, unless: :credit_card?
+
+    def lump_sum?
+      installments_count == 1
+    end
+
+    def installment?
+      installments_count > 1
+    end
   end
 end

@@ -15,6 +15,14 @@ FactoryBot.define do
     gateway_id { Faker::Internet.uuid }
 
     credit_card_hash { Faker::Crypto.sha1 if credit_card? }
+    payment_method_fee_cents { Faker::Number.number(digits: 3) }
+    installments_count do
+      if payment_method == Billing::PaymentMethods::CREDIT_CARD
+        (1..6).to_a.sample
+      else
+        1
+      end
+    end
 
     trait :with_shipping_address do
       association :shipping_address, factory: :shared_address
@@ -32,9 +40,10 @@ FactoryBot.define do
     end
 
     after :build do |payment, evaluator|
-      payment.amount_cents = evaluator.payment_items.sum(&:amount_cents)
-      payment.total_shipping_fee_cents = evaluator.payment_items.sum(&:shipping_fee_cents)
-      payment.total_amount_cents = evaluator.payment_items.sum(&:total_amount_cents)
+      payment_items = evaluator.payment_items
+      payment.amount_cents = payment_items.sum(&:amount_cents)
+      payment.shipping_fee_cents = payment_items.sum(&:shipping_fee_cents)
+      payment.total_amount_cents = payment_items.sum(&:total_amount_cents) + payment.payment_method_fee_cents
     end
 
     after :create do |payment, evaluator|

@@ -15,22 +15,11 @@ RSpec.describe Catarse::V2::Billing::InstallmentSimulationsAPI, type: :api do
         .with(:pagarme_minimum_value_for_installment).and_return(1500)
     end
 
-    context 'when the amount is greater than the minimum amount for installation' do
-      it 'returns installment_simulations' do
-        get '/v2/billing/installment_simulations', params: params
-        result = Billing::InstallmentSimulator.new.calculate(params['total_amount_cents']).to_json
+    it 'returns installment simulations' do
+      get '/v2/billing/installment_simulations', params: params
+      result = Billing::InstallmentCalculator.simulations(amount: params['total_amount_cents']).to_json
 
-        expect(response.body).to eq(result)
-      end
-    end
-
-    context 'when the amount is less than the minimum amount for installation' do
-      it 'returns installment_simulations' do
-        get '/v2/billing/installment_simulations', params: { 'total_amount_cents' => 1000 }
-        expected_response = { installments_count: 1, total_amount_cents: 1000, installment_amount_cents: 1000 }
-
-        expect(response.body).to eq([expected_response].to_json)
-      end
+      expect(response.body).to eq(result)
     end
 
     it 'return status 200 - ok' do
