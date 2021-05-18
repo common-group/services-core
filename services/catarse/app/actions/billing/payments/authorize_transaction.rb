@@ -14,8 +14,8 @@ module Billing
         next_state = evalute_next_state(response)
 
         payment.transition_to!(next_state, response)
-        payment.update!(gateway: 'pagar_me', gateway_id: response['id'])
-        create_credit_card(response)
+        credit_card = payment.credit_card || find_or_create_credit_card(response['card'])
+        payment.update!(gateway: 'pagar_me', gateway_id: response['id'], credit_card: credit_card)
       end
 
       private
@@ -37,13 +37,20 @@ module Billing
         end
       end
 
-      def create_credit_card(response)
-        credit_card_data = response['card']
+      def find_or_create_credit_card(credit_card_data)
+        find_credit_card(credit_card_data['id']) || create_credit_card(credit_card_data)
+      end
+
+      def find_credit_card(gateway_id)
+        Billing::CreditCard.find_by(gateway: 'pagar_me', gateway_id: gateway_id, user_id: payment.user_id)
+      end
+
+      def create_credit_card(credit_card_data)
         expiration_date = parse_credit_card_expiration_date(credit_card_data['expiration_date'])
 
         payment.create_credit_card!(
           user: payment.user,
-          gateway: payment.gateway,
+          gateway: 'pagar_me',
           gateway_id: credit_card_data['id'],
           holder_name: credit_card_data['holder_name'],
           bin: credit_card_data['first_digits'],
