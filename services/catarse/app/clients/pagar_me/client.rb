@@ -6,6 +6,11 @@ module PagarMe
 
     base_uri 'https://api.pagar.me/1/'
 
+    def find_transaction(transaction_id)
+      response = self.class.get("/transactions/#{transaction_id}", body: { api_key: api_key })
+      response.parsed_response
+    end
+
     def create_transaction(transaction_params)
       # TODO: handler errors (Timeout, internal server error)
       response = self.class.post('/transactions', body: transaction_params.merge(api_key: api_key))
