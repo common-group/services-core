@@ -384,7 +384,7 @@ GEM
       pg (>= 0.17)
       responders
     public_suffix (4.0.6)
-    puma (5.2.2)
+    puma (5.3.1)
       nio4r (~> 2.0)
     pundit (2.1.0)
       activesupport (>= 3.0.0)
@@ -670,7 +670,7 @@ DEPENDENCIES
   pg (= 1.2.3)
   pg_search (= 2.3.5)
   postgres-copy (= 1.5.0)
-  puma (= 5.2.2)
+  puma (= 5.3.1)
   pundit (= 2.1.0)
   rack-cors (= 1.1.1)
   rack-mini-profiler (= 2.3.1)
