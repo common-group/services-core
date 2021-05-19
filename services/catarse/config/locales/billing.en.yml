@@ -1,0 +1,6 @@
+en:
+  models:
+    billing:
+      payment:
+        errors:
+          invalid_total_amount: "doesn't match other values"
