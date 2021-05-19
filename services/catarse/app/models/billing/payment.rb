@@ -22,6 +22,7 @@ module Billing
     monetize :total_amount_cents, numericality: { greater_than_or_equal_to: 1 }
 
     has_enumeration_for :payment_method, with: Billing::PaymentMethods, required: true, create_helpers: true
+    has_enumeration_for :gateway, with: Billing::Gateways, required: true, create_helpers: true
 
     validates :user_id, presence: true
     validates :billing_address_id, presence: true

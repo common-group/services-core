@@ -15,7 +15,7 @@ module Billing
 
         payment.transition_to!(next_state, response)
         credit_card = payment.credit_card || find_or_create_credit_card(response['card'])
-        payment.update!(gateway: 'pagar_me', gateway_id: response['id'], credit_card: credit_card)
+        payment.update!(gateway_id: response['id'], credit_card: credit_card)
       end
 
       private
@@ -42,7 +42,7 @@ module Billing
       end
 
       def find_credit_card(gateway_id)
-        Billing::CreditCard.find_by(gateway: 'pagar_me', gateway_id: gateway_id, user_id: payment.user_id)
+        Billing::CreditCard.find_by(gateway: payment.gateway, gateway_id: gateway_id, user_id: payment.user_id)
       end
 
       def create_credit_card(credit_card_data)
@@ -50,7 +50,7 @@ module Billing
 
         payment.create_credit_card!(
           user: payment.user,
-          gateway: 'pagar_me',
+          gateway: payment.gateway,
           gateway_id: credit_card_data['id'],
           holder_name: credit_card_data['holder_name'],
           bin: credit_card_data['first_digits'],

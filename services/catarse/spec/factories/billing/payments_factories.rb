@@ -8,10 +8,11 @@ FactoryBot.define do
     traits_for_enum :payment_method, Billing::PaymentMethods.list
     payment_method { Billing::PaymentMethods.list.sample }
 
+    gateway { Billing::Gateways.list.sample }
+
     traits_for_enum :state, Billing::PaymentStateMachine.states
     state { Billing::PaymentStateMachine.states.sample }
 
-    gateway { Faker::Lorem.word }
     gateway_id { Faker::Internet.uuid }
 
     credit_card_hash { Faker::Crypto.sha1 if credit_card? }

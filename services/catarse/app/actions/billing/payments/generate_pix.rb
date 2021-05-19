@@ -15,7 +15,7 @@ module Billing
 
         if response['status'] == 'waiting_payment'
           payment.transition_to!(:waiting_payment, response)
-          payment.update!(gateway: 'pagar_me', gateway_id: response['id'])
+          payment.update!(gateway_id: response['id'])
           create_pix(response)
         else
           handle_fatal_error('Invalid gateway request',
