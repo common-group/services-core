@@ -34,6 +34,10 @@ RSpec.describe Billing::PaymentBuilder, type: :lib do
       expect(payment.state).to eq Billing::PaymentStateMachine.initial_state
     end
 
+    it 'assigns gateway' do
+      expect(payment.gateway).to eq Billing::Gateways::PAGAR_ME
+    end
+
     it 'assigns billing address replica' do
       replica = instance_double(Shared::Address, id: Faker::Internet.uuid)
       allow(Shared::AddressReplicator).to receive(:by_id).with(attributes[:billing_address_id]).and_return(replica)

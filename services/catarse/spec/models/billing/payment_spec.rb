@@ -25,6 +25,10 @@ RSpec.describe Billing::Payment, type: :model do
     it 'setups payment_method with Billing::PaymentMethods enum' do
       expect(described_class.enumerations).to include(payment_method: Billing::PaymentMethods)
     end
+
+    it 'setups gateway with Billing::Gateways enum' do
+      expect(described_class.enumerations).to include(gateway: Billing::Gateways)
+    end
   end
 
   describe 'Validations' do
