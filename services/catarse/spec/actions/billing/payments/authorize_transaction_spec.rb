@@ -65,10 +65,10 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
           expect(payment.reload).to be_in_state(gateway_status)
         end
 
-        it 'updates payment gateway and gateway id' do
+        it 'updates payment gateway_id' do
           result
 
-          expect(payment.reload.attributes).to include('gateway' => 'pagar_me', 'gateway_id' => gateway_response['id'])
+          expect(payment.reload.attributes).to include('gateway_id' => gateway_response['id'])
         end
       end
     end
@@ -77,7 +77,7 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
       before do
         Billing::CreditCard.create(
           attributes_for(:billing_credit_card).merge(
-            gateway: 'pagar_me',
+            gateway: payment.gateway,
             user_id: create(:user).id,
             gateway_id: gateway_response['card']['id']
           )
@@ -123,7 +123,7 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
           attributes_for(:billing_credit_card).merge(
             user_id: payment.user_id,
             gateway_id: gateway_response['card']['id'],
-            gateway: 'pagar_me'
+            gateway: payment.gateway
           )
         )
       end
@@ -132,7 +132,7 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
         payment.update!(credit_card_id: nil)
         Billing::CreditCard.create(
           attributes_for(:billing_credit_card).merge(
-            gateway: 'pagar_me',
+            gateway: payment.gateway,
             user_id: create(:user).id,
             gateway_id: gateway_response['card']['id']
           )
