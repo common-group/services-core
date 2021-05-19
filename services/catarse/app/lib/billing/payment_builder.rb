@@ -21,7 +21,7 @@ module Billing
     def base_attributes
       replicate_addresses
       initial_state = Billing::PaymentStateMachine.initial_state
-      attributes.except(:payables).merge(state: initial_state)
+      attributes.except(:payables).merge(state: initial_state, gateway: Billing::Gateways::PAGAR_ME)
     end
 
     def replicate_addresses

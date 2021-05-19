@@ -9,6 +9,12 @@ RSpec.describe Billing::CreditCard, type: :model do
     it { is_expected.to have_many(:payments).class_name('Billing::Payment').dependent(:nullify) }
   end
 
+  describe 'Configurations' do
+    it 'setups gateway with Billing::Gateways enum' do
+      expect(described_class.enumerations).to include(gateway: Billing::Gateways)
+    end
+  end
+
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:user_id) }
     it { is_expected.to validate_presence_of(:gateway) }

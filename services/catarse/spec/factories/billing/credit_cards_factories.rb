@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :billing_credit_card, class: 'Billing::CreditCard' do
     association :user, factory: :user
-    gateway { Faker::Lorem.word }
+    gateway { Billing::Gateways.list.sample }
+
     gateway_id { Faker::Internet.uuid }
     holder_name { Faker::Name.name }
     bin { Faker::Business.credit_card_number.tr('-', '')[0..5] }

@@ -71,10 +71,10 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
         expect(payment.reload).to be_in_state('waiting_payment')
       end
 
-      it 'updates payment gateway and gateway_id' do
+      it 'updates payment gateway_id' do
         result
 
-        expect(payment.reload.attributes).to include('gateway' => 'pagar_me', 'gateway_id' => gateway_response['id'])
+        expect(payment.reload.attributes).to include('gateway_id' => gateway_response['id'])
       end
 
       it 'creates a new boleto' do
