@@ -6,6 +6,8 @@ module Billing
 
     has_many :payments, class_name: 'Billing::Payment', dependent: :nullify
 
+    has_enumeration_for :gateway, with: Billing::Gateways, required: true, create_helpers: true
+
     validates :user_id, presence: true
     validates :gateway, presence: true
     validates :gateway_id, presence: true
