@@ -1,0 +1,6 @@
+pt:
+  models:
+    billing:
+      payment:
+        errors:
+          invalid_total_amount: "incompatível com os outros valores"
