@@ -9,7 +9,6 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
     let(:payment_params) do
       {
         'payment_method' => payment.payment_method,
-        'gateway' => payment.gateway,
         'billing_address_id' => Faker::Internet.uuid,
         'installments_count' => Faker::Number.number(digits: 1),
         'payables' => [
