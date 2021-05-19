@@ -32,12 +32,22 @@ module Billing
     validates :installments_count, numericality: { greater_than: 0 }, if: :credit_card?
     validates :installments_count, numericality: { equal_to: 1 }, unless: :credit_card?
 
+    validate :total_amount_represents_the_sum_of_amount_and_fees
+
     def lump_sum?
       installments_count == 1
     end
 
     def installment?
       installments_count > 1
+    end
+
+    private
+
+    def total_amount_represents_the_sum_of_amount_and_fees
+      return if total_amount_cents == (amount_cents + shipping_fee_cents + payment_method_fee_cents)
+
+      errors.add(:total_amount_cents, I18n.t('models.billing.payment.errors.invalid_total_amount'))
     end
   end
 end

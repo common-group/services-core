@@ -55,5 +55,30 @@ RSpec.describe Billing::Payment, type: :model do
 
       it { is_expected.to validate_numericality_of(:installments_count).is_equal_to(1) }
     end
+
+    context 'when total amount cents represents sum of amount and fees' do
+      subject(:payment) do
+        described_class.new(total_amount: 50, amount: 20, shipping_fee: 20, payment_method_fee: 10)
+      end
+
+      it 'doesn`t add invalid_total_amount error' do
+        payment.valid?
+
+        expect(payment.errors[:total_amount_cents]).to be_empty
+      end
+    end
+
+    context 'when total amount cents doesn`t represent sum of amount and fees' do
+      subject(:payment) do
+        described_class.new(total_amount: 50, amount: 10, shipping_fee: 10, payment_method_fee: 10)
+      end
+
+      it 'adds invalid total amount error message' do
+        payment.valid?
+
+        error_message = I18n.t('models.billing.payment.errors.invalid_total_amount')
+        expect(payment.errors[:total_amount_cents]).to include error_message
+      end
+    end
   end
 end
