@@ -7,7 +7,6 @@ module Catarse
         params do
           requires :payment, type: Hash do
             requires :payment_method, type: String
-            requires :gateway, type: String
             requires :installments_count, type: Integer
 
             requires :billing_address_id, type: String
