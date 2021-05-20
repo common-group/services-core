@@ -83,7 +83,7 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
         expect(payment.boleto.attributes).to include(
           'barcode' => gateway_response['boleto_barcode'],
           'url' => gateway_response['boleto_url'],
-          'expires_at' => gateway_response['boleto_expiration_date'].to_datetime
+          'expires_on' => gateway_response['boleto_expiration_date'].to_date
         )
       end
     end
