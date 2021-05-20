@@ -6,6 +6,6 @@ module Billing
 
     validates :payment_id, presence: true
     validates :key, presence: true
-    validates :expires_at, presence: true
+    validates :expires_on, presence: true
   end
 end
