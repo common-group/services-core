@@ -38,7 +38,7 @@ module Billing
         payment.create_boleto!(
           barcode: response['boleto_barcode'],
           url: response['boleto_url'],
-          expires_at: response['boleto_expiration_date'].to_datetime
+          expires_on: response['boleto_expiration_date'].to_date
         )
       end
     end
