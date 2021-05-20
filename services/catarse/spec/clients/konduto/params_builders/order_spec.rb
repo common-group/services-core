@@ -10,7 +10,20 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   describe 'ATTRIBUTES constant' do
     it 'returns params attributes' do
       expect(described_class::ATTRIBUTES).to eq %i[
-        id total_amount currency ip purchased_at analyze customer payment billing shipping shopping_cart
+        id
+        visitor
+        total_amount
+        shipping_amount
+        currency
+        installments
+        ip
+        purchased_at
+        analyze
+        customer
+        payment
+        billing
+        shipping
+        shopping_cart
       ]
     end
   end
@@ -21,8 +34,11 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
     it 'returns all attributes with corresponding methods results' do
       expect(params_builder.build).to eq(
         id: params_builder.id,
+        visitor: params_builder.visitor,
         total_amount: params_builder.total_amount,
+        shipping_amount: params_builder.shipping_amount,
         currency: params_builder.currency,
+        installments: params_builder.installments,
         ip: params_builder.ip,
         purchased_at: params_builder.purchased_at,
         analyze: params_builder.analyze,
@@ -43,6 +59,15 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
     end
   end
 
+  describe '#visitor' do
+    let(:user) { User.new(id: Faker::Internet.uuid) }
+    let(:payment_attributes) { { user: user } }
+
+    it 'returns current user id' do
+      expect(params_builder.visitor).to eq user.id.to_s
+    end
+  end
+
   describe '#total_amount' do
     let(:payment_attributes) { { total_amount_cents: Faker::Number.number(digits: 4) } }
 
@@ -51,11 +76,27 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
     end
   end
 
+  describe '#shipping_amount' do
+    let(:payment_attributes) { { shipping_fee_cents: Faker::Number.number(digits: 4) } }
+
+    it 'returns payment shipping fee as float' do
+      expect(params_builder.shipping_amount).to eq payment.shipping_fee.to_f
+    end
+  end
+
   describe '#currency' do
     let(:payment_attributes) { { total_amount_currency: Faker::Currency.code } }
 
     it 'returns total amount currency' do
       expect(params_builder.currency).to eq payment.total_amount_currency
+    end
+  end
+
+  describe '#installments' do
+    let(:payment_attributes) { { installments_count: (1..6).to_a.sample } }
+
+    it 'returns payment installments count' do
+      expect(params_builder.installments).to eq payment.installments_count
     end
   end
 
