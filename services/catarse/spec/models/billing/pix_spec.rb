@@ -10,6 +10,6 @@ RSpec.describe Billing::Pix, type: :model do
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:payment_id) }
     it { is_expected.to validate_presence_of(:key) }
-    it { is_expected.to validate_presence_of(:expires_at) }
+    it { is_expected.to validate_presence_of(:expires_on) }
   end
 end
