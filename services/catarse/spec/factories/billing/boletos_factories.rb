@@ -5,6 +5,6 @@ FactoryBot.define do
     association :payment, factory: :billing_payment
     barcode { Faker::Barcode.isbn }
     url { Faker::Internet.url }
-    expires_at { Faker::Date.between(from: Time.zone.tomorrow, to: 10.days.from_now) }
+    expires_on { Faker::Date.between(from: Time.zone.tomorrow, to: 10.days.from_now).to_date }
   end
 end
