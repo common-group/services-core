@@ -11,6 +11,6 @@ RSpec.describe Billing::Boleto, type: :model do
     it { is_expected.to validate_presence_of(:payment_id) }
     it { is_expected.to validate_presence_of(:barcode) }
     it { is_expected.to validate_presence_of(:url) }
-    it { is_expected.to validate_presence_of(:expires_at) }
+    it { is_expected.to validate_presence_of(:expires_on) }
   end
 end
