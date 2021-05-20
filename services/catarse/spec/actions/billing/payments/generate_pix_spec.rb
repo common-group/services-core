@@ -81,7 +81,7 @@ RSpec.describe Billing::Payments::GeneratePix, type: :action do
 
         expect(payment.reload.pix.attributes).to include(
           'key' => gateway_response['pix_qr_code'],
-          'expires_at' => gateway_response['pix_expiration_date'].to_datetime
+          'expires_on' => gateway_response['pix_expiration_date'].to_date
         )
       end
     end
