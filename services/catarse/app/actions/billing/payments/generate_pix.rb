@@ -37,7 +37,7 @@ module Billing
       def create_pix(response)
         payment.create_pix!(
           key: response['pix_qr_code'],
-          expires_at: response['pix_expiration_date'].to_datetime
+          expires_on: response['pix_expiration_date'].to_date
         )
       end
     end
