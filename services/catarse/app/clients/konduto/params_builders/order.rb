@@ -6,7 +6,20 @@ module Konduto
       attr_reader :user, :credit_card, :billing_address, :shipping_address, :payment_items
 
       ATTRIBUTES = %i[
-        id total_amount currency ip purchased_at analyze customer payment billing shipping shopping_cart
+        id
+        visitor
+        total_amount
+        shipping_amount
+        currency
+        installments
+        ip
+        purchased_at
+        analyze
+        customer
+        payment
+        billing
+        shipping
+        shopping_cart
       ].freeze
 
       def initialize(payment:)
@@ -18,10 +31,6 @@ module Konduto
         @payment_items = @payment.items
       end
 
-      # TODO: pending fields
-      # installments:
-      # shipping_amount:
-      # visitor:
       def build
         ATTRIBUTES.index_with { |attribute| send(attribute) }
       end
@@ -30,12 +39,24 @@ module Konduto
         @payment.id.to_s
       end
 
+      def visitor
+        user.id.to_s
+      end
+
       def total_amount
         @payment.total_amount.to_f
       end
 
+      def shipping_amount
+        @payment.shipping_fee.to_f
+      end
+
       def currency
         @payment.total_amount_currency
+      end
+
+      def installments
+        @payment.installments_count
       end
 
       def ip
