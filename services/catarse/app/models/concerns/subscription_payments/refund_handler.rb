@@ -7,7 +7,7 @@ module SubscriptionPayments
     def refund
       # Reembolsa no pagarMe
       transaction = PagarMe::Transaction.find(gateway_general_data['gateway_id'])
-      transaction.refund if transaction.status == 'paid'
+      transaction.refund if transaction.payment_method == 'credit_card' && transaction.status == 'paid'
 
       remove_payment_user_balance
 

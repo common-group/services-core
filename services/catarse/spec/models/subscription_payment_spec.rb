@@ -6,7 +6,7 @@ RSpec.describe SubscriptionPayment, type: :model do
   describe '#refund' do
     let(:gateway_id) { '123' }
     let(:subscription_payment) { described_class.new(gateway_general_data: { gateway_id: gateway_id }) }
-    let(:transaction) { double(status: 'paid', refund: true, payment_method: 'boleto') } # rubocop:disable RSpec/VerifiedDoubles
+    let(:transaction) { double(status: 'paid', refund: true, payment_method: 'credit_card') } # rubocop:disable RSpec/VerifiedDoubles
 
     before do
       allow(PagarMe::Transaction).to receive(:find).with(gateway_id).and_return(transaction)
@@ -15,7 +15,7 @@ RSpec.describe SubscriptionPayment, type: :model do
       allow(subscription_payment).to receive(:update_payment_status)
     end
 
-    context 'when transaction is paid' do
+    context 'when transaction is paid with credit_card as the payment_method' do
       it 'refunds on pagarme' do
         expect(transaction).to receive(:refund)
 
@@ -23,10 +23,20 @@ RSpec.describe SubscriptionPayment, type: :model do
       end
     end
 
-    context 'when transaction isn`t paid' do
-      let(:transaction) do
-        double(PagarMe::Transaction, status: 'refunded', refund: true, payment_method: 'boleto') # rubocop:disable RSpec/VerifiedDoubles
+    context 'when transaction isn`t paid with credit_card as the payment_method' do
+      before do
+        allow(transaction).to receive(:status).and_return('refunded')
       end
+
+      it 'doesn`t refund on pagarme' do
+        expect(transaction).not_to receive(:refund)
+
+        subscription_payment.refund
+      end
+    end
+
+    context 'when transaction is paid with boleto as the payment_method' do
+      before { allow(transaction).to receive(:payment_method).and_return('boleto') }
 
       it 'doesn`t refund on pagarme' do
         expect(transaction).not_to receive(:refund)
@@ -42,6 +52,8 @@ RSpec.describe SubscriptionPayment, type: :model do
     end
 
     context 'when payment method is boleto' do
+      before { allow(transaction).to receive(:payment_method).and_return('boleto') }
+
       it 'adds amount to subscriber balance' do
         expect(subscription_payment).to receive(:add_amount_subscriber_balance)
 
