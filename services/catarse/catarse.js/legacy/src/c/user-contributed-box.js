@@ -8,6 +8,7 @@ import modalBox from '../c/modal-box';
 import userVM from '../vms/user-vm';
 import rewardReceiver from './reward-receiver';
 import paymentVM from '../vms/payment-vm';
+import projectVM from '../vms/project-vm';
 
 const I18nScope = _.partial(h.i18nScope, 'payment.state');
 const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
@@ -72,7 +73,8 @@ const userContributedBox = {
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
                         m('.fontsize-base.fontweight-semibold.lineheight-looser',
-                            `R$ ${contribution.value}`
+                            `R$ ${contribution.value}`,
+                            (contribution.payment_method === 'BoletoBancario' ? m('span.fontsize-smallest.fontcolor-secondary', `(+R$ ${h.formatNumber((contribution.slip_fee), 2, 3)} ${ window.I18n.t('slip_fee', contributionScope())} )` ) : '')
                         ),
                         m('.w-embed',
                             m('div', [
@@ -90,7 +92,11 @@ const userContributedBox = {
                                 ]),
                                 m('.fontsize-smallest',
                                     (contribution.installments > 1 ? (`${contribution.installments} x R$ ${ h.formatNumber(contribution.installment_value, 2) } `) : ''),
-                                    (contribution.payment_method === 'BoletoBancario' ? window.I18n.t('bank_slip', contributionScope()) : window.I18n.t('credit_card', contributionScope()))
+                                    {
+                                        'BoletoBancario': window.I18n.t('bank_slip', contributionScope()),
+                                        'Pix': 'Pix',
+                                        'CartaoDeCredito': window.I18n.t('credit_card', contributionScope())
+                                    }[contribution.payment_method]
                                 ),
                                 (contribution.gateway_id ?
                                     m('.fontsize-smallest',
@@ -115,10 +121,21 @@ const userContributedBox = {
                                         window.I18n.t('print_slip', contributionScope())
                                     ) : ''),
 
+                                (contribution.gateway_data && contributionVM.canShowPix(contribution) ?
+                                    m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}'][target='__blank']`,
+                                        window.I18n.t('print_pix', contributionScope())
+                                    ) : ''),
+
                                 (contribution.gateway_data && contributionVM.canGenerateSlip(contribution) ?
                                     m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/second_slip'][target='__blank']`,
                                         window.I18n.t('slip_copy', contributionScope())
                                     ) : ''),
+
+                                (contribution.gateway_data && contributionVM.canGeneratePix(contribution)?
+                                    m(`a.alt-link.u-margintop-10[href='/projects/${contribution.project_id}/contributions/${contribution.contribution_id}/second_pix'][target='__blank']`,
+                                        window.I18n.t('pix_copy', contributionScope())
+                                    ) : ''),
+
                                 m('.w-checkbox.fontsize-smallest.fontcolor-secondary.u-margintop-10', [
                                     m(`input.w-checkbox-input[id='anonymous'][name='anonymous'][type='checkbox']${contribution.anonymous ? '[checked=\'checked\']' : ''}[value='1']`, {
                                         onclick: () => state.toggleAnonymous(contribution.project_id, contribution)

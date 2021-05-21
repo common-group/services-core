@@ -94,7 +94,9 @@ pt:
       anonymous: Quero que meu apoio não seja público
       anonymous_sub: 'Quero que minha assinatura não seja pública'
       print_slip: Imprimir boleto
+      print_pix: Visualizar Pix
       slip_copy: Gerar 2a via
+      pix_copy: Gerar 2a via
       status: Status
       contact_author: "Enviar mensagem"
       show_receipt: 'Ver recibo'
@@ -105,6 +107,7 @@ pt:
       reward: Recompensa
       no_reward: "Não selecionou recompensa"
       delivery_estimate: "Estimativa de entrega:"
+      slip_fee: "Custo do Boleto"
       delivery_status: "Status da entrega:"
       answer_survey: "Responda o questionário"
       id_payment_gateway: "ID do Apoio:"

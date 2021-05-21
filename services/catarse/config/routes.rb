@@ -119,6 +119,7 @@ Catarse::Application.routes.draw do
             get 'toggle_anonymous'
             get 'toggle_delivery'
             get :second_slip
+            get :second_pix
             get :receipt
           end
           put :credits_checkout, on: :member
@@ -205,6 +206,12 @@ Catarse::Application.routes.draw do
       resources :feedbacks, only: [:create]
 
       namespace :admin do
+        resources :transfeera do
+          collection do
+            post 'webhook'
+          end
+        end
+
         resources :balance_transfers do
           collection do
             post 'batch_approve'
@@ -237,6 +244,7 @@ Catarse::Application.routes.draw do
         resources :subscription_payments do
           collection do
             post :batch_chargeback
+            post :refund
           end
         end
 
