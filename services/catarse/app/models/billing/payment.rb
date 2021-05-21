@@ -35,6 +35,7 @@ module Billing
     validates :installments_count, numericality: { equal_to: 1 }, unless: :credit_card?
 
     validate :total_amount_represents_the_sum_of_amount_and_fees
+    validate :credit_card_owner_matches_user, if: :credit_card?
 
     def lump_sum?
       installments_count == 1
@@ -50,6 +51,12 @@ module Billing
       return if total_amount_cents == (amount_cents + shipping_fee_cents + payment_method_fee_cents)
 
       errors.add(:total_amount_cents, I18n.t('models.billing.payment.errors.invalid_total_amount'))
+    end
+
+    def credit_card_owner_matches_user
+      return if credit_card.blank? || user_id == credit_card.user_id
+
+      errors.add(:credit_card_id, I18n.t('models.billing.payment.errors.invalid_credit_card'))
     end
   end
 end

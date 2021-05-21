@@ -4,3 +4,4 @@ pt:
       payment:
         errors:
           invalid_total_amount: "incompatível com os outros valores"
+          invalid_credit_card: "usuário do cartão de credito não corresponde ao do pagamento"
