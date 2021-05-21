@@ -85,5 +85,39 @@ RSpec.describe Billing::Payment, type: :model do
         expect(payment.errors[:total_amount_cents]).to include error_message
       end
     end
+
+    context 'when credit card owner matches user' do
+      subject(:payment) do
+        described_class.new(user: user, credit_card: credit_card, payment_method: Billing::PaymentMethods::CREDIT_CARD)
+      end
+
+      let(:user) { User.new(id: 1) }
+      let(:credit_card) { Billing::CreditCard.new(user: user) }
+
+      it 'doesn`t add invalid_credit_card error' do
+        payment.valid?
+
+        expect(payment.errors[:credit_card_id]).to be_empty
+      end
+    end
+
+    context 'when credit card owner doesn`t match user' do
+      subject(:payment) do
+        described_class.new(
+          user: User.new(id: 2),
+          credit_card: credit_card,
+          payment_method: Billing::PaymentMethods::CREDIT_CARD
+        )
+      end
+
+      let(:credit_card) { Billing::CreditCard.new(user: User.new(id: 1)) }
+
+      it 'adds invalid credit card error message' do
+        payment.valid?
+
+        error_message = I18n.t('models.billing.payment.errors.invalid_credit_card')
+        expect(payment.errors[:credit_card_id]).to include error_message
+      end
+    end
   end
 end
