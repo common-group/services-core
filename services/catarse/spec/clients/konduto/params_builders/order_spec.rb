@@ -16,7 +16,7 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   end
 
   describe '#build' do
-    let(:payment) { create(:billing_payment, :credit_card, credit_card: build(:billing_credit_card)) }
+    let(:payment) { create(:billing_payment, :with_credit_card) }
 
     it 'returns all attributes with corresponding methods results' do
       expect(params_builder.build).to eq(

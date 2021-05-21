@@ -31,7 +31,7 @@ FactoryBot.define do
 
     trait :with_credit_card do
       payment_method { Billing::PaymentMethods::CREDIT_CARD }
-      association :credit_card, factory: :billing_credit_card
+      credit_card { association :billing_credit_card, user: user }
     end
 
     transient do
