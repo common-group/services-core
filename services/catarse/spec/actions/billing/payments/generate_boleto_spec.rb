@@ -56,9 +56,9 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
       end
 
       it 'doesn`t  change payment state' do
-        result
+        expect(payment).not_to receive(:wait_payment!)
 
-        expect(payment.reload).to be_in_state('created')
+        result
       end
     end
 
@@ -66,15 +66,15 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
       it { is_expected.to be_success }
 
       it 'transitions payment state to waiting payment' do
-        result
+        expect(payment).to receive(:wait_payment!).with(gateway_response)
 
-        expect(payment.reload).to be_in_state('waiting_payment')
+        result
       end
 
       it 'updates payment gateway_id' do
         result
 
-        expect(payment.reload.attributes).to include('gateway_id' => gateway_response['id'])
+        expect(payment.reload.gateway_id).to eq gateway_response['id']
       end
 
       it 'creates a new boleto' do

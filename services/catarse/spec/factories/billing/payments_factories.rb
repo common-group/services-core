@@ -42,6 +42,8 @@ FactoryBot.define do
 
     after :build do |payment, evaluator|
       payment_items = evaluator.payment_items
+      item_state = Billing::PaymentStateMachine::MAP_TO_PAYMENT_ITEM_STATE[payment.state]
+      payment_items.each { |i| i.state = item_state }
       payment.amount_cents = payment_items.sum(&:amount_cents)
       payment.shipping_fee_cents = payment_items.sum(&:shipping_fee_cents)
       payment.total_amount_cents = payment_items.sum(&:total_amount_cents) + payment.payment_method_fee_cents

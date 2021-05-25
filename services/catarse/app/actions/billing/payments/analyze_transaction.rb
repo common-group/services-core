@@ -8,10 +8,10 @@ module Billing
       input :payment, type: Billing::Payment
       input :konduto_client, type: Konduto::Client, default: -> { Konduto::Client.new }
 
-      MAPPED_RECOMMENDATIONS = {
-        'APPROVE' => :approved_on_antifraud,
-        'DECLINE' => :declined_on_antifraud,
-        'REVIEW' => :waiting_review,
+      MAPPED_ACTION = {
+        'APPROVE' => :approve_on_antifraud!,
+        'DECLINE' => :decline_on_antifraud!,
+        'REVIEW' => :wait_review!,
         'NONE' => nil
       }.freeze
 
@@ -19,12 +19,12 @@ module Billing
         return if can_skip_analysis?
 
         response = konduto_client.create_order(build_order_params)
-        next_state = evaluate_next_state(response)
+        action = evaluate_next_action(response)
 
-        return if next_state.nil?
+        return if action.nil?
 
         create_processing_fee!
-        payment.transition_to!(next_state, response)
+        payment.send(action, response)
       end
 
       private
@@ -41,16 +41,16 @@ module Billing
         Konduto::ParamsBuilders::Order.new(payment: payment).build
       end
 
-      def evaluate_next_state(response)
+      def evaluate_next_action(response)
         recommendation = response.dig('order', 'recommendation')
 
-        unless MAPPED_RECOMMENDATIONS.key?(recommendation)
+        unless MAPPED_ACTION.key?(recommendation)
           handle_fatal_error('Invalid antifraud request',
             { data: response, payment_id: payment.id, user_id: payment.user_id }
           )
         end
 
-        MAPPED_RECOMMENDATIONS[recommendation]
+        MAPPED_ACTION[recommendation]
       end
 
       def create_processing_fee!

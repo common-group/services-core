@@ -48,6 +48,26 @@ RSpec.describe Billing::Payments::Refund, type: :action do
 
         expect(payment.reload).to be_in_state(:refunded)
       end
+
+      it 'transitions payment items state to refunded' do
+        result
+
+        expect(payment.reload.items).to all(be_in_state(:refunded))
+      end
+    end
+
+    context 'when state transition cannot be done' do
+      before { payment.items << create(:billing_payment_item, :pending) }
+
+      it 'rollbacks transaction' do
+        begin
+          result
+        rescue Statesman::TransitionFailedError
+          # does nothing
+        end
+
+        expect(payment.reload).to be_in_state(:paid)
+      end
     end
   end
 end
