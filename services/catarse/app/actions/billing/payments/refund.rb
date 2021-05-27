@@ -9,7 +9,10 @@ module Billing
       def call
         fail!(error: 'Payment cannot transition to refunded') unless payment.can_transition_to?(:refunded)
 
-        payment.transition_to!(:refunded, metadata)
+        ActiveRecord::Base.transaction do
+          payment.transition_to!(:refunded, metadata)
+          payment.items.each { |i| i.transition_to!(:refunded) }
+        end
       end
     end
   end

@@ -58,8 +58,7 @@ RSpec.describe PagarMe::WebhookProcessor, type: :client do
       let(:webhook_status) { 'paid' }
 
       it 'settles payment' do
-        expect(Billing::Payments::Settle).to receive(:result)
-          .with(payment: payment, metadata: { webhook_id: webhook.id })
+        expect(payment).to receive(:settle!).with({ webhook_id: webhook.id })
 
         webhook_processor.run
       end
@@ -71,8 +70,7 @@ RSpec.describe PagarMe::WebhookProcessor, type: :client do
       before { allow(payment).to receive(:in_state?).with(:paid).and_return(true) }
 
       it 'refunds payment' do
-        expect(Billing::Payments::Refund).to receive(:result)
-          .with(payment: payment, metadata: { webhook_id: webhook.id })
+        expect(payment).to receive(:refund!).with({ webhook_id: webhook.id })
 
         webhook_processor.run
       end
@@ -84,8 +82,7 @@ RSpec.describe PagarMe::WebhookProcessor, type: :client do
       before { allow(payment).to receive(:in_state?).with(:paid).and_return(false) }
 
       it 'refuses payment' do
-        expect(Billing::Payments::Refuse).to receive(:result)
-          .with(payment: payment, metadata: { webhook_id: webhook.id })
+        expect(payment).to receive(:refuse!).with({ webhook_id: webhook.id })
 
         webhook_processor.run
       end
@@ -95,8 +92,7 @@ RSpec.describe PagarMe::WebhookProcessor, type: :client do
       let(:webhook_status) { 'chargedback' }
 
       it 'charges back payment' do
-        expect(Billing::Payments::Chargeback).to receive(:result)
-          .with(payment: payment, metadata: { webhook_id: webhook.id })
+        expect(payment).to receive(:chargeback!).with({ webhook_id: webhook.id })
 
         webhook_processor.run
       end
@@ -123,9 +119,9 @@ RSpec.describe PagarMe::WebhookProcessor, type: :client do
       let(:error_message) { Faker::Lorem.paragraph }
 
       before do
-        allow(Billing::Payments::Settle).to receive(:result)
-          .with(payment: payment, metadata: { webhook_id: webhook.id })
-          .and_return(ServiceActor::Result.new(failure?: true, error: error_message))
+        allow(payment).to receive(:settle!)
+          .with({ webhook_id: webhook.id })
+          .and_raise(error_message)
       end
 
       it 'handles error with Sentry' do
@@ -144,9 +140,9 @@ RSpec.describe PagarMe::WebhookProcessor, type: :client do
 
     context 'when action processing is successful' do
       before do
-        allow(Billing::Payments::Settle).to receive(:result)
-          .with(payment: payment, metadata: { webhook_id: webhook.id })
-          .and_return(ServiceActor::Result.new(failure?: false))
+        allow(payment).to receive(:settle!)
+          .with({ webhook_id: webhook.id })
+          .and_return(true)
       end
 
       it 'transitions webhook state to processed' do

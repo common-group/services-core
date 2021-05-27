@@ -9,7 +9,10 @@ module Billing
       def call
         fail!(error: 'Payment cannot transition to charged_back') unless payment.can_transition_to?(:charged_back)
 
-        payment.transition_to!(:charged_back, metadata)
+        ActiveRecord::Base.transaction do
+          payment.transition_to!(:charged_back, metadata)
+          payment.items.each { |i| i.transition_to!(:charged_back) }
+        end
       end
     end
   end
