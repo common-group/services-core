@@ -23,7 +23,7 @@ RSpec.shared_examples 'has state machine' do
     %i[
       can_transition_to? current_state history last_transition transition_to! transition_to in_state?
     ].each do |method|
-      it { is_expected.to respond_to method }
+      it { is_expected.to delegate_method(method).to(:state_machine) }
     end
   end
 

@@ -9,7 +9,10 @@ module Billing
       def call
         fail!(error: 'Payment cannot transition to refused') unless payment.can_transition_to?(:refused)
 
-        payment.transition_to!(:refused, metadata)
+        ActiveRecord::Base.transaction do
+          payment.transition_to!(:refused, metadata)
+          payment.items.each { |i| i.transition_to!(:canceled) }
+        end
       end
     end
   end

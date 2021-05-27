@@ -37,6 +37,9 @@ module Billing
     validate :total_amount_represents_the_sum_of_amount_and_fees
     validate :credit_card_owner_matches_user, if: :credit_card?
 
+    delegate :wait_payment!, :authorize!, :settle!, :refuse!, :approve_on_antifraud!, :decline_on_antifraud!,
+      :wait_review!, :refund!, :chargeback!, to: :state_machine
+
     def lump_sum?
       installments_count == 1
     end

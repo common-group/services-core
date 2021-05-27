@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
   describe '.states' do
     it 'returns payment item states list' do
-      expect(described_class.states).to eq %w[pending paid refunded charged_back]
+      expect(described_class.states).to eq %w[pending paid canceled refunded charged_back]
     end
   end
 
