@@ -53,23 +53,39 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
       result
     end
 
-    %i[authorized refused].each do |gateway_status|
-      context "when gateway response status is #{gateway_status}" do
-        before { gateway_response['status'] = gateway_status.to_s }
+    context 'when gateway response status is authorized' do
+      before { gateway_response['status'] = 'authorized' }
 
-        it { is_expected.to be_success }
+      it { is_expected.to be_success }
 
-        it "transitions payment status to #{gateway_status}" do
-          result
+      it 'calls authorize! on payment' do
+        expect(payment).to receive(:authorize!).with(gateway_response)
 
-          expect(payment.reload).to be_in_state(gateway_status)
-        end
+        result
+      end
 
-        it 'updates payment gateway_id' do
-          result
+      it 'updates payment gateway_id' do
+        result
 
-          expect(payment.reload.attributes).to include('gateway_id' => gateway_response['id'])
-        end
+        expect(payment.reload.gateway_id).to eq(gateway_response['id'])
+      end
+    end
+
+    context 'when gateway response status is refused' do
+      before { gateway_response['status'] = 'refused' }
+
+      it { is_expected.to be_success }
+
+      it 'calls refuse! on payment' do
+        expect(payment).to receive(:refuse!).with(gateway_response)
+
+        result
+      end
+
+      it 'updates payment gateway_id' do
+        result
+
+        expect(payment.reload.gateway_id).to eq(gateway_response['id'])
       end
     end
 

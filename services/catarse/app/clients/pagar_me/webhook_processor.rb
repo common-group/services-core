@@ -28,26 +28,19 @@ module PagarMe
     end
 
     def handle_status_change
-      action = next_action
-
-      result = action.result(payment: payment, metadata: { webhook_id: webhook.id })
-
-      raise result.error if result.failure?
-    end
-
-    def next_action
       action = mapped_actions[webhook.body['current_status']]
+
       raise 'Unknown PagarMe transaction status' if action.nil?
 
-      action
+      payment.send(action, { webhook_id: webhook.id })
     end
 
     def mapped_actions
       {
-        'paid' => Billing::Payments::Settle,
-        'refunded' => payment.in_state?(:paid) ? Billing::Payments::Refund : Billing::Payments::Refuse,
-        'refused' => Billing::Payments::Refuse,
-        'chargedback' => Billing::Payments::Chargeback
+        'paid' => :settle!,
+        'refunded' => payment.in_state?(:paid) ? :refund! : :refuse!,
+        'refused' => :refuse!,
+        'chargedback' => :chargeback!
       }
     end
 
