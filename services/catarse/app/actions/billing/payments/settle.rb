@@ -9,7 +9,10 @@ module Billing
       def call
         fail!(error: 'Payment cannot transition to paid') unless payment.can_transition_to?(:paid)
 
-        payment.transition_to!(:paid, metadata)
+        ActiveRecord::Base.transaction do
+          payment.transition_to!(:paid, metadata)
+          payment.items.each { |i| i.transition_to!(:paid) }
+        end
       end
     end
   end
