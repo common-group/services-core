@@ -11,9 +11,8 @@ module Billing
       def call
         response = pagar_me_client.create_transaction(transaction_params)
 
-        next_state = evalute_next_state(response)
+        transition_payment_state(response)
 
-        payment.transition_to!(next_state, response)
         credit_card = payment.credit_card || find_or_create_credit_card(response['card'])
         payment.update!(gateway_id: response['id'], credit_card: credit_card)
       end
@@ -24,12 +23,12 @@ module Billing
         PagarMe::TransactionParamsBuilder.new(payment: payment).build
       end
 
-      def evalute_next_state(response)
+      def transition_payment_state(response)
         case response['status']
         when 'authorized'
-          :authorized
+          payment.authorize!(response)
         when 'refused'
-          :refused
+          payment.refuse!(response)
         else
           handle_fatal_error('Invalid gateway request',
             { data: response, payment_id: payment.id, user_id: payment.user_id }

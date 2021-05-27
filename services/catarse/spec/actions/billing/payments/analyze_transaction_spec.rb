@@ -63,16 +63,16 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
       result
     end
 
-    shared_examples 'process antifraud recommendation' do |recommendation:, next_state:|
+    shared_examples 'process antifraud recommendation' do |recommendation:, action:|
       context "when konduto recommendation is #{recommendation}" do
         let(:antifraud_response) { { 'order' => { 'recommendation' => recommendation } } }
 
         it { is_expected.to be_success }
 
-        it "transitions payment state to #{next_state}" do
-          result
+        it "executes #{action} on payment" do
+          expect(payment).to receive(action).with(antifraud_response)
 
-          expect(payment.reload).to be_in_state(next_state)
+          result
         end
 
         it 'creates a processing fee' do
@@ -84,9 +84,9 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
       end
     end
 
-    include_examples 'process antifraud recommendation', recommendation: 'APPROVE', next_state: :approved_on_antifraud
-    include_examples 'process antifraud recommendation', recommendation: 'DECLINE', next_state: :declined_on_antifraud
-    include_examples 'process antifraud recommendation', recommendation: 'REVIEW', next_state: :waiting_review
+    include_examples 'process antifraud recommendation', recommendation: 'APPROVE', action: :approve_on_antifraud!
+    include_examples 'process antifraud recommendation', recommendation: 'DECLINE', action: :decline_on_antifraud!
+    include_examples 'process antifraud recommendation', recommendation: 'REVIEW', action: :wait_review!
 
     context 'when konduto response recommendation is NONE' do
       let(:payment) { create(:billing_payment, :refused, :with_credit_card) }
