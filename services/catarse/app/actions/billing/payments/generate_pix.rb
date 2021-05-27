@@ -14,7 +14,7 @@ module Billing
         response = pagar_me_client.create_transaction(transaction_params)
 
         if response['status'] == 'waiting_payment'
-          payment.transition_to!(:waiting_payment, response)
+          payment.wait_payment!(response)
           payment.update!(gateway_id: response['id'])
           create_pix(response)
         else

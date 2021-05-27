@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Billing::Payments::Refuse, type: :action do
+RSpec.describe Billing::Payments::Settle, type: :action do
   describe 'Inputs' do
     subject(:inputs) { described_class.inputs }
 
@@ -22,37 +22,37 @@ RSpec.describe Billing::Payments::Refuse, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, metadata: { data: 'example' }) }
 
-    let(:payment) { create(:billing_payment, :created) }
+    let(:payment) { create(:billing_payment, :authorized) }
 
-    context 'when payment state cannot transition to refused' do
-      before { allow(payment).to receive(:can_transition_to?).with(:refused).and_return(false) }
+    context 'when payment state cannot transition to paid' do
+      before { allow(payment).to receive(:can_transition_to?).with(:paid).and_return(false) }
 
       it { is_expected.to be_failure }
 
       it 'returns error message' do
-        expect(result.error).to eq 'Payment cannot transition to refused'
+        expect(result.error).to eq 'Payment cannot transition to paid'
       end
 
       it 'doesn`t transition payment state' do
         result
 
-        expect(payment.reload).to be_in_state(:created)
+        expect(payment.reload).to be_in_state(:authorized)
       end
     end
 
-    context 'when payment state can transition to refused' do
+    context 'when payment state can transition to paid' do
       it { is_expected.to be_success }
 
-      it 'transitions payment state to refused' do
+      it 'transitions payment state to paid' do
         result
 
-        expect(payment.reload).to be_in_state(:refused)
+        expect(payment.reload).to be_in_state(:paid)
       end
 
-      it 'transitions payment items state to refused' do
+      it 'transitions payment items state to paid' do
         result
 
-        expect(payment.reload.items).to all(be_in_state(:canceled))
+        expect(payment.reload.items).to all(be_in_state(:paid))
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe Billing::Payments::Refuse, type: :action do
           # does nothing
         end
 
-        expect(payment.reload).to be_in_state(:created)
+        expect(payment.reload).to be_in_state(:authorized)
       end
     end
   end
