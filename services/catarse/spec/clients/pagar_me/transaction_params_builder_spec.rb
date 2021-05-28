@@ -78,7 +78,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
           installments: payment.installments_count,
           async: false,
           postback_url: 'https://example.com',
-          pix_expiration_date: 4.days.from_now.to_date.iso8601,
+          pix_expiration_date: 2.days.from_now.to_date.iso8601,
           customer:
           {
             external_id: payment.user.id.to_s,
