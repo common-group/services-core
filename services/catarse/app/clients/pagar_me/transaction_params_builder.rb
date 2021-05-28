@@ -50,9 +50,11 @@ module PagarMe
     end
 
     def build_pix_transaction_params
-      # TODO: pix expiration date calc
+      # TODO: get deadline from settings
+      expiration_date = 2.days.from_now.to_date
+
       base_params.merge(
-        pix_expiration_date: 4.days.from_now.to_date.iso8601,
+        pix_expiration_date: expiration_date.iso8601,
         customer: build_customer_params.merge(
           external_id: user.id.to_s,
           email: user.email,
