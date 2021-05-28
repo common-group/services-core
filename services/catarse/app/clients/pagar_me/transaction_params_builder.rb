@@ -39,11 +39,13 @@ module PagarMe
     end
 
     def build_boleto_transaction_params
-      # TODO: boleto expiration date calc
-      # TODO: limit params characters length
+      # TODO: get deadline from settings
+      expiration_date = Utils::BusinessCalendar.add_business_days(Time.zone.today, 2)
+
       base_params.merge(
         boleto_rules: ['strict_expiration_date'],
-        customer: build_customer_params
+        customer: build_customer_params,
+        boleto_expiration_date: expiration_date.iso8601
       )
     end
 
