@@ -50,6 +50,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
           amount: payment.total_amount_cents,
           installments: payment.installments_count,
           async: false,
+          boleto_expiration_date: Utils::BusinessCalendar.add_business_days(Time.zone.today, 2).iso8601,
           postback_url: 'https://example.com',
           boleto_rules: ['strict_expiration_date'],
           customer: {
