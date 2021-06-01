@@ -17,7 +17,6 @@ class ProjectPost < ApplicationRecord
   after_save :index_on_common
 
   validates_presence_of :user_id, :project_id, :comment_html, :title
-
   validate :no_base64_images
   before_validation :reference_user
 
