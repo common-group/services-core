@@ -66,7 +66,7 @@ jobs:
           # ruby-version: 3.0.0 # detects from .ruby-version or .tool-versions
           # bundler: 2.2.8 # detects from BUNDLED_WITH from Gemfile.lock
           bundler-cache: true # runs bundle install and caches gem automatically
-          working-directory: ./services/catarse # path to detect .ruby-version, tool-versions, Gemfile and Gemfile.lock
+          working-directory: ./services/catarse # path to detect .ruby-version, .tool-versions, Gemfile and Gemfile.lock
 
       - name: Install postgres client dependencies
         run: sudo apt-get install libpq-dev
