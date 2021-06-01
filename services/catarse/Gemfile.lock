@@ -638,7 +638,7 @@ GEM
       multipart-post (~> 2.0)
 
 PLATFORMS
-  x86_64-darwin-20
+  ruby
 
 DEPENDENCIES
   auto_html (= 2.0.0)
