@@ -257,8 +257,12 @@ class ChangeProjectsAndProjectsDetailsToIgnoreDeletedProjects < ActiveRecord::Mi
                     FROM project_integrations integration
                    WHERE (p.id = integration.project_id))
                  ELSE '[]'::json
+<<<<<<< HEAD
              END AS integrations,
          p.service_slip_fee
+=======
+             END AS integrations
+>>>>>>> main
         FROM (((((((((projects p
           JOIN categories c ON ((c.id = p.category_id)))
           JOIN users u ON ((u.id = p.user_id)))
