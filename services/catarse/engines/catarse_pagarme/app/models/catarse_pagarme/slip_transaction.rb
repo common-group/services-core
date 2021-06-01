@@ -15,6 +15,15 @@ module CatarsePagarme
       self.transaction = PagarMe::Transaction.new(
         self.attributes.merge(payment_method: 'boleto', async: false)
       )
+
+      if %[flex aon].include?(payment.project.mode) && payment.project.service_slip_fee.positive?
+        self.transaction.attributes['amount'] += (payment.project.service_slip_fee * 100).to_i
+
+        if payment.slip_fee.zero?
+          payment.update(slip_fee: payment.project.service_slip_fee)
+        end
+      end
+
       self.transaction.charge
 
       change_payment_state
