@@ -9,7 +9,7 @@ class Blacklist
 end
 
 Catarse::Application.routes.draw do
-  mount Catarse::BaseAPI => '/'
+  mount Catarse::BaseAPI => '/api'
 
   constraints Blacklist.new do
     authenticate :user, lambda { |u| u.admin? } do

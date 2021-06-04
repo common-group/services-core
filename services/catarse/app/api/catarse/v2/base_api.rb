@@ -6,6 +6,7 @@ module Catarse
       format :json
       version :v2, using: :path
 
+      helpers Catarse::V2::Helpers::AuthenticationHelpers
       helpers Catarse::V2::Helpers::RequestHelpers
 
       rescue_from ActiveRecord::RecordInvalid do |e|
@@ -32,8 +33,13 @@ module Catarse
         error!({ error: 'Internal server error' }, 500)
       end
 
+      before do
+        authenticate_request! unless public_route?
+      end
+
       mount Catarse::V2::Billing::BaseAPI
       mount Catarse::V2::Integrations::BaseAPI
+      mount Catarse::V2::Portal::BaseAPI
       mount Catarse::V2::Shared::BaseAPI
     end
   end
