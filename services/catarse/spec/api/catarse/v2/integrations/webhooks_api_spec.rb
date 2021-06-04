@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Catarse::V2::Integrations::WebhooksAPI, type: :api do
+  include_examples 'authenticate routes', public_paths: ['POST /v2/integrations/webhooks/:provider']
+
   describe 'POST /v2/integrations/webhooks' do
     let(:webhook) { build(:integrations_webhook) }
     let(:request_params) { webhook.body.merge('provider' => webhook.provider) }
@@ -28,13 +30,13 @@ RSpec.describe Catarse::V2::Integrations::WebhooksAPI, type: :api do
       end
 
       it 'returns created address' do
-        post "/v2/integrations/webhooks/#{webhook.provider}", params: request_params
+        post "/api/v2/integrations/webhooks/#{webhook.provider}", params: request_params
 
         expect(response.body).to eq({ status: :ok }.to_json)
       end
 
       it 'return status 201 - created' do
-        post "/v2/integrations/webhooks/#{webhook.provider}", params: request_params
+        post "/api/v2/integrations/webhooks/#{webhook.provider}", params: request_params
 
         expect(response).to have_http_status(:created)
       end
@@ -48,7 +50,7 @@ RSpec.describe Catarse::V2::Integrations::WebhooksAPI, type: :api do
       end
 
       it 'return status 500 - internal server error' do
-        post "/v2/integrations/webhooks/#{webhook.provider}", params: request_params
+        post "/api/v2/integrations/webhooks/#{webhook.provider}", params: request_params
 
         expect(response).to have_http_status(:internal_server_error)
       end
