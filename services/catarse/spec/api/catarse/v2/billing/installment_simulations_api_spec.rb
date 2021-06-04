@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Catarse::V2::Billing::InstallmentSimulationsAPI, type: :api do
+  include_examples 'authenticate routes', public_paths: ['GET /v2/billing/installment_simulations']
+
   describe 'POST /v2/billing/installment_simulations' do
     let(:params) do
       { 'total_amount_cents' => Faker::Number.number(digits: 4) }
@@ -16,14 +18,14 @@ RSpec.describe Catarse::V2::Billing::InstallmentSimulationsAPI, type: :api do
     end
 
     it 'returns installment simulations' do
-      get '/v2/billing/installment_simulations', params: params
+      get '/api/v2/billing/installment_simulations', params: params
       result = Billing::InstallmentCalculator.simulations(amount: params['total_amount_cents']).to_json
 
       expect(response.body).to eq(result)
     end
 
     it 'return status 200 - ok' do
-      get '/v2/billing/installment_simulations', params: params
+      get '/api/v2/billing/installment_simulations', params: params
 
       expect(response).to have_http_status(:ok)
     end

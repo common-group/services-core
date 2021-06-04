@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
+  mock_request_authentication
+
+  include_examples 'authenticate routes'
+
   describe 'POST /v2/billing/payments' do
     let(:user) { create(:user) }
     let(:payment) { build(:billing_payment) }
@@ -27,13 +31,13 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
     end
 
     it 'returns processed payment' do
-      post '/v2/billing/payments', params: { payment: payment_params }
+      post '/api/v2/billing/payments', params: { payment: payment_params }
 
       expect(response.body).to eq(payment.to_json)
     end
 
     it 'return status 201 - created' do
-      post '/v2/billing/payments', params: { payment: payment_params }
+      post '/api/v2/billing/payments', params: { payment: payment_params }
 
       expect(response).to have_http_status(:created)
     end
