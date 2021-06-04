@@ -4,13 +4,13 @@ module Billing
   class PaymentItemBuilder
     attr_reader :attributes, :payment_item
 
-    class << self
-      delegate :build, to: :new
-    end
-
     def initialize(attributes)
       @attributes = attributes
       @payment_item = Billing::PaymentItem.new
+    end
+
+    def self.build(attributes)
+      new(attributes).build
     end
 
     def build
