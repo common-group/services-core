@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Catarse::V2::BaseAPI, type: :api do
+  mock_request_authentication
+
   subject(:api) { Class.new(described_class) }
 
   def app

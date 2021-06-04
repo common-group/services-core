@@ -14,6 +14,7 @@ module Catarse
           requires :provider, type: String, values: ::Integrations::WebhookProviders.list
         end
 
+        route_setting :auth, public: true
         post '/webhooks/:provider' do
           result = ::Integrations::Webhooks::Receive.result(attributes: webhook_params, raw_data: raw_request_body)
 

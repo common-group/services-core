@@ -8,6 +8,7 @@ module Catarse
           requires :total_amount_cents, type: Integer
         end
 
+        route_setting :auth, public: true
         get '/installment_simulations' do
           total_amount_cents = params['total_amount_cents']
           result = ::Billing::InstallmentCalculator.simulations(amount: total_amount_cents)
