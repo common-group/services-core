@@ -34,6 +34,16 @@ FactoryBot.define do
       credit_card { association :billing_credit_card, user: user }
     end
 
+    trait :with_boleto do
+      payment_method { Billing::PaymentMethods::BOLETO }
+      boleto { association :billing_boleto }
+    end
+
+    trait :with_pix do
+      payment_method { Billing::PaymentMethods::PIX }
+      pix { association :billing_pix }
+    end
+
     transient do
       payment_items do
         build_list(:billing_payment_item, 2, payment: nil)
