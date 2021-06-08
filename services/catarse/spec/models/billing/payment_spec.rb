@@ -124,7 +124,7 @@ RSpec.describe Billing::Payment, type: :model do
   describe 'Delegations' do
     %i[
       wait_payment! authorize! settle! refuse! approve_on_antifraud! decline_on_antifraud! wait_review! refund!
-      chargeback!
+      chargeback! expire!
     ].each do |method|
       it { is_expected.to delegate_method(method).to(:state_machine) }
     end
