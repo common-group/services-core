@@ -115,6 +115,18 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
     end
   end
 
+  context 'when state is waiting_payment' do
+    let(:payment) { create(:billing_payment, :waiting_payment) }
+
+    it 'allows transition to paid' do
+      expect { payment.transition_to!(:paid) }.not_to raise_error
+    end
+
+    it 'allows transition to overdue' do
+      expect { payment.transition_to!(:overdue) }.not_to raise_error
+    end
+  end
+
   context 'when state is authorized' do
     let(:payment) { create(:billing_payment, :authorized) }
 
@@ -255,6 +267,16 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
       expect(Billing::Payments::Chargeback).to receive(:call).with(payment: state_machine.object, metadata: {})
 
       state_machine.chargeback!
+    end
+  end
+
+  describe '#expire!' do
+    subject(:state_machine) { create(:billing_payment, :waiting_payment).state_machine }
+
+    it 'calls Billing::Payments::Expire action' do
+      expect(Billing::Payments::Expire).to receive(:call).with(payment: state_machine.object, metadata: {})
+
+      state_machine.expire!
     end
   end
 end
