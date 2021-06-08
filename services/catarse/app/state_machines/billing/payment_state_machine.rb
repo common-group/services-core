@@ -31,6 +31,7 @@ module Billing
     state :charged_back
 
     transition from: :created, to: %i[waiting_payment authorized refused]
+    transition from: :waiting_payment, to: %i[paid overdue]
     transition from: :authorized, to: %i[approved_on_antifraud declined_on_antifraud waiting_review paid]
     transition from: :waiting_review, to: %i[paid refused]
     transition from: :paid, to: %i[charged_back refunded]
@@ -73,6 +74,10 @@ module Billing
 
     def chargeback!(metadata = {})
       Billing::Payments::Chargeback.call(payment: object, metadata: metadata)
+    end
+
+    def expire!(metadata = {})
+      Billing::Payments::Expire.call(payment: object, metadata: metadata)
     end
   end
 end

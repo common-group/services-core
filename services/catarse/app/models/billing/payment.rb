@@ -38,7 +38,9 @@ module Billing
     validate :credit_card_owner_matches_user, if: :credit_card?
 
     delegate :wait_payment!, :authorize!, :settle!, :refuse!, :approve_on_antifraud!, :decline_on_antifraud!,
-      :wait_review!, :refund!, :chargeback!, to: :state_machine
+      :wait_review!, :refund!, :chargeback!, :expire!, to: :state_machine
+
+    scope :can_be_expired, Billing::Payments::CanBeExpiredQuery
 
     def lump_sum?
       installments_count == 1
