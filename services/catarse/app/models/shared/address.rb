@@ -11,7 +11,7 @@ module Shared
     validates :state, presence: true
 
     validates :postal_code, length: { maximum: 256 }
-    validates :country_code, length: { maximum: 2 }
+    validates :country_code, length: { maximum: 2 }, inclusion: { in: ISO3166::Country.all.map(&:alpha2) }
     validates :line_1, length: { maximum: 512 }
     validates :line_2, length: { maximum: 512 }
     validates :number, length: { maximum: 64 }
