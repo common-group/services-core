@@ -24,13 +24,13 @@ RSpec.describe Billing::Payments::Expire, type: :action do
 
     let(:payment) { create(:billing_payment, :waiting_payment) }
 
-    context 'when payment state cannot transition to overdue' do
-      before { allow(payment).to receive(:can_transition_to?).with(:overdue).and_return(false) }
+    context 'when payment state cannot transition to expired' do
+      before { allow(payment).to receive(:can_transition_to?).with(:expired).and_return(false) }
 
       it { is_expected.to be_failure }
 
       it 'returns error message' do
-        expect(result.error).to eq 'Payment cannot transition to overdue'
+        expect(result.error).to eq 'Payment cannot transition to expired'
       end
 
       it 'doesn`t transition payment state' do
@@ -40,13 +40,13 @@ RSpec.describe Billing::Payments::Expire, type: :action do
       end
     end
 
-    context 'when payment state can transition to overdue' do
+    context 'when payment state can transition to expired' do
       it { is_expected.to be_success }
 
-      it 'transitions payment state to overdue' do
+      it 'transitions payment state to expired' do
         result
 
-        expect(payment.reload).to be_in_state(:overdue)
+        expect(payment.reload).to be_in_state(:expired)
       end
 
       it 'transitions payment items state to canceled' do

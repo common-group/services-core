@@ -2,7 +2,7 @@
 
 module Billing
   module Payments
-    class CanBeExpiredQuery
+    class OverdueQuery
       attr_reader :relation
 
       class << self
