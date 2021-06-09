@@ -4,7 +4,7 @@ module Billing
   module Payments
     class ExpireOverduePayments < Actor
       def call
-        Billing::Payment.can_be_expired.find_each do |payment|
+        Billing::Payment.overdue.find_each do |payment|
           payment.expire!
         rescue StandardError => e
           Sentry.capture_exception(e, level: :fatal, extra: { payment_id: payment.id })
