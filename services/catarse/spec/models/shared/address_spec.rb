@@ -26,5 +26,7 @@ RSpec.describe Shared::Address, type: :model do
     it { is_expected.to validate_length_of(:first_name).is_at_most(128) }
     it { is_expected.to validate_length_of(:last_name).is_at_most(128) }
     it { is_expected.to validate_length_of(:organization).is_at_most(128) }
+
+    it { is_expected.to validate_inclusion_of(:country_code).in_array(ISO3166::Country.all.map(&:alpha2)) }
   end
 end
