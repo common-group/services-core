@@ -20,7 +20,7 @@ RSpec.describe Catarse::V2::Shared::AddressesAPI, type: :api do
 
     before do
       allow(Shared::Addresses::Create).to receive(:result)
-        .with(user: User.last, attributes: address_params)
+        .with(user: current_user, attributes: address_params)
         .and_return(ServiceActor::Result.new(address: address))
     end
 
