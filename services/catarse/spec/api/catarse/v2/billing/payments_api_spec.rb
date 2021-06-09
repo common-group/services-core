@@ -8,7 +8,6 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
   include_examples 'authenticate routes'
 
   describe 'POST /v2/billing/payments' do
-    let(:user) { create(:user) }
     let(:payment) { build(:billing_payment) }
     let(:payment_params) do
       {
@@ -24,9 +23,8 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
     end
 
     before do
-      allow(User).to receive(:last).and_return(user)
       allow(Billing::Payments::Checkout).to receive(:result)
-        .with(user: user, attributes: payment_params)
+        .with(user: current_user, attributes: payment_params)
         .and_return(ServiceActor::Result.new(payment: payment))
     end
 
