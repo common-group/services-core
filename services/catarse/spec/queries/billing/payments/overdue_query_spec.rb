@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Billing::Payments::CanBeExpiredQuery, type: :query do
+RSpec.describe Billing::Payments::OverdueQuery, type: :query do
   subject(:query) { described_class.new }
 
   describe '#call' do
@@ -21,7 +21,7 @@ RSpec.describe Billing::Payments::CanBeExpiredQuery, type: :query do
     end
 
     it 'returns payments that can be expired' do
-      expect(query.call).to eq [payment_with_pix, payment_with_boleto]
+      expect(query.call).to contain_exactly(payment_with_pix, payment_with_boleto)
     end
   end
 end

@@ -23,7 +23,7 @@ RSpec.describe Billing::Payments::ExpireOverduePayments, type: :action do
     let(:payment_b) { Billing::Payment.new }
 
     before do
-      allow(Billing::Payment).to receive(:can_be_expired).and_return(scope)
+      allow(Billing::Payment).to receive(:overdue).and_return(scope)
       allow(scope).to receive(:find_each).and_yield(payment_b).and_yield(payment_a)
     end
 
