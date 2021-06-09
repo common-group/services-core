@@ -40,7 +40,7 @@ module Billing
     delegate :wait_payment!, :authorize!, :settle!, :refuse!, :approve_on_antifraud!, :decline_on_antifraud!,
       :wait_review!, :refund!, :chargeback!, :expire!, to: :state_machine
 
-    scope :can_be_expired, Billing::Payments::CanBeExpiredQuery
+    scope :overdue, Billing::Payments::OverdueQuery
 
     def lump_sum?
       installments_count == 1

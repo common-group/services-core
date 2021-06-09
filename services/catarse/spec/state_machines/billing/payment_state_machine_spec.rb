@@ -46,8 +46,8 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
       it { is_expected.to eq :paid }
     end
 
-    context 'when key is `overdue`' do
-      subject { described_class::MAP_TO_PAYMENT_ITEM_STATE['overdue'] }
+    context 'when key is `expired`' do
+      subject { described_class::MAP_TO_PAYMENT_ITEM_STATE['expired'] }
 
       it { is_expected.to eq :canceled }
     end
@@ -87,7 +87,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
         declined_on_antifraud
         waiting_review
         paid
-        overdue
+        expired
         refused
         refunded
         charged_back
@@ -122,8 +122,8 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
       expect { payment.transition_to!(:paid) }.not_to raise_error
     end
 
-    it 'allows transition to overdue' do
-      expect { payment.transition_to!(:overdue) }.not_to raise_error
+    it 'allows transition to expired' do
+      expect { payment.transition_to!(:expired) }.not_to raise_error
     end
   end
 

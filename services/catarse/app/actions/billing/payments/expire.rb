@@ -7,10 +7,10 @@ module Billing
       input :metadata, type: Hash, default: {}
 
       def call
-        fail!(error: 'Payment cannot transition to overdue') unless payment.can_transition_to?(:overdue)
+        fail!(error: 'Payment cannot transition to expired') unless payment.can_transition_to?(:expired)
 
         ActiveRecord::Base.transaction do
-          payment.transition_to!(:overdue, metadata)
+          payment.transition_to!(:expired, metadata)
           payment.items.each { |i| i.transition_to!(:canceled) }
         end
       end
