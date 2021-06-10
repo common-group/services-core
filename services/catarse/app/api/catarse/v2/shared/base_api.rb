@@ -6,6 +6,7 @@ module Catarse
       class BaseAPI < Grape::API
         namespace 'shared' do
           mount Catarse::V2::Shared::AddressesAPI
+          mount Catarse::V2::Shared::CountriesAPI
         end
       end
     end
