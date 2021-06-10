@@ -24,7 +24,7 @@ module Catarse
         post '/addresses' do
           address_params = declared(params, include_missing: false)[:address]
 
-          result = ::Shared::Addresses::Create.result(user: User.last, attributes: address_params)
+          result = ::Shared::Addresses::Create.result(user: current_user, attributes: address_params)
 
           result.address
         end
