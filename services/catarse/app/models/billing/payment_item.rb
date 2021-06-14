@@ -15,5 +15,12 @@ module Billing
     validates :payable_type, presence: true
 
     validates :payable_id, uniqueness: { scope: %i[payable_type payment_id] }
+    validate :payment_user_matches_payable_user
+
+    def payment_user_matches_payable_user
+      return if payment.blank? || payable.blank? || payment.user_id == payable.user_id
+
+      errors.add(:payable, I18n.t('models.billing.payment_item.errors.invalid_user'))
+    end
   end
 end
