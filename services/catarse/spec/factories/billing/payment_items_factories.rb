@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :billing_payment_item, class: 'Billing::PaymentItem' do
     association :payment, factory: :billing_payment
-    association :payable, factory: :contribution, strategy: :create
+    payable { create(:contribution, user: payment.user) }
 
     amount_cents { Faker::Number.number(digits: 4) }
     shipping_fee_cents { Faker::Number.number(digits: 4) }

@@ -22,5 +22,32 @@ RSpec.describe Billing::PaymentItem, type: :model do
     it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
     it { is_expected.to validate_numericality_of(:shipping_fee).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:total_amount).is_greater_than_or_equal_to(1) }
+
+    context 'when the payment and payable user are the same' do
+      subject(:payment_item) { described_class.new(payment: payment, payable: payable) }
+
+      let(:payment) { Billing::Payment.new(user: User.new(id: 1)) }
+      let(:payable) { Contribution.new(id: 1, user: User.new(id: 1)) }
+
+      it 'doesn`t add invalid user error' do
+        payment_item.valid?
+
+        expect(payment_item.errors[:payable]).to be_empty
+      end
+    end
+
+    context 'when the payment and payable user are different' do
+      subject(:payment_item) { described_class.new(payment: payment, payable: payable) }
+
+      let(:payment) { Billing::Payment.new(user: User.new(id: 1)) }
+      let(:payable) { Contribution.new(id: 1, user: User.new(id: 2)) }
+
+      it 'adds invalid invalid user error message' do
+        payment_item.valid?
+
+        error_message = I18n.t('models.billing.payment_item.errors.invalid_user')
+        expect(payment_item.errors[:payable]).to include error_message
+      end
+    end
   end
 end
