@@ -46,7 +46,7 @@ FactoryBot.define do
 
     transient do
       payment_items do
-        build_list(:billing_payment_item, 2, payment: nil)
+        build_list(:billing_payment_item, 2, payment: instance)
       end
     end
 
