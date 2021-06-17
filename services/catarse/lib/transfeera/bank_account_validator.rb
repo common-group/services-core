@@ -16,7 +16,7 @@ module Transfeera
         map_to_catarse_bank_account_model validation
       rescue StandardError => e
         Rails.logger.info("VALIDATE ERROR #{e.inspect}")
-        Raven.capture_exception(e, level: "fatal")
+        Sentry.capture_exception(e, level: :fatal)
         {
           valid: false,
           errors: [

@@ -141,7 +141,7 @@ module CatarsePagarme
       payment.generating_second_pix = true
       PixTransaction.new(pix_attributes, payment).charge!
     rescue PagarMe::PagarMeError => e
-      raven_capture(e)
+      sentry_capture(e)
     end
 
     protected
@@ -220,18 +220,15 @@ module CatarsePagarme
       }
     end
 
-    def raven_capture exception
-      ::Raven.user_context(
-        {
-          contribution_id: payment.contribution_id,
-          user_id: payment.contribution.user_id,
-          payment_key: payment.key,
-          project_id: payment.contribution.project_id,
-          payment_method: payment.payment_method
-        }
-      )
-      ::Raven.capture_exception(exception, level: 'fatal')
-      ::Raven.user_context({})
+    def sentry_capture exception
+      user_data = {
+        contribution_id: payment.contribution_id,
+        user_id: payment.contribution.user_id,
+        payment_key: payment.key,
+        project_id: payment.contribution.project_id,
+        payment_method: payment.payment_method
+      }
+      ::Sentry.capture_exception(exception, level: :fatal, user: user_data)
     end
   end
 end

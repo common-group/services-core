@@ -7,7 +7,7 @@ module CatarsePagarme
       transaction = PixTransaction.new(pix_attributes, payment).charge!
       render json: { pix_qr_code: transaction.pix_qr_code, payment_status: transaction.status, gateway_data: payment.gateway_data }
     rescue PagarMe::PagarMeError => e
-      raven_capture(e)
+      sentry_capture(e)
       render json: { pix_qr_code: nil, payment_status: 'failed', message: e.message }
     end
 
@@ -16,7 +16,7 @@ module CatarsePagarme
       transaction = PixTransaction.new(pix_attributes, payment).charge!
       redirect_to main_app.project_contribution_path(contribution.project, contribution)
     rescue PagarMe::PagarMeError => e
-      raven_capture(e)
+      sentry_capture(e)
       render json: { pix_qr_code: nil, payment_status: 'failed', message: e.message }
     end
 
