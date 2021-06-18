@@ -1,8 +1,10 @@
 - user = @notification.user
 - balance_transfer = @notification.balance_transfer
 - bank_account = balance_transfer.bank_data
-
-| Olá #{user.display_name},
+- if user.display_name
+  |Olá, #{user.display_name}!
+- else
+  |Olá!
 br/
 br/
 | O depósito do dinheiro <strong>já foi realizado!</strong> O valor será creditado na conta bancária cadastrada em até <strong>2 dias úteis</strong>.

@@ -1,7 +1,11 @@
 - contribution ||= @notification.contribution
 - owner = contribution.project.user
 - detail = contribution.details.ordered.first
-p Olá, <strong>#{contribution.user.display_name}</strong>!
+p
+- if contribution.user.display_name
+  | Olá, <strong>#{contribution.user.display_name}</strong>!
+- else
+  | Olá!
 
 - if !@notification.metadata.try(:[], 'message').present?
   p #{contribution.project.user.display_name} acabou de sinalizar na plataforma que aconteceu um <strong>ERRO NO ENVIO</strong> de sua recompensa do projeto #{contribution.project.name}.
