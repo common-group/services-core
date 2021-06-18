@@ -23,6 +23,8 @@ class Project < ApplicationRecord
   include Project::VideoHandler
   include Project::CustomValidators
 
+  include Projects::MembershipRelations
+
   has_notifications
 
   mount_uploader :uploaded_image, ProjectUploader
