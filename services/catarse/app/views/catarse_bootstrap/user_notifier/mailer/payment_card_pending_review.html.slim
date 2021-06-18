@@ -1,6 +1,10 @@
 - contribution = @notification.contribution
 
-p Olá, <strong>#{contribution.user.display_name}</strong> !
+p
+- if contribution.user.display_name
+  | Olá, <strong>#{contribution.user.display_name}</strong>!
+- else
+  | Olá!
 
 p O seu apoio está sendo <strong>processado</strong> por nossos meios de pagamento e poderá ficar em análise por até 48h.
 
