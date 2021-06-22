@@ -55,6 +55,11 @@ class ProjectObserver < ActiveRecord::Observer
       audited_user_phone_number: project.user.phone_number
     )
 
+    coming_soon_integration = project.integrations.find_by_name 'COMING_SOON_LANDING_PAGE'
+    coming_soon_integration.destroy unless coming_soon_integration.nil?
+
+    project.notify_reminder_of_publish
+
     UserBroadcastWorker.perform_async(
       follow_id: project.user_id,
       template_name: 'follow_project_online',
