@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rqrcode'
 module QRCode
   class Renderer

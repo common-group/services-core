@@ -41,7 +41,10 @@ namespace :balance_transfer do
         bt.transition_to(:error, transfer_data: transfer.to_hash)
       end
     rescue RestClient::BadGateway => e
-      return Sentry.capture_exception(e, extra: { task: :update_status }) if retries > 3
+      if retries > 3
+        Sentry.capture_exception(e, extra: { task: :update_status })
+        return
+      end
 
       retries += 1
       sleep 3

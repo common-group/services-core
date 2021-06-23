@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Transfeera
   class Webhook < BasePaymentRequest
     def self.validate_request(transfeera_signature, request_body)

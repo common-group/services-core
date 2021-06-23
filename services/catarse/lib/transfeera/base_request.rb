@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Transfeera
   class BaseRequest
     def initialize(http_request)

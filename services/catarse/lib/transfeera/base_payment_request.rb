@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Transfeera
   class BasePaymentRequest < BaseRequest
     def client_credentials
