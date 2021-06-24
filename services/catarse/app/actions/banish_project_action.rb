@@ -5,7 +5,7 @@ class BanishProjectAction
   def initialize(project_id:)
     @project = Project.find project_id
   rescue => e
-    Raven.capture_exception(e, level: 'fatal')
+    Sentry.capture_exception(e, level: :fatal)
   end
 
   def call
@@ -20,7 +20,7 @@ class BanishProjectAction
     @project.user.update_columns(banned_at: DateTime.now)
     BlacklistDocument.find_or_create_by number: @project.user.cpf
   rescue => e
-    Raven.capture_exception(e, level: 'fatal')
+    Sentry.capture_exception(e, level: :fatal)
   end
 
   def project_sub
@@ -45,7 +45,7 @@ class BanishProjectAction
           t.refund if t.status == 'paid'
           balance_transaction_for_project_user(payment)
         rescue Exception => e
-          Raven.capture_exception(e)
+          Sentry.capture_exception(e)
         end
       end
     end
@@ -56,6 +56,7 @@ class BanishProjectAction
     @project.subscription_payments.where("data ->> 'payment_method' = 'boleto' ").find_each do |payment|
       if payment.status == 'paid'
         begin
+          cw = CommonWrapper.new
           balance_transaction_for_project_user(payment)
           # Remover saldo do apoiador de assinaturas
           BalanceTransaction.create!(
@@ -65,9 +66,9 @@ class BanishProjectAction
             subscription_payment_uuid: payment.id,
             project_id: payment.project.id
           ) if !BalanceTransaction.where(event_name: 'subscription_payment_refunded', subscription_payment_uuid: payment.id, user_id: payment.user.id).present?
-          payment.refund
+          cw.refund_subscription_payment(payment)
         rescue Exception => e
-          Raven.capture_exception(e)
+          Sentry.capture_exception(e)
         end
       end
     end
