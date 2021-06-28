@@ -29,7 +29,9 @@ function _ProjectShow({ project_id, project_user_id, post_id, ...rest }: Project
     const query: { [key:string]: any } = m.parseQueryString(location.search)
 
     const shouldDisplayPreviewHeader = project && project.is_owner_or_admin && project.state === 'draft' && comingSoonIntegrationData
-    const shouldDisplayComingSoonPage = project && project.permalink === permalink && project.state === 'draft' && comingSoonIntegrationData
+    const shouldDisplayComingSoonPage = project &&
+        (project.permalink === permalink || !isProjectPageDraftAccess)
+        && project.state === 'draft' && comingSoonIntegrationData
 
     const onSelectPreview = (previewSelected: PreviewHeaderComingSoonLandingPageViewSelected) => setPreviewSelected(previewSelected)
 

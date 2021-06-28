@@ -310,7 +310,9 @@ class ProjectsController < ApplicationController
         Project.without_state('deleted').by_permalink(permalink).first!
       end
     else
-      Project.without_state('deleted').find(params[:id])
+      project = Project.without_state('deleted').find(params[:id])
+      @selected_permalink = project.permalink
+      project
     end
   end
 

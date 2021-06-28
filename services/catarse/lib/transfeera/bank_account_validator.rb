@@ -15,8 +15,8 @@ module Transfeera
         validation = validation_response["_validation"]
         map_to_catarse_bank_account_model validation
       rescue StandardError => e
+        Sentry.capture_exception(e)
         Rails.logger.info("VALIDATE ERROR #{e.inspect}")
-        Sentry.capture_exception(e, level: :fatal)
         {
           valid: false,
           errors: [

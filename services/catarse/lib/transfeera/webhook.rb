@@ -50,6 +50,7 @@ module Transfeera
       result = authorized_request with_options
       save_webhook_result result
     rescue StandardError => e
+      Sentry.capture_exception(e)
       Rails.logger.info("Error getting Transfeera webhook: #{e.inspect}")
       {}
     end
@@ -61,6 +62,7 @@ module Transfeera
       authorized_request with_options
       fetch_api_webhook_data
     rescue StandardError => e
+      Sentry.capture_exception(e)
       Rails.logger.info("Error creating Transfeera webhook: #{e.inspect}")
       nil
     end
@@ -70,6 +72,7 @@ module Transfeera
       authorized_request(update_webhook_config(webhook_id))
       fetch_api_webhook_data
     rescue StandardError => e
+      Sentry.capture_exception(e)
       Rails.logger.info("Error updating Transfeera webhook: #{e.inspect}")
       nil
     end
@@ -92,6 +95,7 @@ module Transfeera
       CatarseSettings[:transfeera_webhook_data] = webhook_data_json
       webhook_result[0]
     rescue StandardError => e
+      Sentry.capture_exception(e)
       Rails.logger.info("Error saving Transfeera webhook data to settings: #{e.inspect} #{webhook_result.inspect}")
       Rails.logger.info(e.backtrace)
       {}
@@ -100,6 +104,7 @@ module Transfeera
     def transfeera_webhook_data
       JSON.parse(CatarseSettings.get_without_cache(:transfeera_webhook_data)).to_h
     rescue StandardError => e
+      Sentry.capture_exception(e)
       Rails.logger.info("Error parsing Transfeera webhook data from settings: #{e.inspect}")
       nil
     end

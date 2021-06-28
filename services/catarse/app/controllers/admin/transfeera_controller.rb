@@ -41,7 +41,7 @@ module Admin
         try_update_to_transferred(transfer, status)
       end
     rescue StandardError => e
-      Rails.logger.info("Error on transitioning transfer state #{e.inspect}")
+      Sentry.capture_exception(e)
     end
 
     def transfeera_parameters

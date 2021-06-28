@@ -78,7 +78,7 @@ module Transfeera
       {
         value: (transfer.amount || 0).round(2),
         integration_id: transfer.id,
-        payment_method: 'TRANSFERENCIA',
+        payment_method: 'PIX',
         destination_bank_account: create_bank_account_hash(bank_account, account_type)
       }
     end

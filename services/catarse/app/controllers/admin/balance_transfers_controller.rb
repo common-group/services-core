@@ -27,7 +27,7 @@ class Admin::BalanceTransfersController < Admin::BaseController
     render json: { transfer_ids: processing_transfers.pluck(&:id) }
 
   rescue StandardError => error_message
-    Sentry.capture_exception(error_message, level: :fatal)
+    Sentry.capture_exception(error_message)
     Transfeera::BatchTransfer.remove(batch_id) unless batch_id.nil?
     render json: { transfer_ids: [], error_message: error_message }, status: :unprocessable_entity
   end
