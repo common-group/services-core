@@ -4,6 +4,8 @@ module Membership
   class Tier < ApplicationRecord
     belongs_to :project
 
+    has_many :billing_options, class_name: 'Membership::BillingOption', dependent: :destroy
+
     validates :name, presence: true
     validates :description, presence: true
 
