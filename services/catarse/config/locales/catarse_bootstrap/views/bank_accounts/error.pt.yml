@@ -1,0 +1,4 @@
+pt:
+  bank_accounts:
+    errors:
+      only_numbers_for_agency_digit: 'Dígito da agência não pode conter letras. Substitua a letra pelo número "0".'
