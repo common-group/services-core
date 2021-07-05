@@ -25,7 +25,7 @@ class SubscriptionProject < Project
   end
 
   def pledged
-    @pledged ||= subscriptions.where(status: 'active').sum("(checkout_data->>'amount')::integer/100")
+    @pledged ||= 0 #subscriptions.where(status: 'active').sum("(checkout_data->>'amount')::integer/100")
   end
 
   def current_goal
