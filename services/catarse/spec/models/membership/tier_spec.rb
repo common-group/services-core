@@ -7,6 +7,7 @@ RSpec.describe Membership::Tier, type: :model do
     it { is_expected.to belong_to(:project) }
 
     it { is_expected.to have_many(:billing_options).class_name('Membership::BillingOption').dependent(:destroy) }
+    it { is_expected.to have_many(:subscriptions).class_name('Membership::Subscription').dependent(:destroy) }
   end
 
   describe 'Validations' do
