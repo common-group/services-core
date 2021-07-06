@@ -27,6 +27,7 @@ RSpec.describe Project, type: :model do
     it { is_expected.to have_many :balance_transactions }
 
     it { is_expected.to have_many(:tiers).class_name('Membership::Tier').dependent(:destroy) }
+    it { is_expected.to have_many(:subscriptions).class_name('Membership::Subscription').dependent(:destroy) }
   end
 
   describe 'validations' do
