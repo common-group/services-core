@@ -181,6 +181,8 @@ pt:
         body: 'Conteúdo'
         visible: 'Publicar (Marque caso queira publicar essa nóvidade)'
     errors:
+      messages:
+        deliver_at_in_the_past: 'Data de entrega da recompensa não pode ser anterior à hoje.'
       models:
         payment:
           duplicate: "O seu pagamento já está sendo processado"

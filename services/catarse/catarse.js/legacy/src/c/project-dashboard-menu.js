@@ -15,6 +15,7 @@ import h from '../h';
 import railsErrorsVM from '../vms/rails-errors-vm';
 import projectVM from '../vms/project-vm';
 import { MenuLink } from '../root/projects/edit/menu-link';
+import popNotification from '../c/pop-notification';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.dashboard_nav');
 const linksScope = _.partial(h.i18nScope, 'projects.dashboard_nav_links');
@@ -24,6 +25,7 @@ const projectDashboardMenu = {
         const body = document.getElementsByTagName('body')[0],
             editLinksToggle = h.toggleProp(true, false),
             validating = prop(false),
+            deliverAtError = prop(false),
             showPublish = h.toggleProp(true, false),
             bodyToggleForNav = h.toggleProp('body-project open', 'body-project closed'),
             validatePublish = () => {
@@ -39,6 +41,10 @@ const projectDashboardMenu = {
                     m.redraw();
                 }).catch((err) => {
                     validating(false);
+                    deliverAtError(false);
+                    if (err.errors_json['rewards'] != undefined) {
+                      deliverAtError(true);
+                    }
                     railsErrorsVM.setRailsErrors(err.errors_json);
                     m.redraw();
                 });
@@ -63,6 +69,7 @@ const projectDashboardMenu = {
 
         vnode.state = {
             body,
+            deliverAtError,
             validating,
             validatePublish,
             editLinksToggle,
@@ -209,7 +216,9 @@ const projectDashboardMenu = {
                                         }, [
                                             window.I18n.t('publish', I18nScope()), m.trust('&nbsp;&nbsp;'), m('span.fa.fa-chevron-right')
                                         ]) : '')
-                                    ]))
+                                    ]), [
+                                        !state.deliverAtError() ? m(popNotification, { message: window.I18n.t('activerecord.errors.messages.deliver_at_in_the_past') }) : ''
+                                    ])
                             )
                         ] : [
                             ((project.mode === 'flex' && project.is_published) ? [
