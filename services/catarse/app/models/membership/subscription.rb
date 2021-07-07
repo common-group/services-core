@@ -2,6 +2,8 @@
 
 module Membership
   class Subscription < ApplicationRecord
+    include Utils::HasStateMachine
+
     belongs_to :project
     belongs_to :user
     belongs_to :tier, class_name: 'Membership::Tier'
