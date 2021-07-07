@@ -6,6 +6,7 @@ module Projects
 
     included do
       has_many :tiers, class_name: 'Membership::Tier', dependent: :destroy
+      has_many :subscriptions, class_name: 'Membership::Subscription', dependent: :destroy
     end
   end
 end
