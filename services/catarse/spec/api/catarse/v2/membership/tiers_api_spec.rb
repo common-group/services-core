@@ -56,4 +56,44 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
       expect(response).to have_http_status(:created)
     end
   end
+
+  describe 'PUT /v2/membership/tiers/:id' do
+    let(:tier) { create(:membership_tier) }
+    let(:tier_params) { attributes_for(:membership_tier).slice(:name, :description).stringify_keys }
+
+    before do
+      allow(Membership::Tiers::Update).to receive(:result)
+        .with(id: tier.id, attributes: tier_params)
+        .and_return(ServiceActor::Result.new(tier: tier))
+    end
+
+    it 'returns updated tier' do
+      put "/api/v2/membership/tiers/#{tier.id}", params: { tier: tier_params }
+      expected_response = { tier: Membership::TierEntity.represent(tier) }.to_json
+
+      expect(response.body).to eq expected_response
+    end
+
+    it 'return status 200 - ok' do
+      put "/api/v2/membership/tiers/#{tier.id}", params: { tier: tier_params }
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'DELETE /v2/membership/tiers/:id' do
+    let(:tier) { create(:membership_tier) }
+
+    before do
+      allow(Membership::Tiers::Destroy).to receive(:result)
+        .with(id: tier.id)
+        .and_return(ServiceActor::Result.new(tier: tier))
+    end
+
+    it 'return status 204 - no_content' do
+      delete "/api/v2/membership/tiers/#{tier.id}"
+
+      expect(response).to have_http_status(:no_content)
+    end
+  end
 end
