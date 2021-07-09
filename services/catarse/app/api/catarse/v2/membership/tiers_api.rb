@@ -35,6 +35,33 @@ module Catarse
 
           present :tier, result.tier, with: ::Membership::TierEntity
         end
+
+        params do
+          requires :id, type: String
+          requires :tier, type: Hash do
+            optional :project_id, type: String
+            optional :name, type: String
+            optional :description, type: String
+            optional :subscribers_limit, type: Integer
+            optional :request_shipping_address, type: Boolean
+          end
+        end
+
+        put '/tiers/:id' do
+          result = ::Membership::Tiers::Update.result(id: params[:id], attributes: tier_params)
+
+          present :tier, result.tier, with: ::Membership::TierEntity
+        end
+
+        params do
+          requires :id, type: String
+        end
+
+        delete '/tiers/:id' do
+          ::Membership::Tiers::Destroy.result(id: params[:id])
+
+          status :no_content
+        end
       end
     end
   end
