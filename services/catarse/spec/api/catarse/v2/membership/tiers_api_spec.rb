@@ -17,7 +17,7 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
         .and_return(ServiceActor::Result.new(tiers: tiers))
     end
 
-    it 'returns created tier' do
+    it 'returns project tiers' do
       get '/api/v2/membership/tiers', params: { project_id: project_id }
       expected_response = { tiers: Membership::TierEntity.represent(tiers) }.to_json
 
