@@ -8,6 +8,11 @@ RSpec.describe Membership::BillingOption, type: :model do
   end
 
   describe 'Validations' do
+    it do
+      billing_option = create(:membership_billing_option)
+      expect(billing_option).to validate_uniqueness_of(:cadence_in_months).scoped_to(:tier_id)
+    end
+
     it { is_expected.to validate_numericality_of(:cadence_in_months).is_equal_to(1).only_integer }
     it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
   end
