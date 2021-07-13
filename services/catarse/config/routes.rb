@@ -119,12 +119,18 @@ Catarse::Application.routes.draw do
             get 'toggle_anonymous'
             get 'toggle_delivery'
             get :second_slip
+            get :second_pix
             get :receipt
           end
           put :credits_checkout, on: :member
         end
 
         resources :integrations, { only: [:index, :create, :update], controller: 'projects/integrations' }
+
+        member do
+          post 'coming-soon/activate', to: 'projects/coming_soon#activate'
+          delete 'coming-soon/deactivate', to: 'projects/coming_soon#deactivate'
+        end
 
         collection do
           get :fallback_create, to: 'projects#create'
@@ -133,6 +139,7 @@ Catarse::Application.routes.draw do
         member do
           post :upload_image
           get 'insights'
+          get 'coming-soon'
           get 'posts'
           get 'surveys'
           get 'fiscal'

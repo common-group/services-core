@@ -46,6 +46,49 @@ RSpec.describe Project, type: :model do
     it { is_expected.to allow_value('test-project').for(:permalink) }
     it { is_expected.not_to allow_value('users').for(:permalink) }
     it { is_expected.not_to allow_value('agua.sp.01').for(:permalink) }
+
+    context 'when an online project has rewards with delivery date in the future' do
+      let(:project) { create(:project, goal: 10_000, state: 'online') }
+
+      before do
+        project.rewards.first.update(deliver_at: Date.tomorrow)
+      end
+
+      it 'doesn`t add deliver_at_in_the_past error' do
+        project.valid?
+
+        expect(project.errors[:rewards]).to be_empty
+      end
+    end
+
+    context 'when an online project has rewards with delivery date in the past' do
+      let(:project) { create(:project, goal: 10_000, state: 'online') }
+
+      before do
+        project.rewards.first.update(deliver_at: Date.yesterday)
+      end
+
+      it 'doesn`t add deliver_at_in_the_past error' do
+        project.valid?
+
+        expect(project.errors[:rewards]).to be_empty
+      end
+    end
+
+    context 'when a project changes state to online and has rewards with delivery date in the past' do
+      let(:project) { create(:project, goal: 10_000, state: 'draft') }
+
+      before do
+        project.rewards.first.update(deliver_at: Date.yesterday)
+      end
+
+      it 'adds deliver_at_in_the_past error message' do
+        project.push_to_online
+
+        error_message = I18n.t('activerecord.errors.messages.deliver_at_in_the_past')
+        expect(project.errors[:rewards]).to include error_message
+      end
+    end
   end
 
   describe 'before validations' do
@@ -716,6 +759,24 @@ RSpec.describe Project, type: :model do
         account_entity_type: project.user.try(:decorator).try(:entity_type)
       }.to_json)
     end
+  end
+
+  describe 'fill_service_slip_fee' do
+    let(:service_slip_fee) { Faker::Number.number(digits: 3) }
+
+    before { CatarseSettings[:catarse_slip_tax] = service_slip_fee }
+
+    context 'when project is flex or aon' do
+      let(:project) { create(:project, state: 'online', service_slip_fee: 0, mode: %w[flex aon].sample) }
+
+      it { expect(project.service_slip_fee).to eq(service_slip_fee) }
+    end
+  end
+
+  context 'when project is sub' do
+    let(:project) { create(:project, state: 'online', service_slip_fee: 0, mode: 'sub') }
+
+    it { expect(project.service_slip_fee).to be_zero }
   end
 
   describe 'create_event_to_status' do

@@ -172,6 +172,8 @@ en:
         body: Content
         visible: Publish (check if you want to publish this nóvidade)
     errors:
+      messages:
+        deliver_at_in_the_past: Reward delivery date cannot be in the past
       models:
         payment:
           duplicate: Your payment is already being processed
@@ -412,6 +414,13 @@ en:
         pending_refund: Refund requested on %{date}
         refused: Unrealized payment
         chargeback: Answered
+      pix:
+        pending: Awaiting payment confirmation
+        paid: Confirmed on %{date}
+        refunded: Refunded on %{date}
+        pending_refund: Refund requested on %{date}
+        refused: Unrealized payment
+        chargeback: Answered
       cartaodecredito:
         pending: Awaiting payment confirmation
         paid: Confirmed on %{date}
@@ -473,6 +482,7 @@ en:
       desconhecido: ''
       creditos: Credits
       boleto_bancario: Bank slip
+      pix: Pix
       cartao_de_credito: Credit card
       debito_bancario: Bank debit
       cartao_debito: Debit card

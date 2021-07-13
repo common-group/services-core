@@ -33,6 +33,7 @@ class Project < ApplicationRecord
             :status_flag, to: :decorator
 
   before_save :set_adult_content_tag
+  before_create :fill_service_slip_fee
 
   self.inheritance_column = 'mode'
   belongs_to :user
@@ -87,6 +88,10 @@ class Project < ApplicationRecord
                   ignoring: :accents
 
   after_commit :start_metric_storage_worker, on: :create
+
+  def fill_service_slip_fee
+    self.service_slip_fee = CatarseSettings.get_without_cache(:catarse_slip_tax).to_i if service_slip_fee.zero?
+  end
 
   def start_metric_storage_worker
     ProjectMetricStorageRefreshWorker.perform_async(id)
@@ -390,6 +395,19 @@ class Project < ApplicationRecord
         options
       )
     end
+  end
+
+  def notify_reminder_of_publish(options = {})
+    reminders.each do |reminder|
+      notify_once(
+        'project_coming_soon_published',
+        reminder.user,
+        self,
+        options
+      )
+    end
+
+    reminders.destroy_all
   end
 
   def delete_from_reminder_queue(user_id)

@@ -33,6 +33,7 @@ en:
         address_title: Name and address
         address_neighbourhood: 'Neighborhood:'
         answered_at: Answered on %{date}
+        not_answered: Not Answered
       report:
         info: Info
         profile: Profile
@@ -274,6 +275,7 @@ en:
         subscription_edit: Confirm signature changes
         invoice_none: None
         pay_slip: Print Ticket
+        pay_pix: Print Pix
         errors:
           global: Please review the fields below before proceeding.
           inline:
@@ -285,6 +287,10 @@ en:
             slip_submission: There was an error while trying to generate the ticket.
               Please try again in a few moments.
             slip_validation: Error validating form data. Please review them and try
+              again.
+            pix_submission: There was an error while trying to generate the ticket.
+              Please try again in a few moments.
+            pix_validation: Error validating form data. Please review them and try
               again.
             encryption_error: Please try again in a few moments.
             payment_failed: Please review your credit card information and try again
@@ -301,15 +307,23 @@ en:
             phone: Invalid phone number.
         review_slip_email: You will also receive an email with this ticket.
         slip_expiration: This bank slip expires on day %{date}.
+        review_pix_email: You will also receive an email with this ticket.
+        pix_expiration: This bank pix expires on day %{date}.
         print_slip: Print Ticket
+        print_pix: Print Pix
         pay: Finish payment
         slip_message: In generating the ticket, the director is already counting on
+          his contribution. Pay through the expiration date on the internet, lottery houses,
+          ATMs or bank branch.
+        pix_message: In generating the ticket, the director is already counting on
           his contribution. Pay through the expiration date on the internet, lottery houses,
           ATMs or bank branch.
         review_title: Fill in and review the payment data
         review_subtitle: These data will be informed to the project director
         delivery_address: Address
         payment_slip_disclaimer: If the project is not successful, we will repay your
+          contribution. The bank details entered here will be used for this.
+        payment_pix_disclaimer: If the project is not successful, we will repay your
           contribution. The bank details entered here will be used for this.
         review_errors_title: Check the reported data
         review_errors: Some information is missing or not entered correctly, correct

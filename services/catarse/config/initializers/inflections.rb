@@ -6,6 +6,7 @@
 # (all these examples are active by default):
 ActiveSupport::Inflector.inflections do |inflect|
   inflect.irregular 'Dia', 'Dias'
+  inflect.acronym 'QR'
   inflect.acronym 'API'
 end
 #
