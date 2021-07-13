@@ -1,0 +1,10 @@
+en:
+  models:
+    billing:
+      payment:
+        errors:
+          invalid_total_amount: "doesn't match other values"
+          invalid_credit_card: "credit card owner doesn't match user"
+      payment_item:
+        errors:
+          invalid_user: "payment user doesn't match payable user"

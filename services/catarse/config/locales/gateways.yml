@@ -1,0 +1,4 @@
+en:
+  enumerations:
+    gateways:
+      pagar_me: 'Pagar.me'

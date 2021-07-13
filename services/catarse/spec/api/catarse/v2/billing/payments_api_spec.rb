@@ -1,0 +1,43 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
+  mock_request_authentication
+
+  include_examples 'authenticate routes'
+
+  describe 'POST /v2/billing/payments' do
+    let(:payment) { build(:billing_payment) }
+    let(:payment_params) do
+      {
+        'payment_method' => payment.payment_method,
+        'billing_address_id' => Faker::Internet.uuid,
+        'installments_count' => Faker::Number.number(digits: 1),
+        'payables' => [
+          { 'id' => 123, 'type' => 'Contribution' },
+          { 'id' => 456, 'type' => 'Subscription' }
+        ],
+        credit_card_hash: Faker::Lorem.word
+      }
+    end
+
+    before do
+      allow(Billing::Payments::Checkout).to receive(:result)
+        .with(user: current_user, attributes: payment_params)
+        .and_return(ServiceActor::Result.new(payment: payment))
+    end
+
+    it 'returns processed payment' do
+      post '/api/v2/billing/payments', params: { payment: payment_params }
+
+      expect(response.body).to eq(payment.to_json)
+    end
+
+    it 'return status 201 - created' do
+      post '/api/v2/billing/payments', params: { payment: payment_params }
+
+      expect(response).to have_http_status(:created)
+    end
+  end
+end

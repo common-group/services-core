@@ -1,0 +1,6 @@
+en:
+  enumerations:
+    payment_methods:
+      credit_card: 'Credit Card'
+      pix: 'Pix'
+      boleto: 'Boleto'

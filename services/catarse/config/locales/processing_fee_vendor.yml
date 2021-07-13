@@ -1,0 +1,5 @@
+en:
+  enumerations:
+    processing_fee_vendor:
+      pagar_me: 'Pagar.me'
+      konduto: 'Konduto'

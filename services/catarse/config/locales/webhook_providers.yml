@@ -1,0 +1,5 @@
+en:
+  enumerations:
+    webhook_providers:
+      pagar_me: 'Pagar.me'
+      konduto: 'Konduto'
