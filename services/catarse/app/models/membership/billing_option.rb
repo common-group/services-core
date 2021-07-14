@@ -6,6 +6,8 @@ module Membership
 
     monetize :amount_cents, numericality: { greater_than_or_equal_to: 1 }
 
+    validates :cadence_in_months, uniqueness: { scope: :tier_id }
+
     validates :cadence_in_months, numericality: { equal_to: 1, only_integer: true }
   end
 end
