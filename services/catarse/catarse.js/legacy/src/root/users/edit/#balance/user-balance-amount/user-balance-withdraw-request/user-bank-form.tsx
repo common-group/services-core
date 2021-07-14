@@ -4,10 +4,6 @@ import { UserBankSearchList } from './user-bank-search-list'
 import { UserBankAccountInputTextField } from './user-bank-account-input-text-field'
 import { withHooks, useState, useMemo } from 'mithril-hooks'
 import { UserBankAccountSelectValue } from './user-bank-account-select-value'
-import h from '../../../../../../h'
-import _ from 'underscore'
-
-const I18nScope = _.partial(h.i18nScope, 'bank_accounts.errors');
 
 export type UserBankFormProps = {
     bankAccount: BankAccount
@@ -28,9 +24,6 @@ export const UserBankForm = withHooks<UserBankFormProps>(_UserBankForm)
 function _UserBankForm(props : UserBankFormProps) {
 
     const [ showOtherBanks, setShowOtherBanks ] = useState(false)
-    const [ showErrorAgency, setErrorAgency ] = useState(false)
-    const [ showErrorAgencyId, setErrorAgencyId ] = useState(false)
-
     const {
         getErrors,
         banks,
@@ -82,11 +75,6 @@ function _UserBankForm(props : UserBankFormProps) {
     const handleOnChangeValueFor = (field : string) => (value : string | number) => onChange({...bankAccount, [field]: value } as BankAccount)
 
     const shouldShowOtherBanksInput = `${bankAccount.bank_id}` === '0'
-
-    const errorAgencyDigit = (value : string, field : string, set : Function, show : boolean) => {
-        value == '' || value.match(/^[0-9]+$/) != null ? set(false) : set(!show)
-        handleOnChangeValueFor(`${field}`)(value.replace(/\D/gim, ''))
-    }
 
     return (
         <div>
@@ -161,8 +149,6 @@ function _UserBankForm(props : UserBankFormProps) {
                             className='w-col w-col-7 w-col-small-7 w-col-tiny-7 w-sub-col-middle'
                             labelText='Agência'
                             {...getHandleFor('agency')}
-                            onChange={(agency) => errorAgencyDigit(agency,'agency', setErrorAgency, showErrorAgency)}
-                            errors={showErrorAgency ? [window.I18n.t('only_numbers_for_agency_digit', I18nScope())] : []}
                             />
 
                         <UserBankAccountInputTextField
@@ -171,8 +157,6 @@ function _UserBankForm(props : UserBankFormProps) {
                             labelText='Dígito agência'
                             required={false}
                             {...getHandleFor('agency_digit')}
-                            onChange={(agency_digit) => errorAgencyDigit(agency_digit,'agency_digit', setErrorAgencyId, showErrorAgencyId)}
-                            errors={showErrorAgencyId ? [window.I18n.t('only_numbers_for_agency_digit', I18nScope())] : []}
                             />
                     </div>
                 </div>
