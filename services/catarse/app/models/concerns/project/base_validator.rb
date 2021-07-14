@@ -12,11 +12,6 @@ module Project::BaseValidator
     with_options if: :online? do |wo|
       wo.validates_presence_of :city
       wo.validates_length_of :name, maximum: Project::NAME_MAXLENGTH
-      wo.validate do |project|
-        if state_changed? && project.rewards.select{ |r| r.deliver_at < Time.zone.today }.present?
-          errors.add(:rewards, :deliver_at_in_the_past)
-        end
-      end
     end
 
     # Start validations when project state

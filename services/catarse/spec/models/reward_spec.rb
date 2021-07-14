@@ -28,29 +28,6 @@ RSpec.describe Reward, type: :model do
     end
   end
 
-  describe 'validations' do
-    context 'when deliver_at is in the future' do
-      let(:reward) { Reward.new(deliver_at: Date.tomorrow) }
-
-      it 'doesn`t add deliver_at_in_the_past error' do
-        reward.valid?
-
-        expect(reward.errors[:deliver_at]).to be_empty
-      end
-    end
-
-    context 'when deliver_at is in the past' do
-      let(:reward) { Reward.new(deliver_at: Date.yesterday) }
-
-      it 'adds deliver_at_in_the_past error message' do
-        reward.valid?
-
-        error_message = I18n.t('activerecord.errors.messages.deliver_at_in_the_past')
-        expect(reward.errors[:deliver_at]).to include error_message
-      end
-    end
-  end
-
   describe 'Associations' do
     it { is_expected.to belong_to :project }
     it { is_expected.to have_many :contributions }
