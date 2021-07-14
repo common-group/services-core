@@ -1,4 +1,0 @@
-pt:
-  bank_accounts:
-    errors:
-      only_numbers_for_agency_digit: 'Agency Digit cannot contain letters. Replace the letter with the number "0".'
