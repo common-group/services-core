@@ -33,8 +33,6 @@ class Reward < ApplicationRecord
     if: -> { project && project.is_sub? }
 
   validates_numericality_of :maximum_contributions, only_integer: true, greater_than: 0, allow_nil: true
-  validate :deliver_date_cannot_be_in_the_past, if: :deliver_at?, on: :create
-
   scope :remaining, -> {
     where("
              rewards.maximum_contributions IS NULL
@@ -59,12 +57,6 @@ class Reward < ApplicationRecord
   before_save :log_changes
   after_save :expires_project_cache
   after_save :index_on_common
-
-  def deliver_date_cannot_be_in_the_past
-    if deliver_at < Time.zone.today
-      errors.add(:deliver_at, :deliver_at_in_the_past)
-    end
-  end
 
   def log_changes
     self.last_changes = changes.to_json

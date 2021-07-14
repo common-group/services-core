@@ -172,8 +172,6 @@ en:
         body: Content
         visible: Publish (check if you want to publish this nóvidade)
     errors:
-      messages:
-        deliver_at_in_the_past: Reward delivery date cannot be in the past
       models:
         payment:
           duplicate: Your payment is already being processed
