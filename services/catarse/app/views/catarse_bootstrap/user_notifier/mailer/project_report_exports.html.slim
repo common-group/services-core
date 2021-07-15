@@ -1,6 +1,9 @@
 - report = @notification.try(:report) || @notification.report
 center
+- if report.project.user.display_name
   |Olá, #{report.project.user.display_name}!
+- else
+  |Olá!
 center
   p A exportação do relatório #{report.report_name_locale} está pronta.
 br

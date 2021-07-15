@@ -1,7 +1,10 @@
 - user = @notification.user
 - category = @notification.category
 
-| Olá #{user.display_name},
+- if user.display_name
+    |Olá, #{user.display_name}!
+- else
+    |Olá!
 br/
 br/
 | Novidades dessa semana na categoria #{category.name_pt} do Catarse

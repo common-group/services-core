@@ -4,7 +4,10 @@
 - company_name = CatarseSettings[:company_name]
 - contact_email = CatarseSettings[:email_contact]
 
-|Olá, <strong>#{contribution.user.display_name}</strong>!
+- if contribution.user.display_name
+  |Olá, <strong>#{contribution.user.display_name}</strong>!
+- else
+  |Olá!
 br
 br
 |O projeto #{contribution.project.name} foi #{project.decorator.display_mailer_status} aqui no #{company_name} e por isso reembolsamos o valor do seu apoio. O crédito efetivo deverá acontecer na fatura vigente, caso ela ainda esteja em aberto, ou na subsequente, caso a desse mês já esteja fechada.
