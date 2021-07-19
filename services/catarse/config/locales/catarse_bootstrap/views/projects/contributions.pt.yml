@@ -336,22 +336,24 @@ pt:
         error: Ooops. Ocorreu um erro ao registrar seu apoio. Por favor, tente novamente.
       thank_you_slip:
         thank_you: 'Estou contando com seu apoio...'
-        thank_you_text_html: "<div class='fontsize-base'>Você também recebeu esse boleto no email:</div><div class='fontsize-large u-marginbottom-10'>%{email}</div><a class='alt-link fontsize-small' href='%{link_email}'>Se esse não é seu email de contato, altere aqui</a>"
+        thank_you_text_html: "<div class='fontsize-smaller'>Você também recebeu o boleto em %{email}</div>"
+      thank_you_pix:
+        thank_you_pix_html: "<div class='fontsize-smaller'>Você também recebeu o QR code em %{email}</div>"
       thank_you:
         subscription_edit:
-          thank_you: "Quase lá!"
-          text_html: "<div class='fontsize-base'>A alteração de sua assinatura foi processada, mas só será efetivada na sua próxima cobrança. Enviamos uma mensagem com detalhes para o email abaixo:</div><div class='fontsize-large u-marginbottom-10'>%{email}</div><a class='alt-link fontsize-small' href='%{link_email}'>Se esse não é seu email de contato, altere aqui</a>"
+          thank_you: "Quase lá! A alteração só será confirmada em sua próxima cobrança."
+          text_html: "<div class='fontsize-smaller'>Voce receberá mais detalhes em %{email}</div>"
         thank_you_error: 'Ocorreu um erro ao solicitar os dados do seu pagamento. Tente novamente em alguns instantes.'
-        thank_you: 'Estou contando com seu apoio...'
-        thank_you_text_html: "<div class='fontsize-base'>Assim que o pagamento for concluído, enviaremos a confirmação do seu apoio para o email cadastrado:</div><div class='fontsize-large u-marginbottom-10'>%{email}</div><a class='alt-link fontsize-small' href='%{link_email}'>Se esse não é seu email de contato, altere aqui</a>"
-        thank_you_pix_html: "<div class='fontsize-base'>Você também recebeu o QR code em:</div><div class='fontsize-large u-marginbottom-10'>%{email}</div><a class='alt-link fontsize-small' href='%{link_email}'>Se esse não é seu email de contato, altere aqui</a>"
+        thank_you: 'Valeu! Seu apoio está sendo processado.'
+        thank_you_text_html: "<div class='fontsize-smaller'>Você receberá uma confirmação em %{email}</div>"
+        another_email_html: "<a class='fontsize-smallest alt-link' href='%{link_email}'>Não é seu email?</a>"
         thank_you_slip_unconfirmed_text_html: "<div class='fontsize-base'>Se tudo correr bem, você vai receber um email em breve com o boleto para pagamento no email cadastrado:</div><div class='fontsize-large u-marginbottom-10'>%{email}</div><a class='alt-link fontsize-small' href='%{link_email}'>Se esse não é seu email de contato, altere aqui</a>"
         share: Compartilhe
         tweet: Tuíte
         share_back: 'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
         follow: 'Seguir'
         follow_category: 'Curte a categoria %{category}? Você pode receber em primeira mão e diretamente no seu email quando novos projetos entrarem no ar!'
-        project_recommendations: 'Recomendações de projetos para você'
+        project_recommendations: 'Recomendações de campanhas para você'
         profile_link: 'através do seu perfil'
       show:
         header_subtitle: Sem você talvez este projeto não tivesse uma chance. Bem-vindo

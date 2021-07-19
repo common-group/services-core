@@ -77,85 +77,87 @@ const thankYou = {
         return m('#thank-you', { oncreate: state.setEvents }, [
             m('.page-header.u-marginbottom-30',
                 m('.w-container',
-                    m('.w-row',
-                        m('.w-col.w-col-10.w-col-push-1',
+                    m('.thanks-header',
+                        m('.thanks-header-title-wrapper',
                             [
-                                m('.u-marginbottom-20.u-text-center',
+                                m('.thanks-thumb-wrapper',
                                     m(`img.thumb.u-round[src='${attrs.contribution.project.user_thumb}']`)
                                 ),
-                                m('#thank-you.u-text-center', !state.isSlip && !state.isPix ?
-                                    [
-                                        m('#creditcard-thank-you.fontsize-larger.text-success.u-marginbottom-20',
-                                            window.I18n.t('thank_you.thank_you', I18nScope())
-                                        ),
-                                        m('.fontsize-base.u-marginbottom-40',
-                                            m.trust(
-                                                window.I18n.t(('thank_you.thank_you_text_html'),
+                                m('#thank-you.thanks-header-title',
+                                    m('.fontsize-large.text-success.lineheight-tighter.u-marginbottom-10.fontweight-semibold',
+                                        state.isSlip || state.isPix ?
+                                        window.I18n.t('thank_you_slip.thank_you', I18nScope()) : window.I18n.t('thank_you.thank_you', I18nScope())
+                                    ),
+                                    m('.thanks-header-instructions-wrapper',
+                                        m('.thanks-header-instructions',
+                                            m('.fontsize-smaller',
+                                                state.isSlip || state.isPix ? (
+                                                    m.trust(window.I18n.t(
+                                                    state.isSlip ? 'thank_you_slip.thank_you_text_html' : 'thank_you_pix.thank_you_pix_html',
                                                     I18nScope({
-                                                        total: attrs.contribution.project.total_contributions,
                                                         email: attrs.contribution.contribution_email,
-                                                        link2: `/${window.I18n.locale}/users/${currentUser.id}/edit#contributions`,
-                                                        link_email: `/${window.I18n.locale}/users/${currentUser.id}/edit#about_me`
-                                                    })
-                                                )
-                                            )
-                                        )
-                                    ] : [
-                                        m('#slip-thank-you.fontsize-largest.text-success.u-marginbottom-20', window.I18n.t('thank_you_slip.thank_you', I18nScope())),
-                                        m('.fontsize-base.u-marginbottom-40',
-                                            m.trust(window.I18n.t('thank_you_slip.thank_you_text_html',
-                                                I18nScope({
-                                                    email: attrs.contribution.contribution_email,
-                                                    link_email: `/${window.I18n.locale}/users/${currentUser.id}/edit#about_me`
+                                                    })))
+                                                ) :
+                                                m.trust(window.I18n.t('thank_you.thank_you_text_html',
+                                                    I18nScope({
+                                                        email: attrs.contribution.contribution_email,
                                                 })))
+                                            )
                                         ),
-                                        (
-                                            state.isPix ? '' : m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
-                                                'Compartilhe com seus amigos e ajude esse projeto a bater a meta!'
+                                        m('.fontsize-smallest.alt-link',
+                                            m.trust(window.I18n.t('thank_you.another_email_html',
+                                                I18nScope({
+                                                    link_email: `/${window.I18n.locale}/users/${currentUser.id}/edit#about_me`
+                                                }))
                                             )
                                         )
-                                    ]
-                                ),
-                                state.isSlip || state.isPix ? '' : m('.w-row',
-                                    [
-                                        m('.w-hidden-small.w-hidden-tiny',
-                                            [
-                                                m('.w-sub-col.w-col.w-col-4', m(facebookButton, {
-                                                    url: facebookUrl,
-                                                    big: true
-                                                })),
-                                                m('.w-sub-col.w-col.w-col-4', m(facebookButton, {
-                                                    messenger: true,
-                                                    big: true,
-                                                    url: messengerUrl,
-                                                })),
-                                                m('.w-col.w-col-4',
-                                                    m(`a.btn.btn-large.btn-tweet.u-marginbottom-20[href="${twitterUrl}"][target="_blank"]`, [
-                                                        m('span.fa.fa-twitter'),
-                                                        ' Twitter'
-                                                    ])
-                                                )
-                                            ]
-                                        ),
-                                        m('.w-hidden-main.w-hidden-medium', [
-                                            m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
-                                                onclick: state.displayShareBox.toggle
-                                            }, 'Compartilhe')),
-                                            state.displayShareBox() ? m(projectShareBox, {
-                                                // Mocking a project prop
-                                                project: prop({
-                                                    permalink: attrs.contribution.project.permalink,
-                                                    name: attrs.contribution.project.name
-                                                }),
-                                                displayShareBox: state.displayShareBox,
-                                                utm: 'ctrse_thankyou',
-                                                ref: 'ctrse_thankyou'
-                                            }) : ''
-                                        ])
-                                    ]
-                                ),
+                                    )
+                                )
                             ]
-                        )
+                        ),
+                        state.isSlip || state.isPix ? '' :
+                            m('.thanks-header-share',
+                                m('.divider.u-margintop-20.u-marginbottom-20'),
+                                m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary.u-marginbottom-10.u-text-center',
+                                    'Que tal compartilhar o projeto?'
+                                ),
+                                [
+                                    m('.w-row',
+                                        [
+                                            m('.u-marginbottom-10 w-col w-col-4', m(facebookButton, {
+                                                url: facebookUrl,
+                                                medium: true
+                                            })),
+                                            m('.u-marginbottom-10 w-col w-col-4', m(facebookButton, {
+                                                messenger: true,
+                                                medium: true,
+                                                url: messengerUrl,
+                                            })),
+                                            m('.u-marginbottom-10 w-col w-col-4',
+                                                m(`a.btn.btn-medium.btn-tweet.u-marginbottom-20[href="${twitterUrl}"][target="_blank"]`, [
+                                                    m('span.fa.fa-twitter'),
+                                                    ' Twitter'
+                                                ])
+                                            )
+                                        ]
+                                    ),
+                                    m('.w-hidden-main.w-hidden-medium', [
+                                        m('.u-marginbottom-30.u-text-center-small-only', m('button.btn.btn-large.btn-terciary.u-marginbottom-40', {
+                                            onclick: state.displayShareBox.toggle
+                                        }, 'Compartilhe')),
+                                        state.displayShareBox() ? m(projectShareBox, {
+                                            // Mocking a project prop
+                                            project: prop({
+                                                permalink: attrs.contribution.project.permalink,
+                                                name: attrs.contribution.project.name
+                                            }),
+                                            displayShareBox: state.displayShareBox,
+                                            utm: 'ctrse_thankyou',
+                                            ref: 'ctrse_thankyou'
+                                        }) : ''
+                                    ])
+                                ]
+                            )
                     )
                 )
             ),

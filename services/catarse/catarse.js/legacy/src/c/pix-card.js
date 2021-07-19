@@ -36,7 +36,7 @@ const pixCard = {
     view: ({state, attrs}) => {
         return [
             m('.w-container.w-row',
-                m('.u-text-center.u-margintop-30.w-col.w-col-6',
+                m('.u-text-center.w-col.w-col-6',
                 m('.fontsize-base.fontweight-semibold', 'Leia com o app do seu banco'),
                 m('div.u-margintop-30.u-marginbottom-20',
                     m.trust(attrs.pix_qr_code)
