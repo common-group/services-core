@@ -4,7 +4,7 @@ module Membership
   class BillingOptionEntity < BaseEntity
     expose :id
     expose :cadence_in_months
-    expose :amount, with: MoneyEntity
+    expose :amount, using: MoneyEntity
     expose :enabled
   end
 end
