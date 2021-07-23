@@ -10,6 +10,6 @@ FactoryBot.define do
     billing_option { association :membership_billing_option, tier: tier }
     state { Membership::SubscriptionStateMachine.states.sample }
     cadence_in_months { 1 }
-    amount_cents { Faker::Number.number(digits: 4) }
+    amount_cents { billing_option.amount_cents }
   end
 end

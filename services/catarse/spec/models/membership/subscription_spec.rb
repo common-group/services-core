@@ -20,10 +20,15 @@ RSpec.describe Membership::Subscription, type: :model do
 
     it do
       subscription = create(:membership_subscription)
-      expect(subscription).to validate_uniqueness_of(:tier_id).scoped_to(:user_id).case_insensitive
+      expect(subscription).to validate_uniqueness_of(:user_id).scoped_to(:project_id).case_insensitive
     end
 
     it { is_expected.to validate_numericality_of(:cadence_in_months).is_equal_to(1).only_integer }
-    it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
+
+    it do
+      sub = create(:membership_subscription)
+      expect(sub).to validate_numericality_of(:amount_cents)
+        .is_greater_than_or_equal_to(sub.billing_option.amount_cents)
+    end
   end
 end
