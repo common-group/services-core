@@ -13,8 +13,8 @@ class CreateMembershipSubscriptions < ActiveRecord::Migration[6.1]
     end
 
     add_index :membership_subscriptions,
-      %i[user_id tier_id],
+      %i[user_id project_id],
       unique: true,
-      name: 'idx_user_tier_uniq'
+      name: 'idx_user_project_uniq'
   end
 end

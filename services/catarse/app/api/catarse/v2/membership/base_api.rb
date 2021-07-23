@@ -6,6 +6,7 @@ module Catarse
       class BaseAPI < Grape::API
         namespace 'membership' do
           mount Catarse::V2::Membership::BillingOptionsAPI
+          mount Catarse::V2::Membership::SubscriptionsAPI
           mount Catarse::V2::Membership::TiersAPI
         end
       end
