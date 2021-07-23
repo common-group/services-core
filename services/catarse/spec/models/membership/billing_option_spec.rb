@@ -5,6 +5,8 @@ require 'rails_helper'
 RSpec.describe Membership::BillingOption, type: :model do
   describe 'Relations' do
     it { is_expected.to belong_to(:tier).class_name('Membership::Tier') }
+
+    it { is_expected.to have_one(:project).through(:tier) }
   end
 
   describe 'Validations' do
