@@ -71,8 +71,9 @@ const thankYou = {
     },
     view: function ({ state, attrs }) {
         const currentUser = getCurrentUserCached();
+        const projectUrl = `${window.location.origin}/${attrs.contribution.project.permalink}`
         const facebookUrl = `https://www.catarse.me/${attrs.contribution.project.permalink}?ref=ctrse_thankyou&utm_source=facebook.com&utm_medium=social&utm_campaign=ctrse_thankyou`;
-        const messengerUrl = `https://www.catarse.me/${attrs.contribution.project.permalink}?ref=ctrse_thankyou&utm_source=facebook_messenger&utm_medium=social&utm_campaign=ctrse_thankyou`;
+        const whatsappShareLink = h.isMobile() ? `whatsapp://send?text=${encodeURIComponent(`Eu adoraria se você pudesse dar uma olhada no meu projeto no Catarse. Sua ajuda significa muito pra mim: ${projectUrl}?utm_source=whatsapp&utm_medium=social&utm_campaign=project_share_simplified`)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(`Eu adoraria se você pudesse dar uma olhada no meu projeto no Catarse. Sua ajuda significa muito pra mim: ${projectUrl}?utm_source=whatsapp&utm_medium=social&utm_campaign=project_share_simplified`)}`
         const twitterUrl = `https://twitter.com/intent/tweet?text=Acabei%20de%20apoiar%20o%20projeto%20${encodeURIComponent(attrs.contribution.project.name)}%20https://www.catarse.me/${attrs.contribution.project.permalink}%3Fref%3Dctrse_thankyou%26utm_source%3Dtwitter%26utm_medium%3Dsocial%26utm_campaign%3Dctrse_thankyou`;
         return m('#thank-you', { oncreate: state.setEvents }, [
             m('.page-header.u-marginbottom-30',
@@ -118,23 +119,24 @@ const thankYou = {
                         state.isSlip || state.isPix ? '' :
                             m('.thanks-header-share',
                                 m('.divider.u-margintop-20.u-marginbottom-20'),
-                                m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary.u-marginbottom-10.u-text-center',
+                                m('.fontsize-smaller.fontweight-semibold.fontcolor-secondary.u-marginbottom-10.u-text-center.w-hidden-medium.w-hidden-small',
                                     'Que tal compartilhar o projeto?'
                                 ),
                                 [
-                                    m('.w-row',
+                                    m('.w-row.w-hidden-medium.w-hidden-small',
                                         [
                                             m('.u-marginbottom-10 w-col w-col-4', m(facebookButton, {
+                                                class: 'thanks-margin',
                                                 url: facebookUrl,
                                                 medium: true
                                             })),
-                                            m('.u-marginbottom-10 w-col w-col-4', m(facebookButton, {
-                                                messenger: true,
-                                                medium: true,
-                                                url: messengerUrl,
-                                            })),
+                                            m('.u-marginbottom-10 w-col w-col-4', [
+                                                m('a.btn.btn-medium[data-action="share/whatsapp/share"]', {
+                                                    href: whatsappShareLink
+                                                }, [m('span.fa.fa-whatsapp'), ' Whatsapp'])
+                                            ]),
                                             m('.u-marginbottom-10 w-col w-col-4',
-                                                m(`a.btn.btn-medium.btn-tweet.u-marginbottom-20[href="${twitterUrl}"][target="_blank"]`, [
+                                                m(`a.btn.btn-medium.btn-tweet[href="${twitterUrl}"][target="_blank"]`, [
                                                     m('span.fa.fa-twitter'),
                                                     ' Twitter'
                                                 ])
