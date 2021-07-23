@@ -8,6 +8,7 @@ class User < ApplicationRecord
   include Users::OmniauthHandler
   include Users::CustomValidators
   include Shared::CommonWrapper
+  include Users::MembershipRelations
 
   has_notifications
   # Include default devise modules. Others available are:
@@ -89,7 +90,7 @@ class User < ApplicationRecord
   has_many :links, class_name: 'UserLink', inverse_of: :user
   has_many :balance_transactions
   has_many :mail_marketing_users
-  has_many :subscriptions,  foreign_key: :user_id, primary_key: :common_id
+  has_many :old_subscriptions, class_name: 'Subscriptions', foreign_key: :user_id, primary_key: :common_id
   has_and_belongs_to_many :recommended_projects, join_table: :recommendations, class_name: 'Project'
 
   begin

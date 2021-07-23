@@ -31,6 +31,8 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_many :mail_marketing_users }
     it { is_expected.to have_one :user_total }
     it { is_expected.to have_one :bank_account }
+
+    it { is_expected.to have_many(:subscriptions).class_name('Membership::Subscription').dependent(:destroy) }
   end
 
   describe 'validations' do

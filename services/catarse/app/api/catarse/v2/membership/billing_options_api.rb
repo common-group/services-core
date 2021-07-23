@@ -5,7 +5,7 @@ module Catarse
     module Membership
       class BillingOptionsAPI < Grape::API
         helpers do
-          def billing_options_params
+          def billing_option_params
             declared(params, include_missing: false)[:billing_option]
           end
         end
@@ -30,7 +30,7 @@ module Catarse
 
         post '/tiers/:tier_id/billing_options' do
           result = ::Membership::BillingOptions::Create.result(
-            tier_id: params[:tier_id], attributes: billing_options_params
+            tier_id: params[:tier_id], attributes: billing_option_params
           )
 
           present :billing_option, result.billing_option, with: ::Membership::BillingOptionEntity
@@ -45,7 +45,7 @@ module Catarse
           end
         end
         put '/billing_options/:id' do
-          result = ::Membership::BillingOptions::Update.result(id: params[:id], attributes: billing_options_params)
+          result = ::Membership::BillingOptions::Update.result(id: params[:id], attributes: billing_option_params)
 
           present :billing_option, result.billing_option, with: ::Membership::BillingOptionEntity
         end
