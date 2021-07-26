@@ -104,7 +104,6 @@ const ProjectsSubscriptionThankYou = {
                             ),
                             m('.thanks-header-title', [
                                 m('.fontsize-large.text-success.lineheight-tighter.u-marginbottom-10.fontweight-semibold',
-                                    window.I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
                                 state.isEdit
                                     ? window.I18n.t('thank_you.subscription_edit.thank_you', I18nScope())
                                     : window.I18n.t('thank_you.thank_you', I18nScope())
