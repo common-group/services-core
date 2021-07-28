@@ -221,14 +221,15 @@ module CatarsePagarme
     end
 
     def sentry_capture exception
-      user_data = {
-        contribution_id: payment.contribution_id,
-        user_id: payment.contribution.user_id,
-        payment_key: payment.key,
-        project_id: payment.contribution.project_id,
-        payment_method: payment.payment_method
-      }
-      ::Sentry.capture_exception(exception, level: :fatal, user: user_data)
+      ::Sentry.capture_exception(exception, level: :fatal,
+        extra: {
+          contribution_id: payment.contribution_id,
+          user_id: payment.contribution.user_id,
+          payment_key: payment.key,
+          project_id: payment.contribution.project_id,
+          payment_method: payment.payment_method
+        }
+      )
     end
   end
 end
