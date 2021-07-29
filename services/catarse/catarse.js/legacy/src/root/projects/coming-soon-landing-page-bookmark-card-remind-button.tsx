@@ -1,4 +1,4 @@
-import { useEffect, useState, withHooks } from 'mithril-hooks'
+import { useEffect, useRef, useState, withHooks } from 'mithril-hooks'
 import { ProjectDetails, UserDetails } from '../../entities'
 import { Loader } from '../../shared/components/loader'
 import PopNotification from '../../c/pop-notification'
@@ -7,25 +7,21 @@ import './coming-soon-landing-page-bookmark-card.scss'
 import h from '../../h'
 import { getCurrentUserCached } from '../../shared/services/user/get-current-user-cached'
 import { isLoggedIn } from '../../shared/services/user/is-logged-in'
+import m from 'mithril'
+import { removeRemind } from './controllers/removeRemind'
+import { remind } from './controllers/remind'
 
 export type ComingSoonLandingPageBookmarkCardRemindButtonProps = {
     project: ProjectDetails
     isFollowing: boolean
-    remind(project: ProjectDetails)
-    removeRemind(project: ProjectDetails)
 }
 
 export const ComingSoonLandingPageBookmarkCardRemindButton = withHooks<ComingSoonLandingPageBookmarkCardRemindButtonProps>(_ComingSoonLandingPageBookmarkCardRemindButton)
 
 function _ComingSoonLandingPageBookmarkCardRemindButton(props: ComingSoonLandingPageBookmarkCardRemindButtonProps) {
 
-    const {
-        project,
-        isFollowing,
-        remind,
-        removeRemind,
-    } = props
-
+    const { project, isFollowing } = props
+    const popupTimeout = useRef<NodeJS.Timeout>()
     const [isLoading, setIsLoading] = useState(false)
     const [currentUserBookmarked, setCurrentUserBookmarked] = useState(isFollowing)
 
@@ -38,63 +34,65 @@ function _ComingSoonLandingPageBookmarkCardRemindButton(props: ComingSoonLanding
     function redirectToLogin() {
         if (!isLoggedIn(getCurrentUserCached())) {
             h.storeAction('reminder', project.project_id)
-            h.navigateToDevise(`?redirect_to=${location.pathname}`)
+            h.navigateToDevise(`?redirect_to=${location.pathname}?remindMe=true`)
             return true
         }
 
         return false
     }
 
-    const displayPopNotificationMessage = ({message, isError = false} : {message: string, isError?: boolean}) => {
-        setPopNotificationMessage(message)
-        setDisplayPopNotification(true)
-        setIsPopNotificationError(isError)
-        setTimeout(() => setDisplayPopNotification(false), timeDisplayingPopup)
-    }
-
     const remindMe = async (event: Event) => {
         event.preventDefault()
         if (redirectToLogin()) return
-
-        try {
-            setIsLoading(true)
-            await remind(project)
-            setCurrentUserBookmarked(true)
-            displayPopNotificationMessage({
-                message: 'Você irá receber um email quando este projeto for publicado!'
-            })
-        } catch (error) {
-            displayPopNotificationMessage({
-                message: 'Error ao salvar lembrete.',
-                isError: true
-            })
-        } finally {
-            setIsLoading(false)
-        }
+        toggleRemindMeProject()
     }
 
     const removeRemindMe = async (event: Event) => {
         event.preventDefault()
+        toggleRemindMeProject()
+    }
+
+    useEffect(() => {
+        setCurrentUserBookmarked(project.in_reminder)
+        toggleRemindAndRemoveParamOptionToPerformIt()
+    }, [project.in_reminder])
+
+    function toggleRemindAndRemoveParamOptionToPerformIt() {
+        const params = m.parseQueryString(location.search)
+        if (params.remindMe && !project.in_reminder) {
+            toggleRemindMeProject()
+        }
+        delete params['remindMe']
+        m.route.set(location.pathname, params)
+    }
+
+    async function toggleRemindMeProject() {
+        const {
+            toggle,
+            successMessage,
+            errorMessage,
+        } = configRemindRequest(project)
+
         try {
             setIsLoading(true)
-            await removeRemind(project)
-            setCurrentUserBookmarked(false)
-            displayPopNotificationMessage({
-                message: 'Ok, Removemos o lembrete por e-mail de quando a campanha for ao ar!'
-            })
+            await toggle()
+            setCurrentUserBookmarked(!project.in_reminder)
+            await displayPopNotificationMessage({ message: successMessage })
         } catch (error) {
-            displayPopNotificationMessage({
-                message: 'Error ao remover lembrete.',
-                isError: true
-            })
+            await displayPopNotificationMessage({ message: errorMessage, isError: true })
         } finally {
             setIsLoading(false)
         }
     }
 
-    useEffect(() => {
-        setCurrentUserBookmarked(project.in_reminder)
-    }, [project.in_reminder])
+    async function displayPopNotificationMessage({message, isError = false} : {message: string, isError?: boolean}) {
+        setPopNotificationMessage(message)
+        setIsPopNotificationError(isError)
+        setDisplayPopNotification(!displayPopNotification)
+        if (popupTimeout.current) clearTimeout(popupTimeout.current)
+        setTimeout(() => setDisplayPopNotification(true))
+        popupTimeout.current = setTimeout(() => setDisplayPopNotification(false), timeDisplayingPopup)
+    }
 
     return (
         <div class="back-project-btn-div">
@@ -129,4 +127,24 @@ function _ComingSoonLandingPageBookmarkCardRemindButton(props: ComingSoonLanding
             </div>
         </div>
     )
+}
+
+const configRemindRequest = (project: ProjectDetails) => ({
+    async toggle() {
+        if (project.in_reminder) {
+            await removeRemind(project)
+        } else {
+            await remind(project)
+        }
+    },
+    successMessage: project.in_reminder ?
+        'Ok, Removemos o lembrete por e-mail de quando a campanha for ao ar!' :
+        'Você irá receber um email quando este projeto for publicado!',
+    errorMessage: project.in_reminder ?
+        'Error ao remover lembrete.' :
+        'Error ao salvar lembrete.'
+})
+
+function removeRemindMeAutomaticSearchParam() {
+    m.route.set(location.pathname)
 }

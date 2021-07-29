@@ -35,9 +35,7 @@ function _ProjectPreview(props: ProjectPreviewProps) {
                         <ComingSoonLandingPage
                             project={props.project()}
                             user={projectVM.userDetails() as UserDetails}
-                            isFollowing={false}
-                            remind={async () => ({followers: 12})}
-                            removeRemind={async () => ({followers: 11})} />
+                            isFollowing={false} />
                 }
             </div>
         )

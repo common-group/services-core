@@ -11,13 +11,11 @@ export type ComingSoonLandingPageBookmarkCardProps = {
     project: ProjectDetails
     user: UserDetails
     isFollowing: boolean
-    remind(project: ProjectDetails)
-    removeRemind(project: ProjectDetails)
 }
 
 export const ComingSoonLandingPageBookmarkCard = withHooks<ComingSoonLandingPageBookmarkCardProps>(_ComingSoonLandingPageBookmarkCard)
 
-function _ComingSoonLandingPageBookmarkCard({project, user, isFollowing, remind, removeRemind}: ComingSoonLandingPageBookmarkCardProps) {
+function _ComingSoonLandingPageBookmarkCard({ project, user, isFollowing }: ComingSoonLandingPageBookmarkCardProps) {
 
     const projectNameOrEmpty = project.name || project['project_name'] || ''
     const projectOwnerName = project.user ? userVM.displayName(project.user) : (project.owner_public_name || project.owner_name)
@@ -46,9 +44,7 @@ function _ComingSoonLandingPageBookmarkCard({project, user, isFollowing, remind,
             </div>
             <ComingSoonLandingPageBookmarkCardRemindButton
                 project={project}
-                isFollowing={isFollowing}
-                remind={remind}
-                removeRemind={removeRemind} />
+                isFollowing={isFollowing} />
         </div>
     )
 }

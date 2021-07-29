@@ -18,7 +18,7 @@ function _MenuLink({label, href, isNew, selectedClasses, iconClasses} : MenuLink
     }
 
     return (
-        <a href={href} onclick={routeTo} class={`dashboard-nav-link-left u-marginbottom-20 ${selectedClasses}`}>
+        <a href={href} onclick={routeTo} class={`dashboard-nav-link-left ${selectedClasses}`}>
             <span class={`fa-fw fa ${iconClasses}`}></span>
             &nbsp;{label} { isNew && <span class="badge">Novo</span> }
         </a>

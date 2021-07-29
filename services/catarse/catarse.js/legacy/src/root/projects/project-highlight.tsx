@@ -14,11 +14,20 @@ export type ProjectHighlightProps = {
     project: ProjectDetails
     projectImageChild?: JSX.Element
     hideEmbed: boolean
+    showHeadline: boolean
+    showAddressLinks: boolean
 }
 
 export const ProjectHighlight = withHooks<ProjectHighlightProps>(_ProjectHighlight)
 
-function _ProjectHighlight({project, projectImageChild, hideEmbed}: ProjectHighlightProps) {
+function _ProjectHighlight(props: ProjectHighlightProps) {
+    const {
+        project,
+        projectImageChild,
+        hideEmbed,
+        showHeadline = true,
+        showAddressLinks = true
+    } = props;
 
     const [displayShareBox, setDisplayShareBox] = useState(false)
 
@@ -41,7 +50,10 @@ function _ProjectHighlight({project, projectImageChild, hideEmbed}: ProjectHighl
                         </div>
                 }
                 <div class="w-hidden-small w-hidden-tiny">
-                    <AddressTag project={Stream(project)} isDark={isSubscriptionMode} />
+                    {
+                        showAddressLinks &&
+                        <AddressTag project={Stream(project)} isDark={isSubscriptionMode} />
+                    }
                     <CategoryTag project={Stream(project)} isDark={isSubscriptionMode} />
                     {
                         project.recommended &&
@@ -49,7 +61,7 @@ function _ProjectHighlight({project, projectImageChild, hideEmbed}: ProjectHighl
                     }
                 </div>
                 {
-                    !isSubscriptionMode &&
+                    !isSubscriptionMode && showHeadline &&
                     <div class="project-blurb">
                         {project.headline}
                     </div>

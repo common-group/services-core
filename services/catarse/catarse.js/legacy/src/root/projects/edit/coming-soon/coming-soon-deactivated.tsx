@@ -19,7 +19,7 @@ function _ComingSoonDeactivated({project, activate}: ComingSoonDeactivatedProps)
                         <div class="w-form">
                             <form id="email-form-2" name="email-form-2" data-name="Email Form 2">
                                 <div class="u-marginbottom-30 card card-terciary medium w-row">
-                                    <div class="_w-sub-col w-col w-col-6">
+                                    <div class="w-sub-col w-col w-col-6">
                                         <label for="name-8" class="fontweight-semibold fontsize-base">
                                             Página de pré-lançamento
                                         </label>

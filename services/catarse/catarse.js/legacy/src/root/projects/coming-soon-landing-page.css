@@ -39,3 +39,49 @@
     border-top: 6px solid #79808b;
     border-left: 10px solid transparent;
 }
+
+@media screen and (max-width: 767px) {
+    .flag-curve {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .flag {
+        -webkit-box-align: stretch;
+        align-items: stretch;
+        inset: auto 0% 0%;
+        margin-left: 0px;
+        margin-top: 0px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .flag-container {
+        border-radius: 0px;
+        box-shadow: none;
+        padding-bottom: 6px;
+        padding-top: 6px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .flag-container {
+        font-size: 13px;
+        font-weight: 400;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .author-coming-soon-wrapper {
+        -webkit-box-pack: center;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .project-main.coming-soon {
+        padding-top: 0px;
+    }
+}

@@ -143,18 +143,18 @@ const projectDashboardMenu = {
                                     ])
 
                                 ] : ''
+                            ),
+                            (
+                                project.state === 'draft' &&
+                                m(MenuLink, {
+                                    label: 'Pré-Lançamento',
+                                    href: `/projects/${project.id}/coming-soon`,
+                                    isNew: true,
+                                    selectedClasses: `${h.locationActionMatch('coming-soon') ? 'selected' : '' }`,
+                                    iconClasses: 'fa-lg fa-rocket',
+                                })
                             )
                     ]),
-                    (
-                        project.state === 'draft' &&
-                        m(MenuLink, {
-                            label: 'Pré-Lançamento',
-                            href: `/projects/${project.id}/coming-soon`,
-                            isNew: true,
-                            selectedClasses: `${h.locationActionMatch('coming-soon') ? 'selected' : '' }`,
-                            iconClasses: 'fa-lg fa-rocket',
-                        })
-                    ),
                     m('.edit-project-div', [
                         (!project.is_published ? '' : m('button#toggle-edit-menu.dashboard-nav-link-left', {
                             onclick: state.editLinksToggle.toggle

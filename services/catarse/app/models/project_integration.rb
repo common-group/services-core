@@ -31,8 +31,7 @@ class ProjectIntegration < ApplicationRecord
 
   def set_project_validations
     project.validates_length_of :name, maximum: Project::NAME_MAXLENGTH
-    project.validates_inclusion_of :content_rating, in: [1, 18]
-    project.validates_presence_of :city, :headline
+    project.validates_presence_of :headline
     project.validates_presence_of(:uploaded_image) if project.video_thumbnail.blank?
   end
 end

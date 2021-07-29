@@ -71,9 +71,7 @@ function _ProjectShow({ project_id, project_user_id, post_id, ...rest }: Project
                                     <ComingSoonLandingPage
                                         project={project}
                                         user={projectVM.userDetails() as UserDetails}
-                                        isFollowing={project.in_reminder}
-                                        remind={remind}
-                                        removeRemind={removeRemind} />
+                                        isFollowing={project.in_reminder} />
                             }
                         </div>
                         :
@@ -81,9 +79,7 @@ function _ProjectShow({ project_id, project_user_id, post_id, ...rest }: Project
                             <ComingSoonLandingPage
                                 project={project}
                                 user={projectVM.userDetails() as UserDetails}
-                                isFollowing={project.in_reminder}
-                                remind={remind}
-                                removeRemind={removeRemind} />
+                                isFollowing={project.in_reminder} />
                             :
                             <ProjectPage
                                 project_id={project_id}
