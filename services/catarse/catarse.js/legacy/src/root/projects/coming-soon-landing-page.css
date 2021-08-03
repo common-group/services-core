@@ -48,11 +48,7 @@
 
 @media screen and (max-width: 767px) {
     .flag {
-        -webkit-box-align: stretch;
-        align-items: stretch;
-        inset: auto 0% 0%;
-        margin-left: 0px;
-        margin-top: 0px;
+        display: none;
     }
 }
 
