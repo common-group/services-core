@@ -63,7 +63,7 @@ function _ComingSoonLandingPageBookmarkCardRemindButton(props: ComingSoonLanding
             toggleRemindMeProject()
         }
         delete params['remindMe']
-        m.route.set(location.pathname, params)
+        m.route.set(location.pathname + location.hash, params)
     }
 
     async function toggleRemindMeProject() {
@@ -144,7 +144,3 @@ const configRemindRequest = (project: ProjectDetails) => ({
         'Error ao remover lembrete.' :
         'Error ao salvar lembrete.'
 })
-
-function removeRemindMeAutomaticSearchParam() {
-    m.route.set(location.pathname)
-}

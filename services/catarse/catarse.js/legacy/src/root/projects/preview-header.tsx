@@ -45,8 +45,8 @@ const PreviewHeaderComingSoonLandingPage = withHooks<PreviewHeaderComingSoonLand
 function _PreviewHeaderComingSoonLandingPage({ project, comingSoonIntegration, onSelectPreview }: PreviewHeaderComingSoonLandingPageProps) {
 
     const baseUrl = `${location.protocol}//${location.host}`
-    const comingSoonLandingPageUrl = `${baseUrl}/${project.permalink}`
-    const permalinkUrl = `${baseUrl}/${comingSoonIntegration.data.draft_url}`
+    const comingSoonLandingPageUrl = `${baseUrl}/${project.permalink}${location.hash}`
+    const permalinkUrl = `${baseUrl}/${comingSoonIntegration.data.draft_url}${location.hash}`
     const [viewSelected, setViewSelected] = useState(PreviewHeaderComingSoonLandingPageViewSelected.ComingSoonLandingPage)
 
     const permalink = location.pathname.replace(/\/(.*)/, '$1')
