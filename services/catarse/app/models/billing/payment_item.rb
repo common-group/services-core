@@ -4,6 +4,8 @@ module Billing
   class PaymentItem < ApplicationRecord
     include Utils::HasStateMachine
 
+    ALLOWED_PAYABLE_TYPES = %w[Contribution Membership::Subscription].freeze
+
     belongs_to :payment, class_name: 'Billing::Payment'
     belongs_to :payable, polymorphic: true
 
@@ -16,6 +18,8 @@ module Billing
 
     validates :payable_id, uniqueness: { scope: %i[payable_type payment_id] }
     validate :payment_user_matches_payable_user
+
+    validates :payable_type, inclusion: { in: ALLOWED_PAYABLE_TYPES }
 
     def payment_user_matches_payable_user
       return if payment.blank? || payable.blank? || payment.user_id == payable.user_id

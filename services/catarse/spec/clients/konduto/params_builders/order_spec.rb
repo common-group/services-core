@@ -189,10 +189,9 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   end
 
   describe '#shopping_cart' do
-    let(:payment_attributes) { { items: payment_items } }
-    let(:payment_items) { build_list(:billing_payment_item, 2) }
+    let(:payment) { create(:billing_payment) }
     let(:shopping_cart_item_params) do
-      payment_items.map { |item| Konduto::ParamsBuilders::ShoppingCartItem.new(item).build }
+      payment.items.map { |item| Konduto::ParamsBuilders::ShoppingCartItem.new(item).build }
     end
 
     it 'returns shopping cart item params for each payment item' do

@@ -44,6 +44,15 @@ RSpec.describe Konduto::ParamsBuilders::ShoppingCartItem, type: :params_builder 
       end
     end
 
+    context 'when object is tier' do
+      let(:tier) { Membership::Tier.new(id: Faker::Number.number) }
+      let(:payable) { Membership::Subscription.new({ tier: tier }) }
+
+      it 'returns tier id is string' do
+        expect(params_builder.sku).to eq tier.id.to_s
+      end
+    end
+
     context 'when object is project' do
       let(:project) { Project.new(id: Faker::Number.number) }
       let(:payable) { Contribution.new({ project: project }) }
@@ -64,6 +73,15 @@ RSpec.describe Konduto::ParamsBuilders::ShoppingCartItem, type: :params_builder 
       end
     end
 
+    context 'when object is tier' do
+      let(:tier) { Membership::Tier.new(id: Faker::Number.number) }
+      let(:payable) { Membership::Subscription.new({ tier: tier }) }
+
+      it 'returns tier id is string' do
+        expect(params_builder.product_code).to eq tier.id.to_s
+      end
+    end
+
     context 'when object is project' do
       let(:project) { Project.new(id: Faker::Number.number) }
       let(:payable) { Contribution.new({ project: project }) }
@@ -81,6 +99,15 @@ RSpec.describe Konduto::ParamsBuilders::ShoppingCartItem, type: :params_builder 
 
       it 'returns reward created_at using iso8601 format' do
         expect(params_builder.created_at).to eq reward.created_at.to_date.iso8601
+      end
+    end
+
+    context 'when object is tier' do
+      let(:tier) { Membership::Tier.new(created_at: Faker::Time.backward(days: 30)) }
+      let(:payable) { Membership::Subscription.new({ tier: tier }) }
+
+      it 'returns tier created_at using iso8601 format' do
+        expect(params_builder.created_at).to eq tier.created_at.to_date.iso8601
       end
     end
 
@@ -111,6 +138,15 @@ RSpec.describe Konduto::ParamsBuilders::ShoppingCartItem, type: :params_builder 
 
   describe '#description' do
     let(:payable) { Contribution.new({ reward: reward }) }
+
+    context 'when tier is present' do
+      let(:payable) { Membership::Subscription.new({ tier: tier }) }
+      let(:tier) { Membership::Tier.new(name: Faker::Lorem.sentence[0..99]) }
+
+      it 'returns tier name' do
+        expect(params_builder.description).to eq tier.name
+      end
+    end
 
     context 'when reward is present' do
       let(:reward) { Reward.new(description: Faker::Lorem.sentence[0..99]) }

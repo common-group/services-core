@@ -285,4 +285,30 @@ RSpec.describe Contribution, type: :model do
       it { is_expected.to be(true)}
     end
   end
+
+  describe '#amount_cents' do
+    it 'returns value as cents' do
+      contribution = described_class.new(value: 10.54)
+
+      expect(contribution.amount_cents).to eq 1054
+    end
+  end
+
+  describe '#shipping_fee_cents' do
+    context 'when shipping fee is present' do
+      it 'returns shipping fee value as cents' do
+        contribution = described_class.new(shipping_fee: ShippingFee.new(value: 53.98))
+
+        expect(contribution.shipping_fee_cents).to eq 5398
+      end
+    end
+
+    context 'when shipping fee is nil' do
+      it 'returns 0' do
+        contribution = described_class.new
+
+        expect(contribution.shipping_fee_cents).to be_zero
+      end
+    end
+  end
 end
