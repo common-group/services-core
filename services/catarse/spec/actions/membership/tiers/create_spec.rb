@@ -6,6 +6,7 @@ RSpec.describe Membership::Tiers::Create, type: :action do
   describe 'Inputs' do
     subject { described_class.inputs }
 
+    it { is_expected.to include(project_id: { type: String }) }
     it { is_expected.to include(attributes: { type: Hash }) }
   end
 
@@ -16,10 +17,11 @@ RSpec.describe Membership::Tiers::Create, type: :action do
   end
 
   describe '#call' do
-    subject(:result) { described_class.result(attributes: attributes) }
+    subject(:result) { described_class.result(project_id: project.id.to_s, attributes: attributes) }
+
+    let(:project) { create(:project) }
 
     context 'when attributes are valid' do
-      let(:project) { create(:project) }
       let(:attributes) { attributes_for(:membership_tier).merge(project_id: project.id) }
 
       it { is_expected.to be_success }

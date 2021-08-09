@@ -8,15 +8,15 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
   include_examples 'authenticate routes'
 
   describe 'POST /v2/billing/payments' do
-    let(:payment) { build(:billing_payment) }
+    let(:payment) { build(:billing_payment, user: create(:user)) }
     let(:payment_params) do
       {
         'payment_method' => payment.payment_method,
         'billing_address_id' => Faker::Internet.uuid,
         'installments_count' => Faker::Number.number(digits: 1),
         'payables' => [
-          { 'id' => 123, 'type' => 'Contribution' },
-          { 'id' => 456, 'type' => 'Subscription' }
+          { 'id' => '123', 'type' => 'Contribution' },
+          { 'id' => '456', 'type' => 'Membership::Subscription' }
         ],
         credit_card_hash: Faker::Lorem.word
       }

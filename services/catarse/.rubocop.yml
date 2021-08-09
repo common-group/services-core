@@ -15,6 +15,7 @@ AllCops:
     - 'vendor/**/*'
     - 'db/schema.rb'
     - 'db/migrate/*'
+    - 'db/refactoring_migrations/*'
     - 'config/routes.rb'
     - 'node_modules/**/*'
     - 'catarse.js/**/*'

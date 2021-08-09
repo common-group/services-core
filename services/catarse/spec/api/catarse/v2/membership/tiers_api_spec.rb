@@ -7,7 +7,7 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
 
   include_examples 'authenticate routes'
 
-  describe 'GET /v2/membership/tiers' do
+  describe 'GET /v2/membership/projects/:project_id/tiers' do
     let(:tiers) { build_list(:membership_tier, 5) }
     let(:project_id) { Faker::Internet.uuid }
 
@@ -18,14 +18,14 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
     end
 
     it 'returns project tiers' do
-      get '/api/v2/membership/tiers', params: { project_id: project_id }
+      get "/api/v2/membership/projects/#{project_id}/tiers"
       expected_response = { tiers: Membership::TierEntity.represent(tiers) }.to_json
 
       expect(response.body).to eq expected_response
     end
 
     it 'return status 200 - ok' do
-      get '/api/v2/membership/tiers', params: { project_id: project_id }
+      get "/api/v2/membership/projects/#{project_id}/tiers"
 
       expect(response).to have_http_status(:ok)
     end
@@ -33,25 +33,24 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
 
   describe 'POST /v2/membership/tiers' do
     let(:tier) { build(:membership_tier) }
-    let(:tier_params) do
-      attributes_for(:membership_tier, project_id: '123').slice(:project_id, :name, :description).stringify_keys
-    end
+    let(:project_id) { Faker::Internet.uuid }
+    let(:tier_params) { attributes_for(:membership_tier).slice(:project_id, :name, :description).stringify_keys }
 
     before do
       allow(Membership::Tiers::Create).to receive(:result)
-        .with(attributes: tier_params)
+        .with(project_id: project_id, attributes: tier_params)
         .and_return(ServiceActor::Result.new(tier: tier))
     end
 
     it 'returns created tier' do
-      post '/api/v2/membership/tiers', params: { tier: tier_params }
+      post "/api/v2/membership/projects/#{project_id}/tiers", params: { tier: tier_params }
       expected_response = { tier: Membership::TierEntity.represent(tier) }.to_json
 
       expect(response.body).to eq expected_response
     end
 
     it 'return status 201 - created' do
-      post '/api/v2/membership/tiers', params: { tier: tier_params }
+      post "/api/v2/membership/projects/#{project_id}/tiers", params: { tier: tier_params }
 
       expect(response).to have_http_status(:created)
     end
