@@ -5,6 +5,14 @@ require 'rails_helper'
 RSpec.describe Billing::PaymentItem, type: :model do
   it_behaves_like 'has state machine'
 
+  describe 'Constants' do
+    describe 'ALLOWED_PAYABLE_TYPES' do
+      it 'returns contribution and subscriptions class names' do
+        expect(described_class::ALLOWED_PAYABLE_TYPES).to eq %w[Contribution Membership::Subscription]
+      end
+    end
+  end
+
   describe 'Relations' do
     it { is_expected.to belong_to :payment }
     it { is_expected.to belong_to :payable }
@@ -22,6 +30,8 @@ RSpec.describe Billing::PaymentItem, type: :model do
     it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
     it { is_expected.to validate_numericality_of(:shipping_fee).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:total_amount).is_greater_than_or_equal_to(1) }
+
+    it { is_expected.to validate_inclusion_of(:payable_type).in_array(described_class::ALLOWED_PAYABLE_TYPES) }
 
     context 'when the payment and payable user are the same' do
       subject(:payment_item) { described_class.new(payment: payment, payable: payable) }

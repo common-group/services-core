@@ -13,8 +13,8 @@ module Catarse
             optional :shipping_address_id, type: String
 
             requires :payables, type: Array[JSON] do
-              requires :id, type: Integer
-              requires :type, type: String, values: %w[Contribution Subscription]
+              requires :id, type: String
+              requires :type, type: String, values: ::Billing::PaymentItem::ALLOWED_PAYABLE_TYPES
             end
 
             optional :credit_card_id, type: String
@@ -27,7 +27,6 @@ module Catarse
         end
 
         post '/payments' do
-          # TODO: Payment in installments
           payment_params = declared(params, include_missing: false)[:payment]
 
           result = ::Billing::Payments::Checkout.result(user: current_user, attributes: payment_params)
