@@ -22,8 +22,8 @@ module Billing
 
     def base_attributes
       payable = payable_class.find(attributes[:id])
-      amount_cents = (payable.value * 100).to_i
-      shipping_fee_cents = (payable.shipping_fee.try(:value).to_f * 100).to_i
+      amount_cents = payable.amount_cents
+      shipping_fee_cents = payable.try(:shipping_fee_cents).to_i
       initial_state = Billing::PaymentItemStateMachine.initial_state
       {
         payable: payable,

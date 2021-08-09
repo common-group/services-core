@@ -62,6 +62,14 @@ class Contribution < ApplicationRecord
       and (current_timestamp - un.created_at) > '7 days'::interval) or not exists(select true from contribution_notifications un where un.contribution_id = contributions.id and un.template_name = 'contribution_project_unsuccessful_slip_no_account'))").distinct
   end
 
+  def amount_cents
+    (value * 100).to_i
+  end
+
+  def shipping_fee_cents
+    (shipping_fee.try(:value).to_f * 100).to_i
+  end
+
   def payment
     Payment.find_by_contribution_id(id)
   end

@@ -3,7 +3,8 @@
 FactoryBot.define do
   factory :billing_payment_item, class: 'Billing::PaymentItem' do
     association :payment, factory: :billing_payment
-    payable { create(:contribution, user: payment.user) }
+
+    payable { create(%i[contribution membership_subscription].sample, user: payment.user) }
 
     amount_cents { Faker::Number.number(digits: 4) }
     shipping_fee_cents { Faker::Number.number(digits: 4) }
@@ -13,11 +14,11 @@ FactoryBot.define do
     traits_for_enum :state, Billing::PaymentItemStateMachine.states
 
     trait :contribution do
-      association :payable, factory: :contribution
+      payable { create(:contribution, user: payment.user) }
     end
 
     trait :subscription do
-      association :payable, factory: :subscription
+      payable { create(:membership_subscription, user: payment.user) }
     end
   end
 end

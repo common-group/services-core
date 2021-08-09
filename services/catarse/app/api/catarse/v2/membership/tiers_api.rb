@@ -14,15 +14,15 @@ module Catarse
           requires :project_id, type: String
         end
 
-        get '/tiers' do
+        get '/projects/:project_id/tiers' do
           result = ::Membership::Tiers::List.result(project_id: params[:project_id])
 
           present :tiers, result.tiers, with: ::Membership::TierEntity
         end
 
         params do
+          requires :project_id, type: String
           requires :tier, type: Hash do
-            requires :project_id, type: String
             requires :name, type: String
             requires :description, type: String
             optional :subscribers_limit, type: Integer
@@ -30,8 +30,8 @@ module Catarse
           end
         end
 
-        post '/tiers' do
-          result = ::Membership::Tiers::Create.result(attributes: tier_params)
+        post '/projects/:project_id/tiers' do
+          result = ::Membership::Tiers::Create.result(project_id: params[:project_id], attributes: tier_params)
 
           present :tier, result.tier, with: ::Membership::TierEntity
         end
