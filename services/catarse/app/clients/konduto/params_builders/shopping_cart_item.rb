@@ -3,15 +3,15 @@
 module Konduto
   module ParamsBuilders
     class ShoppingCartItem
-      attr_reader :payment_item, :reward, :project, :object
+      attr_reader :payment_item, :pledge_subject, :project, :object
 
       ATTRIBUTES = %i[sku product_code created_at category name description unit_cost quantity].freeze
 
       def initialize(payment_item)
         @payment_item = payment_item
-        @reward = payment_item.payable.reward
+        @pledge_subject = payment_item.payable.try(:reward) || payment_item.payable.try(:tier)
         @project = payment_item.payable.project
-        @object = reward || project
+        @object = pledge_subject || project
       end
 
       def build
@@ -39,7 +39,14 @@ module Konduto
       end
 
       def description
-        reward.try(:description).to_s[0..99]
+        text = case pledge_subject.class.name
+        when 'Reward'
+          pledge_subject.description
+        when 'Membership::Tier'
+          pledge_subject.name
+        end
+
+        text.to_s[0..99]
       end
 
       def unit_cost
