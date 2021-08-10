@@ -23,8 +23,8 @@ RSpec.describe Billing::PaymentItem, type: :model do
     it { is_expected.to validate_presence_of :payable_type }
 
     it do
-      payment_item = create(:billing_payment_item)
-      expect(payment_item).to validate_uniqueness_of(:payable_id).scoped_to(:payable_type, :payment_id)
+      payment_item = create(:billing_payment_item, :subscription)
+      expect(payment_item).to validate_uniqueness_of(:payable_id).scoped_to(:payable_type, :payment_id).case_insensitive
     end
 
     it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(1) }
