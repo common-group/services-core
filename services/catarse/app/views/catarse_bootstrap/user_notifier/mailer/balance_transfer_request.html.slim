@@ -3,10 +3,7 @@
 - bank_account = user.bank_account
 - company_name = CatarseSettings[:company_name]
 
-- if user.display_name
-  |Olá, #{user.display_name}!
-- else
-  |Olá!
+= render partial: 'user_notifier/mailer/greetings', locals: { user: user }
 br/
 br/
 | O pedido de saque do dinheiro foi registrado no nosso sistema e o processo de transferência já está <strong>em andamento.</strong> :-)

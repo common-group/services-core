@@ -6,11 +6,7 @@
 - new_canceled = transitions.where(to_status: 'canceled')
 
 h3
-- if owner.display_name
-  |Olá, #{owner.display_name}!
-- else
-  |Olá!
-
+= render partial: 'user_notifier/mailer/greetings', locals: { user: owner }
 h3 Seu saldo atual no Catarse é R$#{owner.total_balance}.
 br
 p Nas últimas 24h da sua campanha:

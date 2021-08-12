@@ -2,10 +2,7 @@
 
 - company_name = CatarseSettings[:company_name]
 
-- if user.display_name
-  |Oi, #{user.display_name}!
-- else
-  |Oi!
+= render partial: 'user_notifier/mailer/greetings', locals: { user: user }
 br/
 p
   | Ocorreu um <strong>erro na na transferência</strong> para sua conta bancária.

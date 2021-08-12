@@ -7,10 +7,7 @@
 - company_name = CatarseSettings[:company_name]
 
 p
-- if project.user.decorate.display_name
-  | Olá, #{project.user.decorate.display_name}!
-- else
-  | Olá!
+  = render partial: 'user_notifier/mailer/greetings', locals: { user: project.user.decorate }
 
 p
   | O apoio realizado pelo #{contribution.user.decorate.display_name} foi cancelado e reembolsado.

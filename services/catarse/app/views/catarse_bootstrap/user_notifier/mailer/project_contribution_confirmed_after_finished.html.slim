@@ -2,11 +2,7 @@
 - contribution = @notification.contribution
 - project = contribution.project
 
-p
-- if project.user.decorate.display_name
-  | Olá, #{project.user.decorate.display_name}!
-- else
-  | Olá!
+= render partial: 'user_notifier/mailer/greetings', locals: { user: project.user.decorate }
 br/
 br/
 | Uma nova contribuição foi confirmada para o seu projeto após ter sido finalizado.

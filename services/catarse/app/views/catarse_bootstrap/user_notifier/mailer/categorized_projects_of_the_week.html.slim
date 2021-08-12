@@ -1,10 +1,7 @@
 - user = @notification.user
 - category = @notification.category
 
-- if user.display_name
-    |Olá, #{user.display_name}!
-- else
-    |Olá!
+= render partial: 'user_notifier/mailer/greetings', locals: { user: user }
 br/
 br/
 | Novidades dessa semana na categoria #{category.name_pt} do Catarse

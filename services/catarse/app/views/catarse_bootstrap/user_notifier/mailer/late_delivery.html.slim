@@ -3,10 +3,7 @@
 - email_contact = CatarseSettings[:email_contact]
 
 p
-- if project.user.display_name
-  | Olá, #{project.user.display_name}!
-- else
-  | Olá!
+= render partial: 'user_notifier/mailer/greetings', locals: { user: project.user }
 
 p Em seu projeto #{project.name} você ofereceu recompensas com estimativa de entrega para #{first_deliver}, porém ainda não marcou suas recompensas como enviadas para os seus apoiadores.
 

@@ -4,10 +4,7 @@
 - project_link = edit_project_url(project)
 - company_name = CatarseSettings[:company_name]
 
-- if user.decorate.display_name
-  |Olá, #{user.decorate.display_name}!
-- else
-  |Olá!
+= render partial: 'user_notifier/mailer/greetings', locals: { user: user.decorate }
 br/
 br/
 | <strong>O projeto #{link_to project.name, project_link, target: '__blank'} está no ar e já pode receber apoios!</strong>
