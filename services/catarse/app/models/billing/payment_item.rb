@@ -16,10 +16,22 @@ module Billing
     validates :payable_id, presence: true
     validates :payable_type, presence: true
 
-    validates :payable_id, uniqueness: { scope: %i[payable_type payment_id] }
+    validates :payable_id, uniqueness: { scope: %i[payable_type payment_id], case_sensitive: false }
     validate :payment_user_matches_payable_user
 
     validates :payable_type, inclusion: { in: ALLOWED_PAYABLE_TYPES }
+
+    delegate :settle!, :cancel!, :refund!, :chargeback!, to: :state_machine
+
+    def subscription?
+      payable_type == 'Membership::Subscription'
+    end
+
+    def contribution?
+      payable_type == 'Contribution'
+    end
+
+    private
 
     def payment_user_matches_payable_user
       return if payment.blank? || payable.blank? || payment.user_id == payable.user_id

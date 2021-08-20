@@ -4,20 +4,6 @@ module Billing
   class PaymentStateMachine
     include Statesman::Machine
 
-    MAP_TO_PAYMENT_ITEM_STATE = {
-      created: :pending,
-      waiting_payment: :pending,
-      authorized: :pending,
-      approved_on_antifraud: :pending,
-      declined_on_antifraud: :pending,
-      waiting_review: :pending,
-      paid: :paid,
-      expired: :canceled,
-      refused: :canceled,
-      refunded: :refunded,
-      charged_back: :charged_back
-    }.with_indifferent_access.freeze
-
     state :created, initial: true
     state :waiting_payment
     state :authorized

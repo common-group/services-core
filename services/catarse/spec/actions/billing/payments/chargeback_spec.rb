@@ -24,6 +24,8 @@ RSpec.describe Billing::Payments::Chargeback, type: :action do
 
     let(:payment) { create(:billing_payment, :paid) }
 
+    before { payment.items.each { |item| allow(item).to receive(:chargeback!) } }
+
     context 'when payment state cannot transition to charged_back' do
       before { allow(payment).to receive(:can_transition_to?).with(:charged_back).and_return(false) }
 
@@ -49,10 +51,10 @@ RSpec.describe Billing::Payments::Chargeback, type: :action do
         expect(payment.reload).to be_in_state(:charged_back)
       end
 
-      it 'transitions payment items state to charged_back' do
-        result
+      it 'chargebacks payment items' do
+        expect(payment.items).to all(receive(:chargeback!))
 
-        expect(payment.reload.items).to all(be_in_state(:charged_back))
+        result
       end
     end
 
