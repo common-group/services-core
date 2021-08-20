@@ -11,7 +11,7 @@ module Billing
 
         ActiveRecord::Base.transaction do
           payment.transition_to!(:paid, metadata)
-          payment.items.each { |i| i.transition_to!(:paid) }
+          payment.items.each { |i| i.settle! }
         end
       end
     end

@@ -24,6 +24,8 @@ RSpec.describe Billing::Payments::Settle, type: :action do
 
     let(:payment) { create(:billing_payment, :authorized) }
 
+    before { payment.items.each { |item| allow(item).to receive(:settle!) } }
+
     context 'when payment state cannot transition to paid' do
       before { allow(payment).to receive(:can_transition_to?).with(:paid).and_return(false) }
 
@@ -49,10 +51,10 @@ RSpec.describe Billing::Payments::Settle, type: :action do
         expect(payment.reload).to be_in_state(:paid)
       end
 
-      it 'transitions payment items state to paid' do
-        result
+      it 'settle payment items' do
+        expect(payment.items).to all(receive(:settle!))
 
-        expect(payment.reload.items).to all(be_in_state(:paid))
+        result
       end
     end
 
