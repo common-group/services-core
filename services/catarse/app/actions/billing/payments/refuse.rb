@@ -11,7 +11,7 @@ module Billing
 
         ActiveRecord::Base.transaction do
           payment.transition_to!(:refused, metadata)
-          payment.items.each { |i| i.transition_to!(:canceled) }
+          payment.items.each { |i| i.cancel! }
         end
       end
     end

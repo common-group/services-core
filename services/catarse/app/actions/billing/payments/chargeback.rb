@@ -11,7 +11,7 @@ module Billing
 
         ActiveRecord::Base.transaction do
           payment.transition_to!(:charged_back, metadata)
-          payment.items.each { |i| i.transition_to!(:charged_back) }
+          payment.items.each { |i| i.chargeback! }
         end
       end
     end
