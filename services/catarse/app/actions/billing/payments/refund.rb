@@ -11,7 +11,7 @@ module Billing
 
         ActiveRecord::Base.transaction do
           payment.transition_to!(:refunded, metadata)
-          payment.items.each { |i| i.transition_to!(:refunded) }
+          payment.items.each { |i| i.refund! }
         end
       end
     end

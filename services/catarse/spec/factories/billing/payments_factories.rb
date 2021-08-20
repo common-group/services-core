@@ -1,5 +1,19 @@
 # frozen_string_literal: true
 
+PAYMENT_ITEM_FACTORY_STATES = {
+  created: :pending,
+  waiting_payment: :pending,
+  authorized: :pending,
+  approved_on_antifraud: :pending,
+  declined_on_antifraud: :pending,
+  waiting_review: :pending,
+  paid: :paid,
+  expired: :canceled,
+  refused: :canceled,
+  refunded: :refunded,
+  charged_back: :charged_back
+}.freeze
+
 FactoryBot.define do
   factory :billing_payment, class: 'Billing::Payment' do
     association :user
@@ -46,14 +60,12 @@ FactoryBot.define do
 
     transient do
       payment_items do
-        build_list(:billing_payment_item, 2, payment: instance)
+        build_list(:billing_payment_item, 2, PAYMENT_ITEM_FACTORY_STATES[state.to_sym], payment: instance)
       end
     end
 
     after :build do |payment, evaluator|
       payment_items = evaluator.payment_items
-      item_state = Billing::PaymentStateMachine::MAP_TO_PAYMENT_ITEM_STATE[payment.state]
-      payment_items.each { |i| i.state = item_state }
       payment.amount_cents = payment_items.sum(&:amount_cents)
       payment.shipping_fee_cents = payment_items.sum(&:shipping_fee_cents)
       payment.total_amount_cents = payment_items.sum(&:total_amount_cents) + payment.payment_method_fee_cents

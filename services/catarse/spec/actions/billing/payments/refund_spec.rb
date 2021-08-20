@@ -24,6 +24,8 @@ RSpec.describe Billing::Payments::Refund, type: :action do
 
     let(:payment) { create(:billing_payment, :paid) }
 
+    before { payment.items.each { |item| allow(item).to receive(:refund!) } }
+
     context 'when payment state cannot transition to refunded' do
       before { allow(payment).to receive(:can_transition_to?).with(:refunded).and_return(false) }
 
@@ -49,10 +51,10 @@ RSpec.describe Billing::Payments::Refund, type: :action do
         expect(payment.reload).to be_in_state(:refunded)
       end
 
-      it 'transitions payment items state to refunded' do
-        result
+      it 'refunds payment items' do
+        expect(payment.items).to all(receive(:refund!))
 
-        expect(payment.reload.items).to all(be_in_state(:refunded))
+        result
       end
     end
 

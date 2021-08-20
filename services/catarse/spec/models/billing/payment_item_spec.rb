@@ -60,4 +60,42 @@ RSpec.describe Billing::PaymentItem, type: :model do
       end
     end
   end
+
+  describe 'Delegations' do
+    %i[settle! cancel! refund! chargeback!].each do |method|
+      it { is_expected.to delegate_method(method).to(:state_machine) }
+    end
+  end
+
+  describe '#subscription?' do
+    subject { described_class.new(payable_type: payable_type) }
+
+    context 'when payable type is Membership::Subscription' do
+      let(:payable_type) { 'Membership::Subscription' }
+
+      it { is_expected.to be_subscription }
+    end
+
+    context 'when payable type isn`t Membership::Subscription' do
+      let(:payable_type) { (described_class::ALLOWED_PAYABLE_TYPES - ['Membership::Subscription']).sample }
+
+      it { is_expected.not_to be_subscription }
+    end
+  end
+
+  describe '#contribution?' do
+    subject { described_class.new(payable_type: payable_type) }
+
+    context 'when payable type is Contribution' do
+      let(:payable_type) { 'Contribution' }
+
+      it { is_expected.to be_contribution }
+    end
+
+    context 'when payable type isn`t Contribution' do
+      let(:payable_type) { (described_class::ALLOWED_PAYABLE_TYPES - ['Contribution']).sample }
+
+      it { is_expected.not_to be_contribution }
+    end
+  end
 end

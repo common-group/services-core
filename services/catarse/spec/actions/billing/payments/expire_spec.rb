@@ -24,6 +24,8 @@ RSpec.describe Billing::Payments::Expire, type: :action do
 
     let(:payment) { create(:billing_payment, :waiting_payment) }
 
+    before { payment.items.each { |item| allow(item).to receive(:cancel!) } }
+
     context 'when payment state cannot transition to expired' do
       before { allow(payment).to receive(:can_transition_to?).with(:expired).and_return(false) }
 
@@ -49,10 +51,10 @@ RSpec.describe Billing::Payments::Expire, type: :action do
         expect(payment.reload).to be_in_state(:expired)
       end
 
-      it 'transitions payment items state to canceled' do
-        result
+      it 'cancels payment items' do
+        expect(payment.items).to all(receive(:cancel!))
 
-        expect(payment.reload.items).to all(be_in_state(:canceled))
+        result
       end
     end
 
