@@ -1,0 +1,92 @@
+- fiscal_data ||= @notification.fiscal_data
+- project = fiscal_data.last.project
+- user = fiscal_data.last.user
+- finished_date = fiscal_data.last.end_date.strftime('%d/%m/%Y')
+
+center
+  h1 style="line-height: 5px" INFORME DE RENDIMENTOS
+
+hr/
+
+br/
+p style="margin:0;"
+  span style="font-weight:bold;" Projeto:
+  span #{project.name}
+p style="margin:0;"
+  span style="font-weight:bold;" Beneficiário:
+  span #{user.name}
+p style="margin:0;"
+  span style="font-weight:bold;" CPF/CNPJ:
+  span #{user.cpf}
+
+
+- unless fiscal_data.sum(:total_amount_to_pf_cents).zero?
+  h3 PESSOAS FÍSICAS:
+  table style="border: 1px solid;width:100%;border-collapse: collapse;"
+    tr
+      td style="border: 1px solid;text-align:center;font-weight:bold;" INTERVALO
+      td style="border: 1px solid;text-align:center;font-weight:bold;" VALOR
+    - fiscal_data.each do |fiscal|
+      tr
+        td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+          span #{fiscal.begin_date.strftime('%d/%m/%Y')} - #{fiscal.end_date.strftime('%d/%m/%Y')}
+        td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+          span #{number_to_currency fiscal.total_amount_to_pf_cents, precision: 2}
+
+- unless fiscal_data.sum(:total_amount_to_pj_cents).zero?
+  h3 PESSOAS JURÍDICAS:
+  table style="border: 1px solid;width:100%;border-collapse: collapse;"
+    tr
+      td style="border: 1px solid;text-align:center;font-weight:bold;" INTERVALO
+      td style="border: 1px solid;text-align:center;font-weight:bold;" VALOR
+    - fiscal_data.each do |fiscal|
+      tr
+        td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+          span #{fiscal.begin_date.strftime('%d/%m/%Y')} - #{fiscal.end_date.strftime('%d/%m/%Y')}
+        td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+          span #{number_to_currency fiscal.total_amount_to_pj_cents, precision: 2}
+
+h3 DISCRIMINAÇÃO DOS RENDIMENTOS:
+
+table style="border: 1px solid;width:100%;border-collapse: collapse;"
+  tr
+    td style="border: 1px solid;text-align:center;font-weight:bold;" Valor Arrecadado
+    td style="border: 1px solid;text-align:center;font-weight:bold;"
+      span #{number_to_currency fiscal_data.sum(:total_amount_to_pf_cents) + fiscal_data.sum(:total_amount_to_pj_cents), precision: 2}
+  tr
+    td style="border: 1px solid;text-align:left;vertical-align: middle;white-space: nowrap;"
+      span Meio de Pagamento (-)
+    td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+      span #{number_to_currency fiscal_data.sum(:total_gateway_fee_cents), precision: 2}
+
+  tr
+    td style="border: 1px solid;text-align:left;vertical-align: middle;white-space: nowrap;"
+      span Custo do Antifraude (-)
+    td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+      span #{number_to_currency fiscal_data.sum(:total_antifraud_fee_cents), precision: 2}
+  tr
+    td style="border: 1px solid;text-align:left;vertical-align: middle;white-space: nowrap;"
+      span Taxa Líquida Catarse (-)
+    td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+      span #{number_to_currency -fiscal_data.sum(:total_catarse_fee_cents) - (fiscal_data.sum(:total_gateway_fee_cents) || 0) - (fiscal_data.sum(:total_antifraud_fee_cents) || 0) , precision: 2}
+  - unless fiscal_data.sum(:total_irrf_cents).zero?
+    tr
+      td style="border: 1px solid;text-align:left;vertical-align: middle;white-space: nowrap;"
+        span Retenção IRRF (+)
+      td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+        span #{number_to_currency fiscal_data.sum(:total_irrf_cents), precision: 2}
+  tr
+    td style="border: 1px solid;text-align:left;vertical-align: middle;white-space: nowrap;"
+      span style="font-weight:bold;"
+        span Repasse líquido (#{(1-project.service_fee)*100}%
+        - unless fiscal_data.sum(:total_irrf_cents).zero?
+          span + Retenções
+        span ) (=)
+    td style="border: 1px solid;text-align:center;vertical-align: middle;white-space: nowrap;"
+      span #{number_to_currency fiscal_data.sum(:total_amount_to_pf_cents) + fiscal_data.sum(:total_amount_to_pj_cents) -fiscal_data.sum(:total_catarse_fee_cents) - (fiscal_data.sum(:total_gateway_fee_cents) || 0) - (fiscal_data.sum(:total_antifraud_fee_cents) || 0), precision: 2}
+
+br/
+p style="text-align:right;" São Paulo #{finished_date}
+
+p style="margin:0;" GRUPO COMUM CONSULTORIA E INTERMEDIAÇÃO DE NEGÓCIOS
+p style="margin:0;" CNPJ 14.512.425/0001-94
