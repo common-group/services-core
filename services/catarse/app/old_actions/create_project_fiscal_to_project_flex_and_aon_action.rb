@@ -9,7 +9,7 @@ class CreateProjectFiscalToProjectFlexAndAonAction
 
   def call
     @project_data = new_project_data
-    unless @project_data.total_amount_cents.zero? && @project_data.total_chargeback_cost_cents.zero?
+    if @project_data.total_amount_to_pf_cents.positive? || @project_data.total_amount_to_pj_cents.positive?
       @project_data.save!
       @project_data
     end
@@ -23,20 +23,45 @@ class CreateProjectFiscalToProjectFlexAndAonAction
     ProjectFiscal.new(
       user_id: @project.user_id,
       project_id: @project.id,
-      total_amount_cents: total_amount,
+      total_amount_to_pf_cents: total_amount_to_pj,
+      total_amount_to_pj_cents: total_amount_to_pf,
       total_catarse_fee_cents: total_catarse_fee,
       total_gateway_fee_cents: total_geteway_fee('paid'),
       total_antifraud_fee_cents: total_antifraud_fee('paid'),
       total_chargeback_cost_cents: total_chargeback_cost,
+      total_irrf_cents: total_irrf,
       begin_date: begin_date,
       end_date: end_date
     )
   end
 
-  def total_amount
-    query = Payment.joins(:contribution).where(contribution: { project_id: @project.id }, state: 'paid')
+  def total_amount_to_pj
+    query = Payment.joins(contribution: :user).where(
+      contribution: { project_id: @project.id },
+      user: { account_type: %w[pj mei] }, state: 'paid'
+    )
 
     time_interval(query, 'payments', 'paid').sum(:value)
+  end
+
+  def total_amount_to_pf
+    query = Payment.joins(contribution: :user).where(
+      contribution: { project_id: @project.id },
+      user: { account_type: 'pf' }, state: 'paid'
+    )
+
+    time_interval(query, 'payments', 'paid').sum(:value)
+  end
+
+  def total_irrf
+    return 0 if total_catarse_fee > 666.66
+
+    query = Payment.joins(contribution: :user).where(
+      contribution: { project_id: @project.id },
+      user: { account_type: %w[pj mei] }, state: 'paid'
+    )
+
+    0.015 * time_interval(query, 'payments', 'paid').sum(:value)
   end
 
   def total_catarse_fee
