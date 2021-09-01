@@ -9,8 +9,8 @@ RSpec.describe CreateProjectFiscalToProjectSubAction, type: :action do
     subject(:result) do
       described_class.new(
         project_id: subscription_project.id,
-        month: Time.zone.now.month,
-        year: Time.zone.now.year
+        month: 6,
+        year: 2020
       ).call
     end
 
@@ -20,7 +20,7 @@ RSpec.describe CreateProjectFiscalToProjectSubAction, type: :action do
         create(:confirmed_contribution, value: value, project: subscription_project),
         create(:confirmed_contribution, value: value, project: subscription_project),
         create(:confirmed_contribution, value: value, project: subscription_project,
-          created_at: Time.zone.now - 60.days
+          created_at: '04/04/2020'.to_date
         ),
         create(:contribution, value: value, project: subscription_project)
       ]
@@ -31,25 +31,25 @@ RSpec.describe CreateProjectFiscalToProjectSubAction, type: :action do
         contribution[1].payments.last,
         contribution[2].payments.last,
         create(:payment, state: 'chargeback', contribution: contribution[3],
-          value: value, created_at: Time.zone.yesterday
+          value: value, created_at: '04/06/2020'.to_date
         )
       ]
     end
     let!(:antifraud) do
       [
-        create(:antifraud_analysis, payment: payment[0], created_at: Time.zone.yesterday),
-        create(:antifraud_analysis, payment: payment[1], created_at: Time.zone.yesterday),
-        create(:antifraud_analysis, payment: payment[2], created_at: Time.zone.now - 60.days),
-        create(:antifraud_analysis, payment: contribution[3].payments.last, created_at: Time.zone.yesterday)
+        create(:antifraud_analysis, payment: payment[0], created_at: '28/06/2020'.to_date),
+        create(:antifraud_analysis, payment: payment[1], created_at: '11/06/2020'.to_date),
+        create(:antifraud_analysis, payment: payment[2], created_at: '04/04/2020'.to_date),
+        create(:antifraud_analysis, payment: contribution[3].payments.last, created_at: '06/06/2020'.to_date)
       ]
     end
 
     before do
       contribution[0].user.update(account_type: 'pj')
       contribution[1].user.update(account_type: 'pf')
-      contribution[0].payments.last.update(created_at: Time.zone.yesterday)
-      contribution[1].payments.last.update(created_at: Time.zone.yesterday)
-      contribution[2].payments.last.update(created_at: Time.zone.now - 60.days)
+      contribution[0].payments.last.update(created_at: '21/06/2020'.to_date)
+      contribution[1].payments.last.update(created_at: '07/06/2020'.to_date)
+      contribution[2].payments.last.update(created_at: '04/04/2020'.to_date)
     end
 
     it 'returns project fiscals attributes' do
