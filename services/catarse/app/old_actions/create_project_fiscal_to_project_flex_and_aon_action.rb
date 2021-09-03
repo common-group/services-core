@@ -23,8 +23,8 @@ class CreateProjectFiscalToProjectFlexAndAonAction
     ProjectFiscal.new(
       user_id: @project.user_id,
       project_id: @project.id,
-      total_amount_to_pf_cents: total_amount_to_pj,
-      total_amount_to_pj_cents: total_amount_to_pf,
+      total_amount_to_pf_cents: total_amount_to_pf,
+      total_amount_to_pj_cents: total_amount_to_pj,
       total_catarse_fee_cents: total_catarse_fee,
       total_gateway_fee_cents: total_geteway_fee('paid'),
       total_antifraud_fee_cents: total_antifraud_fee('paid'),

@@ -52,8 +52,8 @@ RSpec.describe CreateProjectFiscalToProjectFlexAndAonAction, type: :action do
         'user_id' => project.user_id,
         'project_id' => project.id,
         'total_irrf_cents' => (0.015 * payment[1].value).to_i,
-        'total_amount_to_pj_cents' => (payment[1].value + payment[1].value).to_i,
-        'total_amount_to_pf_cents' => payment[0].value.to_i,
+        'total_amount_to_pj_cents' => payment[1].value.to_i,
+        'total_amount_to_pf_cents' => (payment[0].value + payment[2].value).to_i,
         'total_catarse_fee_cents' => (project.service_fee *
           (payment[2].value + payment[1].value + payment[0].value)).to_i,
         'total_gateway_fee_cents' => (payment[2].gateway_fee + payment[1].gateway_fee + payment[0].gateway_fee).to_i,
