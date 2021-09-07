@@ -23,6 +23,13 @@ RSpec.describe Contribution, type: :model do
     it { is_expected.to belong_to(:user) }
     it { is_expected.to belong_to(:reward).optional }
     it { is_expected.to belong_to(:address).optional }
+
+    it do
+      expect(described_class.new).to have_many(:payment_items)
+        .class_name('Billing::PaymentItem')
+        .with_primary_key(:uuid_ref)
+        .dependent(:destroy)
+    end
   end
 
   describe 'Validations' do

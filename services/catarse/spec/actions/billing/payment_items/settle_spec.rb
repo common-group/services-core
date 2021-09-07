@@ -50,7 +50,7 @@ RSpec.describe Billing::PaymentItems::Settle, type: :action do
     context 'with subscription as payable' do
       let(:payment_item) { create(:billing_payment_item, :subscription, :pending) }
 
-      it 'activates subscription' do
+      pending 'confirms payment' do
         result
 
         expect(payment_item.payable.reload).to be_in_state(:active)

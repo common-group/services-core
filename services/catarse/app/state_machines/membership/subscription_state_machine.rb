@@ -12,7 +12,7 @@ module Membership
     state :deleted
 
     transition from: :started, to: %i[active deleted]
-    transition from: :active, to: %i[canceling inactive]
+    transition from: :active, to: %i[canceling inactive active]
     transition from: :canceling, to: %i[canceled]
     transition from: :inactive, to: %i[active]
 

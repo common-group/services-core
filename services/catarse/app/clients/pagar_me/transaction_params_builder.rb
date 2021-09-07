@@ -30,7 +30,7 @@ module PagarMe
         amount: payment.total_amount_cents,
         installments: payment.installments_count,
         async: false,
-        postback_url: 'https://example.com'
+        postback_url: 'https://example.com' # TODO: get from settings
       }
     end
 

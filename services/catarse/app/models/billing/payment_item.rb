@@ -9,6 +9,9 @@ module Billing
     belongs_to :payment, class_name: 'Billing::Payment'
     belongs_to :payable, polymorphic: true
 
+    scope :subscriptions, -> { where(payable_type: 'Membership::Subscriptions') }
+    scope :contributions, -> { where(payable_type: 'Contribution') }
+
     monetize :amount_cents, numericality: { greater_than_or_equal_to: 1 }
     monetize :shipping_fee_cents, numericality: { greater_than_or_equal_to: 0 }
     monetize :total_amount_cents, numericality: { greater_than_or_equal_to: 1 }

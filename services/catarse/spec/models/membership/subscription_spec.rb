@@ -10,6 +10,26 @@ RSpec.describe Membership::Subscription, type: :model do
     it { is_expected.to belong_to(:user) }
     it { is_expected.to belong_to(:tier).class_name('Membership::Tier') }
     it { is_expected.to belong_to(:billing_option).class_name('Membership::BillingOption') }
+    it { is_expected.to belong_to(:credit_card).class_name('Billing::CreditCard').optional }
+    it { is_expected.to belong_to(:shipping_address).class_name('Shared::Address').optional }
+
+    it { is_expected.to have_many(:payment_items).class_name('Billing::PaymentItem').dependent(:restrict_with_error) }
+  end
+
+  describe 'Configurations' do
+    it 'setups payment_method with Billing::PaymentMethods enum' do
+      expect(described_class.enumerations).to include(payment_method: Billing::PaymentMethods)
+    end
+  end
+
+  describe 'Scopes' do
+    describe '#pending_charge' do
+      it 'returns subscriptions pending charge' do
+        expect(Membership::Subscriptions::PendingChargeQuery).to receive(:call)
+
+        described_class.pending_charge
+      end
+    end
   end
 
   describe 'Validations' do
