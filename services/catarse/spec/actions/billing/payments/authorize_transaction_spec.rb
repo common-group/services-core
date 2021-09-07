@@ -24,7 +24,7 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
-    let(:payment) { create(:billing_payment, :created, :credit_card) }
+    let(:payment) { create(:simple_payment, :created, credit_card: nil) }
     let(:pagar_me_client) { PagarMe::Client.new }
     let(:transaction_params) { PagarMe::TransactionParamsBuilder.new(payment: payment).build }
     let(:gateway_response) do
@@ -122,7 +122,7 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
     end
 
     context 'when payment already has a credit card' do
-      let(:payment) { create(:billing_payment, :created, :with_credit_card) }
+      let(:payment) { create(:simple_payment, :created) }
 
       it 'doesn`t create credit card' do
         expect { result }.not_to change(Billing::CreditCard, :count)
@@ -148,9 +148,7 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
         payment.update!(credit_card_id: nil)
         Billing::CreditCard.create(
           attributes_for(:billing_credit_card).merge(
-            gateway: payment.gateway,
-            user_id: create(:user).id,
-            gateway_id: gateway_response['card']['id']
+            gateway: payment.gateway, user_id: create(:user).id, gateway_id: gateway_response['card']['id']
           )
         )
         gateway_response['card']['id'] = credit_card.gateway_id

@@ -1,10 +1,10 @@
 class CreateIntegrationsWebhookStateTransitions < ActiveRecord::Migration[6.1]
   def change
-    create_table :integrations_webhook_state_transitions, id: :uuid do |t|
+    create_table :integrations_webhook_state_transitions do |t|
+      t.references :webhook, null: false, foreign_key: { on_delete: :cascade, to_table: :integrations_webhooks }
       t.string :to_state, null: false
       t.jsonb :metadata, default: {}
       t.integer :sort_key, null: false
-      t.references :webhook, null: false, foreign_key: { to_table: :integrations_webhooks }, type: :uuid
       t.boolean :most_recent, null: false
 
       t.timestamps

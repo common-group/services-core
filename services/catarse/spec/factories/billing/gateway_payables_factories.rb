@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :billing_gateway_payable, class: 'Billing::GatewayPayable' do
-    association :payment, factory: :billing_payment
+    association :payment, factory: :simple_payment
     gateway_id { Faker::Internet.uuid }
     state { Faker::Lorem.word }
     amount { Faker::Number.number(digits: 4) }

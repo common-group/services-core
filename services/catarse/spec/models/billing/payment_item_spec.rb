@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Billing::PaymentItem, type: :model do
-  it_behaves_like 'has state machine'
+  it_behaves_like 'has state machine' do
+    let(:record) { create(:billing_payment_item, :contribution) }
+  end
 
   describe 'Constants' do
     describe 'ALLOWED_PAYABLE_TYPES' do
@@ -23,7 +25,7 @@ RSpec.describe Billing::PaymentItem, type: :model do
     it { is_expected.to validate_presence_of :payable_type }
 
     it do
-      payment_item = create(:billing_payment_item, :subscription)
+      payment_item = create(:billing_payment_item, :contribution)
       expect(payment_item).to validate_uniqueness_of(:payable_id).scoped_to(:payable_type, :payment_id).case_insensitive
     end
 
@@ -64,6 +66,28 @@ RSpec.describe Billing::PaymentItem, type: :model do
   describe 'Delegations' do
     %i[settle! cancel! refund! chargeback!].each do |method|
       it { is_expected.to delegate_method(method).to(:state_machine) }
+    end
+  end
+
+  describe 'Scopes' do
+    describe '.subscriptions' do
+      let!(:sub_payment_item) { create(:billing_payment_item, :subscription) }
+
+      before { create(:billing_payment_item, :contribution) }
+
+      it 'returns payment items where payable is a subscription' do
+        expect(described_class.subscriptions.to_a).to eq [sub_payment_item]
+      end
+    end
+
+    describe '.contributions' do
+      let!(:contribution_payment_item) { create(:billing_payment_item, :contribution) }
+
+      before { create(:billing_payment_item, :subscription) }
+
+      it 'returns payment items where payable is a contribution' do
+        expect(described_class.contributions.to_a).to eq [contribution_payment_item]
+      end
     end
   end
 

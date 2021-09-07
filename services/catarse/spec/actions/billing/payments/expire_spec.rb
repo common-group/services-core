@@ -22,7 +22,7 @@ RSpec.describe Billing::Payments::Expire, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, metadata: { data: 'example' }) }
 
-    let(:payment) { create(:billing_payment, :waiting_payment) }
+    let(:payment) { create(:boleto_payment, :waiting_payment) }
 
     before { payment.items.each { |item| allow(item).to receive(:cancel!) } }
 
@@ -59,7 +59,10 @@ RSpec.describe Billing::Payments::Expire, type: :action do
     end
 
     context 'when state transition cannot be done' do
-      before { payment.items << create(:billing_payment_item, :refunded) }
+      before do
+        create(:billing_payment_item, :refunded, :contribution, payment: payment)
+        payment.reload
+      end
 
       it 'rollbacks transaction' do
         begin

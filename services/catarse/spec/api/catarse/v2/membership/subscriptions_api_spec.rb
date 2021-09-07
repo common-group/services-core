@@ -9,7 +9,7 @@ RSpec.describe Catarse::V2::Membership::SubscriptionsAPI, type: :api do
 
   describe 'POST /v2/membership/subscriptions' do
     let(:subscription) { build(:membership_subscription) }
-    let(:subscription_params) { { billing_option_id: Faker::Internet.uuid, amount_cents: Faker::Number.number } }
+    let(:subscription_params) { { billing_option_id: Faker::Number.number, amount_cents: Faker::Number.number } }
 
     before do
       allow(Membership::Subscriptions::Create).to receive(:result)

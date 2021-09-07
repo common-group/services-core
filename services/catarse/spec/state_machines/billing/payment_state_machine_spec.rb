@@ -32,7 +32,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   context 'when state is created' do
-    let(:payment) { create(:billing_payment, :created) }
+    let(:payment) { create(:simple_payment, :created) }
 
     it 'allows transition to waiting_payment' do
       expect { payment.transition_to!(:waiting_payment) }.not_to raise_error
@@ -48,7 +48,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   context 'when state is waiting_payment' do
-    let(:payment) { create(:billing_payment, :waiting_payment) }
+    let(:payment) { create(:simple_payment, :waiting_payment) }
 
     it 'allows transition to paid' do
       expect { payment.transition_to!(:paid) }.not_to raise_error
@@ -60,7 +60,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   context 'when state is authorized' do
-    let(:payment) { create(:billing_payment, :authorized) }
+    let(:payment) { create(:simple_payment, :authorized) }
 
     it 'allows transition to approved_on_antifraud' do
       expect { payment.transition_to!(:approved_on_antifraud) }.not_to raise_error
@@ -80,7 +80,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   context 'when state is paid' do
-    let(:payment) { create(:billing_payment, :paid) }
+    let(:payment) { create(:simple_payment, :paid) }
 
     it 'allows transition to charged_back' do
       expect { payment.transition_to!(:charged_back) }.not_to raise_error
@@ -92,7 +92,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   context 'when state is waiting_review' do
-    let(:payment) { create(:billing_payment, :waiting_review) }
+    let(:payment) { create(:simple_payment, :waiting_review) }
 
     it 'allows transition to paid' do
       expect { payment.transition_to!(:paid) }.not_to raise_error
@@ -105,7 +105,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
 
   describe '.after_transition' do
     it 'updates payment state to new state' do
-      payment = create(:billing_payment, :created)
+      payment = create(:simple_payment, :created)
       payment.state_machine.transition_to!(:waiting_payment)
 
       expect(payment.reload.state).to eq 'waiting_payment'
@@ -113,7 +113,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#wait_payment!' do
-    subject(:state_machine) { create(:billing_payment, :created).state_machine }
+    subject(:state_machine) { create(:simple_payment, :created).state_machine }
 
     it 'transitions state to waiting_payment' do
       state_machine.wait_payment!
@@ -123,7 +123,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#authorize!' do
-    subject(:state_machine) { create(:billing_payment, :created).state_machine }
+    subject(:state_machine) { create(:simple_payment, :created).state_machine }
 
     it 'transitions state to authorized' do
       state_machine.authorize!
@@ -133,7 +133,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#settle!' do
-    subject(:state_machine) { create(:billing_payment, :authorized).state_machine }
+    subject(:state_machine) { create(:simple_payment, :authorized).state_machine }
 
     it 'calls Billing::Payments::Settle action' do
       expect(Billing::Payments::Settle).to receive(:call).with(payment: state_machine.object, metadata: {})
@@ -143,7 +143,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#refuse!' do
-    subject(:state_machine) { create(:billing_payment, :created).state_machine }
+    subject(:state_machine) { create(:simple_payment, :created).state_machine }
 
     it 'calls Billing::Payments::Refuse action' do
       expect(Billing::Payments::Refuse).to receive(:call).with(payment: state_machine.object, metadata: {})
@@ -153,7 +153,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#approve_on_antifraud!' do
-    subject(:state_machine) { create(:billing_payment, :authorized).state_machine }
+    subject(:state_machine) { create(:simple_payment, :authorized).state_machine }
 
     it 'transitions state to approved_on_antifraud' do
       state_machine.approve_on_antifraud!
@@ -163,7 +163,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#decline_on_antifraud!' do
-    subject(:state_machine) { create(:billing_payment, :authorized).state_machine }
+    subject(:state_machine) { create(:simple_payment, :authorized).state_machine }
 
     it 'transitions state to declined_on_antifraud' do
       state_machine.decline_on_antifraud!
@@ -173,7 +173,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#wait_review!' do
-    subject(:state_machine) { create(:billing_payment, :authorized).state_machine }
+    subject(:state_machine) { create(:simple_payment, :authorized).state_machine }
 
     it 'transitions state to waiting_review' do
       state_machine.wait_review!
@@ -183,7 +183,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#refund!' do
-    subject(:state_machine) { create(:billing_payment, :paid).state_machine }
+    subject(:state_machine) { create(:simple_payment, :paid).state_machine }
 
     it 'calls Billing::Payments::Refund action' do
       expect(Billing::Payments::Refund).to receive(:call).with(payment: state_machine.object, metadata: {})
@@ -193,7 +193,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#chargeback!' do
-    subject(:state_machine) { create(:billing_payment, :paid).state_machine }
+    subject(:state_machine) { create(:simple_payment, :paid).state_machine }
 
     it 'calls Billing::Payments::Chargeback action' do
       expect(Billing::Payments::Chargeback).to receive(:call).with(payment: state_machine.object, metadata: {})
@@ -203,7 +203,7 @@ RSpec.describe Billing::PaymentStateMachine, type: :state_machine do
   end
 
   describe '#expire!' do
-    subject(:state_machine) { create(:billing_payment, :waiting_payment).state_machine }
+    subject(:state_machine) { create(:simple_payment, :waiting_payment).state_machine }
 
     it 'calls Billing::Payments::Expire action' do
       expect(Billing::Payments::Expire).to receive(:call).with(payment: state_machine.object, metadata: {})

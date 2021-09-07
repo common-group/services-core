@@ -13,7 +13,7 @@ RSpec.describe Billing::PaymentBuilder, type: :lib do
     let!(:attributes) do
       base_attributes.merge(
         payables: [{ type: 'Contribution', id: '1' }, { type: 'Subscription', id: '2' }],
-        billing_address_id: create(:shared_address).id
+        billing_address_id: create(:common_address).id
       )
     end
     let(:item_a) { Billing::PaymentItem.new(amount: 20, shipping_fee: 30, total_amount: 50) }
@@ -39,20 +39,20 @@ RSpec.describe Billing::PaymentBuilder, type: :lib do
     end
 
     it 'assigns billing address replica' do
-      replica = instance_double(Shared::Address, id: Faker::Internet.uuid)
-      allow(Shared::AddressReplicator).to receive(:by_id).with(attributes[:billing_address_id]).and_return(replica)
+      replica = instance_double(Common::Address, id: Faker::Number.number)
+      allow(Common::AddressReplicator).to receive(:by_id).with(attributes[:billing_address_id]).and_return(replica)
 
       expect(payment.billing_address_id).to eq replica.id
     end
 
     context 'when shipping address id is present' do
-      before { attributes.merge!(shipping_address_id: create(:shared_address).id) }
+      before { attributes.merge!(shipping_address_id: create(:common_address).id) }
 
       it 'assigns shipping address replica' do
-        replica = instance_double(Shared::Address, id: Faker::Internet.uuid)
+        replica = instance_double(Common::Address, id: Faker::Number.number)
 
-        allow(Shared::AddressReplicator).to receive(:by_id).with(attributes[:billing_address_id]).and_call_original
-        allow(Shared::AddressReplicator).to receive(:by_id).with(attributes[:shipping_address_id]).and_return(replica)
+        allow(Common::AddressReplicator).to receive(:by_id).with(attributes[:billing_address_id]).and_call_original
+        allow(Common::AddressReplicator).to receive(:by_id).with(attributes[:shipping_address_id]).and_return(replica)
 
         expect(payment.shipping_address_id).to eq replica.id
       end

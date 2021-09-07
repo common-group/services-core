@@ -1,7 +1,7 @@
 class CreateBillingPixes < ActiveRecord::Migration[6.1]
   def change
-    create_table :billing_pixes, id: :uuid do |t|
-      t.references :payment, null: false, foreign_key: { to_table: :billing_payments }, type: :uuid
+    create_table :billing_pixes do |t|
+      t.references :payment, null: false, foreign_key: { on_delete: :cascade, to_table: :billing_payments }
       t.string :key, null: false
       t.datetime :expires_at, null: false
 

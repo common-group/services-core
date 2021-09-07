@@ -1,7 +1,7 @@
 class CreateBillingGatewayPayables < ActiveRecord::Migration[6.1]
   def change
-    create_table :billing_gateway_payables, id: :uuid do |t|
-      t.references :payment, null: false, foreign_key: { to_table: :billing_payments }, type: :uuid
+    create_table :billing_gateway_payables do |t|
+      t.references :payment, null: false, foreign_key: { on_delete: :cascade, to_table: :billing_payments }
       t.string :gateway_id, null: false
       t.string :state, null: false
       t.monetize :amount

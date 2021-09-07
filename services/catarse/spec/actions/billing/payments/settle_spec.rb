@@ -22,7 +22,7 @@ RSpec.describe Billing::Payments::Settle, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, metadata: { data: 'example' }) }
 
-    let(:payment) { create(:billing_payment, :authorized) }
+    let(:payment) { create(:simple_payment, :authorized) }
 
     before { payment.items.each { |item| allow(item).to receive(:settle!) } }
 
@@ -59,7 +59,10 @@ RSpec.describe Billing::Payments::Settle, type: :action do
     end
 
     context 'when state transition cannot be done' do
-      before { payment.items << create(:billing_payment_item, :charged_back) }
+      before do
+        create(:billing_payment_item, :contribution, :charged_back, payment: payment)
+        payment.reload
+      end
 
       it 'rollbacks transaction' do
         begin
