@@ -3,7 +3,7 @@
 module Membership
   module Tiers
     class List < Actor
-      input :project_id, type: String
+      input :project_id, type: Integer
 
       output :tiers, type: Enumerable
 

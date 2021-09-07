@@ -24,7 +24,7 @@ RSpec.describe Billing::GatewayPayables::Import, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
-    let(:payment) { create(:billing_payment, installments_count: 1) }
+    let(:payment) { create(:simple_payment, installments_count: 1) }
     let(:pagar_me_client) { PagarMe::Client.new }
 
     before do
@@ -34,7 +34,7 @@ RSpec.describe Billing::GatewayPayables::Import, type: :action do
     end
 
     context 'when payables count is different from payment installments count' do
-      let(:payment) { create(:billing_payment, :credit_card, installments_count: 2) }
+      let(:payment) { create(:simple_payment, installments_count: 2) }
       let(:gateway_response) { [{ foo: :bar }] }
 
       it { is_expected.to be_failure }

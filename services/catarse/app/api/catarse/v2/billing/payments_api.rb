@@ -9,11 +9,11 @@ module Catarse
             requires :payment_method, type: String
             requires :installments_count, type: Integer
 
-            requires :billing_address_id, type: String
-            optional :shipping_address_id, type: String
+            requires :billing_address_id, type: Integer
+            optional :shipping_address_id, type: Integer
 
             requires :payables, type: Array[JSON] do
-              requires :id, type: String
+              requires :id, type: Integer
               requires :type, type: String, values: ::Billing::PaymentItem::ALLOWED_PAYABLE_TYPES
             end
 
@@ -29,7 +29,7 @@ module Catarse
         post '/payments' do
           payment_params = declared(params, include_missing: false)[:payment]
 
-          result = ::Billing::Payments::Checkout.result(user: current_user, attributes: payment_params)
+          result = ::Billing::Payments::Process.result(user: current_user, attributes: payment_params)
 
           result.payment
         end

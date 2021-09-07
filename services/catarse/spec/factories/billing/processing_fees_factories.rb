@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :billing_processing_fee, class: 'Billing::ProcessingFee' do
-    association :payment, factory: :billing_payment
+    association :payment, factory: :simple_payment
     amount { Faker::Number.number(digits: 3) }
     vendor { Billing::ProcessingFeeVendors.list.sample }
   end

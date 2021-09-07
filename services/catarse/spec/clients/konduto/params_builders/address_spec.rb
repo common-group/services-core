@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Konduto::ParamsBuilders::Address, type: :params_builder do
   subject(:params_builder) { described_class.new(address, credit_card) }
 
-  let(:address) { Shared::Address.new(address_attributes) }
+  let(:address) { Common::Address.new(address_attributes) }
   let(:credit_card) { Billing::CreditCard.new(credit_card_attributes) }
   let(:address_attributes) { {} }
   let(:credit_card_attributes) { {} }
@@ -20,7 +20,7 @@ RSpec.describe Konduto::ParamsBuilders::Address, type: :params_builder do
 
   describe '#build' do
     let(:credit_card) { build(:billing_credit_card) }
-    let(:address) { build(:shared_address) }
+    let(:address) { build(:common_address) }
 
     it 'returns all attributes with corresponding methods results' do
       expect(params_builder.build).to eq(

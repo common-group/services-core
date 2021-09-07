@@ -1,78 +1,79 @@
 # frozen_string_literal: true
 
-PAYMENT_ITEM_FACTORY_STATES = {
-  created: :pending,
-  waiting_payment: :pending,
-  authorized: :pending,
-  approved_on_antifraud: :pending,
-  declined_on_antifraud: :pending,
-  waiting_review: :pending,
-  paid: :paid,
-  expired: :canceled,
-  refused: :canceled,
-  refunded: :refunded,
-  charged_back: :charged_back
-}.freeze
-
 FactoryBot.define do
   factory :billing_payment, class: 'Billing::Payment' do
-    association :user
-    association :billing_address, factory: :shared_address
-
-    traits_for_enum :payment_method, Billing::PaymentMethods.list
-    payment_method { Billing::PaymentMethods.list.sample }
-
+    association :user, strategy: :create
+    association :billing_address, factory: :common_address, strategy: :create
     gateway { Billing::Gateways.list.sample }
+    gateway_id { Faker::Internet.uuid }
+    installments_count { 1 }
 
     traits_for_enum :state, Billing::PaymentStateMachine.states
     state { Billing::PaymentStateMachine.states.sample }
 
-    gateway_id { Faker::Internet.uuid }
-
-    credit_card_hash { Faker::Crypto.sha1 if credit_card? }
-    payment_method_fee_cents { Faker::Number.number(digits: 3) }
-    installments_count do
-      if payment_method == Billing::PaymentMethods::CREDIT_CARD
-        (1..6).to_a.sample
-      else
-        1
-      end
+    transient do
+      item_state { BillingFactoriesHelpers.convert_payment_state_to_item_state(state) }
     end
 
-    trait :with_shipping_address do
-      association :shipping_address, factory: :shared_address
-    end
-
-    trait :with_credit_card do
+    trait :credit_card do
       payment_method { Billing::PaymentMethods::CREDIT_CARD }
       credit_card { association :billing_credit_card, user: user }
+      credit_card_hash { Faker::Crypto.sha1 }
+      payment_method_fee_cents { 0 }
     end
 
-    trait :with_boleto do
-      payment_method { Billing::PaymentMethods::BOLETO }
-      boleto { association :billing_boleto }
-    end
-
-    trait :with_pix do
+    trait :pix do
       payment_method { Billing::PaymentMethods::PIX }
-      pix { association :billing_pix }
+      payment_method_fee_cents { 0 }
+      after(:create) { |payment| create(:billing_pix, payment: payment) }
     end
 
-    transient do
-      payment_items do
-        build_list(:billing_payment_item, 2, PAYMENT_ITEM_FACTORY_STATES[state.to_sym], payment: instance)
+    trait :boleto do
+      payment_method { Billing::PaymentMethods::BOLETO }
+      payment_method_fee_cents { Faker::Number.number(digits: 3) }
+      after(:create) { |payment| create(:billing_boleto, payment: payment) }
+    end
+
+    trait :contribution do
+      transient do
+        payables do
+          [create(:contribution, user: user)]
+        end
+      end
+
+      after :build do |payment, evaluator|
+        payment.items = evaluator.payables.map { |p| Billing::PaymentItemBuilder.build(id: p.id, type: p.class.name) }
+        payment.items.each { |i| i.state = evaluator.item_state }
+        payment.amount_cents = payment.items.sum(&:amount_cents)
+        payment.shipping_fee_cents = payment.items.sum(&:shipping_fee_cents)
+        payment.total_amount_cents = payment.items.sum(&:total_amount_cents) + payment.payment_method_fee_cents
       end
     end
 
-    after :build do |payment, evaluator|
-      payment_items = evaluator.payment_items
-      payment.amount_cents = payment_items.sum(&:amount_cents)
-      payment.shipping_fee_cents = payment_items.sum(&:shipping_fee_cents)
-      payment.total_amount_cents = payment_items.sum(&:total_amount_cents) + payment.payment_method_fee_cents
+    trait :subscription do
+      transient do
+        payables do
+          sub_state = BillingFactoriesHelpers.convert_item_state_to_subscription_state(item_state)
+          [create(:membership_subscription, sub_state, user: user)]
+        end
+      end
+
+      after :build do |payment, evaluator|
+        payment.items = evaluator.payables.map { |p| Billing::PaymentItemBuilder.build(id: p.id, type: p.class.name) }
+        payment.items.each { |i| i.state = evaluator.item_state }
+        payment.amount_cents = payment.items.sum(&:amount_cents)
+        payment.shipping_fee_cents = payment.items.sum(&:shipping_fee_cents)
+        payment.total_amount_cents = payment.items.sum(&:total_amount_cents) + payment.payment_method_fee_cents
+      end
     end
 
-    after :create do |payment, evaluator|
-      payment.items.create!(evaluator.payment_items.map(&:attributes))
+    after :create do |payment|
+      payment.items.each(&:save!)
     end
+
+    factory :simple_payment, traits: %i[credit_card contribution]
+    factory :credit_card_payment, traits: %i[credit_card contribution]
+    factory :pix_payment, traits: %i[pix contribution]
+    factory :boleto_payment, traits: %i[boleto contribution]
   end
 end

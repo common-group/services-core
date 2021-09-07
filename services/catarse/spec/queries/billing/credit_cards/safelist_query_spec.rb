@@ -6,12 +6,12 @@ RSpec.describe Billing::CreditCards::SafelistQuery, type: :query do
   subject(:query) { described_class.new }
 
   describe '#call' do
-    let!(:payment) { create(:billing_payment, :paid, :with_credit_card) }
+    let!(:payment) { create(:credit_card_payment, :paid) }
 
     before do
       not_paid_states = Billing::PaymentStateMachine.states - ['paid']
       not_paid_states.each do |state|
-        create(:billing_payment, :with_credit_card, state: state)
+        create(:credit_card_payment, state: state)
       end
     end
 

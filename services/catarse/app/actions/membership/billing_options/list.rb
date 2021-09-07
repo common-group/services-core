@@ -3,7 +3,7 @@
 module Membership
   module BillingOptions
     class List < Actor
-      input :tier_id, type: String
+      input :tier_id, type: Integer
 
       output :billing_options, type: Enumerable
 

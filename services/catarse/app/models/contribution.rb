@@ -8,6 +8,7 @@ class Contribution < ApplicationRecord
   include PgSearch::Model
   include Contribution::CustomValidators
   include Shared::CommonWrapper
+  include Contribution::BillingRelations
 
   belongs_to :project
   belongs_to :reward, optional: true

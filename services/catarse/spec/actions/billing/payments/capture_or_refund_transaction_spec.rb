@@ -31,7 +31,7 @@ RSpec.describe Billing::Payments::CaptureOrRefundTransaction, type: :action do
 
     %i[authorized approved_on_antifraud].each do |payment_state|
       context "when payment state is #{payment_state}" do
-        let(:payment) { create(:billing_payment, :credit_card, payment_state) }
+        let(:payment) { create(:simple_payment, payment_state) }
 
         it 'captures transaction on gateway' do
           expect(pagar_me_client).to receive(:capture_transaction).with(payment.gateway_id)
@@ -42,7 +42,7 @@ RSpec.describe Billing::Payments::CaptureOrRefundTransaction, type: :action do
     end
 
     context 'when payment state is declined_on_antifraud' do
-      let(:payment) { create(:billing_payment, :credit_card, :declined_on_antifraud) }
+      let(:payment) { create(:simple_payment, :declined_on_antifraud) }
 
       it 'refunds transaction on gateway' do
         expect(pagar_me_client).to receive(:refund_transaction).with(payment.gateway_id)

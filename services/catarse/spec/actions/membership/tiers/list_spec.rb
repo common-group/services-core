@@ -6,7 +6,7 @@ RSpec.describe Membership::Tiers::List, type: :action do
   describe 'Inputs' do
     subject { described_class.inputs }
 
-    it { is_expected.to include(project_id: { type: String }) }
+    it { is_expected.to include(project_id: { type: Integer }) }
   end
 
   describe 'Outputs' do
@@ -21,7 +21,7 @@ RSpec.describe Membership::Tiers::List, type: :action do
     context 'when project exists' do
       let(:project) { create(:project) }
       let!(:tiers) { create_list(:membership_tier, 3, project: project) }
-      let(:project_id) { project.id.to_s }
+      let(:project_id) { project.id }
 
       it { is_expected.to be_success }
 
@@ -31,7 +31,7 @@ RSpec.describe Membership::Tiers::List, type: :action do
     end
 
     context 'when project doesn`t exist' do
-      let(:project_id) { 'not-found' }
+      let(:project_id) { 99_999_999 }
 
       it { expect { result }.to raise_error(ActiveRecord::RecordNotFound) }
     end

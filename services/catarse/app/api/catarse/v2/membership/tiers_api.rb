@@ -11,7 +11,7 @@ module Catarse
         end
 
         params do
-          requires :project_id, type: String
+          requires :project_id, type: Integer
         end
 
         get '/projects/:project_id/tiers' do
@@ -21,7 +21,7 @@ module Catarse
         end
 
         params do
-          requires :project_id, type: String
+          requires :project_id, type: Integer
           requires :tier, type: Hash do
             requires :name, type: String
             requires :description, type: String
@@ -37,7 +37,7 @@ module Catarse
         end
 
         params do
-          requires :id, type: String
+          requires :id, type: Integer
           requires :tier, type: Hash do
             optional :project_id, type: String
             optional :name, type: String
@@ -54,7 +54,7 @@ module Catarse
         end
 
         params do
-          requires :id, type: String
+          requires :id, type: Integer
         end
 
         delete '/tiers/:id' do

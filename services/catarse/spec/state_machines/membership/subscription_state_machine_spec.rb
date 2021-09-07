@@ -10,46 +10,48 @@ RSpec.describe Membership::SubscriptionStateMachine, type: :state_machine do
   end
 
   describe 'Transitions' do
-    context 'when state is started' do
-      it 'allows transition to active' do
-        subscription = create(:membership_subscription, :started)
+    let(:subscription) { create(:membership_subscription, state) }
 
+    context 'when state is started' do
+      let(:state) { :started }
+
+      it 'allows transition to active' do
         expect { subscription.transition_to!(:active) }.not_to raise_error
       end
 
       it 'allows transition to deleted' do
-        subscription = create(:membership_subscription, :started)
-
         expect { subscription.transition_to!(:deleted) }.not_to raise_error
       end
     end
 
     context 'when state is active' do
-      it 'allows transition to canceling' do
-        subscription = create(:membership_subscription, :active)
+      let(:state) { :active }
 
+      it 'allows transition to canceling' do
         expect { subscription.transition_to!(:canceling) }.not_to raise_error
       end
 
       it 'allows transition to inactive' do
-        subscription = create(:membership_subscription, :active)
-
         expect { subscription.transition_to!(:inactive) }.not_to raise_error
+      end
+
+      it 'allows transition to active' do
+        expect { subscription.transition_to!(:active) }.not_to raise_error
       end
     end
 
     context 'when state is canceling' do
-      it 'allows transition to canceled' do
-        subscription = create(:membership_subscription, :canceling)
+      let(:state) { :canceling }
 
+      it 'allows transition to canceled' do
         expect { subscription.transition_to!(:canceled) }.not_to raise_error
       end
     end
 
     context 'when state is inactive' do
-      it 'allows transition to active' do
-        subscription = create(:membership_subscription, :inactive)
+      let(:state) { :inactive }
 
+      it 'allows transition to active' do
         expect { subscription.transition_to!(:active) }.not_to raise_error
       end
     end

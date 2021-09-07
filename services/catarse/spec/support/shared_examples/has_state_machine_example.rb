@@ -30,9 +30,6 @@ RSpec.shared_examples 'has state machine' do
   describe 'Callbacks' do
     describe '#after_create' do
       it 'creates a state transition' do
-        factory_name = FactoryBot.factories.to_a.find { |f| f.build_class == described_class }.name
-        record = create(factory_name)
-
         expect(record.state_transitions.last.attributes).to include(
           'to_state' => record.state, 'sort_key' => 1, 'most_recent' => true
         )

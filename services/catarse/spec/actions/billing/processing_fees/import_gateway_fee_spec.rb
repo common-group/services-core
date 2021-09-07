@@ -24,7 +24,7 @@ RSpec.describe Billing::ProcessingFees::ImportGatewayFee, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
-    let(:payment) { create(:billing_payment) }
+    let(:payment) { create(:simple_payment) }
     let(:pagar_me_client) { PagarMe::Client.new }
     let(:transaction_data) { { 'cost' => Faker::Number.number(digits: 3) } }
 
