@@ -28,7 +28,7 @@ module Billing
       %i[billing_address_id shipping_address_id].each do |address_attributes|
         next if attributes[address_attributes].blank?
 
-        address_replica = ::Shared::AddressReplicator.by_id(attributes[address_attributes])
+        address_replica = ::Common::AddressReplicator.by_id(attributes[address_attributes])
         attributes[address_attributes] = address_replica.id
       end
     end

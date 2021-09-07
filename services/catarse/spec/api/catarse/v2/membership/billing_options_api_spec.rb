@@ -31,7 +31,7 @@ RSpec.describe Catarse::V2::Membership::BillingOptionsAPI, type: :api do
   end
 
   describe 'POST /v2/membership/tiers/:tier_id/billing_options' do
-    let(:tier_id) { Faker::Internet.uuid }
+    let(:tier_id) { Faker::Number.number }
     let(:billing_option) { build(:membership_billing_option) }
     let(:billing_option_params) { billing_option.attributes.slice('cadence_in_months', 'amount_cents') }
 

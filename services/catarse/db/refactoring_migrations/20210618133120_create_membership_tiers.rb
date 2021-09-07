@@ -1,7 +1,7 @@
 class CreateMembershipTiers < ActiveRecord::Migration[6.1]
   def change
-    create_table :membership_tiers, id: :uuid do |t|
-      t.references :project, null: false, foreign_key: true
+    create_table :membership_tiers do |t|
+      t.references :project, null: false, foreign_key: { on_delete: :cascade }
       t.string :name, null: false, limit: 512
       t.text :description, null: false
       t.text :thumbnail

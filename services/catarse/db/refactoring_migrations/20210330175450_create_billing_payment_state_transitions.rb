@@ -1,10 +1,10 @@
 class CreateBillingPaymentStateTransitions < ActiveRecord::Migration[6.1]
   def change
-    create_table :billing_payment_state_transitions, id: :uuid do |t|
+    create_table :billing_payment_state_transitions do |t|
+      t.references :payment, null: false, foreign_key: { on_delete: :cascade, to_table: :billing_payments }
       t.string :to_state, null: false
       t.jsonb :metadata, default: {}
       t.integer :sort_key, null: false
-      t.references :payment, null: false, foreign_key: { to_table: :billing_payments }, type: :uuid
       t.boolean :most_recent, null: false
 
       t.timestamps

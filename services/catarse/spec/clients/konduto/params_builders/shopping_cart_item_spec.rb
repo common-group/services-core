@@ -18,7 +18,7 @@ RSpec.describe Konduto::ParamsBuilders::ShoppingCartItem, type: :params_builder 
   end
 
   describe '#build' do
-    let(:payment_item) { create(:billing_payment_item) }
+    let(:payment_item) { create(:billing_payment_item, :contribution) }
 
     it 'returns all attributes with corresponding methods results' do
       expect(params_builder.build).to eq(

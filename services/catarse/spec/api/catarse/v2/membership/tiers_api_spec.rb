@@ -9,7 +9,7 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
 
   describe 'GET /v2/membership/projects/:project_id/tiers' do
     let(:tiers) { build_list(:membership_tier, 5) }
-    let(:project_id) { Faker::Internet.uuid }
+    let(:project_id) { Faker::Number.number }
 
     before do
       allow(Membership::Tiers::List).to receive(:result)
@@ -33,7 +33,7 @@ RSpec.describe Catarse::V2::Membership::TiersAPI, type: :api do
 
   describe 'POST /v2/membership/tiers' do
     let(:tier) { build(:membership_tier) }
-    let(:project_id) { Faker::Internet.uuid }
+    let(:project_id) { Faker::Number.number }
     let(:tier_params) { attributes_for(:membership_tier).slice(:project_id, :name, :description).stringify_keys }
 
     before do

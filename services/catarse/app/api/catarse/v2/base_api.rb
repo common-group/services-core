@@ -38,10 +38,10 @@ module Catarse
       end
 
       mount Catarse::V2::Billing::BaseAPI
+      mount Catarse::V2::Common::BaseAPI
       mount Catarse::V2::Integrations::BaseAPI
       mount Catarse::V2::Membership::BaseAPI
       mount Catarse::V2::Portal::BaseAPI
-      mount Catarse::V2::Shared::BaseAPI
     end
   end
 end

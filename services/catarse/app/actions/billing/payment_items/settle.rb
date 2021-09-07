@@ -11,8 +11,17 @@ module Billing
 
         ActiveRecord::Base.transaction do
           payment_item.transition_to!(:paid, metadata)
-          payment_item.payable.transition_to!(:active) if payment_item.subscription?
+          confirm_subscription_payment if payment_item.subscription?
         end
+      end
+
+      private
+
+      def confirm_subscription_payment
+        Membership::Subscriptions::ConfirmPayment.call(
+          subscription: payment_item.payable,
+          payment_item: payment_item
+        )
       end
     end
   end

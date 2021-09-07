@@ -3,14 +3,16 @@
 require 'rails_helper'
 
 RSpec.describe Billing::Payment, type: :model do
-  it_behaves_like 'has state machine'
+  it_behaves_like 'has state machine' do
+    let(:record) { create(:simple_payment) }
+  end
 
   describe 'Relations' do
     subject(:payment) { described_class.new }
 
     it { is_expected.to belong_to :user }
-    it { is_expected.to belong_to(:billing_address).class_name('Shared::Address') }
-    it { is_expected.to belong_to(:shipping_address).class_name('Shared::Address').optional }
+    it { is_expected.to belong_to(:billing_address).class_name('Common::Address') }
+    it { is_expected.to belong_to(:shipping_address).class_name('Common::Address').optional }
     it { is_expected.to belong_to(:credit_card).class_name('Billing::CreditCard').optional }
 
     it { is_expected.to have_one(:pix).class_name('Billing::Pix').dependent(:destroy) }
@@ -38,7 +40,7 @@ RSpec.describe Billing::Payment, type: :model do
     it { is_expected.to validate_presence_of(:gateway) }
 
     it do
-      payment = create(:billing_payment)
+      payment = create(:credit_card_payment)
       expect(payment).to validate_uniqueness_of(:gateway_id).scoped_to(:gateway)
     end
 

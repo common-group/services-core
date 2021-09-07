@@ -6,7 +6,7 @@ RSpec.describe Membership::Tiers::Destroy, type: :action do
   describe 'Inputs' do
     subject { described_class.inputs }
 
-    it { is_expected.to include(id: { type: String }) }
+    it { is_expected.to include(id: { type: Integer }) }
   end
 
   describe 'Outputs' do
@@ -19,7 +19,7 @@ RSpec.describe Membership::Tiers::Destroy, type: :action do
     subject(:result) { described_class.result(id: tier_id) }
 
     context 'when tier doesn`t exist' do
-      let(:tier_id) { 'wrong-id' }
+      let(:tier_id) { 99_999_999 }
 
       it { expect { result }.to raise_error(ActiveRecord::RecordNotFound) }
     end

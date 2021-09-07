@@ -6,7 +6,7 @@ RSpec.describe Membership::BillingOptions::Update, type: :action do
   describe 'Inputs' do
     subject { described_class.inputs }
 
-    it { is_expected.to include(id: { type: String }) }
+    it { is_expected.to include(id: { type: Integer }) }
     it { is_expected.to include(attributes: { type: Hash }) }
   end
 
@@ -20,7 +20,7 @@ RSpec.describe Membership::BillingOptions::Update, type: :action do
     subject(:result) { described_class.result(id: billing_option_id, attributes: attributes) }
 
     context 'when billing_option doesn`t exist' do
-      let(:billing_option_id) { 'wrong-id' }
+      let(:billing_option_id) { 99_999_999 }
       let(:attributes) { {} }
 
       it { expect { result }.to raise_error(ActiveRecord::RecordNotFound) }

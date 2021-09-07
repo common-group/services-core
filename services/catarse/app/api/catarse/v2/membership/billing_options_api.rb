@@ -11,7 +11,7 @@ module Catarse
         end
 
         params do
-          requires :tier_id, type: String
+          requires :tier_id, type: Integer
         end
 
         get '/tiers/:tier_id/billing_options' do
@@ -21,7 +21,7 @@ module Catarse
         end
 
         params do
-          requires :tier_id, type: String
+          requires :tier_id, type: Integer
           requires :billing_option, type: Hash do
             requires :cadence_in_months, type: Integer
             requires :amount_cents, type: Integer
@@ -37,7 +37,7 @@ module Catarse
         end
 
         params do
-          requires :id, type: String
+          requires :id, type: Integer
           requires :billing_option, type: Hash do
             optional :cadence_in_months, type: Integer
             optional :amount_cents, type: Integer
@@ -51,7 +51,7 @@ module Catarse
         end
 
         params do
-          requires :id, type: String
+          requires :id, type: Integer
         end
 
         delete '/billing_options/:id' do

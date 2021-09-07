@@ -7,7 +7,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
     subject(:result) { described_class.new(payment: payment).build }
 
     context 'when payment_method is credit_card with credit card registered' do
-      let(:payment) { create(:billing_payment, :with_credit_card) }
+      let(:payment) { create(:simple_payment) }
 
       it 'returns credit card transaction params with card_id' do
         expect(result).to eq(
@@ -24,7 +24,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
     end
 
     context 'when payment_method is credit_card without credit card registered' do
-      let(:payment) { create(:billing_payment, :credit_card) }
+      let(:payment) { create(:simple_payment, credit_card: nil) }
 
       it 'returns credit card transaction params with card_hash' do
         expect(result).to eq(
@@ -41,7 +41,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
     end
 
     context 'when payment_method is boleto' do
-      let(:payment) { create(:billing_payment, :boleto) }
+      let(:payment) { create(:boleto_payment) }
 
       it 'returns boleto transaction params' do
         expect(result).to eq(
@@ -68,7 +68,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
     end
 
     context 'when payment_method is pix' do
-      let(:payment) { create(:billing_payment, payment_method: 'pix') }
+      let(:payment) { create(:pix_payment) }
 
       it 'returns pix transaction params' do
         expect(result).to eq(

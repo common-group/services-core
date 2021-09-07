@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Integrations::Webhook, type: :model do
-  it_behaves_like 'has state machine'
+  it_behaves_like 'has state machine' do
+    let(:record) { create(:integrations_webhook) }
+  end
 
   describe 'Configurations' do
     it 'setups provider with Integrations::WebhookProviders enum' do

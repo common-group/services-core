@@ -11,7 +11,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
 
   describe 'Transitions' do
     context 'when state is pending' do
-      let(:payment_item) { create(:billing_payment_item, :pending) }
+      let(:payment_item) { create(:billing_payment_item, :contribution, :pending) }
 
       it 'allows transition to paid' do
         expect { payment_item.state_machine.transition_to!(:paid) }.not_to raise_error
@@ -23,7 +23,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
     end
 
     context 'when state is paid' do
-      let(:payment_item) { create(:billing_payment_item, :paid) }
+      let(:payment_item) { create(:billing_payment_item, :contribution, :paid) }
 
       it 'allows transition to refunded' do
         expect { payment_item.state_machine.transition_to!(:refunded) }.not_to raise_error
@@ -36,7 +36,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
   end
 
   describe '#settle!' do
-    subject(:state_machine) { create(:billing_payment_item, :pending).state_machine }
+    subject(:state_machine) { create(:billing_payment_item, :contribution, :pending).state_machine }
 
     it 'calls Billing::Payments::Settle action' do
       expect(Billing::PaymentItems::Settle).to receive(:call).with(payment_item: state_machine.object, metadata: {})
@@ -46,7 +46,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
   end
 
   describe '#cancel!' do
-    subject(:state_machine) { create(:billing_payment_item, :pending).state_machine }
+    subject(:state_machine) { create(:billing_payment_item, :contribution, :pending).state_machine }
 
     it 'calls Billing::Payments::Cancel action' do
       expect(Billing::PaymentItems::Cancel).to receive(:call).with(payment_item: state_machine.object, metadata: {})
@@ -56,7 +56,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
   end
 
   describe '#refund!' do
-    subject(:state_machine) { create(:billing_payment_item, :paid).state_machine }
+    subject(:state_machine) { create(:billing_payment_item, :contribution, :paid).state_machine }
 
     it 'calls Billing::Payments::Refund action' do
       expect(Billing::PaymentItems::Refund).to receive(:call).with(payment_item: state_machine.object, metadata: {})
@@ -66,7 +66,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
   end
 
   describe '#chargeback!' do
-    subject(:state_machine) { create(:billing_payment_item, :paid).state_machine }
+    subject(:state_machine) { create(:billing_payment_item, :contribution, :paid).state_machine }
 
     it 'calls Billing::Payments::Chargeback action' do
       expect(Billing::PaymentItems::Chargeback).to receive(:call).with(payment_item: state_machine.object, metadata: {})
@@ -77,7 +77,7 @@ RSpec.describe Billing::PaymentItemStateMachine, type: :state_machine do
 
   describe '.after_transition' do
     it 'updates payment state to new state' do
-      payment_item = create(:billing_payment_item, :pending)
+      payment_item = create(:billing_payment_item, :contribution, :pending)
       payment_item.state_machine.transition_to!(:paid)
 
       expect(payment_item.reload.state).to eq 'paid'

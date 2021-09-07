@@ -12,18 +12,18 @@ RSpec.describe Catarse::V2::Billing::PaymentsAPI, type: :api do
     let(:payment_params) do
       {
         'payment_method' => payment.payment_method,
-        'billing_address_id' => Faker::Internet.uuid,
+        'billing_address_id' => Faker::Number.number,
         'installments_count' => Faker::Number.number(digits: 1),
         'payables' => [
-          { 'id' => '123', 'type' => 'Contribution' },
-          { 'id' => '456', 'type' => 'Membership::Subscription' }
+          { 'id' => 123, 'type' => 'Contribution' },
+          { 'id' => 456, 'type' => 'Membership::Subscription' }
         ],
         credit_card_hash: Faker::Lorem.word
       }
     end
 
     before do
-      allow(Billing::Payments::Checkout).to receive(:result)
+      allow(Billing::Payments::Process).to receive(:result)
         .with(user: current_user, attributes: payment_params)
         .and_return(ServiceActor::Result.new(payment: payment))
     end

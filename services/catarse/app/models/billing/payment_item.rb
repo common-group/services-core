@@ -7,7 +7,10 @@ module Billing
     ALLOWED_PAYABLE_TYPES = %w[Contribution Membership::Subscription].freeze
 
     belongs_to :payment, class_name: 'Billing::Payment'
-    belongs_to :payable, polymorphic: true
+    belongs_to :payable, polymorphic: true, inverse_of: :payment_items
+
+    scope :subscriptions, -> { where(payable_type: 'Membership::Subscription') }
+    scope :contributions, -> { where(payable_type: 'Contribution') }
 
     monetize :amount_cents, numericality: { greater_than_or_equal_to: 1 }
     monetize :shipping_fee_cents, numericality: { greater_than_or_equal_to: 0 }

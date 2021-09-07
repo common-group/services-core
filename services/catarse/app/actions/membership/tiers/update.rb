@@ -3,7 +3,7 @@
 module Membership
   module Tiers
     class Update < Actor
-      input :id, type: String
+      input :id, type: Integer
       input :attributes, type: Hash
 
       output :tier, type: Membership::Tier

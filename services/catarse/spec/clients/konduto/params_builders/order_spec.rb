@@ -29,7 +29,7 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   end
 
   describe '#build' do
-    let(:payment) { create(:billing_payment, :with_credit_card) }
+    let(:payment) { create(:credit_card_payment) }
 
     it 'returns all attributes with corresponding methods results' do
       expect(params_builder.build).to eq(
@@ -158,7 +158,7 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
 
   describe '#billing' do
     let(:payment_attributes) { { billing_address: billing_address, credit_card: credit_card } }
-    let(:billing_address) { build(:shared_address) }
+    let(:billing_address) { build(:common_address) }
     let(:credit_card) { build(:billing_credit_card) }
     let(:billing_address_params) { Konduto::ParamsBuilders::Address.new(billing_address, credit_card).build }
 
@@ -170,7 +170,7 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   describe '#shipping' do
     context 'when payment has shipping address' do
       let(:payment_attributes) { { shipping_address: shipping_address, credit_card: credit_card } }
-      let(:shipping_address) { build(:shared_address) }
+      let(:shipping_address) { build(:common_address) }
       let(:credit_card) { build(:billing_credit_card) }
       let(:shipping_address_params) { Konduto::ParamsBuilders::Address.new(shipping_address, credit_card).build }
 
@@ -189,7 +189,7 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   end
 
   describe '#shopping_cart' do
-    let(:payment) { create(:billing_payment) }
+    let(:payment) { create(:credit_card_payment) }
     let(:shopping_cart_item_params) do
       payment.items.map { |item| Konduto::ParamsBuilders::ShoppingCartItem.new(item).build }
     end

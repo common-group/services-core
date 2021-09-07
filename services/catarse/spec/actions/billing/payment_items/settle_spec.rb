@@ -50,18 +50,21 @@ RSpec.describe Billing::PaymentItems::Settle, type: :action do
     context 'with subscription as payable' do
       let(:payment_item) { create(:billing_payment_item, :subscription, :pending) }
 
-      it 'activates subscription' do
-        result
+      it 'confirms subscription payment' do
+        expect(Membership::Subscriptions::ConfirmPayment).to receive(:call)
+          .with(subscription: payment_item.payable, payment_item: payment_item)
 
-        expect(payment_item.payable.reload).to be_in_state(:active)
+        result
       end
     end
 
     context 'with contribution as payable' do
       let(:payment_item) { create(:billing_payment_item, :contribution, :pending) }
 
-      it 'doesn`t try to activate contribution' do
-        expect { result }.not_to raise_error
+      it 'doesn`t try to confirm subscription payment' do
+        expect(Membership::Subscriptions::ConfirmPayment).not_to receive(:call)
+
+        result
       end
     end
 

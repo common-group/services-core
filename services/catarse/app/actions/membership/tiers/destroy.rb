@@ -3,7 +3,7 @@
 module Membership
   module Tiers
     class Destroy < Actor
-      input :id, type: String
+      input :id, type: Integer
 
       def call
         tier = Membership::Tier.find(id)
