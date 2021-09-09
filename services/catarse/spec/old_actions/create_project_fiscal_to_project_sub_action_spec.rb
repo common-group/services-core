@@ -56,13 +56,14 @@ RSpec.describe CreateProjectFiscalToProjectSubAction, type: :action do
       expect(result.attributes).to include(
         'user_id' => subscription_project.user_id,
         'project_id' => subscription_project.id,
-        'total_irrf_cents' => (0.015 * payment[1].value).to_i,
-        'total_amount_to_pj_cents' => payment[0].value.to_i,
-        'total_amount_to_pf_cents' => payment[1].value.to_i,
-        'total_catarse_fee_cents' => (subscription_project.service_fee * (payment[0].value + payment[1].value)).to_i,
-        'total_gateway_fee_cents' => (payment[0].gateway_fee + payment[1].gateway_fee).to_i,
-        'total_antifraud_fee_cents' => (antifraud[0].cost + antifraud[1].cost).to_i,
-        'total_chargeback_cost_cents' => (payment[2].gateway_fee + antifraud[2].cost).to_i
+        'total_irrf_cents' => (0.015 * (payment[1].value * 100)).to_i,
+        'total_amount_to_pj_cents' => payment[0].value.to_i * 100,
+        'total_amount_to_pf_cents' => payment[1].value.to_i * 100,
+        'total_catarse_fee_cents' => (subscription_project.service_fee * (payment[0].value +
+          payment[1].value)).to_i * 100,
+        'total_gateway_fee_cents' => (payment[0].gateway_fee + payment[1].gateway_fee).to_i * 100,
+        'total_antifraud_fee_cents' => (antifraud[0].cost + antifraud[1].cost).to_i * 100,
+        'total_chargeback_cost_cents' => (payment[2].gateway_fee + antifraud[2].cost).to_i * 100
       )
     end
   end

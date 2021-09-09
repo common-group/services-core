@@ -17,6 +17,7 @@ RSpec.describe ProjectFiscal, type: :model do
     it { is_expected.to validate_numericality_of(:total_amount_to_pf).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:total_amount_to_pj).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:total_catarse_fee).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:total_antifraud_fee).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:total_gateway_fee).is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:total_irrf).is_greater_than_or_equal_to(0) }
   end
