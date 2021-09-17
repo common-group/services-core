@@ -21,6 +21,9 @@ function _ProjectComingSoonSwitch({
     activate,
     deactivate
 }: ProjectComingSoonSwitchProps) {
+
+    const knowledgeBaseUrl = 'https://suporte.catarse.me/hc/pt-br/articles/4406261323028'
+
     return (
         <div class="project-coming-soon">
 
@@ -41,7 +44,7 @@ function _ProjectComingSoonSwitch({
                                 Sua pré-campanha no Catarse
                             </div>
                             <p class="fontsize-base">
-                                Engaje sua comunidade antes mesmo de publicar seu projeto, com sua página de pré-lançamento no Catarse. <a href="#" class="alt-link">Saiba mais</a>
+                                Engaje sua comunidade antes mesmo de publicar seu projeto, com sua página de pré-lançamento no Catarse. <a target="_blank" href={knowledgeBaseUrl} class="alt-link">Saiba mais</a>
                             </p>
                         </div>
                         <div class="w-col w-col-2"></div>

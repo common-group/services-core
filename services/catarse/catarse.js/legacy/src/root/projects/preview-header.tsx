@@ -45,17 +45,19 @@ const PreviewHeaderComingSoonLandingPage = withHooks<PreviewHeaderComingSoonLand
 function _PreviewHeaderComingSoonLandingPage({ project, comingSoonIntegration, onSelectPreview }: PreviewHeaderComingSoonLandingPageProps) {
 
     const baseUrl = `${location.protocol}//${location.host}`
-    const comingSoonLandingPageUrl = `${baseUrl}/${project.permalink}${location.hash}`
-    const permalinkUrl = `${baseUrl}/${comingSoonIntegration.data.draft_url}${location.hash}`
+    const comingSoonLandingPageUrl = `${baseUrl}/${project.permalink}`
+    const permalinkUrl = `${baseUrl}/${comingSoonIntegration.data.draft_url}`
     const [viewSelected, setViewSelected] = useState(PreviewHeaderComingSoonLandingPageViewSelected.ComingSoonLandingPage)
-
-    const permalink = location.pathname.replace(/\/(.*)/, '$1')
+    const permalink = location.pathname.replace(/\/(.*)#?(.*)/g, '$1')
+    const knowledgeBaseUrl = 'https://suporte.catarse.me/hc/pt-br/articles/4406261323028#links_lp'
 
     useEffect(() => {
         if (permalink === project.permalink) {
             selectPreview(PreviewHeaderComingSoonLandingPageViewSelected.ComingSoonLandingPage)
         } else if (permalink === comingSoonIntegration?.data?.draft_url) {
             selectPreview(PreviewHeaderComingSoonLandingPageViewSelected.DraftPage)
+        } else {
+            selectPreview(PreviewHeaderComingSoonLandingPageViewSelected.ComingSoonLandingPage)
         }
     }, [permalink])
 
@@ -82,7 +84,7 @@ function _PreviewHeaderComingSoonLandingPage({ project, comingSoonIntegration, o
                             <div class="fontsize-small u-text-center">
                                 Seu projeto possui esses dois links, que podem ser usados ao mesmo
                                 tempo. Em ambos os links, as pessoas podem se cadastrar para receber um email quando o seu projeto for
-                                publicado <a href="#" class="alt-link">Saiba mais</a>.
+                                publicado <a target="_blank" href={knowledgeBaseUrl} class="alt-link">Saiba mais</a>.
                                 <br />
                             </div>
                         </div>

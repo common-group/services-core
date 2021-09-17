@@ -28,12 +28,14 @@ const I18nScope = _.partial(h.i18nScope, 'projects.edit');
 const projectEdit = {
     oninit: function (vnode) {
         const { project_id, user_id } = vnode.attrs;
-        const project = projectVM.fetchProject(project_id);
-        const c_opts = { project_id, user_id, project };
         const hash = prop(window.location.hash);
-
+        const project = h.RedrawStream();
+        projectVM.fetchProject(project_id, true, project);
         const displayTabContent = () => {
-
+            const c_opts = { project_id, user_id, project };
+            if (hash() !== window.location.hash) {
+              projectVM.fetchProject(project_id, true, project);
+            }
             hash(window.location.hash);
             const isUnpublishedAdmin = !project().is_published || project().is_admin_role;
             const isEmptyHash = _.isEmpty(hash()) || hash() === '#_=_';
