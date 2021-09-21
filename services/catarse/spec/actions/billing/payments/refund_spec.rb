@@ -22,7 +22,7 @@ RSpec.describe Billing::Payments::Refund, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, metadata: { data: 'example' }) }
 
-    let(:payment) { create(:billing_payment, :paid) }
+    let(:payment) { create(:simple_payment, :paid) }
 
     before { payment.items.each { |item| allow(item).to receive(:refund!) } }
 
@@ -59,7 +59,10 @@ RSpec.describe Billing::Payments::Refund, type: :action do
     end
 
     context 'when state transition cannot be done' do
-      before { payment.items << create(:billing_payment_item, :pending) }
+      before do
+        create(:billing_payment_item, :contribution, :pending, payment: payment)
+        payment.reload
+      end
 
       it 'rollbacks transaction' do
         begin

@@ -24,7 +24,7 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, konduto_client: konduto_client) }
 
-    let(:payment) { create(:billing_payment, :authorized, :with_credit_card) }
+    let(:payment) { create(:simple_payment, :authorized) }
     let(:konduto_client) { Konduto::Client.new }
     let(:order_params) { Konduto::ParamsBuilders::Order.new(payment: payment).build }
     let(:antifraud_response) { { 'order' => { 'recommendation' => 'APPROVE' } } }
@@ -89,7 +89,7 @@ RSpec.describe Billing::Payments::AnalyzeTransaction, type: :action do
     include_examples 'process antifraud recommendation', recommendation: 'REVIEW', action: :wait_review!
 
     context 'when konduto response recommendation is NONE' do
-      let(:payment) { create(:billing_payment, :refused, :with_credit_card) }
+      let(:payment) { create(:simple_payment, :refused) }
       let(:antifraud_response) { { 'order' => { 'recommendation' => 'NONE' } } }
 
       it { is_expected.to be_success }

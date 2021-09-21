@@ -12,7 +12,7 @@ module Catarse
 
         params do
           requires :subscription, type: Hash do
-            requires :billing_option_id, type: String
+            requires :billing_option_id, type: Integer
             requires :amount_cents, type: Integer
           end
         end

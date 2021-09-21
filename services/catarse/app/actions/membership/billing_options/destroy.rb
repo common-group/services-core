@@ -3,7 +3,7 @@
 module Membership
   module BillingOptions
     class Destroy < Actor
-      input :id, type: String
+      input :id, type: Integer
 
       def call
         billing_option = Membership::BillingOption.find(id)

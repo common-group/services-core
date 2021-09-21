@@ -23,7 +23,7 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
-    let(:payment) { create(:billing_payment, :created, :boleto) }
+    let(:payment) { create(:billing_payment, :created, :contribution, payment_method: Billing::PaymentMethods::BOLETO) }
     let(:pagar_me_client) { PagarMe::Client.new }
     let(:transaction_params) { PagarMe::TransactionParamsBuilder.new(payment: payment).build }
     let(:gateway_response) do

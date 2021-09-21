@@ -20,7 +20,7 @@ RSpec.describe Billing::Payments::Create, type: :action do
     subject(:result) { described_class.result(user: user, attributes: attributes) }
 
     let(:user) { create(:user) }
-    let(:payment) { build(:billing_payment, user: user, billing_address: create(:shared_address)) }
+    let(:payment) { build(:simple_payment, user: user, billing_address: create(:common_address)) }
     let(:attributes) { Hash[*Faker::Lorem.words(number: 8)] }
     let(:payment_builder) { instance_double(Billing::PaymentBuilder) }
 
@@ -53,7 +53,7 @@ RSpec.describe Billing::Payments::Create, type: :action do
           result
         rescue ActiveRecord::RecordInvalid
           # do nothing
-        end.not_to change(Shared::Address, :count)
+        end.not_to change(Common::Address, :count)
       end
     end
   end

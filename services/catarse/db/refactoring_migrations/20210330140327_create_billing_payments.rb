@@ -1,7 +1,7 @@
 class CreateBillingPayments < ActiveRecord::Migration[6.1]
   def change
-    create_table :billing_payments, id: :uuid do |t|
-      t.references :user, null: false, foreign_key: true
+    create_table :billing_payments do |t|
+      t.references :user, null: false, foreign_key: { on_delete: :restrict }
 
       t.monetize :total_amount
       t.string :payment_method, null: false

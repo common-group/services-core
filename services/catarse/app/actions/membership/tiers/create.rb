@@ -3,7 +3,7 @@
 module Membership
   module Tiers
     class Create < Actor
-      input :project_id, type: String
+      input :project_id, type: Integer
       input :attributes, type: Hash
 
       output :tier, type: Membership::Tier

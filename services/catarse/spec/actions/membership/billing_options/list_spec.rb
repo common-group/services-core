@@ -6,7 +6,7 @@ RSpec.describe Membership::BillingOptions::List, type: :action do
   describe 'Inputs' do
     subject { described_class.inputs }
 
-    it { is_expected.to include(tier_id: { type: String }) }
+    it { is_expected.to include(tier_id: { type: Integer }) }
   end
 
   describe 'Outputs' do
@@ -31,7 +31,7 @@ RSpec.describe Membership::BillingOptions::List, type: :action do
     end
 
     context 'when tier doesn`t exist' do
-      let(:tier_id) { 'not-found' }
+      let(:tier_id) { 99_999_999 }
 
       it { expect { result }.to raise_error(ActiveRecord::RecordNotFound) }
     end

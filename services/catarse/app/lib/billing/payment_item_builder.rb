@@ -2,11 +2,10 @@
 
 module Billing
   class PaymentItemBuilder
-    attr_reader :attributes, :payment_item
+    attr_reader :attributes
 
     def initialize(attributes)
       @attributes = attributes
-      @payment_item = Billing::PaymentItem.new
     end
 
     def self.build(attributes)
@@ -14,6 +13,7 @@ module Billing
     end
 
     def build
+      payment_item = Billing::PaymentItem.new
       payment_item.assign_attributes(base_attributes)
       payment_item
     end
@@ -21,9 +21,8 @@ module Billing
     private
 
     def base_attributes
-      payable = payable_class.find(attributes[:id])
       amount_cents = payable.amount_cents
-      shipping_fee_cents = payable.try(:shipping_fee_cents).to_i
+      shipping_fee_cents = 0 # TODO: calculate shipping fee
       initial_state = Billing::PaymentItemStateMachine.initial_state
       {
         payable: payable,
@@ -34,8 +33,11 @@ module Billing
       }
     end
 
-    def payable_class
-      attributes[:type].constantize
+    def payable
+      @payable ||= begin
+        payable_class = attributes[:type].constantize
+        payable_class.find_by(id: attributes[:id])
+      end
     end
   end
 end

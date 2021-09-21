@@ -1,31 +1,26 @@
 # frozen_string_literal: true
 
-SUBSCRIPTION_FACTORY_STATES = {
-  pending: :started,
-  paid: :active,
-  canceled: :canceled,
-  refunded: :inactive,
-  charged_back: :inactive
-}.freeze
-
 FactoryBot.define do
   factory :billing_payment_item, class: 'Billing::PaymentItem' do
     traits_for_enum :state, Billing::PaymentItemStateMachine.states
-
-    association :payment, factory: :billing_payment
-
-    payable do
-      if Faker::Boolean.boolean # randomize payable between Contribution and Subscription
-        create(:membership_subscription, SUBSCRIPTION_FACTORY_STATES[state.to_sym], user: payment.user)
-      else
-        create(:contribution, user: payment.user)
-      end
-    end
+    state { Billing::PaymentItemStateMachine.states.sample }
 
     amount_cents { Faker::Number.number(digits: 4) }
     shipping_fee_cents { Faker::Number.number(digits: 4) }
     total_amount_cents { amount_cents + shipping_fee_cents }
-    state { Billing::PaymentItemStateMachine.states.sample }
+
+    transient do
+      user { create(:user) }
+    end
+
+    payment do
+      create(:billing_payment, :credit_card,
+        amount_cents: amount_cents,
+        shipping_fee_cents: shipping_fee_cents,
+        total_amount_cents: total_amount_cents,
+        user: user
+      )
+    end
 
     trait :contribution do
       payable { create(:contribution, user: payment.user) }
@@ -33,7 +28,8 @@ FactoryBot.define do
 
     trait :subscription do
       payable do
-        create(:membership_subscription, SUBSCRIPTION_FACTORY_STATES[state.to_sym], user: payment.user)
+        sub_state = BillingFactoriesHelpers.convert_item_state_to_subscription_state(state)
+        create(:membership_subscription, sub_state, user: payment.user)
       end
     end
   end

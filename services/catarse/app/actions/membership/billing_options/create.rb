@@ -3,7 +3,7 @@
 module Membership
   module BillingOptions
     class Create < Actor
-      input :tier_id, type: String
+      input :tier_id, type: Integer
       input :attributes, type: Hash
 
       output :billing_option, type: Membership::BillingOption
