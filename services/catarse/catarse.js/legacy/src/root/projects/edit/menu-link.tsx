@@ -12,13 +12,8 @@ export type MenuLinkProps = {
 export const MenuLink = withHooks<MenuLinkProps>(_MenuLink);
 
 function _MenuLink({label, href, isNew, selectedClasses, iconClasses} : MenuLinkProps) {
-    const routeTo = (event: Event) => {
-        event.preventDefault()
-        m.route.set(href)
-    }
-
     return (
-        <a href={href} onclick={routeTo} class={`dashboard-nav-link-left ${selectedClasses}`}>
+        <a href={href} class={`dashboard-nav-link-left ${selectedClasses}`}>
             <span class={`fa-fw fa ${iconClasses}`}></span>
             &nbsp;{label} { isNew && <span class="badge">Novo</span> }
         </a>

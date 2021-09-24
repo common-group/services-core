@@ -56,8 +56,6 @@ function _PreviewHeaderComingSoonLandingPage({ project, comingSoonIntegration, o
             selectPreview(PreviewHeaderComingSoonLandingPageViewSelected.ComingSoonLandingPage)
         } else if (permalink === comingSoonIntegration?.data?.draft_url) {
             selectPreview(PreviewHeaderComingSoonLandingPageViewSelected.DraftPage)
-        } else {
-            selectPreview(PreviewHeaderComingSoonLandingPageViewSelected.ComingSoonLandingPage)
         }
     }, [permalink])
 
