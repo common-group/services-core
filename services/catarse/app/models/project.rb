@@ -306,6 +306,14 @@ class Project < ApplicationRecord
     payments.with_state(:paid).where('NULLIF(gateway_fee, 0) IS NULL').present?
   end
 
+  def has_comming_soon_landing_page_integration?
+    comming_soon_landing_page_integration.present?
+  end
+
+  def comming_soon_landing_page_integration
+    integrations.where(name: 'COMING_SOON_LANDING_PAGE').first
+  end
+
   def subscribed_users
     if is_sub?
       User.subscribed_to_posts.subscribed_to_project(common_id)

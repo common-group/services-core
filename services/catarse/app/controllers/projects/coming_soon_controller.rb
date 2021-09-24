@@ -33,7 +33,7 @@ module Projects
       {
         name: 'COMING_SOON_LANDING_PAGE',
         data: {
-          draft_url: "#{parent.name.parameterize.tr('-', '_')}_#{SecureRandom.hex(4)}"
+          draft_url: "#{parent.permalink.parameterize.tr('-', '_')}_#{SecureRandom.hex(4)}"
         }
       }
     end

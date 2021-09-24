@@ -24,6 +24,14 @@ class ProjectObserver < ActiveRecord::Observer
       ProjectDownloaderWorker.perform_async(project.id)
     end
 
+    if project.has_comming_soon_landing_page_integration?
+      integration = project.comming_soon_landing_page_integration
+      integration.data = {
+        draft_url: "#{project.permalink.parameterize.tr('-', '_')}_#{SecureRandom.hex(4)}"
+      }
+      integration.save!
+    end
+
     project.index_on_common
   end
 
