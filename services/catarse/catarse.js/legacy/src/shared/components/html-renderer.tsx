@@ -1,9 +1,7 @@
 import m from 'mithril'
 import { Liquid } from 'liquidjs'
-import { useEffect, useState, withHooks } from 'mithril-hooks'
+import { useEffect, useMemo, useState, withHooks } from 'mithril-hooks'
 import h from '../../h'
-
-const engine = new Liquid()
 
 export type HTMLRendererProps = {
     html: string;
@@ -16,19 +14,17 @@ export const HTMLRenderer = withHooks<HTMLRendererProps>(_HTMLRenderer);
 function _HTMLRenderer(props: HTMLRendererProps) {
     const { html, variables, onRenderWithoutScripts } = props
     const [ rendered, setRendered ] = useState('')
+    const engine = useMemo(() => new Liquid(), [])
 
     useEffect(() => {
-        const strippedScriptsHtml = h.stripScripts(html)
-        const htmlParsed = engine.parse(strippedScriptsHtml)
-        engine
-            .render(htmlParsed, variables)
-            .then((renderedHtml) => {
-                if (onRenderWithoutScripts) {
-                    onRenderWithoutScripts(html)
-                }
-                setRendered(renderedHtml)
-            })
-            .catch(error => console.log('HTMLRenderer', error))
+        try {
+            const strippedScriptsHtml = h.stripScripts(html)
+            const renderedHtml = engine.parseAndRenderSync(strippedScriptsHtml, variables)
+            setRendered(renderedHtml)
+            if (onRenderWithoutScripts) onRenderWithoutScripts(html)
+        } catch (error) {
+            console.log('Error on trying render', error)
+        }
     }, [html])
 
     return m.trust(rendered)

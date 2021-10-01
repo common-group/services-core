@@ -14,6 +14,8 @@ import { If } from '../shared/components/if'
 import { ObjectTree } from '../shared/components/object-tree'
 import _ from 'underscore'
 import { cleanUndefinedFromObject } from '../utils/clean-undefined-from-object'
+import { AdminNotificationsList } from './admin-notifications-list'
+import { Loader } from '../shared/components/loader'
 
 export default withHooks(_AdminNotifications)
 
@@ -77,6 +79,8 @@ function _AdminNotifications() {
     loadTemplatesList()
   }, [])
 
+  if (isLoadingTemplates) return <Loader />
+
   return (
     <>
       <div id="notifications-admin">
@@ -93,6 +97,8 @@ function _AdminNotifications() {
             </div>
           </div>
         </div>
+        <div class="divider"></div>
+        <AdminNotificationsList templates={templates}/>
         <div class="divider"></div>
         {selectedNotification && (
           <>
@@ -113,7 +119,7 @@ function _AdminNotifications() {
   )
 }
 
-type NotificationTemplate = {
+export type NotificationTemplate = {
   created_at: string
   default_subject: string
   default_template: string
@@ -161,6 +167,8 @@ const NotificationTemplateEditor = withHooks<NotificationTemplateEditorProps>(_N
 
 function _NotificationTemplateEditor(props: NotificationTemplateEditorProps) {
   const { label, subject, body, onChangeTemplateSubject, onChangeTemplateBody } = props
+
+  if (!label || !subject || !body) return <Loader />
 
   const [variables, setVariables] = useState<LoadVariablesResult>()
 
