@@ -149,4 +149,21 @@ RSpec.describe PagarMe::Client, type: :client do
       expect(response).to eq JSON.parse(request_response)
     end
   end
+
+  describe '#create_credit_card' do
+    let(:credit_card_params) { { key: 'value' } }
+    let(:request_response) { Hash[*Faker::Lorem.words(number: 4)].to_json }
+
+    before do
+      stub_request(:post, "#{described_class.base_uri}/cards")
+        .with(body: credit_card_params.merge(api_key: api_key))
+        .to_return(body: request_response, headers: { 'Content-Type' => 'application/json' })
+    end
+
+    it 'creates credit card' do
+      response = client.create_credit_card(credit_card_params)
+
+      expect(response).to eq JSON.parse(request_response)
+    end
+  end
 end

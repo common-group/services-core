@@ -6,7 +6,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
   describe '#build' do
     subject(:result) { described_class.new(payment: payment).build }
 
-    context 'when payment_method is credit_card with credit card registered' do
+    context 'when payment_method is credit_card' do
       let(:payment) { create(:simple_payment) }
 
       it 'returns credit card transaction params with card_id' do
@@ -16,26 +16,9 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
           amount: payment.total_amount_cents,
           installments: payment.installments_count,
           async: false,
-          postback_url: 'https://example.com',
+          postback_url: 'https://example.com/api/v1/integrations/webhooks/pagar_me',
           capture: false,
           card_id: payment.credit_card.gateway_id
-        )
-      end
-    end
-
-    context 'when payment_method is credit_card without credit card registered' do
-      let(:payment) { create(:simple_payment, credit_card: nil) }
-
-      it 'returns credit card transaction params with card_hash' do
-        expect(result).to eq(
-          reference_key: payment.id,
-          payment_method: Billing::PaymentMethods::CREDIT_CARD,
-          amount: payment.total_amount_cents,
-          installments: payment.installments_count,
-          async: false,
-          postback_url: 'https://example.com',
-          capture: false,
-          card_hash: payment.credit_card_hash
         )
       end
     end
@@ -51,7 +34,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
           installments: payment.installments_count,
           async: false,
           boleto_expiration_date: Utils::BusinessCalendar.add_business_days(Time.zone.today, 2).iso8601,
-          postback_url: 'https://example.com',
+          postback_url: 'https://example.com/api/v1/integrations/webhooks/pagar_me',
           boleto_rules: ['strict_expiration_date'],
           customer: {
             name: payment.user.name,
@@ -77,7 +60,7 @@ RSpec.describe PagarMe::TransactionParamsBuilder, type: :params_builder do
           amount: payment.total_amount_cents,
           installments: payment.installments_count,
           async: false,
-          postback_url: 'https://example.com',
+          postback_url: 'https://example.com/api/v1/integrations/webhooks/pagar_me',
           pix_expiration_date: 2.days.from_now.to_date.iso8601,
           customer:
           {

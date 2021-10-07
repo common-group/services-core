@@ -20,7 +20,7 @@ RSpec.describe Billing::Payments::Create, type: :action do
     subject(:result) { described_class.result(user: user, attributes: attributes) }
 
     let(:user) { create(:user) }
-    let(:payment) { build(:simple_payment, user: user, billing_address: create(:common_address)) }
+    let(:payment) { build(:simple_payment, user: user) }
     let(:attributes) { Hash[*Faker::Lorem.words(number: 8)] }
     let(:payment_builder) { instance_double(Billing::PaymentBuilder) }
 

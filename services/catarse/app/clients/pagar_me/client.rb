@@ -44,6 +44,11 @@ module PagarMe
       response.parsed_response
     end
 
+    def create_credit_card(attributes)
+      response = self.class.post('/cards', body: attributes.merge(api_key: api_key))
+      response.parsed_response
+    end
+
     private
 
     def api_key

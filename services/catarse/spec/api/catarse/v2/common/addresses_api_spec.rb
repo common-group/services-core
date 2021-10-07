@@ -7,7 +7,7 @@ RSpec.describe Catarse::V2::Common::AddressesAPI, type: :api do
 
   include_examples 'authenticate routes'
 
-  describe 'POST /v2/shared/addresses' do
+  describe 'POST /v2/common/addresses' do
     let(:address) { build(:common_address) }
     let(:address_params) do
       {
@@ -25,13 +25,13 @@ RSpec.describe Catarse::V2::Common::AddressesAPI, type: :api do
     end
 
     it 'returns created address' do
-      post '/api/v2/shared/addresses', params: { address: address_params }
+      post '/api/v2/common/addresses', params: { address: address_params }
 
       expect(response.body).to eq(address.to_json)
     end
 
     it 'return status 201 - created' do
-      post '/api/v2/shared/addresses', params: { address: address_params }
+      post '/api/v2/common/addresses', params: { address: address_params }
 
       expect(response).to have_http_status(:created)
     end

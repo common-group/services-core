@@ -5,7 +5,8 @@ require 'rails_helper'
 RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   subject(:params_builder) { described_class.new(payment: payment) }
 
-  let(:payment) { Billing::Payment.new(payment_attributes) }
+  let(:payment) { Billing::Payment.new(payment_attributes.merge(credit_card: credit_card)) }
+  let(:credit_card) { build(:billing_credit_card) }
 
   describe 'ATTRIBUTES constant' do
     it 'returns params attributes' do
@@ -157,10 +158,10 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
   end
 
   describe '#billing' do
-    let(:payment_attributes) { { billing_address: billing_address, credit_card: credit_card } }
-    let(:billing_address) { build(:common_address) }
-    let(:credit_card) { build(:billing_credit_card) }
-    let(:billing_address_params) { Konduto::ParamsBuilders::Address.new(billing_address, credit_card).build }
+    let(:payment_attributes) { {} }
+    let(:billing_address_params) do
+      Konduto::ParamsBuilders::Address.new(credit_card.billing_address, credit_card).build
+    end
 
     it 'returns billing address params' do
       expect(params_builder.billing).to eq billing_address_params
@@ -169,9 +170,8 @@ RSpec.describe Konduto::ParamsBuilders::Order, type: :params_builder do
 
   describe '#shipping' do
     context 'when payment has shipping address' do
-      let(:payment_attributes) { { shipping_address: shipping_address, credit_card: credit_card } }
+      let(:payment_attributes) { { shipping_address: shipping_address } }
       let(:shipping_address) { build(:common_address) }
-      let(:credit_card) { build(:billing_credit_card) }
       let(:shipping_address_params) { Konduto::ParamsBuilders::Address.new(shipping_address, credit_card).build }
 
       it 'returns shipping address params' do

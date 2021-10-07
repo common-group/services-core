@@ -26,7 +26,7 @@ module Konduto
         @payment = payment
         @user = @payment.user
         @credit_card = @payment.credit_card
-        @billing_address = @payment.billing_address
+        @billing_address = @credit_card.billing_address
         @shipping_address = @payment.shipping_address
         @payment_items = @payment.items
       end
