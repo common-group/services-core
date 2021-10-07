@@ -30,12 +30,12 @@ module PagarMe
         amount: payment.total_amount_cents,
         installments: payment.installments_count,
         async: false,
-        postback_url: 'https://example.com' # TODO: get from settings
+        postback_url: 'https://example.com/api/v1/integrations/webhooks/pagar_me' # TODO: get from settings
       }
     end
 
     def build_credit_card_transaction_params
-      base_params.merge(build_credit_card_params).merge(capture: false)
+      base_params.merge(card_id: credit_card.gateway_id, capture: false)
     end
 
     def build_boleto_transaction_params
@@ -80,14 +80,6 @@ module PagarMe
           }
         ]
       }
-    end
-
-    def build_credit_card_params
-      if credit_card.present?
-        { card_id: credit_card.gateway_id }
-      else
-        { card_hash: payment.credit_card_hash }
-      end
     end
   end
 end

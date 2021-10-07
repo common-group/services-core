@@ -19,18 +19,16 @@ module Billing
     private
 
     def base_attributes
-      replicate_addresses
+      replicate_shipping_addresses
       initial_state = Billing::PaymentStateMachine.initial_state
       attributes.except(:payables).merge(state: initial_state, gateway: Billing::Gateways::PAGAR_ME)
     end
 
-    def replicate_addresses
-      %i[billing_address_id shipping_address_id].each do |address_attributes|
-        next if attributes[address_attributes].blank?
+    def replicate_shipping_addresses
+      return if attributes[:shipping_address_id].blank?
 
-        address_replica = ::Common::AddressReplicator.by_id(attributes[address_attributes])
-        attributes[address_attributes] = address_replica.id
-      end
+      address_replica = ::Common::AddressReplicator.by_id(attributes[:shipping_address_id])
+      attributes[:shipping_address_id] = address_replica.id
     end
 
     def build_payment_items

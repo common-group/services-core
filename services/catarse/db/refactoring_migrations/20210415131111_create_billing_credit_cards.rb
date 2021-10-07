@@ -11,7 +11,7 @@ class CreateBillingCreditCards < ActiveRecord::Migration[6.1]
       t.string :country, null: false
       t.string :brand, null: false
       t.date :expires_on, null: false
-      t.boolean :saved, default: false
+      t.boolean :saved, default: false, null: false
 
       t.timestamps
     end

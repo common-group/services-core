@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :billing_payment, class: 'Billing::Payment' do
     association :user, strategy: :create
-    association :billing_address, factory: :common_address, strategy: :create
+
     gateway { Billing::Gateways.list.sample }
     gateway_id { Faker::Internet.uuid }
     installments_count { 1 }
@@ -18,7 +18,6 @@ FactoryBot.define do
     trait :credit_card do
       payment_method { Billing::PaymentMethods::CREDIT_CARD }
       credit_card { association :billing_credit_card, user: user }
-      credit_card_hash { Faker::Crypto.sha1 }
       payment_method_fee_cents { 0 }
     end
 

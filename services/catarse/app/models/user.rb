@@ -8,7 +8,7 @@ class User < ApplicationRecord
   include Users::OmniauthHandler
   include Users::CustomValidators
   include Shared::CommonWrapper
-  include Users::MembershipRelations
+  include Users::RefactoringRelations
 
   has_notifications
   # Include default devise modules. Others available are:

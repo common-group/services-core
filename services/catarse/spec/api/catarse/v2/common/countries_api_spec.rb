@@ -7,7 +7,7 @@ RSpec.describe Catarse::V2::Common::CountriesAPI, type: :api do
 
   include_examples 'authenticate routes'
 
-  describe 'GET /v2/shared/countries' do
+  describe 'GET /v2/common/countries' do
     let(:countries) { [{ 'code' => 'name' }] }
 
     before do
@@ -15,13 +15,13 @@ RSpec.describe Catarse::V2::Common::CountriesAPI, type: :api do
     end
 
     it 'returns countries list' do
-      get '/api/v2/shared/countries'
+      get '/api/v2/common/countries'
 
       expect(response.body).to eq(countries.to_json)
     end
 
     it 'return status 200 - ok' do
-      get '/api/v2/shared/countries'
+      get '/api/v2/common/countries'
 
       expect(response).to have_http_status(:ok)
     end

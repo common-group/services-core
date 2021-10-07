@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe Billing::CreditCard, type: :model do
   describe 'Relations' do
     it { is_expected.to belong_to(:user) }
+    it { is_expected.to belong_to(:billing_address).class_name('Common::Address') }
 
     it { is_expected.to have_many(:payments).class_name('Billing::Payment').dependent(:nullify) }
   end
@@ -17,6 +18,7 @@ RSpec.describe Billing::CreditCard, type: :model do
 
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:user_id) }
+    it { is_expected.to validate_presence_of(:billing_address_id) }
     it { is_expected.to validate_presence_of(:gateway) }
     it { is_expected.to validate_presence_of(:gateway_id) }
     it { is_expected.to validate_presence_of(:holder_name) }

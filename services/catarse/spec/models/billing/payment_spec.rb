@@ -11,7 +11,6 @@ RSpec.describe Billing::Payment, type: :model do
     subject(:payment) { described_class.new }
 
     it { is_expected.to belong_to :user }
-    it { is_expected.to belong_to(:billing_address).class_name('Common::Address') }
     it { is_expected.to belong_to(:shipping_address).class_name('Common::Address').optional }
     it { is_expected.to belong_to(:credit_card).class_name('Billing::CreditCard').optional }
 
@@ -35,7 +34,6 @@ RSpec.describe Billing::Payment, type: :model do
 
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:user_id) }
-    it { is_expected.to validate_presence_of(:billing_address_id) }
     it { is_expected.to validate_presence_of(:payment_method) }
     it { is_expected.to validate_presence_of(:gateway) }
 
