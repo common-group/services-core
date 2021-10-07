@@ -24,24 +24,10 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(payment: payment, pagar_me_client: pagar_me_client) }
 
-    let(:payment) { create(:simple_payment, :created, credit_card: nil) }
+    let(:payment) { create(:simple_payment, :created) }
     let(:pagar_me_client) { PagarMe::Client.new }
     let(:transaction_params) { PagarMe::TransactionParamsBuilder.new(payment: payment).build }
-    let(:gateway_response) do
-      {
-        'status' => 'authorized',
-        'id' => Faker::Internet.uuid,
-        'card' => {
-          'id' => Faker::Lorem.word,
-          'holder_name' => Faker::Name.name,
-          'first_digits' => Faker::Number.number(digits: 6).to_s,
-          'last_digits' => Faker::Number.number(digits: 4).to_s,
-          'country' => Faker::Address.country,
-          'brand' => Faker::Business.credit_card_type,
-          'expiration_date' => '0228'
-        }
-      }
-    end
+    let(:gateway_response) { { 'status' => 'authorized', 'id' => Faker::Internet.uuid } }
 
     before do
       allow(pagar_me_client).to receive(:create_transaction).with(transaction_params).and_return(gateway_response)
@@ -86,82 +72,6 @@ RSpec.describe Billing::Payments::AuthorizeTransaction, type: :action do
         result
 
         expect(payment.reload.gateway_id).to eq(gateway_response['id'])
-      end
-    end
-
-    context 'when credit card hasn`t been used by user before' do
-      before do
-        Billing::CreditCard.create(
-          attributes_for(:billing_credit_card).merge(
-            gateway: payment.gateway,
-            user_id: create(:user).id,
-            gateway_id: gateway_response['card']['id']
-          )
-        )
-      end
-
-      it 'creates credit card' do
-        expect { result }.to change(Billing::CreditCard, :count).by(1)
-      end
-
-      it 'assigns created credit card to payment' do
-        result
-
-        expect(payment.credit_card.attributes).to include(
-          'user_id' => payment.user_id,
-          'gateway' => payment.gateway,
-          'gateway_id' => gateway_response.dig('card', 'id'),
-          'holder_name' => gateway_response.dig('card', 'holder_name'),
-          'bin' => gateway_response.dig('card', 'first_digits'),
-          'last_digits' => gateway_response.dig('card', 'last_digits'),
-          'country' => gateway_response.dig('card', 'country'),
-          'brand' => gateway_response.dig('card', 'brand'),
-          'expires_on' => Date.parse('2028-02-01')
-        )
-      end
-    end
-
-    context 'when payment already has a credit card' do
-      let(:payment) { create(:simple_payment, :created) }
-
-      it 'doesn`t create credit card' do
-        expect { result }.not_to change(Billing::CreditCard, :count)
-      end
-
-      it 'doesn`t change payment credit card' do
-        expect { result }.not_to change(payment, :credit_card_id)
-      end
-    end
-
-    context 'when credit card has been used by user before' do
-      let!(:credit_card) do
-        Billing::CreditCard.create(
-          attributes_for(:billing_credit_card).merge(
-            user_id: payment.user_id,
-            gateway_id: gateway_response['card']['id'],
-            gateway: payment.gateway
-          )
-        )
-      end
-
-      before do
-        payment.update!(credit_card_id: nil)
-        Billing::CreditCard.create(
-          attributes_for(:billing_credit_card).merge(
-            gateway: payment.gateway, user_id: create(:user).id, gateway_id: gateway_response['card']['id']
-          )
-        )
-        gateway_response['card']['id'] = credit_card.gateway_id
-      end
-
-      it 'doesn`t create credit card' do
-        expect { result }.not_to change(Billing::CreditCard, :count)
-      end
-
-      it 'assigns found credit card to payment' do
-        result
-
-        expect(payment.credit_card_id).to eq(credit_card.id)
       end
     end
 

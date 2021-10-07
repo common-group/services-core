@@ -5,6 +5,7 @@ module Catarse
     module Billing
       class BaseAPI < Grape::API
         namespace 'billing' do
+          mount Catarse::V2::Billing::CreditCardsAPI
           mount Catarse::V2::Billing::InstallmentSimulationsAPI
           mount Catarse::V2::Billing::PaymentsAPI
         end

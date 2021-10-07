@@ -6,7 +6,6 @@ module Billing
 
     belongs_to :user
 
-    belongs_to :billing_address, class_name: 'Common::Address'
     belongs_to :shipping_address, class_name: 'Common::Address', optional: true
     belongs_to :credit_card, class_name: 'Billing::CreditCard', optional: true
 
@@ -26,7 +25,6 @@ module Billing
     has_enumeration_for :gateway, with: Billing::Gateways, required: true, create_helpers: true
 
     validates :user_id, presence: true
-    validates :billing_address_id, presence: true
     validates :gateway, presence: true
 
     validates :gateway_id, uniqueness: { scope: :gateway }, allow_nil: true

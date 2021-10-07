@@ -32,6 +32,7 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_one :user_total }
     it { is_expected.to have_one :bank_account }
 
+    it { is_expected.to have_many(:new_credit_cards).class_name('Billing::CreditCard').dependent(:destroy) }
     it { is_expected.to have_many(:subscriptions).class_name('Membership::Subscription').dependent(:destroy) }
   end
 
