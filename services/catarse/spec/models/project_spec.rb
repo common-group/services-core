@@ -718,6 +718,26 @@ RSpec.describe Project, type: :model do
     end
   end
 
+  describe 'fill_service_slip_fee' do
+    let(:service_slip_fee) { Faker::Number.number(digits: 3) }
+
+    before { CatarseSettings[:catarse_slip_tax] = service_slip_fee }
+
+    %w[flex aon].each do |mode|
+      context "when project is #{mode}" do
+        let(:project) { create(:project, state: 'online', service_slip_fee: 0, mode: mode) }
+
+        it { expect(project.service_slip_fee).to eq(service_slip_fee) }
+      end
+    end
+
+    context 'when project is sub' do
+      let(:project) { create(:project, state: 'online', service_slip_fee: 0, mode: 'sub') }
+
+      it { expect(project.service_slip_fee).to be_zero }
+    end
+  end
+
   describe 'create_event_to_status' do
 
     let(:integrations_attributes) { [{ name: 'SOLIDARITY_SERVICE_FEE', data: { name: 'SOLIDARITY FEE NAME' } }] }
