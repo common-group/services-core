@@ -19,6 +19,7 @@ const paymentSlip = {
             completed = prop(false),
             subscriptionEditConfirmed = prop(false),
             showSubscriptionModal = prop(false),
+            serviceSlipFee = h.formatNumber((projectVM.getCurrentProject().service_slip_fee), 2, 3),
             isReactivation = vnode.attrs.isReactivation || prop(false);
 
         const buildSlip = () => {
@@ -60,6 +61,7 @@ const paymentSlip = {
             vm,
             buildSlip,
             slipPaymentDate,
+            serviceSlipFee,
             loading,
             completed,
             error,
@@ -74,13 +76,14 @@ const paymentSlip = {
 
         return m('.w-row',
                     m('.w-col.w-col-12',
-                        m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [
-                            projectVM.isSubscription() ? '' : m('.fontsize-small.u-marginbottom-20',
+                        m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card.u-text-center', [
+                            projectVM.isSubscription() ? '' : m('.fontsize-base.fontweight-semibold.u-marginbottom-10',
                                 state.slipPaymentDate() ? `Esse boleto bancário vence no dia ${h.momentify(state.slipPaymentDate().slip_expiration_date)}.` : 'carregando...'
                             ),
-                            m('.fontsize-small.u-marginbottom-40',
+                            m('.fontsize-small',
                                 'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'
                             ),
+                            m('.fontweight-semibold.fontcolor-secondary.u-marginbottom-40.u-margintop-10.fontsize-small', ` (Custo do boleto: R$ ${state.serviceSlipFee})`),
                             m('.w-row',
                                 m('.w-col.w-col-8.w-col-push-2', [
                                     state.vm.isLoading() ? h.loader() : state.completed() ? '' : m('input.btn.btn-large.u-marginbottom-20', {
