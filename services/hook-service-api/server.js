@@ -42,6 +42,22 @@ const verifyKondutoSignature = (req) => {
     return hash === req.body.signature
 }
 
+const wasPaymentCreatedInTheLast30min = (paymentDate) => {
+    const paymentCreatedAt = new Date(paymentDate);
+    const dateNow = new Date();
+    if (!isValidDate(paymentCreatedAt)){
+        return false
+    }
+    const diffTimeInMinutes = Math.abs((dateNow - paymentCreatedAt)/(1000 * 60));
+    const diffMaxInMinutes = 30;
+
+    return diffTimeInMinutes <= diffMaxInMinutes
+}
+
+const isValidDate = (date) => {
+    return date instanceof Date && !isNaN(date);
+}
+
 const alreadyProcessed = (error) => {
     return ['Transação com status \'paid\' não pode ser capturada.', 'Transação já estornada'].includes(error.message);
 }
@@ -142,6 +158,10 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const last_payment = res.rows[0].last_payment_data;
 
                 if (req.body.old_status === 'authorized' && req.body.current_status === 'refunded') {
+                    req.body.current_status = 'refused'
+                }
+
+                if (req.body.old_status === 'paid' && req.body.current_status === 'refunded' && wasPaymentCreatedInTheLast30min(payment.created_at)) {
                     req.body.current_status = 'refused'
                 }
 
