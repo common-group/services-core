@@ -72,7 +72,7 @@ BEGIN;
         );
 
         return next ok(
-            (_result->'project_owner')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at, external_id}',
+            (_result->'project_owner')::jsonb ?& '{id, name, email, document_type, document_number, created_at, fmt_created_at, external_id, public_name}',
             'check project_owner structure keys'
         );
 
