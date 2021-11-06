@@ -1,0 +1,59 @@
+type: object
+required:
+  - address
+properties:
+  address:
+    type: object
+    description: Informações do endereço
+    required:
+      - country_code
+      - line_1
+      - city
+      - state
+    properties:
+      country_code:
+        type: string
+        description: Código de duas letras ISO 3166-1 Alpha-2 representando o país
+        example: BR
+      postal_code:
+        type: string
+        description: CEP ou código postal
+        example: 60420400
+      line_1:
+        type: string
+        description: Nome da rua, avenida, rodovia, etc.
+        example: Rua Felipe Camarão
+      line_2:
+        type: string
+        description: |
+          Complemento. ex.: Apartamento, casa, conjunto, andar, etc.
+        example: AP 104
+      number:
+        type: string
+        description: Número ou s/n
+        example: 165
+      neighborhood:
+        type: string
+        description: Bairro
+        example: Montese
+      city:
+        type: string
+        description: Cidade
+        example: Fortaleza
+      state:
+        type: string
+        description: Estado/Província
+        example: CE
+      first_name:
+        type: string
+        description: Nome do destinatário
+        example: John
+      last_name:
+        type: string
+        description: Sobrenome do destinatário
+        example: Doe
+      organization:
+        type: string
+        description: Nome da empresa, em caso de ponto comercial
+        example: Catarse
+

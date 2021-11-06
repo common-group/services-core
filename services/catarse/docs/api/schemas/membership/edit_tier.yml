@@ -1,0 +1,24 @@
+type: object
+required:
+  - tier
+properties:
+  tier:
+    type: object
+    description: Informações do nível de apoio
+    properties:
+      name:
+        type: string
+        description: Nome do nível de apoio
+        example: Nível Ouro
+      description:
+        type: string
+        description: Descrição do nível de apoio
+        example: Os assinantes Nível Ouro têm acesso a um grupo exclusivo
+      subscribers_limit:
+        type: integer
+        description: Limite de assinantes ativos que esse nível pode ter ao mesmo tempo
+        example: 80
+      request_shipping_address:
+        type: boolean
+        description: Se é necessário solicitar o endereço de entrega ao assinar o nível de apoio
+        example: true

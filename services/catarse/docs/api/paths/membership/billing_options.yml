@@ -1,0 +1,51 @@
+get:
+  tags:
+    - Opções de Cobrança
+  summary: Obter opções de cobrança
+  description: Lista todas as opções de cobrança de um nível de apoio
+  parameters:
+    - name: tier_id
+      in: path
+      description: ID do nível de apoio
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  responses:
+    200:
+      description: Lista das opções de cobrança
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: ../../schemas.yml#/BillingOption
+post:
+  tags:
+    - Opções de Cobrança
+  summary: Criar opção de cobrança
+  description: Cria uma nova opção de cobrança para um nível de apoio
+  parameters:
+    - name: tier_id
+      in: path
+      description: ID do nível de apoio
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  requestBody:
+    description: Informações do nível de apoio a ser criado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewBillingOption
+  responses:
+    201:
+      description: Opção de cobrança criada
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/BillingOption

@@ -1,0 +1,36 @@
+post:
+  tags:
+    - Webhooks
+  summary: Criar webhooks
+  description: Cria e processa um novo webhook
+  parameters:
+    - name: provider
+      in: path
+      description: Fornecedor do webhook
+      required: true
+      schema:
+        type: string
+        enum:
+          - pagar_me
+          - konduto
+  requestBody:
+    description: Conteúdo do webhook
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: true
+        example: { some_attr: 'some_value', other_attr: 'other_value' }
+  responses:
+    201:
+      description: Informação com o status 'ok'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: O valor é sempre `ok`
+          example: { status: 'ok' }

@@ -1,0 +1,57 @@
+openapi: '3.0.3'
+info:
+  title: Endpoints
+  description: Rotas para a API v2 interna do Catarse
+  version: 'v2'
+servers:
+  - url: https://catarse.me/api/v2
+    description: Servidor de produção
+  - url: https://sandbox.catarse.me/api/v2
+    description: Servidor de sandbox
+
+tags:
+  - name: Assinaturas
+  - name: Cartões de Crédito
+  - name: Endereços
+  - name: Níveis de Apoio
+  - name: Opções de Cobrança
+  - name: Pagamentos
+  - name: Países
+  - name: Simulações de Parcelamento
+  - name: Tokens de Autenticação
+  - name: Webhooks
+
+paths:
+  /billing/credit_cards:
+    $ref: ./paths/billing/credit_cards.yml
+  /billing/installment_simulations:
+    $ref: ./paths/billing/installment_simulations.yml
+  /billing/payments:
+    $ref: ./paths/billing/payments.yml
+
+  /common/addresses:
+    $ref: ./paths/common/addresses.yml
+  /common/countries:
+    $ref: ./paths/common/countries.yml
+
+  /integrations/webhooks/{provider}:
+    $ref: ./paths/integrations/webhooks.yml
+
+  /membership/tiers/{tier_id}/billing_options:
+    $ref: ./paths/membership/billing_options.yml
+  /membership/billing_options/{id}:
+    $ref: ./paths/membership/billing_option.yml
+  /membership/subscriptions:
+    $ref: ././paths/membership/subscriptions.yml
+  /membership/projects/{project_id}/tiers:
+    $ref: ./paths/membership/tiers.yml
+  /membership/tiers/{id}:
+    $ref: ./paths/membership/tier.yml
+
+  /portal/auth_tokens:
+    $ref: ./paths/portal/auth_tokens.yml
+  /portal/auth_tokens/me:
+    $ref: ./paths/portal/auth_tokens_me.yml
+components:
+  schemas:
+    $ref: ./schemas.yml

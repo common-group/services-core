@@ -1,0 +1,21 @@
+type: object
+required:
+  - subscription
+properties:
+  subscription:
+    type: object
+    description: Informações da assinatura
+    required:
+      - billing_option_id
+      - amount_cents
+    properties:
+      billing_option_id:
+        type: integer
+        description: ID da opção de cobrança
+        example: 1234
+      amount_cents:
+        type: integer
+        description: |
+          Valor em centavos (BRL) que será cobrado a cada período da assinatura.
+          Deve ser maior ou igual ao valor da opção de cobrança
+        example: 4000

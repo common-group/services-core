@@ -1,0 +1,19 @@
+post:
+  tags:
+    - Endereços
+  summary: Criar endereço
+  description: Cria um novo endereço
+  requestBody:
+    description: Informações do endereço a ser criado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewAddress
+  responses:
+    201:
+      description: Endereço criado
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/Address
