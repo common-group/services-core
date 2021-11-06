@@ -1,0 +1,26 @@
+name: Sync API Doc to ReadMe
+on:
+  push:
+    branches:
+      - feature/nova_arquitetura_de_pagamento
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.10.0
+
+      - name: Install Swagger CLI
+        run: yarn global add swagger-cli
+
+      - name: Bundle OAS file
+        run: swagger-cli bundle ./services/catarse/docs/api/openapi.yml --outfile _build_/openapi.yml --type yaml
+
+      - uses: readmeio/github-readme-sync@v2
+        with:
+          readme-oas-key: ${{ secrets.README_OAS_KEY }}
+          oas-file-path:  ./_build_/openapi.yml

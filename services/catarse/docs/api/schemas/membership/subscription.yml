@@ -1,0 +1,64 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único do objeto
+    example: 1234
+  cadence_in_months:
+    type: string
+    description: Periodicidade da cobrança em meses. Por exemplo, se o valor é 3, a cobrança é trimestral, se o valor é 12, então a cobrança é anual.
+    example: 6
+  state:
+    type: string
+    description: Estado da assinatura. TODO
+    example: active
+  amount:
+    $ref: ../../schemas.yml#/Money
+    description: Valor da assinatura
+  user:
+    type: object
+    description: Informações do assinante
+    properties:
+      id:
+        type: integer
+        description: ID do assinante
+        example: 1234
+      name:
+        type: string
+        description: Nome do assinante
+        example: John Doe
+  project:
+    type: object
+    description: Informações do projeto
+    properties:
+      id:
+        type: integer
+        description: ID do projeto
+        example: 1234
+      name:
+        type: string
+        description: Nome do projeto
+        example: RPG de Mesa XYZ
+      permalink:
+        type: string
+        description: Permalink do projeto
+        example: rpg-de-mesa-xyz
+  tier:
+    type: object
+    description: Informações do nível de apoio
+    properties:
+      id:
+        type: integer
+        description: ID do nível de apoio
+        example: 1234
+      name:
+        type: string
+        description: Nome do nível de apoio
+        example: Plano Ouro
+  billing_option:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: ID da opção de cobrança
+        example: 1234

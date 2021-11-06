@@ -1,0 +1,20 @@
+type: object
+required:
+  - billing_option
+properties:
+  billing_option:
+    type: object
+    description: Informações da opção de cobrança
+    properties:
+      cadence_in_months:
+        type: integer
+        description: Periodicidade da cobrança em meses. Por exemplo, se o valor é 3, a cobrança é trimestral, se o valor é 12, então a cobrança é anual
+        example: 6
+      amount_cents:
+        type: integer
+        description: Valor em centavos (BRL) que será cobrado a cada período da assinatura
+        example: 4000
+      enabled:
+        type: boolean
+        description: Se a opção de cobrança deve ser desabilitada ou não
+        example: true

@@ -1,0 +1,19 @@
+post:
+  tags:
+    - Cartões de Crédito
+  summary: Criar cartão de crédito
+  description: Cria um novo cartão de crédito
+  requestBody:
+    description: Informações do cartão de crédito a ser criado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewCreditCard
+  responses:
+    201:
+      description: Cartão de crédito criado
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/CreditCard

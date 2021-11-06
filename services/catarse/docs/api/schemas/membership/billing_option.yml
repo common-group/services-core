@@ -1,0 +1,17 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único do objeto
+    example: 1234
+  cadence_in_months:
+    type: string
+    description: Periodicidade da cobrança em meses. Por exemplo, se o valor é 3, a cobrança é trimestral, se o valor é 12, então a cobrança é anual.
+    example: 6
+  amount:
+    $ref: ../../schemas.yml#/Money
+    description: Valor mínimo da assinatura
+  enabled:
+    type: boolean
+    description: Se essa opção de cobrança está ativda ou não.
+    example: true

@@ -1,0 +1,14 @@
+get:
+  tags:
+    - Países
+  summary: Obter países
+  description: Lista todos os países
+  responses:
+    200:
+      description: Lista dos países disponíveis
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: ../../schemas.yml#/Country

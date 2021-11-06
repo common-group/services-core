@@ -1,0 +1,46 @@
+put:
+  tags:
+    - Níveis de Apoio
+  summary: Atualizar nível de apoio
+  description: Atualiza um nível de apoio
+  parameters:
+    - name: id
+      in: path
+      description: ID do nível de apoio
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  requestBody:
+    description: Informações do nível de apoio a ser atualizado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/EditTier
+  responses:
+    200:
+      description: Nível de apoio atualizado
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/Tier
+delete:
+  tags:
+    - Níveis de Apoio
+  summary: Remover nível de apoio
+  description: Remove um nível de apoio
+  parameters:
+    - name: id
+      in: path
+      description: ID do nível de apoio
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  responses:
+    204:
+      description: Nível de apoio removido com sucesso
+

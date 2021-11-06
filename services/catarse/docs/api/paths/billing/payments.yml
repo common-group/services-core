@@ -1,0 +1,19 @@
+post:
+  tags:
+    - Pagamentos
+  summary: Criar pagamento
+  description: Cria e processa um novo pagamento
+  requestBody:
+    description: Informações do pagamento a ser criado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewPayment
+  responses:
+    201:
+      description: Pagamento criado
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/Payment

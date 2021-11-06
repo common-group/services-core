@@ -1,0 +1,54 @@
+type: object
+required:
+  - payment
+properties:
+  payment:
+    type: object
+    description: Informações do pagamento
+    required:
+      - payment_method
+      - installments_count
+      - payables
+    properties:
+      payment_method:
+        type: string
+        enum:
+          - boleto
+          - credit_card
+          - pix
+        description: Método do pagamento
+        example: pix
+      installments_count:
+        type: integer
+        minimum: 1
+        maximum: 6
+        description: |
+          Número de parcelas do pagamento. Para os métodos de pagamento `boleto` e `pix`, o valor desse campo deverá ser 1. Para pagamentos com cartão de crédito, é possível parcelar em até 6x.
+        example: 1
+      shipping_address_id:
+        type: integer
+        description: ID do Endereço de entrega
+        example: 1234
+      payables:
+        type: array
+        description: Informações dos items a serem pagos
+        items:
+          required:
+            - id
+            - type
+          properties:
+            id:
+              type: integer
+              description: ID do objeto a ser pago
+              example: 1234
+            type:
+              type: string
+              enum:
+                - Contribution
+                - Membership::Subscription
+              description: Tipo do item a ser pago
+              example: Membership::Subscription
+      credit_card_id:
+        type: integer
+        description: ID do cartão de crédito. É obrigatório para pagamentos onde o método de pagamento é `credit_card`
+        example: 1234

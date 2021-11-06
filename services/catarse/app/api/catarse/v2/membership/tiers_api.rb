@@ -39,7 +39,6 @@ module Catarse
         params do
           requires :id, type: Integer
           requires :tier, type: Hash do
-            optional :project_id, type: String
             optional :name, type: String
             optional :description, type: String
             optional :subscribers_limit, type: Integer

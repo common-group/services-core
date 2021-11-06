@@ -9,5 +9,6 @@ module Billing
     expose :last_digits
     expose :brand
     expose :expires_on, format_with: :iso_timestamp
+    expose :saved
   end
 end

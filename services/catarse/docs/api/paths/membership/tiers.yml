@@ -1,0 +1,51 @@
+get:
+  tags:
+    - Níveis de Apoio
+  summary: Obter níveis de apoio
+  description: Lista todos os níveis de apoio de um projeto
+  parameters:
+    - name: project_id
+      in: path
+      description: ID do projeto de assinatura
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  responses:
+    200:
+      description: Lista dos níveis de apoio
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: ../../schemas.yml#/Tier
+post:
+  tags:
+    - Níveis de Apoio
+  summary: Criar nível de apoio
+  description: Cria um nível de apoio para um projeto de assinatura
+  parameters:
+    - name: project_id
+      in: path
+      description: ID do projeto de assinatura
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  requestBody:
+    description: Informações do nível de apoio a ser criado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewTier
+  responses:
+    201:
+      description: Nível de apoio criado
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/Tier

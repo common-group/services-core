@@ -1,0 +1,19 @@
+post:
+  tags:
+    - Assinaturas
+  summary: Criar assinatura
+  description: Cria uma nova assinatura
+  requestBody:
+    description: Informações da assinatura a ser criada
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewSubscription
+  responses:
+    201:
+      description: Assinatura criada
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/Subscription

@@ -1,0 +1,47 @@
+put:
+  tags:
+    - Opções de Cobrança
+  summary: Atualizar opção de cobrança
+  description: Atualiza uma opção de cobrança
+  parameters:
+    - name: id
+      in: path
+      description: ID da opção de cobrança
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  requestBody:
+    description: Informações do nível de apoio a ser criado
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/EditBillingOption
+  responses:
+    200:
+      description: Opção de cobrança atualizada
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: ../../schemas.yml#/BillingOption
+delete:
+  tags:
+    - Opções de Cobrança
+  summary: Remover opção de cobrança
+  description: Remove uma opção de cobrança
+  parameters:
+    - name: id
+      in: path
+      description: ID da opção de cobrança
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 1234
+  responses:
+    204:
+      description: Opção de cobrança removida com sucesso
