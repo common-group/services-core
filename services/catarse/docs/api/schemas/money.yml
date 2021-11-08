@@ -1,0 +1,14 @@
+type: object
+properties:
+  value:
+    type: string
+    description: Valor em número decimal
+    example: '10.49'
+  currency:
+    type: string
+    description: Código de 3 dígitos representando a moeda
+    example: BRL
+  formatted:
+    type: string
+    description: Valor formatado de acordo com a moeda
+    example: R$ 10.49

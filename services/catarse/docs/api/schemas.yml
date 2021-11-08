@@ -1,0 +1,39 @@
+Address:
+  $ref: ./schemas/common/address.yml
+AuthToken:
+  $ref: ./schemas/portal/auth_token.yml
+BillingOption:
+  $ref: ./schemas/membership/billing_option.yml
+Country:
+  $ref: ./schemas/common/country.yml
+CreditCard:
+  $ref: ./schemas/billing/credit_card.yml
+EditBillingOption:
+  $ref: ./schemas/membership/edit_billing_option.yml
+EditTier:
+  $ref: ./schemas/membership/edit_tier.yml
+InstallmentSimulation:
+  $ref: ./schemas/billing/installment_simulation.yml
+NewAddress:
+  $ref: ./schemas/common/new_address.yml
+NewBillingOption:
+  $ref: ./schemas/membership/new_billing_option.yml
+NewCredential:
+  $ref: ./schemas/portal/new_credential.yml
+NewCreditCard:
+  $ref: ./schemas/billing/new_credit_card.yml
+NewPayment:
+  $ref: ./schemas/billing/new_payment.yml
+NewSubscription:
+  $ref: ./schemas/membership/new_subscription.yml
+NewTier:
+  $ref: ./schemas/membership/new_tier.yml
+Money:
+  $ref: ./schemas/money.yml
+Payment:
+  $ref: ./schemas/billing/payment.yml
+Subscription:
+  $ref: ./schemas/membership/subscription.yml
+Tier:
+  $ref: ./schemas/membership/tier.yml
+

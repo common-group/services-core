@@ -1,0 +1,12 @@
+get:
+  tags:
+    - Tokens de Autenticação
+  summary: Obter token de autenticação
+  description: Retorna um token de autenticação do usuário autenticado pelo devise
+  responses:
+    201:
+      description: Token
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/AuthToken

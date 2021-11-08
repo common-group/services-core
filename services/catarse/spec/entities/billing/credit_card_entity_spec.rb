@@ -35,4 +35,8 @@ RSpec.describe Billing::CreditCardEntity, type: :entity do
   it 'exposes expires_on' do
     expect(serializable_hash[:expires_on]).to eq resource.expires_on.iso8601
   end
+
+  it 'exposes saved' do
+    expect(serializable_hash[:saved]).to eq resource.saved
+  end
 end

@@ -1,0 +1,5 @@
+type: object
+properties:
+  todo:
+    type: string
+    description: TODO

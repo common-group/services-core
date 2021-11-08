@@ -1,0 +1,23 @@
+type: object
+required:
+  - credit_card
+properties:
+  credit_card:
+    type: object
+    description: Informações do cartão de crédito
+    required:
+      - hash
+      - billing_address_id
+    properties:
+      hash:
+        type: string
+        description: Hash dos dados criptografados do cartão de crédito. Esse hash é gerado no cliente, evitando assim o envio de informações sensíveis para os servidores.
+        example: d1cd4c72962bffaaaa2c92bc426129c21865526ad1cd4c72962bffaaaa2c92bc426129c21865526ad1cd4c72962bffaaaa2c92bc426129c21865526ad1cd4c72962bffaaaa2c92bc426129c21865526a
+      billing_address_id:
+        type: integer
+        description: ID do Endereço de cobrança
+        example: 1234
+      saved:
+        type: boolean
+        description: Se o cartão de crédito deve ser salvo ou não. Caso `true`, o cartão de crédito ficará disponível para seleção no formulário de pagamento nos próximos apoios.
+        example: true

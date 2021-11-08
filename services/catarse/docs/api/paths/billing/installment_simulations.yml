@@ -1,0 +1,21 @@
+get:
+  tags:
+    - Simulações de Parcelamento
+  summary: Obter simulações de parcelamento
+  description: Retorna as simulações de parcelamento
+  parameters:
+    - name: total_amount_cents
+      in: query
+      description: Informação do valor a ser parcelado
+      required: true
+      schema:
+        type: integer
+        format: int64
+      example: 40000
+  responses:
+    200:
+      description: Simulações do parcelamento
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/InstallmentSimulation

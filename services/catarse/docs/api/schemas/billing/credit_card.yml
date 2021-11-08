@@ -1,0 +1,31 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Identificador único do objeto
+    example: 1234
+  billing_address:
+    type: object
+    $ref: ../../schemas.yml#/Address
+    description: Endereço de cobrança
+  holder_name:
+    type: string
+    description: Nome do titular do cartão de crédito
+    example: 'John Doe'
+  bin:
+    type: string
+    description: Primeiros 6 dígitos do cartão de crédito
+    example: '123456'
+  last_digits:
+    type: string
+    description: Últimos 4 digitos do cartão de crédito
+    example: '1234'
+  expires_on:
+    type: string
+    format: date
+    description: Data de validade do cartão de crédito em formato ISO8601 (yyyy-mm-dd)
+    example:  2030-01-01
+  saved:
+    type: boolean
+    description: Se o cartão de crédito está salvo ou não
+    example: true

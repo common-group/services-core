@@ -1,0 +1,19 @@
+post:
+  tags:
+    - Tokens de Autenticação
+  summary: Criar token de autenticação
+  description: Cria um novo token de autenticação
+  requestBody:
+    description: Informações das credenciais do usuário
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../schemas.yml#/NewCredential
+  responses:
+    201:
+      description: Opção de cobrança criada
+      content:
+        application/json:
+          schema:
+            $ref: ../../schemas.yml#/AuthToken
