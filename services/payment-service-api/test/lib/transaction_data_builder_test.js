@@ -133,39 +133,123 @@ test('test buildTransactionData - saved credit card', async t => {
 })
 
 test('test buildTransactionData - bank slip for individual person', async t => {
-  const contextOvewrite = {  payment: { data: { customer: { document_number: '12345678901' } } } }
+  const contextOvewrite = {  
+    payment: { 
+      data: { 
+        customer: {
+          name: 'Tommy Oliver',
+          email: 'mopheus@nabucodonozor.com',
+          phone: { ddd: '11', ddi: '55', number: '888889999' },
+          address: {
+            city: 'São Paulo',
+            state: 'SP',
+            street: 'Avenida Brigadeiro Faria Lima',
+            country: 'Brasil',
+            zipcode: '01451001',
+            country_code: 'BR',
+            neighborhood: 'Jardim Paulistano',
+            complementary: 'Casa Azul',
+            street_number: '1811' 
+          },
+          document_number: '12345678901'
+        } 
+      } 
+    } 
+  }
   const context = sampleContext(bankSlipContextData(contextOvewrite))
   const transactionData = buildTransactionData(context)
   const expectedResponse = {
     customer: {
+      external_id: `${context.payment.data.customer.document_number}`,
+      email: context.payment.data.customer.email,
+      country: 'br',
       name: context.payment.data.customer.name,
       type: 'individual',
       documents: [{
         type: 'cpf',
         number: context.payment.data.customer.document_number
-      }]
+      }],
+      phone_numbers: [
+        '+55085999999999'
+      ]
+    },
+    billing: {
+      name: context.payment.data.customer.name,
+      address: {
+        city: context.payment.data.customer.address.city,
+        state: context.payment.data.customer.address.state.toLowerCase(),
+        street: context.payment.data.customer.address.street,
+        zipcode: context.payment.data.customer.address.zipcode.replace(/\D/g, ""),
+        country: context.payment.data.customer.address.country_code.toLowerCase(),
+        neighborhood: context.payment.data.customer.address.neighborhood,
+        complementary: context.payment.data.customer.address.complementary,
+        street_number: context.payment.data.customer.address.street_number 
+      }
     }
   }
 
   t.is(transactionData.payment_method, 'boleto')
   t.deepEqual(transactionData.customer, expectedResponse.customer)
+  t.deepEqual(transactionData.billing, expectedResponse.billing)
 })
 
 test('test buildTransactionData - bank slip for corporation', async t => {
-  const contextOvewrite = {  payment: { data: { customer: { document_number: '12345678901234' } } } }
+  const contextOvewrite = {
+    payment: { 
+      data: { 
+        customer: {
+          name: 'Tommy Oliver',
+          email: 'mopheus@nabucodonozor.com',
+          phone: { ddd: '11', ddi: '55', number: '888889999' },
+          address: {
+            city: 'São Paulo',
+            state: 'SP',
+            street: 'Avenida Brigadeiro Faria Lima',
+            country: 'Brasil',
+            zipcode: '01451001',
+            country_code: 'BR',
+            neighborhood: 'Jardim Paulistano',
+            complementary: 'Casa Azul',
+            street_number: '1811' 
+          },
+          document_number: '12345678901234'
+        } 
+      } 
+    } 
+  }
   const context = sampleContext(bankSlipContextData(contextOvewrite))
   const transactionData = buildTransactionData(context)
   const expectedResponse = {
     customer: {
+      external_id: `${context.payment.data.customer.document_number}`,
+      email: context.payment.data.customer.email,
+      country: 'br',
       name: context.payment.data.customer.name,
       type: 'corporation',
       documents: [{
         type: 'cnpj',
         number: context.payment.data.customer.document_number
-      }]
+      }],
+      phone_numbers: [
+        '+55085999999999'
+      ]
+    },
+    billing: {
+      name: context.payment.data.customer.name,
+      address: {
+        city: context.payment.data.customer.address.city,
+        state: context.payment.data.customer.address.state.toLowerCase(),
+        street: context.payment.data.customer.address.street,
+        zipcode: context.payment.data.customer.address.zipcode.replace(/\D/g, ""),
+        country: context.payment.data.customer.address.country_code.toLowerCase(),
+        neighborhood: context.payment.data.customer.address.neighborhood,
+        complementary: context.payment.data.customer.address.complementary,
+        street_number: context.payment.data.customer.address.street_number 
+      }
     }
   }
 
   t.is(transactionData.payment_method, 'boleto')
   t.deepEqual(transactionData.customer, expectedResponse.customer)
+  t.deepEqual(transactionData.billing, expectedResponse.billing)
 })
