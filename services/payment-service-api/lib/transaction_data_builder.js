@@ -54,14 +54,39 @@ const bankSlipTransactionData = (context) => {
   const customer = payment.data.customer
   const isIndividual = customer.document_number.length === 11
 
+  let address = {
+    country: customer.address.country_code.toLowerCase(),
+    state: customer.address.state.toLowerCase(),
+    city: customer.address.city,
+    street: customer.address.street,
+    zipcode: customer.address.zipcode.replace(/\D/g, ""),
+    neighborhood: customer.address.neighborhood,
+    street_number: customer.address.street_number,
+    complementary: customer.address.complementary
+  }
+
+  if(!customer.address.complementary) {
+    delete address['complementary'];
+  }
+
   return {
     customer: {
+      external_id: `${customer.document_number}`,
+      email: customer.email,
       name: limitStringSize(customer.name, 100),
       type: isIndividual ? 'individual' : 'corporation',
+      country: address.country,
       documents: [{
         type: isIndividual ? 'cpf' : 'cnpj',
         number: customer.document_number
-      }]
+      }],
+      phone_numbers: [
+        '+55085999999999'
+      ]
+    },
+    billing: {
+      name: customer.name,
+      address: address
     }
   }
 }
