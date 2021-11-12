@@ -5,9 +5,7 @@ module Catarse
     module Common
       class CountriesAPI < Grape::API
         get '/countries' do
-          result = ::Common::Countries::List.result
-
-          result.countries
+          present :countries, ISO3166::Country.all, with: ::Common::CountryEntity
         end
       end
     end
