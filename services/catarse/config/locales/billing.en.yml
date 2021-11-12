@@ -1,6 +1,9 @@
 en:
   models:
     billing:
+      credit_card:
+        errors:
+          invalid_billing_address: "billing address owner doesn't match user"
       payment:
         errors:
           invalid_total_amount: "doesn't match other values"

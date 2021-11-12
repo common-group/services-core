@@ -24,14 +24,12 @@ RSpec.describe Billing::CreditCards::CreateOrUpdate, type: :action do
 
   describe '#call' do
     subject(:result) do
-      described_class.result(user: user, attributes: attributes, pagar_me_client: pagar_me_client)
+      described_class.result(user: address.user, attributes: attributes, pagar_me_client: pagar_me_client)
     end
 
-    let(:user) { create(:user) }
+    let(:address) { create(:common_address) }
     let(:pagar_me_client) { PagarMe::Client.new }
-    let(:attributes) do
-      { hash: Faker::Lorem.word, billing_address_id: create(:common_address).id, saved: Faker::Boolean.boolean }
-    end
+    let(:attributes) { { hash: Faker::Lorem.word, billing_address_id: address.id, saved: Faker::Boolean.boolean } }
     let(:gateway_response) do
       {
         'id' => Faker::Lorem.word,
@@ -51,15 +49,18 @@ RSpec.describe Billing::CreditCards::CreateOrUpdate, type: :action do
 
       # another credit card from same user
       Billing::CreditCard.create(
-        build(:billing_credit_card, user: user).attributes.merge(
-          user: user, billing_address: create(:common_address), gateway_id: Faker::Number.number
+        build(:billing_credit_card, user: address.user).attributes.merge(
+          user: address.user, billing_address: address, gateway_id: Faker::Number.number
         )
       )
 
       # "same" credit card from another user
+      another_user = create(:user)
       Billing::CreditCard.create(
         build(:billing_credit_card).attributes.merge(
-          user: create(:user), billing_address: create(:common_address), gateway_id: gateway_response['id']
+          user: another_user,
+          billing_address: create(:common_address, user: another_user),
+          gateway_id: gateway_response['id']
         )
       )
     end
@@ -79,7 +80,7 @@ RSpec.describe Billing::CreditCards::CreateOrUpdate, type: :action do
 
       it 'creates credit card with correct attributes' do
         expect(result.credit_card.attributes).to include(
-          'user_id' => user.id,
+          'user_id' => address.user_id,
           'gateway' => Billing::Gateways::PAGAR_ME,
           'gateway_id' => gateway_response['id'],
           'holder_name' => gateway_response['holder_name'],
@@ -96,8 +97,8 @@ RSpec.describe Billing::CreditCards::CreateOrUpdate, type: :action do
       let!(:credit_card) do
         Billing::CreditCard.create(
           build(:billing_credit_card).attributes.merge(
-            user: user,
-            billing_address: create(:common_address),
+            user: address.user,
+            billing_address: address,
             gateway_id: gateway_response['id']
           )
         ) # cannot use create(:billing_credit_card, gateway_id: ...) due to this issue https://github.com/thoughtbot/factory_bot/issues/1512

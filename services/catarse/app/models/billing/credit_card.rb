@@ -20,6 +20,16 @@ module Billing
     validates :brand, presence: true
     validates :expires_on, presence: true
 
+    validate :billing_address_owner_matches_user, if: %i[user_id? billing_address_id?]
+
     scope :safelist, Billing::CreditCards::SafelistQuery
+
+    private
+
+    def billing_address_owner_matches_user
+      return if user_id == billing_address.user_id
+
+      errors.add(:billing_address_id, I18n.t('models.billing.credit_card.errors.invalid_billing_address'))
+    end
   end
 end
