@@ -1,6 +1,9 @@
 pt:
   models:
     billing:
+      credit_card:
+        errors:
+          invalid_billing_address: "não pertence ao usuário do cartão de crédito"
       payment:
         errors:
           invalid_total_amount: "incompatível com os outros valores"

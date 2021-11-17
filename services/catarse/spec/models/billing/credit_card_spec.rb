@@ -27,6 +27,38 @@ RSpec.describe Billing::CreditCard, type: :model do
     it { is_expected.to validate_presence_of(:country) }
     it { is_expected.to validate_presence_of(:brand) }
     it { is_expected.to validate_presence_of(:expires_on) }
+
+    context 'when billing address owner matches user' do
+      subject(:credit_card) do
+        described_class.new(user: user, billing_address: address)
+      end
+
+      let(:address) { create(:common_address) }
+      let(:user) { address.user }
+
+      it 'doesn`t add invalid_billing_address error' do
+        credit_card.valid?
+
+        expect(credit_card.errors[:billing_address_id]).to be_empty
+      end
+    end
+
+    context 'when billing address owner doesn`t match user' do
+      subject(:credit_card) do
+        described_class.new(user: user, user_id: user.id, billing_address: billing_address)
+      end
+
+      let(:address) { create(:common_address) }
+      let(:user) { address.user }
+      let(:billing_address) { create(:common_address) }
+
+      it 'adds invalid billing address error message' do
+        credit_card.valid?
+
+        error_message = I18n.t('models.billing.credit_card.errors.invalid_billing_address')
+        expect(credit_card.errors[:billing_address_id]).to include error_message
+      end
+    end
   end
 
   describe 'Scopes' do
