@@ -33,6 +33,8 @@ p
   - if detail.installments > 1
     br/
     | <strong>Número de parcelas:</strong> #{detail.installments}
+  - if contribution.payment.slip_fee.positive?
+    | (inc. custo de boleto: R$ #{number_to_currency contribution.payment.slip_fee, precision: 2})
   br/
   br/
   - if contribution.reward.present?
