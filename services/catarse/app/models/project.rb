@@ -92,7 +92,7 @@ class Project < ApplicationRecord
 
   def fill_service_slip_fee
     if !is_sub? && service_slip_fee.zero?
-      self.service_slip_fee = CatarseSettings.get_without_cache(:catarse_slip_tax).to_i
+      self.service_slip_fee = CatarseSettings.get_without_cache(:catarse_slip_tax).to_d
     end
   end
 
