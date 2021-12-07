@@ -9,5 +9,6 @@ FactoryBot.define do
     payment_method { 'CartaoDeCredito' }
     gateway_data { {} }
     gateway_fee { 1.00 }
+    slip_fee { 0 }
   end
 end

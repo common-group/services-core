@@ -107,6 +107,7 @@ pt:
       reward: Recompensa
       no_reward: "Não selecionou recompensa"
       delivery_estimate: "Estimativa de entrega:"
+      slip_fee: "custo do boleto"
       delivery_status: "Status da entrega:"
       answer_survey: "Responda o questionário"
       id_payment_gateway: "ID do Apoio:"
