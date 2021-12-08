@@ -249,6 +249,7 @@ const projectsExplore : m.Component<ProjectExploreAttrs, ProjectExploreState> = 
                 showConnectToFacebookButton &&
                 m(UnsignedFriendFacebookConnect)
             ],
+            projectsExploreVM.projectsView.collection()[0] &&
             m(ExploreProjectsList, {
                 projects: projectsExploreVM.projectsView,
                 isSearch: projectsExploreVM.isTextSearch,
