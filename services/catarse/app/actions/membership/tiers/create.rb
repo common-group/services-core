@@ -10,7 +10,7 @@ module Membership
 
       def call
         project = Project.find(project_id)
-        self.tier = project.tiers.create!(attributes)
+        self.tier = project.tiers.create!(attributes.merge(order: 5))
       end
     end
   end

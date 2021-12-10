@@ -22,7 +22,7 @@ RSpec.describe Membership::Tiers::Create, type: :action do
     let(:project) { create(:project) }
 
     context 'when attributes are valid' do
-      let(:attributes) { attributes_for(:membership_tier).merge(project_id: project.id) }
+      let(:attributes) { attributes_for(:membership_tier).merge(project_id: project.id, order: 5) }
 
       it { is_expected.to be_success }
 
@@ -32,6 +32,10 @@ RSpec.describe Membership::Tiers::Create, type: :action do
 
       it 'creates tier with given attribute' do
         expect(result.tier.attributes).to include(attributes.stringify_keys)
+      end
+
+      it 'creates tier with order equal 5' do
+        expect(result.tier[:order]).to eq(5)
       end
     end
 
