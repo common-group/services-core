@@ -1,0 +1,6 @@
+en:
+  models:
+    membership:
+      tier:
+        errors:
+          invalid_project: "project mode must be membership."

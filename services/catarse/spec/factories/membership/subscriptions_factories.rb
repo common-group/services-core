@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :membership_subscription, class: 'Membership::Subscription' do
     traits_for_enum :state, Membership::SubscriptionStateMachine.states
 
-    association :project
+    association :project, factory: :subscription_project
     association :user
 
     tier { association :membership_tier, project: project }

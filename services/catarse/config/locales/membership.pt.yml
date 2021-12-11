@@ -1,0 +1,6 @@
+pt:
+  models:
+    membership:
+      tier:
+        errors:
+          invalid_project: "o projeto deve ser da modalidade de assinatura."
