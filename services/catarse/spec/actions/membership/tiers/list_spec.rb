@@ -19,7 +19,7 @@ RSpec.describe Membership::Tiers::List, type: :action do
     subject(:result) { described_class.result(project_id: project_id) }
 
     context 'when project exists' do
-      let(:project) { create(:project) }
+      let(:project) { create(:subscription_project) }
       let!(:tiers) { create_list(:membership_tier, 3, project: project) }
       let(:project_id) { project.id }
 

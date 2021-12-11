@@ -15,5 +15,14 @@ module Membership
 
     validates :subscribers_limit, numericality: { greater_than: 0, only_integer: true }, allow_nil: true
     validates :order, numericality: { only_integer: true }
+    validate :project_mode_is_membership
+
+    private
+
+    def project_mode_is_membership
+      return if project.try(:is_sub?)
+
+      errors.add(:project_id, I18n.t('models.membership.tier.errors.invalid_project'))
+    end
   end
 end

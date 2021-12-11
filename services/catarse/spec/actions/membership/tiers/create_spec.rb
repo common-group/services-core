@@ -19,7 +19,7 @@ RSpec.describe Membership::Tiers::Create, type: :action do
   describe '#call' do
     subject(:result) { described_class.result(project_id: project.id, attributes: attributes) }
 
-    let(:project) { create(:project) }
+    let(:project) { create(:subscription_project) }
 
     context 'when attributes are valid' do
       let(:attributes) { attributes_for(:membership_tier).merge(project_id: project.id) }

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :membership_tier, class: 'Membership::Tier' do
-    association :project, factory: :project
+    association :project, factory: :subscription_project
 
     name { Faker::Lorem.sentence }
     description { Faker::Lorem.sentence(word_count: 20) }
