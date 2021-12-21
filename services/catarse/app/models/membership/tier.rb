@@ -15,7 +15,10 @@ module Membership
 
     validates :subscribers_limit, numericality: { greater_than: 0, only_integer: true }, allow_nil: true
     validates :order, numericality: { only_integer: true }
+
     validate :project_mode_is_membership
+
+    before_validation :fill_order, on: :create
 
     private
 
@@ -23,6 +26,12 @@ module Membership
       return if project.try(:is_sub?)
 
       errors.add(:project_id, I18n.t('models.membership.tier.errors.invalid_project'))
+    end
+
+    def fill_order
+      return if order.present?
+
+      self.order = self.class.where(project_id: project_id).maximum(:order).to_i + 1
     end
   end
 end

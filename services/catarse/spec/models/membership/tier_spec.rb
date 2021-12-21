@@ -10,6 +10,54 @@ RSpec.describe Membership::Tier, type: :model do
     it { is_expected.to have_many(:subscriptions).class_name('Membership::Subscription').dependent(:destroy) }
   end
 
+  describe 'Before Validation' do
+    subject(:tier) { create(:membership_tier, project_id: project.id, order: nil) }
+
+    let(:project) { create(:subscription_project) }
+
+    context 'when the order attribute is not populated and there are one or more tiers' do
+      before do
+        create(:membership_tier, order: 1, project: project)
+        create(:membership_tier, order: 3, project: project)
+      end
+
+      it 'the order attribute is the highest value plus a unit' do
+        expect(tier.order).to eq(4)
+      end
+    end
+
+    context 'when the order attribute is not populated and there are no more tier' do
+      it 'the order attribute is equal to one' do
+        expect(tier.order).to eq(1)
+      end
+    end
+
+    context 'when order attribute is populated on creation' do
+      subject(:tier) { create(:membership_tier, project_id: project.id, order: 10) }
+
+      before do
+        create(:membership_tier, project: project, order: 1)
+      end
+
+      it 'there is no change in the attribute order' do
+        expect(tier.order).to eq(10)
+      end
+    end
+
+    context 'when an attribute is updated' do
+      subject(:tier) { create(:membership_tier, project_id: project.id, order: 1) }
+
+      before do
+        create(:membership_tier, project: project, order: 5)
+        tier.update(name: Faker::Lorem.sentence)
+      end
+
+      it 'there is no change in the attribute order' do
+        expect(tier.order).to eq(1)
+      end
+    end
+  end
+
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:description) }
