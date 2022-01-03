@@ -51,7 +51,7 @@ const userAbout = {
         };
 
         load().then(requestSuccess, requestError);
-
+    
         vnode.state = {
             userDetails,
             error,
@@ -73,8 +73,10 @@ const userAbout = {
                       ".w-container[id='about-content']",
                       m('.w-row', [
                           m('.w-col.w-col-8', 
-                            m('.fontsize-base', state.displayAbout() ? userAbout : state.privateAboutMessage )
-                           ),
+                            m('.fontsize-base', 
+                                state.displayAbout() ? (user.about_html ? m.trust(user.about_html) : '') : state.privateAboutMessage
+                            )
+                          ),
                           m('.w-col.w-col-4', user.id ? m(projectUserCard, { userDetails: prop(user), project: prop({}) }) : h.loader()),
                       ])
                   )
