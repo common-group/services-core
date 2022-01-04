@@ -4,6 +4,8 @@ import h from '../h';
 import projectVM from '../vms/project-vm';
 import projectFriends from './project-friends';
 import progressMeter from './progress-meter';
+import { comingSoonIntegration } from '../root/projects/edit/coming-soon/controllers/coming-soon-integration';
+import { ComingSoonLandingPageExploreRemindButton } from '../root/projects/coming-soon-landing-page-explore-remind-button';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
 const projectCard = {
@@ -88,12 +90,13 @@ const projectCard = {
     view: function({state, attrs}) {
         const project = attrs.project;
         const projectOwnerName = project.user ? (project.user.public_name || project.user.name) : (project.owner_public_name || project.owner_name);
-        
+        const projectDetails = attrs.projectDetails;
+        const projectIsComingSoonLandingPage = !!project.integrations && project.integrations.includes("COMING_SOON_LANDING_PAGE")
         const projectLocalizationObject = {
             filter: 'all',
             city_name: project.address ? project.address.city : project.city_name,
             state_acronym: project.address ? project.address.state_acronym : project.state_acronym,
-        };        
+        };
         const projectLocalizationSearchUrl = `/explore?${m.buildQueryString(projectLocalizationObject)}`
         const projectLocalizationName = project.address ? `${project.address.city}, ${project.address.state_acronym}` : `${project.city_name}, ${project.state_acronym}`;
 
@@ -115,7 +118,7 @@ const projectCard = {
                 }),
                 (
                     project.recommended &&
-                    m('div.loved-projects-container', 
+                    m('div.loved-projects-container',
                         m(`a.loved-projects-badge[href="/${window.I18n.locale}/explore?filter=projects_we_love"]`, 'Projeto que amamos')
                     )
                 ),
@@ -135,21 +138,34 @@ const projectCard = {
                             }, project.headline)
                         ])
                     ]),
-                    m(progressMeter, { progress: state.progress, project }),
-                    m('.card-project-stats', [
-                        m('.w-row', [
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
-                                m('.fontsize-base.fontweight-semibold', `${Math.floor(project.progress)}%`)
+                        !!projectDetails && projectDetails.state === 'draft' ?
+                        [
+                            comingSoonIntegration(projectDetails) &&
+                            [
+                                m(ComingSoonLandingPageExploreRemindButton, {
+                                    project: projectDetails,
+                                    isFollowing: projectDetails.in_reminder
+                                })
+                            ]
+                        ]  :
+                        [
+                            m(progressMeter, { progress: state.progress, project }),
+                            m('.card-project-stats', [
+                                m('.w-row', [
+                                    m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4', [
+                                        m('.fontsize-base.fontweight-semibold', `${Math.floor(project.progress)}%`)
+                                    ]),
+                                    m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
+                                        m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
+                                        m('.fontsize-smallest.lineheight-tightest', window.I18n.t(`pledged.${project.mode}`, I18nScope()))
+                                    ]),
+                                    m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', state.cardCopy(project)),
+                                ])
                             ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-center-small-only', [
-                                m('.fontsize-smaller.fontweight-semibold', `R$ ${h.formatNumber(project.pledged)}`),
-                                m('.fontsize-smallest.lineheight-tightest', window.I18n.t(`pledged.${project.mode}`, I18nScope()))
-                            ]),
-                            m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.u-text-right', state.cardCopy(project)),
-                        ])
-                    ]),
-                    m(state.css().city, 
+                        ],
+                        m(state.css().city,
                         m('div', [
+                            !!projectDetails && projectDetails.state != 'draft' ?
                             m('div',
                                 m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectLocalizationSearchUrl}"]`, {
                                     onclick: (/** @type {Event} */ event) => {
@@ -160,7 +176,7 @@ const projectCard = {
                                     m('span.fa.fa-map-marker.fa-sm', ' '),
                                     ` ${projectLocalizationName}`
                                 ])
-                            ),
+                            ) :  m('br'),
                             m('div',
                                 m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectCategorySearchUrl}"]`, {
                                     onclick: (/** @type {Event} */ event) => {
