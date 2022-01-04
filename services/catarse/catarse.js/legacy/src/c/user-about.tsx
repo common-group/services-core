@@ -62,7 +62,6 @@ const userAbout = {
     },
     view: function({ state }) {
         const user = state.userDetails();
-        const userAbout = user.about_html ? m.trust(user.about_html) : ''
         return state.error()
             ? m(inlineError, { message: 'Erro ao carregar dados.' })
             : state.loader()
