@@ -12,45 +12,71 @@ export const ExploreProjectsList = {
         const loading = prop(true);
         const filterWithProjectsDetails = ['active_saved_projects', 'coming_soon_landing_page'];
 
-        if (filterWithProjectsDetails.includes(vnode.attrs.filterKeyName)) {
+        const reloadProjectsDetails = () => {
+            if (filterWithProjectsDetails.includes(vnode.attrs.filterKeyName)) {
+                let projects_ids = [], group_projects_ids = [], dataProjectsDetails = []
+                const projects = vnode.attrs.projects.collection().filter(function (project) {
+                    return !!project.integrations && project.integrations.includes("COMING_SOON_LANDING_PAGE")
+                })
+                projects.map(function (project) { projects_ids.push(`${project.project_id}`) })
+                for (var i = 0; i < projects_ids.length; i = i + 9) {
+                    group_projects_ids.push(projects_ids.slice(i, i + 9));
+                }
 
-            const projects_collection = vnode.attrs.projects.collection();
-            let projects_ids = []
-            projects_collection.map(function (project) {
-                projects_ids.push(`${project.project_id}`)
-            })
+                for (var i = 0; i < group_projects_ids.length; i++) {
+                    const filtersVM = catarse.filtersVM({ project_id: 'in' }).project_id(group_projects_ids[i])
 
-            const filtersVM = catarse.filtersVM({
-                project_id: 'in'
-            }).project_id(projects_ids)
+                    const lProjectsDetails = catarse.loaderWithToken(
+                        models.projectDetail.getPageOptions(filtersVM.parameters())
+                    );
 
-            const lProjectsDetails = catarse.loaderWithToken(models.projectDetail.getPageOptions(
-                filtersVM.parameters())
-            );
-
-            lProjectsDetails.load().then((data) => {
-                projectsDetails(data);
+                    lProjectsDetails.load().then((data) => {
+                        data.map(function(detail) { dataProjectsDetails.push(detail) });
+                    });
+                }
+                projectsDetails(dataProjectsDetails)
                 loading(false);
-            });
-        } else {
-            loading(false);
-        }
+                h.redraw();
+            } else {
+                loading(false);
+            }
+        };
+
+        reloadProjectsDetails();
 
         vnode.state = {
+            loading,
             projectsDetails,
-            loading
+            reloadProjectsDetails
         };
+
     },
     view: function({state, attrs}) {
         const projects = attrs.projects;
         const isSearch = attrs.isSearch;
         const filterKeyName = attrs.filterKeyName;
         const isContributedByFriendsFilter = (filterKeyName === 'contributed_by_friends');
+        const isActiveSavedProjectsFilter = (filterKeyName === 'active_saved_projects');
+        const isComingSoonLandingPageFilter = (filterKeyName === 'coming_soon_landing_page');
         const projectsDetails = state.projectsDetails();
         const loading = state.loading();
+        const projectsLenght = projects.collection().filter(function (project) {
+            return !!project.integrations && project.integrations.includes("COMING_SOON_LANDING_PAGE")
+        }).length
 
-        return m('.w-section.section', [
+        if (!loading && projectsDetails.length > 0 && projectsLenght > 0
+          && projectsLenght != projectsDetails.length) {
+            state.reloadProjectsDetails();
+        }
+
+        if (!loading && (isActiveSavedProjectsFilter || isComingSoonLandingPageFilter)
+            && projectsDetails.length == 0 && projectsLenght > 0) {
+            h.redraw();
+        }
+
+        return !loading && m('.w-section.section', [
             m('.w-container', [
+                (!isActiveSavedProjectsFilter || projectsLenght == projectsDetails.length) ?
                 m('.w-row', [
                     m('.w-row', _.map(projects.collection(), project => {
                         let cardType = 'small';
@@ -60,7 +86,6 @@ export const ExploreProjectsList = {
                             project_details => project_details.project_id === project.project_id
                         );
                         if (projectDetails == undefined) projectDetails = {}
-
 
                         if (isSearch) {
                             ref = 'ctrse_explore_pgsearch';
@@ -85,8 +110,8 @@ export const ExploreProjectsList = {
                         });
                     })),
                     projects.isLoading() ? h.loader() : ''
-                ])
+                ]) : h.loader()
             ])
-        ]);
+        ])
     }
 };

@@ -455,6 +455,11 @@ export class ProjectsExploreViewModel {
                 state: 'desc',
                 pledged: 'desc'
             };
+        } else if (this._filter === 'coming_soon_landing_page')  {
+            return {
+                count_project_reminders: 'desc',
+                updated_at: 'desc'
+            };
         } else {
             return {
                 open_for_contributions: 'desc',

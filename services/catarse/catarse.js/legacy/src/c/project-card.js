@@ -91,7 +91,6 @@ const projectCard = {
         const project = attrs.project;
         const projectOwnerName = project.user ? (project.user.public_name || project.user.name) : (project.owner_public_name || project.owner_name);
         const projectDetails = attrs.projectDetails;
-
         const projectLocalizationObject = {
             filter: 'all',
             city_name: project.address ? project.address.city : project.city_name,
@@ -144,11 +143,10 @@ const projectCard = {
                             [
                                 m(ComingSoonLandingPageExploreRemindButton, {
                                     project: projectDetails,
-                                    isFollowing: projectDetails.in_reminder,
-                                    isProjectCard: true
+                                    isFollowing: projectDetails.in_reminder
                                 })
                             ]
-                        ] :
+                        ]  :
                         [
                             m(progressMeter, { progress: state.progress, project }),
                             m('.card-project-stats', [
@@ -166,6 +164,7 @@ const projectCard = {
                         ],
                         m(state.css().city,
                         m('div', [
+                            !!projectDetails && projectDetails.state != 'draft' ?
                             m('div',
                                 m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectLocalizationSearchUrl}"]`, {
                                     onclick: (/** @type {Event} */ event) => {
@@ -176,7 +175,7 @@ const projectCard = {
                                     m('span.fa.fa-map-marker.fa-sm', ' '),
                                     ` ${projectLocalizationName}`
                                 ])
-                            ),
+                            ) :  m('br'),
                             m('div',
                                 m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectCategorySearchUrl}"]`, {
                                     onclick: (/** @type {Event} */ event) => {

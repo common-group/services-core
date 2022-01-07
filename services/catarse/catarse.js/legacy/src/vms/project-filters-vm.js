@@ -45,7 +45,7 @@ const projectFiltersVM = () => {
         }).open_for_contributions('true'),
 
         active_saved_projects = filtersVM({
-            active_saved_projects: 'eq'
+          active_saved_projects: 'eq'
         }).active_saved_projects(true),
 
         contributed_by_friends = filtersVM({

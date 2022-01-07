@@ -49,7 +49,7 @@ export class ExploreLightBox {
             {
                 name: 'Em breve no Catarse',
                 query: {
-                    mode: 'coming_soon_landing_page',
+                    filter: 'coming_soon_landing_page',
                 }
             },
             userVM.isLoggedIn ? {

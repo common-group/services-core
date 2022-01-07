@@ -38,7 +38,7 @@ function _ComingSoonLandingPageExploreRemindButton(props: ComingSoonLandingPageE
     function redirectToLogin() {
         if (!isLoggedIn(getCurrentUserCached())) {
             h.storeAction('reminder', project.project_id)
-            h.navigateToDevise(`?redirect_to=${location.pathname}?remindMe=true`)
+            h.navigateToDevise(`?redirect_to=/explore?filter=coming_soon_landing_page`)
             return true
         }
 
