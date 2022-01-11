@@ -29,10 +29,12 @@ p
   br/
   | <strong>Forma de pagamento:</strong> #{detail.payment_method}
   br/
-  | <strong>Valor total da contribuição:</strong> #{number_to_currency detail.gateway_amount, precision: 2}
+  | <strong>Valor total da contribuição:</strong> #{number_to_currency (detail.gateway_amount - contribution.payment.slip_fee), precision: 2}
   - if detail.installments > 1
     br/
     | <strong>Número de parcelas:</strong> #{detail.installments}
+  - if contribution.payment.slip_fee.positive?
+    | (+#{number_to_currency contribution.payment.slip_fee, precision: 2} custo de boleto)
   br/
   br/
   - if contribution.reward.present?

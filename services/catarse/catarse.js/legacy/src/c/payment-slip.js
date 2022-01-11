@@ -19,6 +19,7 @@ const paymentSlip = {
             completed = prop(false),
             subscriptionEditConfirmed = prop(false),
             showSubscriptionModal = prop(false),
+            serviceSlipFee = h.formatNumber((projectVM.getCurrentProject().service_slip_fee), 2, 3),
             isReactivation = vnode.attrs.isReactivation || prop(false);
 
         const buildSlip = () => {
@@ -60,6 +61,7 @@ const paymentSlip = {
             vm,
             buildSlip,
             slipPaymentDate,
+            serviceSlipFee,
             loading,
             completed,
             error,
@@ -71,15 +73,19 @@ const paymentSlip = {
     },
     view: function({state, attrs}) {
         const buttonLabel = state.isSubscriptionEdit() && !attrs.isReactivation() ? window.I18n.t('subscription_edit', I18nScope()) : window.I18n.t('pay_slip', I18nScope());
+        const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
 
         return m('.w-row',
                     m('.w-col.w-col-12',
-                        m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card', [
-                            projectVM.isSubscription() ? '' : m('.fontsize-small.u-marginbottom-20',
+                        m('.u-margintop-30.u-marginbottom-60.u-radius.card-big.card.u-text-center', [
+                            projectVM.isSubscription() ? '' : m('.fontsize-base.fontweight-semibold.u-marginbottom-10',
                                 state.slipPaymentDate() ? `Esse boleto bancário vence no dia ${h.momentify(state.slipPaymentDate().slip_expiration_date)}.` : 'carregando...'
                             ),
-                            m('.fontsize-small.u-marginbottom-40',
+                            m('.fontsize-small',
                                 'Ao gerar o boleto, o realizador já está contando com o seu apoio. Pague até a data de vencimento pela internet, casas lotéricas, caixas eletrônicos ou agência bancária.'
+                            ),
+                            m('.u-marginbottom-40',
+                                projectVM.isSubscription() ? '' : m('.fontweight-semibold.fontcolor-secondary.u-margintop-10.fontsize-small', ` (${window.I18n.t('slip_fee', contributionScope())}: R$ ${state.serviceSlipFee})`),
                             ),
                             m('.w-row',
                                 m('.w-col.w-col-8.w-col-push-2', [
