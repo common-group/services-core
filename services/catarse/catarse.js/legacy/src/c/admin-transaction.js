@@ -11,9 +11,9 @@ const adminTransaction = {
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Detalhes do apoio'),
             m('.fontsize-smallest.lineheight-looser', [
                 `Valor: R$${h.formatNumber(contribution.value, 2, 3)}`,
-                (contribution.payment_method === 'BoletoBancario' && !!contribution.slip_fee ?
+                (contribution.payment_method === 'BoletoBancario' ?
                 m('span.fontsize-smallest.fontcolor-secondary',
-                   ` (+R$ ${h.formatNumber((contribution.slip_fee || 0), 2, 3)} ${ window.I18n.t('slip_fee', contributionScope())} )`
+                   ` (+R$ ${h.formatNumber((contribution.slip_fee || 0), 2, 3)} ${ window.I18n.t('slip_fee', contributionScope())})`
                 ) : ''),
                 m('br'),
                 `Taxa: R$${h.formatNumber(contribution.gateway_fee, 2, 3)}`,

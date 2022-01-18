@@ -9,7 +9,7 @@ const adminContribution = {
 
         return m('.w-row.admin-contribution', [
             m('.fontweight-semibold.lineheight-tighter.u-marginbottom-10.fontsize-small', `R$${contribution.value}`,
-            (contribution.payment_method === 'BoletoBancario' && !!contribution.slip_fee ?
+            (contribution.payment_method === 'BoletoBancario' ?
               m('span.fontsize-smallest.fontcolor-secondary',
                 ` (+R$ ${h.formatNumber((contribution.slip_fee || 0), 2, 3)} ${window.I18n.t('slip_fee', contributionScope())} )`) : '')),
             m('.fontsize-smallest.fontcolor-secondary', h.momentify(contribution.created_at, 'DD/MM/YYYY HH:mm[h]')),
