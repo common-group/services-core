@@ -4,7 +4,6 @@ import h from '../h';
 import projectVM from '../vms/project-vm';
 import projectFriends from './project-friends';
 import progressMeter from './progress-meter';
-import { comingSoonIntegration } from '../root/projects/edit/coming-soon/controllers/coming-soon-integration';
 import { ComingSoonLandingPageExploreRemindButton } from '../root/projects/coming-soon-landing-page-explore-remind-button';
 
 const I18nScope = _.partial(h.i18nScope, 'projects.card');
@@ -90,7 +89,6 @@ const projectCard = {
     view: function({state, attrs}) {
         const project = attrs.project;
         const projectOwnerName = project.user ? (project.user.public_name || project.user.name) : (project.owner_public_name || project.owner_name);
-        const projectDetails = attrs.projectDetails;
         const projectLocalizationObject = {
             filter: 'all',
             city_name: project.address ? project.address.city : project.city_name,
@@ -137,15 +135,12 @@ const projectCard = {
                             }, project.headline)
                         ])
                     ]),
-                        !!projectDetails && projectDetails.state === 'draft' ?
+                        project.state === 'draft' ?
                         [
-                            comingSoonIntegration(projectDetails) &&
-                            [
-                                m(ComingSoonLandingPageExploreRemindButton, {
-                                    project: projectDetails,
-                                    isFollowing: projectDetails.in_reminder
-                                })
-                            ]
+                            m(ComingSoonLandingPageExploreRemindButton, {
+                                project: project,
+                                isFollowing: project.in_reminder
+                            })
                         ]  :
                         [
                             m(progressMeter, { progress: state.progress, project }),
@@ -164,7 +159,7 @@ const projectCard = {
                         ],
                         m(state.css().city,
                         m('div', [
-                            !!projectDetails && projectDetails.state != 'draft' ?
+                            project.state != 'draft' ?
                             m('div',
                                 m(`a.link-hidden-dark.fontsize-smallest.fontcolor-secondary[href="${projectLocalizationSearchUrl}"]`, {
                                     onclick: (/** @type {Event} */ event) => {

@@ -36,4 +36,5 @@ export type Project = {
     integrations: ProjectIntegration[];
     category_name: string;
     active_saved_projects: boolean;
+    in_reminder: boolean;
 };

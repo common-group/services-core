@@ -1,18 +1,21 @@
 import { useEffect, useCallback, useRef, useState, withHooks } from 'mithril-hooks'
-import { ProjectDetails } from '../../entities'
+import { Project } from '../../entities'
 import { Loader } from '../../shared/components/loader'
 import PopNotification from '../../c/pop-notification'
 import h from '../../h'
 import { getCurrentUserCached } from '../../shared/services/user/get-current-user-cached'
 import { isLoggedIn } from '../../shared/services/user/is-logged-in'
 import m from 'mithril'
-import { removeRemind } from './controllers/removeRemind'
-import { remind } from './controllers/remind'
+import _ from 'underscore';
+import { removeRemindProject } from './controllers/removeRemindProject'
+import { remindProject } from './controllers/remindProject'
 import './coming-soon-landing-page-bookmark-card.scss'
 import './coming-soon-landing-page-explore-remind-button.scss'
+import { catarse } from '../../api'
+import models from '../../models';
 
 export type ComingSoonLandingPageExploreRemindButtonProps = {
-    project: ProjectDetails
+    project: Project
     isFollowing: boolean
 }
 
@@ -34,6 +37,50 @@ function _ComingSoonLandingPageExploreRemindButton(props: ComingSoonLandingPageE
     useEffect(() => {
         setCurrentUserBookmarked(project.in_reminder)
     }, [project.in_reminder])
+
+    useEffect(() => {
+        findRemindProjectInLocalStorage()
+        displayPop()
+    }, [])
+
+    function findRemindProjectInLocalStorage() {
+        const reminder = parseInt(localStorage.getItem('reminder'));
+
+        if (isLoggedIn(getCurrentUserCached()) && reminder) {
+            const lProjectsDetails = catarse.loaderWithToken(models.projectDetail.getPageOptions(
+                catarse.filtersVM({ project_id: 'eq' }).project_id(reminder).parameters())
+            );
+            lProjectsDetails.load().then((data) => { remindProjectInLocalStorage(_.first(data)) });
+        }
+
+        localStorage.removeItem('reminder');
+    }
+
+    function remindProjectInLocalStorage(projectsDetails) {
+        try {
+            remindProject(projectsDetails)
+            h.storeAction('display_pop', 'success')
+        } catch (error) {
+            h.storeAction('display_pop', 'error')
+        }
+
+        window.location.reload();
+    }
+
+    function displayPop() {
+        const displayPop = localStorage.getItem('display_pop');
+
+        if (displayPop) {
+            if (displayPop == 'success') {
+                displayPopNotificationMessage({ message: 'Você irá receber um email quando este projeto for publicado!' })
+            } else if (displayPop == 'error') {
+                displayPopNotificationMessage({ message: 'Error ao salvar lembrete.', isError: true })
+            }
+
+            localStorage.removeItem('display_pop');
+        }
+        h.redraw();
+    }
 
     function redirectToLogin() {
         if (!isLoggedIn(getCurrentUserCached())) {
@@ -57,7 +104,7 @@ function _ComingSoonLandingPageExploreRemindButton(props: ComingSoonLandingPageE
     async function toggleRemindMeProject(isRemind: boolean) {
         try {
             setIsLoading(true)
-            await isRemind ? remind(project) : removeRemind(project)
+            await isRemind ? remindProject(project) : removeRemindProject(project)
             setCurrentUserBookmarked(isRemind)
             await displayPopNotificationMessage({ message: successMessage(project) })
         } catch (error) {
