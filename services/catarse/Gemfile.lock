@@ -564,7 +564,7 @@ GEM
       faraday
     shoulda-matchers (5.0.0)
       activesupport (>= 5.2.0)
-    sidekiq (6.3.1)
+    sidekiq (6.4.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -731,7 +731,7 @@ DEPENDENCIES
   sentry-rails (= 4.7.3)
   sentry-ruby (= 4.7.3)
   shoulda-matchers (= 5.0.0)
-  sidekiq (= 6.3.1)
+  sidekiq (= 6.4.0)
   sidekiq-status (= 2.1.0)
   simple_form (= 5.1.0)
   simple_token_authentication (= 1.17.0)
