@@ -4,7 +4,7 @@
 class InvalidProject < StandardError; end
 class SuccessfulProject < StandardError; end
 class ProjectsController < ApplicationController
-  after_action :verify_authorized, except: %i[show index video video_embed embed embed_panel about_mobile]
+  after_action :verify_authorized, except: %i[show index video video_embed embed embed_panel about_mobile index_document]
   after_action :redirect_user_back_after_login, only: %i[index show]
   before_action :authorize_and_build_resources, only: %i[edit]
 
@@ -215,6 +215,13 @@ class ProjectsController < ApplicationController
   def show
     resource
     @post ||= resource.posts.where(id: params[:project_post_id].to_i).first if params[:project_post_id].present?
+  end
+
+  def index_document
+    @project = ProjectIndexAction.new(project_id: params[:id], user: current_user).call
+    render json: @project.to_json
+  rescue StandardError => e
+    render json: nil
   end
 
   def video

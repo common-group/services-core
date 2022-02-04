@@ -136,6 +136,7 @@ Catarse::Application.routes.draw do
           get :fallback_create, to: 'projects#create'
         end
         get 'video', on: :collection
+        get 'index_document', on: :member
         member do
           post :upload_image
           get 'insights'
