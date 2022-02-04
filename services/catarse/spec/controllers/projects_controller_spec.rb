@@ -351,6 +351,52 @@ RSpec.describe ProjectsController, type: :controller do
     end
   end
 
+  describe 'GET index_document' do
+    context 'params are valid' do
+      let(:user) { create(:user) }
+      let(:project) { create(:project, user: user) }
+      let(:hits) { [ 'attributes' => { 'id' => '47654' } ] }
+
+      before do
+        allow(controller).to receive(:current_user).and_return(user)
+        allow(ProjectsIndex).to receive(:query).with(match: { project_id: project.id.to_s }).and_return(hits)
+
+        get :index_document, params: { id: project.id }
+      end
+
+      it 'returns project attributes' do
+        expect(response.body).to eq(
+          {
+            "id"=>"47654",
+            "contributed_by_friends"=>false,
+            "in_reminder"=>false,
+            "saved_projects"=>false,
+            "admin_tag_list"=>nil,
+            "admin_notes"=>nil,
+            "can_cancel"=>true
+          }.to_json
+        )
+      end
+    end
+
+    context 'params is not a valid' do
+      let(:user) { create(:user) }
+      let(:project_id) { 'Error' }
+      let(:exception) { RuntimeError.new('Error') }
+
+      before do
+        allow(controller).to receive(:current_user).and_return(user)
+        allow(ProjectIndexAction).to receive(:new)
+          .with(user: user, project_id: project_id)
+          .and_raise(exception)
+
+        get :index_document, params: { id: project_id }
+      end
+
+      it { expect(response.body).to eq nil.to_json }
+    end
+  end
+
   describe 'Solidarity project' do
     let(:integrations_attributes) { [{ name: 'SOLIDARITY_SERVICE_FEE', data: { name: 'SOLIDARITY FEE NAME' } }] }
 

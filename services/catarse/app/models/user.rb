@@ -92,6 +92,8 @@ class User < ApplicationRecord
   has_many :subscriptions,  foreign_key: :user_id, primary_key: :common_id
   has_and_belongs_to_many :recommended_projects, join_table: :recommendations, class_name: 'Project'
 
+  update_index('projects') { projects }
+
   begin
     accepts_nested_attributes_for :unsubscribes, allow_destroy: true
   rescue

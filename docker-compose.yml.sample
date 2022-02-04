@@ -23,6 +23,8 @@ x-ctrse-service: &ctrse-service
       - cluster
 
 volumes:
+  elastic-data:
+    driver: local
   postgres-data:
     driver: local
   postgres-catarse-data:
@@ -61,6 +63,22 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.41
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - cluster
 
   catarse_db:
     image: library/postgres:11.5-alpine
