@@ -72,7 +72,8 @@ const userContributedBox = {
                     ]),
                     m('.u-marginbottom-20.w-col.w-col-3', [
                         m('.fontsize-base.fontweight-semibold.lineheight-looser',
-                            `R$ ${contribution.value}`
+                            `R$ ${contribution.value}`,
+                            (contribution.payment_method === 'BoletoBancario' && !!contribution.slip_fee ? m('span.fontsize-smallest.fontcolor-secondary', ` (+R$ ${h.formatNumber((contribution.slip_fee), 2, 3)} ${ window.I18n.t('slip_fee', contributionScope())})` ) : '')
                         ),
                         m('.w-embed',
                             m('div', [

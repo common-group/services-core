@@ -1,13 +1,20 @@
 import m from 'mithril';
 import h from '../h';
+import _ from 'underscore';
 
 const adminTransaction = {
     view: function({attrs}) {
         const contribution = attrs.contribution;
+        const contributionScope = _.partial(h.i18nScope, 'users.contribution_row');
+
         return m('.w-col.w-col-4', [
             m('.fontweight-semibold.fontsize-smaller.lineheight-tighter.u-marginbottom-20', 'Detalhes do apoio'),
             m('.fontsize-smallest.lineheight-looser', [
                 `Valor: R$${h.formatNumber(contribution.value, 2, 3)}`,
+                (contribution.payment_method === 'BoletoBancario' ?
+                m('span.fontsize-smallest.fontcolor-secondary',
+                   ` (+R$ ${h.formatNumber((contribution.slip_fee || 0), 2, 3)} ${ window.I18n.t('slip_fee', contributionScope())})`
+                ) : ''),
                 m('br'),
                 `Taxa: R$${h.formatNumber(contribution.gateway_fee, 2, 3)}`,
                 m('br'),
