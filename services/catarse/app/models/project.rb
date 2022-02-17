@@ -67,6 +67,8 @@ class Project < ApplicationRecord
 
   has_many :integrations, class_name: 'ProjectIntegration', inverse_of: :project
 
+  update_index('projects') { self }
+
   accepts_nested_attributes_for :integrations, allow_destroy: true
   accepts_nested_attributes_for :rewards, allow_destroy: true
   accepts_nested_attributes_for :user

@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Category, type: :model do
+  include Chewy::Rspec::Helpers
+
   let(:category) { create(:category) }
   let(:category_2) { create(:category) }
 
@@ -75,6 +77,43 @@ RSpec.describe Category, type: :model do
 
       it do
         expect(category.notifications.where(template_name: 'categorized_projects_of_the_week').count).to eq 1
+      end
+    end
+  end
+
+  describe 'project_index' do
+    let(:hits) do
+      [
+        {
+          '_index' => 'projects',
+          '_type' => '_doc',
+          '_id' => '1',
+        }
+      ]
+    end
+
+    let(:raw_response) do
+      {
+        'took' => 4,
+        'hits' => {
+          'total' => {
+            'value' => 1,
+            'relation' => 'eq'
+          },
+          'max_score' => 1.0,
+          'hits' => hits
+        }
+      }
+    end
+
+    context 'when category is updated' do
+      let(:category) { create(:category) }
+      let!(:project) { create(:project, category: category) }
+
+      it 'updates project index' do
+        mock_elasticsearch_response(ProjectsIndex, raw_response) do
+          expect(category.update!(name_pt: 'test')).to update_index(ProjectsIndex)
+        end
       end
     end
   end
