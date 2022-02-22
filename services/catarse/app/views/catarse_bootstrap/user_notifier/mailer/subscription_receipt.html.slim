@@ -1,0 +1,60 @@
+- subscription_payment ||= @notification.subscription_payment
+- transaction = subscription_payment.gateway_cached_data["transaction"]
+
+h2 style="text-align:center; line-height: 45px;"
+  | Olá!
+
+br/
+| Parabéns! O projeto #{link_to(subscription_payment.project.name, project_by_slug_url(permalink: subscription_payment.project.permalink, utm_source:'notification',utm_medium:'email',utm_campaign:'subscription_receipt', utm_content:subscription_payment.project.name))} que,
+|  incluindo você, teve #{subscription_payment.project.total_contributors} apoiadores, foi financiado com sucesso no #{CatarseSettings[:company_name]}.
+
+br/
+
+p Esse e-mail serve como um <strong>recibo definitivo da sua contribuição</strong>.
+
+p Seguem todos os dados do pagamento:
+p
+  | <strong>Nome do apoiador:</strong> #{subscription_payment.user.display_name}
+  br/
+  | <strong>CPF/CNPJ do apoiador:</strong> #{subscription_payment.user.cpf}
+  br/
+  | <strong>Projeto apoiado:</strong> #{subscription_payment.project.name}
+  br/
+
+  - owner = subscription_payment.project.user
+  - owner_name = owner.try(:name)
+  - owner_document = owner.try(:cpf)
+  | <strong>Nome/Razão Social do realizador:</strong> #{owner_name}
+  br/
+  | <strong>CPF/CNPJ do realizador:</strong> #{owner_document}
+  br/
+  br/
+  | <strong>ID do apoio:</strong> #{transaction["id"]}
+  br/
+  | <strong>Data da confirmação do apoio:</strong> #{I18n.l(transaction["date_created"].to_date)}
+  br/
+  | <strong>Forma de pagamento:</strong> #{transaction["payment_method"]}
+  br/
+  | <strong>Valor total da contribuição:</strong> #{number_to_currency transaction["amount"], precision: 2}
+  br/
+  br/
+  - if subscription_payment.reward.present?
+    | <strong>Recompensa selecionada:</strong> #{subscription_payment.reward.description}
+    br/
+    | <strong>Estimativa de entrega informada pelo realizador:</strong> #{subscription_payment.reward.display_deliver_estimate}
+    br/
+
+  br/
+
+p
+  ' Caso tenha alguma dúvida em relação ao <strong>projeto ou à sua recompensa</strong>,
+  ' entre em contato diretamente com o realizador da página do projeto #{link_to subscription_payment.project.name, project_by_slug_url(permalink: subscription_payment.project.permalink)} ou do e-mail #{mail_to owner.try(:email)}.
+p
+  ' É importante ressaltar que o Catarse <strong>não é uma loja</strong>,
+  ' e que esse recibo é referente a um apoio que você fez para um projeto que você acredita ser viável.
+  ' O Catarse não é responsável pela execução desse projeto ou pela entrega das recompensas.
+  ' #{link_to 'Relembre aqui', 'http://suporte.catarse.me/hc/pt-br/articles/115002214043'} como funciona o Financiamento Coletivo e quais são os papéis e responsabilidades
+  ' do Catarse, do Apoiador e do Realizador.
+
+
+= render partial: 'user_notifier/mailer/contact_info'
