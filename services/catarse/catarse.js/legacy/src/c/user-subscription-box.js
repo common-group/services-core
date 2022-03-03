@@ -100,16 +100,15 @@ const userSubscriptionBox = {
 
             l.load().then(() => {
                 h.storeAction('display_pop', 'success')
+                window.location.reload();
             }).catch(e => {
                 h.storeAction('display_pop', 'error')
+                window.location.reload();
             });
-
-            window.location.reload();
         };
 
         function displayPop() {
             const displayPop = localStorage.getItem('display_pop');
-    
             if (displayPop) {
                 if (displayPop == 'success') {
                     showSuccess(true);
@@ -123,7 +122,6 @@ const userSubscriptionBox = {
         }
 
         displayPop();
-    
         const showLastSubscriptionVersionValueIfHasOne = () => {
             const is_active = subscription.status === 'active';
             const current_paid_subscription = subscription.current_paid_subscription;
