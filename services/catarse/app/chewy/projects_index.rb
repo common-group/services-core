@@ -87,7 +87,7 @@ class ProjectsIndex < Chewy::Index  # rubocop:disable Metrics/ClassLength
   field :is_adult_content, value: ->(project) { project.content_rating >= 18 }
   field :content_rating
   field :can_request_transfer, value: lambda { |project|
-    project.state == 'successful' && project.expires_at >= '2016-06-06'.to_date
+    project.state == 'successful' && (project.expires_at.present? && project.expires_at >= '2016-06-06'.to_date)
   }
   field :category, value: ->(project) { project.category.name_pt || project.category.name_en }
   field :posts_count, value: ->(project) { ProjectPost.where(project_id: project.id).count }
