@@ -6,6 +6,8 @@ class Category < ApplicationRecord
   has_many :category_followers
   has_many :users, through: :category_followers
 
+  update_index('projects') { projects }
+
   delegate :display_name, to: :decorator
 
   validates_presence_of :name_pt
