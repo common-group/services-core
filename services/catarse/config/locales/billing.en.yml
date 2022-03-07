@@ -8,6 +8,7 @@ en:
         errors:
           invalid_total_amount: "doesn't match other values"
           invalid_credit_card: "credit card owner doesn't match user"
+          has_items_that_cannot_be_paid_in_installments: "has items that cannot be paid in installments"
       payment_item:
         errors:
           invalid_user: "payment user doesn't match payable user"

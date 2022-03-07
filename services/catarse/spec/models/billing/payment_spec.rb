@@ -119,6 +119,27 @@ RSpec.describe Billing::Payment, type: :model do
         expect(payment.errors[:credit_card_id]).to include error_message
       end
     end
+
+    context 'when pay in installment items that cannot be paid in installment' do
+      subject(:payment) { build(:billing_payment, :credit_card, :subscription, installments_count: 2) }
+
+      it 'adds error message to items' do
+        payment.valid?
+
+        error_message = I18n.t('models.billing.payment.errors.has_items_that_cannot_be_paid_in_installments')
+        expect(payment.errors[:items]).to include error_message
+      end
+    end
+
+    context 'when pay in installment items that can be paid in installment' do
+      subject(:payment) { build(:billing_payment, :credit_card, :contribution, installments_count: 2) }
+
+      it 'doesn`t add error to items' do
+        payment.valid?
+
+        expect(payment.errors[:items]).to be_empty
+      end
+    end
   end
 
   describe 'Delegations' do
