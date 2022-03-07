@@ -55,7 +55,7 @@ RSpec.describe Billing::Payments::GenerateBoleto, type: :action do
         result
       end
 
-      it 'doesn`t  change payment state' do
+      it 'doesn`t change payment state' do
         expect(payment).not_to receive(:wait_payment!)
 
         result

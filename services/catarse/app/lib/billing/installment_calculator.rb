@@ -33,7 +33,7 @@ module Billing
       if installments_count == 1 || amount < @minimum_amount_for_installment
         amount
       else
-        (amount * (1 + interest_rate * installments_count / 100)).round(0)
+        (amount * (1 + ((interest_rate * installments_count) / 100))).round(0)
       end
     end
 
