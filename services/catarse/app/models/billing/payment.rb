@@ -31,6 +31,7 @@ module Billing
 
     validates :installments_count, numericality: { greater_than: 0 }, if: :credit_card?
     validates :installments_count, numericality: { equal_to: 1 }, unless: :credit_card?
+    validate :items_allows_installment, if: :installment?
 
     validate :total_amount_represents_the_sum_of_amount_and_fees
     validate :credit_card_owner_matches_user, if: :credit_card?
@@ -60,6 +61,12 @@ module Billing
       return if credit_card.blank? || user_id == credit_card.user_id
 
       errors.add(:credit_card_id, I18n.t('models.billing.payment.errors.invalid_credit_card'))
+    end
+
+    def items_allows_installment
+      return if items.all?(&:allows_installment?)
+
+      errors.add(:items, I18n.t('models.billing.payment.errors.has_items_that_cannot_be_paid_in_installments'))
     end
   end
 end

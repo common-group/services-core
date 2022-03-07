@@ -8,6 +8,7 @@ pt:
         errors:
           invalid_total_amount: "incompatível com os outros valores"
           invalid_credit_card: "usuário do cartão de credito não corresponde ao do pagamento"
+          has_items_that_cannot_be_paid_in_installments: "contém um ou mais items que não podem ser parcelados"
       payment_item:
         errors:
           invalid_user: "usuário de pagamento não corresponde ao usuário do pagavel"

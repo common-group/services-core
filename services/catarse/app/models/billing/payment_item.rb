@@ -34,6 +34,10 @@ module Billing
       payable_type == 'Contribution'
     end
 
+    def allows_installment?
+      %w[Contribution].include? payable_type
+    end
+
     private
 
     def payment_user_matches_payable_user
