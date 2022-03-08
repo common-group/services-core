@@ -7,7 +7,7 @@ module KondutoHandler
     helper_method :render_konduto_script
 
     def render_konduto_script
-      render_to_string(partial: 'layouts/konduto').html_safe
+      render_to_string(partial: 'catarse_bootstrap/layouts/konduto').html_safe
     end
   end
 end

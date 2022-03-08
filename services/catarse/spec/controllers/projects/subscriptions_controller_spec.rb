@@ -40,7 +40,7 @@ RSpec.describe Projects::SubscriptionsController, type: :controller do
       end
 
       it "renders 'subscription_receipt' template" do
-        expect(response).to render_template('user_notifier/mailer/subscription_receipt')
+        expect(response).to render_template('catarse_bootstrap/user_notifier/mailer/subscription_receipt')
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe Projects::SubscriptionsController, type: :controller do
       end
 
       it "renders 'subscription_receipt' template" do
-        expect(response).to render_template('user_notifier/mailer/subscription_receipt')
+        expect(response).to render_template('catarse_bootstrap/user_notifier/mailer/subscription_receipt')
       end
     end
 

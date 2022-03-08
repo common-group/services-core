@@ -11,7 +11,7 @@ class Projects::ProjectFiscalDataController < ApplicationController
     if !fiscal_data.nil?
       authorize fiscal_data
       template = 'project_debit_note'
-      render "user_notifier/mailer/#{template}", locals: { fiscal_data:fiscal_data }, layout: 'layouts/email'
+      render "catarse_bootstrap/user_notifier/mailer/#{template}", locals: { fiscal_data:fiscal_data }, layout: 'catarse_bootstrap/layouts/email'
     else
       redirect_to edit_project_path(params[:project_id], locale: nil)
     end
@@ -23,7 +23,7 @@ class Projects::ProjectFiscalDataController < ApplicationController
     if !fiscal_data.nil?
       authorize fiscal_data
       template = 'project_inform'
-      render "user_notifier/mailer/#{template}", locals: { fiscal_data:fiscal_data }, layout: 'layouts/email'
+      render "catarse_bootstrap/user_notifier/mailer/#{template}", locals: { fiscal_data:fiscal_data }, layout: 'catarse_bootstrap/layouts/email'
     else
       redirect_to edit_project_path(params[:project_id], locale: nil)
     end

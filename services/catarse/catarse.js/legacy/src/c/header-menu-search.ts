@@ -16,14 +16,14 @@ export type HeaderMenuSearchState = {
 }
 
 export default class HeaderMenuSearch implements m.Component {
-    
+
     oninit({state} : m.Vnode<HeaderMenuSearchAttrs, HeaderMenuSearchState>) {
         state.searchParam = prop('')
         state.formElement = null
     }
 
     view({state} : m.Vnode<HeaderMenuSearchAttrs, HeaderMenuSearchState>) {
-        
+
         const searchParam = state.searchParam
 
         return m('span#menu-search', [
@@ -54,20 +54,20 @@ export default class HeaderMenuSearch implements m.Component {
                 m(`.search-pre-result.w-hidden[data-searchpath="/${window.I18n.locale}/auto_complete_projects"]`, [
                     m('.result',
                         m('.u-text-center',
-                            m('img[alt="Loader"][src="/assets/catarse_bootstrap/loader.gif"]')
+                            m('img[alt="Loader"][src="/images/legacy/catarse_bootstrap/loader.gif"]')
                         )
                     ),
                     m('a.btn.btn-small.btn-terciary.see-more-projects[href="javascript:void(0);"]', ' ver todos')
                 ])
             ]),
-            m('a.w-inline-block.w-hidden-small.w-hidden-tiny.btn.btn-dark.btn-attached.postfix[href="javascript:void(0);"][id="pg_search_submit"]', { 
-                onclick() { 
+            m('a.w-inline-block.w-hidden-small.w-hidden-tiny.btn.btn-dark.btn-attached.postfix[href="javascript:void(0);"][id="pg_search_submit"]', {
+                onclick() {
                     if (state.formElement) {
                         state.formElement.submit()
-                    }    
+                    }
                 }
             },
-                m('img.header-lupa[alt="Lupa"][data-pin-nopin="true"][src="/assets/catarse_bootstrap/lupa.png"]')
+                m('img.header-lupa[alt="Lupa"][data-pin-nopin="true"][src="/images/legacy/catarse_bootstrap/lupa.png"]')
             )
         ])
     }

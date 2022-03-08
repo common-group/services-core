@@ -36,7 +36,7 @@ const projectContributorCard = {
                     project: attrs.project()
                 })
             }, [
-                m(`img.thumb.u-marginbottom-10.u-round[src="${!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/assets/catarse_bootstrap/user.jpg'}"]`)
+                m(`img.thumb.u-marginbottom-10.u-round[src="${!_.isEmpty(contribution.data.profile_img_thumbnail) ? contribution.data.profile_img_thumbnail : '/images/legacy/catarse_bootstrap/user.jpg'}"]`)
             ]),
             m(`a.fontsize-base.fontweight-semibold.lineheigh-tight.link-hidden-dark[href="/users/${contribution.user_id}"]`, {
                 onclick: h.analytics.event({

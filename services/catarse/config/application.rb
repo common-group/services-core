@@ -1,32 +1,36 @@
 # frozen_string_literal: true
 
 require_relative 'boot'
-require 'rails/all'
+
+require 'rails'
+# Pick the frameworks you want:
+require 'active_model/railtie'
+require 'active_job/railtie'
+require 'active_record/railtie'
+# require 'active_storage/engine'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+# require 'action_mailbox/engine'
+# require 'action_text/engine'
+require 'action_view/railtie'
+require 'action_cable/engine'
+# require "rails/test_unit/railtie"
+
 require 'sitemap_generator/tasks'
 
-if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(assets: %w[development test]))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
-end
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
 
 module Catarse
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 7.0
 
     config.to_prepare do
       Devise::Mailer.layout 'email' # email.haml or email.erb
       VideoInfo.provider_api_keys = { youtube: CatarseSettings[:youtube_key], vimeo: CatarseSettings[:vimeo_key] }
     end
-
-    config.paths['app/views'].unshift(Rails.root.join('app/views/catarse_bootstrap'))
-
-    # NOTE: the custom view path is for build a new style without need to
-    # edit the catarse_views
-    # raise config.paths['app/views'].inspect
-    config.paths['app/views'].unshift(Rails.root.join('app/views/custom'))
 
     config.active_record.schema_format = :sql
 
@@ -36,7 +40,6 @@ module Catarse
     # Default encoding for the server
     config.encoding = 'utf-8'
 
-    config.filter_parameters += %i[password password_confirmation]
     config.time_zone = 'Brasilia'
     config.active_record.default_timezone = :utc
 
@@ -49,21 +52,6 @@ module Catarse
       flexible_project_observer subscription_project_observer
     ]
 
-    # Enable the asset pipeline
-    config.assets.enabled = true
-
-    # Don't initialize the app when compiling
-    config.assets.initialize_on_precompile = false
-
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.0'
-
-    config.assets.paths << Rails.root.join('node_modules')
-    config.assets.paths << Rails.root.to_s
-
     config.active_record.dump_schema_after_migration = true
-
-    # Custom webpack-dev-server. Set it to true to use webpack-dev-server
-    config.webpack_dev_server = false
   end
 end

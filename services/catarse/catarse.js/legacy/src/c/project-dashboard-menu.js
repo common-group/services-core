@@ -46,7 +46,7 @@ const projectDashboardMenu = {
             projectThumb = (project) => {
                 if (_.isEmpty(project.large_image)) {
                     if (_.isEmpty(project.thumb_image)) {
-                        return '/assets/thumb-project.png';
+                        return '/images/legacy/thumb-project.png';
                     }
                     return project.thumb_image;
                 }
@@ -85,9 +85,9 @@ const projectDashboardMenu = {
                     m(`a#dashboard_preview_link.w-inline-block.dashboard-project-name[href="${project.is_published ? `/${project.permalink}` : `${editRoute}#preview`}"]`, {
                         onclick: projectVM.routeToProject(project, attrs.ref)
                     }, [
-                        m(`img.thumb-project-dashboard[src="${project ? state.projectThumb(project) : '/assets/thumb-project.png'}"][width="114"]`),
+                        m(`img.thumb-project-dashboard[src="${project ? state.projectThumb(project) : '/images/legacy/thumb-project.png'}"][width="114"]`),
                         m('.fontcolor-negative.lineheight-tight.fontsize-small', project.name),
-                        m(`img.u-margintop-10[src="/assets/catarse_bootstrap/badge-${project.mode}-h.png"]`, {
+                        m(`img.u-margintop-10[src="/images/legacy/catarse_bootstrap/badge-${project.mode}-h.png"]`, {
                             width: projectVM.isSubscription(project) ? 130 : 80
                         })
                     ]),

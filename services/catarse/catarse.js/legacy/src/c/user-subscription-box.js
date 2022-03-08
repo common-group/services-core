@@ -317,7 +317,7 @@ const userSubscriptionBox = {
                                       '.w-col.w-col-8',
                                       m('.fontsize-small.fontweight-semibold.lineheight-tight', [
                                           m(`a.link-hidden[href='/${subscription.project.permalink}']`, subscription.project.project_name),
-                                          m('img[alt="Badge Assinatura"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'),
+                                          m('img[alt="Badge Assinatura"][src="/images/legacy/catarse_bootstrap/badge-sub-h.png"]'),
                                       ])
                                   ),
                               ]),

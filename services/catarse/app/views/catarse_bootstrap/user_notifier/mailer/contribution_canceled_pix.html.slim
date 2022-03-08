@@ -12,7 +12,7 @@ p Notamos que você não realizou o pagamento do PIX para o projeto #{link_to co
   p Como a recompensa que você escolheu originalmente está esgotada, enviamos abaixo um link para que você possa escolher uma nova recompensa e finalizar seu apoio:
   center
     = link_to second_pix_project_contribution_url(contribution.project, contribution, host: CatarseSettings[:host]), target: '__blank' do
-      = image_tag "#{CatarseSettings[:base_url]}/assets/pix_second_button.png"
+      = image_tag "#{CatarseSettings[:base_url]}/images/legacy/pix_second_button.png"
 
 - else
   p Como o prazo de pagamento já venceu, enviamos abaixo a 2ª via do PIX para que você possa finalizar o seu apoio. :-)
@@ -36,4 +36,4 @@ p Notamos que você não realizou o pagamento do PIX para o projeto #{link_to co
       strong = pix_key
   br
 
-= render partial: 'user_notifier/mailer/contact_info'
+= render partial: 'catarse_bootstrap/user_notifier/mailer/contact_info'

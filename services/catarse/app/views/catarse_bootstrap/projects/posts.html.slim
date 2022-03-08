@@ -1,15 +1,11 @@
 - content_for :title, "#{@project.name} · #{CatarseSettings[:company_name]}"
+= render 'layouts/include_redactor_assets'
 
-- content_for :js do
-  = javascript_include_tag "jquery"
-  = javascript_include_tag 'redactor', '//www.google.com/jsapi'
-- content_for :stylesheets do
-  = stylesheet_link_tag 'redactor'
 
 - parameters = { project_id: @project.id, user_id: @project.user_id }.to_json
 
 #application data-parameters=parameters
 
 - content_for :application_js do
-  = javascript_include_tag 'api/application'
-  = javascript_include_tag 'api/catarse'
+  = javascript_include_tag '//www.google.com/jsapi'
+  = render 'layouts/include_catarsejs'

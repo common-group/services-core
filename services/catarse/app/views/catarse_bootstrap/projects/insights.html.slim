@@ -1,10 +1,5 @@
 - content_for :title, "#{@project.name} · #{CatarseSettings[:company_name]}"
-
-- content_for :js do
-  = javascript_include_tag "jquery"
-  = javascript_include_tag 'redactor', '//www.google.com/jsapi'
-- content_for :stylesheets do
-  = stylesheet_link_tag 'redactor'
+= render 'layouts/include_redactor_assets'
 
 #google_oauth_client data-token=CatarseSettings[:google_oauth_client]
 
@@ -19,6 +14,7 @@
 #application.min-height-70[data-id=@project.id]
 
 - content_for :application_js do
-  = javascript_include_tag "//apis.google.com/js/client.js", "api/application"
-  = javascript_include_tag 'api/catarse'
+  = javascript_include_tag "//apis.google.com/js/client.js"
+  = render 'layouts/include_catarsejs'
+
 

@@ -515,7 +515,7 @@ const _dataCache : { [key:string]: any } = {},
         const act = window.location.pathname.split('/').slice(-1)[0];
         return action === act;
     },
-    useAvatarOrDefault = avatarPath => avatarPath || '/assets/catarse_bootstrap/user.jpg',
+    useAvatarOrDefault = avatarPath => avatarPath || '/images/legacy/catarse_bootstrap/user.jpg',
     // Templates
     loader = () => m('.u-text-center.u-margintop-30.u-marginbottom-30', [m('img[alt="Loader"][src="https://s3.amazonaws.com/catarse.files/loader.gif"]')]),
     loaderWithSize = (width, height) => m(`img[alt="Loader"][width=${width}][height=${height || width}][src="https://s3.amazonaws.com/catarse.files/loader.gif"]`),

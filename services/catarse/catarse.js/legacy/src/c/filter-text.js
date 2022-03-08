@@ -14,7 +14,7 @@ const filterText = {
             m('.w-row', [
                 m('.text-field.positive.prefix.no-hover.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                     m('a.w-inline-block[href=\'#\']', buttonOptions,
-                        m('img.header-lupa[src=\'/assets/catarse_bootstrap/lupa_grey.png\']')
+                        m('img.header-lupa[src=\'/images/legacy/catarse_bootstrap/lupa_grey.png\']')
                     )
                 ),
                 m('.w-col.w-col-10.w-col-small-10.w-col-tiny-10',
@@ -24,7 +24,7 @@ const filterText = {
                     })
                 )
             ])
-        ]);       
+        ]);
     }
 };
 

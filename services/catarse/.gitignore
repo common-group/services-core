@@ -43,9 +43,11 @@ package-lock.json
 # Ignore uploaded files in development.
 /storage/*
 !/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
 
 /public/assets
-.byebug_history
 
 /config/master.key
 
@@ -55,3 +57,10 @@ package-lock.json
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# To ignore i18n.js and translations.js
+/public/javascripts/i18n.js
+/public/javascripts/translations.js

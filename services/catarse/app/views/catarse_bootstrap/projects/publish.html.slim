@@ -7,7 +7,6 @@
 #application.min-height-70[data-mithril="Publish" data-id=project.id]
 
 - content_for :application_js do
-  = javascript_include_tag 'api/application'
-  = javascript_include_tag 'api/catarse'
+  = render 'layouts/include_catarsejs'
 
 = render 'shared/footer'

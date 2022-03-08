@@ -22,7 +22,7 @@ const UserFollowCard = {
     },
     view: function({state, attrs}) {
         const friend = state.friend(),
-            profile_img = _.isEmpty(friend.avatar) ? '/assets/catarse_bootstrap/user.jpg' : friend.avatar;
+            profile_img = _.isEmpty(friend.avatar) ? '/images/legacy/catarse_bootstrap/user.jpg' : friend.avatar;
         return m('.w-col.w-col-4',
           m('.card.card-backer.u-marginbottom-20.u-radius.u-text-center',
               [

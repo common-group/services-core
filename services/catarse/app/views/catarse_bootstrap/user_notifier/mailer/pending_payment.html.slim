@@ -12,7 +12,7 @@ br
 p
   center
     = link_to edit_project_contribution_url(project_id: contribution.project.id, id: contribution.id, ref: 'notification_pending', utm_source:'notification',utm_medium:'email',utm_campaign:'pending_payment_link',utm_content:'Faça agora sua contribuição de onde parou'), target: '__blank' do
-      = image_tag "#{CatarseSettings[:base_url]}/assets/catarse_bootstrap/pending_payment.png"
+      = image_tag "#{CatarseSettings[:base_url]}/images/legacy/catarse_bootstrap/pending_payment.png"
 
 
-= render partial: 'user_notifier/mailer/contact_info'
+= render partial: 'catarse_bootstrap/user_notifier/mailer/contact_info'

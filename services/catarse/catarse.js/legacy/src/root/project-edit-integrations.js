@@ -132,7 +132,7 @@ export class ProjectEditIntegrations {
                                                     'Informe o seu ID de Acompanhamento e comece a enviar informações dos visitantes de sua página para a sua conta do Google Analytics ',
                                                     m('a.alt-link[target="_blank"][href="https://suporte.catarse.me/hc/pt-br/articles/360040153431-Como-integrar-a-campanha-no-Catarse-com-o-Google-Analytics-"]', 'Saiba mais')
                                                 ]),
-                                                m('img[src="/assets/logo_lockup_analytics_icon_horizontal_black.png"][width="146"][alt=""]')
+                                                m('img[src="/images/legacy/logo_lockup_analytics_icon_horizontal_black.png"][width="146"][alt=""]')
                                             ]),
                                             m('div.w-col.w-col-7',
                                                 m('div.w-row', [
@@ -155,7 +155,7 @@ export class ProjectEditIntegrations {
                                                         'Envia informações dos visitantes de sua página para o seu Facebook Pixel ',
                                                         m('a.alt-link[target="_blank"][href="https://suporte.catarse.me/hc/pt-br/articles/360040152071-Como-integrar-a-campanha-no-Catarse-com-os-an%C3%BAncios-do-Facebook-por-meio-do-Facebook-Pixel-"]', 'Saiba mais')
                                                     ]),
-                                                    m('img[src="/assets/facebook-pixel-logotyp.png"][width="146"][alt=""]')
+                                                m('img[src="/images/legacy/facebook-pixel-logotyp.png"][width="146"][alt=""]')
                                             ]),
                                             m('div.w-col.w-col-7', [
                                                 m(`input${error() ? '.error' : ''}.text-field.medium.positive.w-input[type="text"][placeholder="123456789123456"][id="fb-pixel-id"]`, {

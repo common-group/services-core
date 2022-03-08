@@ -53,7 +53,7 @@ const Flex = {
         return [
             m('.w-section.hero-full.hero-zelo', [
                 m('.w-container.u-text-center', [
-                    m('img.logo-flex-home[src=\'/assets/logo-flex.png\'][width=\'359\']'),
+                    m('img.logo-flex-home[src=\'/images/legacy/logo-flex.png\'][width=\'359\']'),
                     m('.w-row', [
                         m('.w-col.fontsize-large.u-marginbottom-60.w-col-push-2.w-col-8', 'Vamos construir uma nova modalidade de crowdfunding! Cadastre seu email e saiba como inscrever o seu projeto no flex!')
                     ]),

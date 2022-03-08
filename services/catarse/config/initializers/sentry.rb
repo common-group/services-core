@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'sentry-ruby'
 require 'sentry-rails'
 
 if Rails.env.production? || Rails.env.sandbox?

@@ -1,5 +1,5 @@
-- content_for :js do
-  = javascript_include_tag 'redactor'
+= render 'layouts/include_redactor_assets'
+
 javascript:
   const userName = "#{resource.decorator.display_name}";
 
@@ -12,11 +12,7 @@ javascript:
   window.addEventListener('hashchange', updatePageTitle);
   document.addEventListener('DOMContentLoaded', updatePageTitle);
 
-- content_for :stylesheets do
-  = stylesheet_link_tag 'redactor'
-
 #application data-userid=resource.id
 
 - content_for :application_js do
-  = javascript_include_tag 'api/application'
-  = javascript_include_tag 'api/catarse'
+  = render 'layouts/include_catarsejs'

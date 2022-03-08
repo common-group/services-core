@@ -1,26 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Dynamic Render Path",
-      "warning_code": 15,
-      "fingerprint": "0ba145b1abdd1ea8beecfbb6842349c21ee0fd8c3fc40d0f2a738a895f3b9041",
-      "check_name": "Render",
-      "message": "Render path contains parameter value",
-      "file": "app/controllers/notifications_controller.rb",
-      "line": 9,
-      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
-      "code": "render(action => \"user_notifier/mailer/#{kclass.find(params[:notification_id]).template_name}\", { :locals => ({ :notification => kclass.find(params[:notification_id]) }), :layout => \"layouts/email\" })",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "NotificationsController",
-        "method": "show"
-      },
-      "user_input": "params[:notification_id]",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
       "warning_type": "Unscoped Find",
       "warning_code": 82,
       "fingerprint": "4bf8cfe4a37ecbe09a59dd1bbb6ce4407cedff227c56b3e777943971044fcab2",
@@ -58,22 +38,6 @@
       },
       "user_input": "params[:id]",
       "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "Remote Code Execution",
-      "warning_code": 110,
-      "fingerprint": "9ae68e59cfee3e5256c0540dadfeb74e6b72c91997fdb60411063a6e8518144a",
-      "check_name": "CookieSerialization",
-      "message": "Use of unsafe cookie serialization strategy `:hybrid` might lead to remote code execution",
-      "file": "config/initializers/cookies_serializer.rb",
-      "line": 7,
-      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
-      "code": "Rails.application.config.action_dispatch.cookies_serializer = :hybrid",
-      "render_path": null,
-      "location": null,
-      "user_input": null,
-      "confidence": "Medium",
       "note": ""
     },
     {
@@ -137,6 +101,26 @@
       "note": ""
     },
     {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "e47c4e0487ab73355235ced006d84b4ef0cfa21604c31d8d1940fae62d3a600b",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/controllers/notifications_controller.rb",
+      "line": 9,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => \"catarse_bootstrap/user_notifier/mailer/#{kclass.find(params[:notification_id]).template_name}\", { :locals => ({ :notification => kclass.find(params[:notification_id]) }), :layout => \"catarse_bootstrap/layouts/email\" })",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "NotificationsController",
+        "method": "show"
+      },
+      "user_input": "params[:notification_id]",
+      "confidence": "Weak",
+      "note": ""
+    },
+    {
       "warning_type": "Unscoped Find",
       "warning_code": 82,
       "fingerprint": "fd610f2e5d42b68af4a9e7337423e0679a9c5e3c6177087d3e1b16d374de19e5",
@@ -157,6 +141,6 @@
       "note": ""
     }
   ],
-  "updated": "2022-02-16 08:01:41 -0300",
-  "brakeman_version": "5.1.2"
+  "updated": "2022-04-02 10:46:39 -0300",
+  "brakeman_version": "5.2.1"
 }

@@ -2,8 +2,6 @@
 
 require 'ransack'
 
-Ransack::Adapters::ActiveRecord::Base.class_eval('remove_method :search') # rubocop:disable Style/EvalWithLocation
-
 module Arel
   module Nodes
     class ContainsArray < Arel::Nodes::Binary

@@ -9,7 +9,7 @@ const jobs = {
         return m('.page-jobs', [
             m('.w-section.hero-jobs.hero-medium', [
                 m('.w-containe.u-text-center', [
-                    m('img.icon-hero[src="/assets/logo-white.png"]'),
+                    m('img.icon-hero[src="/images/legacy/logo-white.png"]'),
                     m('.u-text-center.u-marginbottom-20.fontsize-largest', window.I18n.t('title', I18nScope()))
                 ])
             ]),

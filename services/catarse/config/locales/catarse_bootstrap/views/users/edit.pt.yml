@@ -1,7 +1,7 @@
 pt:
   users:
     edit:
-      menu: 
+      menu:
         contributions: 'Apoiados'
         projects: 'Criados'
         about_me: 'Perfil público'
@@ -99,8 +99,8 @@ pt:
           750382:
             title: 'Novidades da semana'
             description: 'Projetos em destaque e pílulas do nosso Blog, selecionados com carinho pela nossa equipe.'
-            image_src: 'https://www.catarse.me/assets/news-img.jpg'
+            image_src: 'https://www.catarse.me/images/legacy/news-img.jpg'
           1370135:
             title: 'Geek News'
             description: 'Quadrinhos, boardgames, RPG e jogos digitais, dentro e fora do Catarse.'
-            image_src: 'https://www.catarse.me/assets/geek-news-img.jpg'
+            image_src: 'https://www.catarse.me/images/legacy/geek-news-img.jpg'

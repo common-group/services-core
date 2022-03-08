@@ -4,8 +4,7 @@ html
     title= content_for(:title)
     = auto_discovery_link_tag :atom, projects_url(format: :atom)
     = auto_discovery_link_tag :rss, projects_url(format: :rss)
-    = stylesheet_link_tag 'catarse_bootstrap/fonts'
-    = stylesheet_link_tag 'catarse_bootstrap/catarse'
+    = stylesheet_link_tag 'legacy'
     = stylesheet_link_tag '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'
     = content_for(:stylesheets)
     = favicon_link_tag 'favicon.ico'
@@ -61,13 +60,10 @@ html
     = yield
 
   = render_konduto_script
-  = javascript_include_tag :analytics
   - if content_for? :application_js
     = yield :application_js
   - else
-    = javascript_include_tag :application
-  - if Rails.configuration.webpack_dev_server
-    = javascript_include_tag "http://localhost:8080/catarse.js"
+    = javascript_include_tag :legacy_application, defer: true
   = javascript_include_tag "https://kit.fontawesome.com/79b2459371.js", crossorigin: "anonymous"
   - if content_for? :js
     /page specific JS files

@@ -53,7 +53,7 @@ function _HeaderMenu(props : HeaderMenuProps) {
                             m.route.set(homeUrl)
                         }}
                         href={homeUrl} class="header-logo w-inline-block" title="Catarse" >
-                        <img src="/assets/catarse_bootstrap/logo_big.png" alt="Logo big" />
+                        <img src="/images/legacy/catarse_bootstrap/logo_big.png" alt="Logo big" />
                     </a>
                     <If condition={!menuShort}>
                         <div id="menu-components">

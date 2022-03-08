@@ -15,7 +15,7 @@ AllCops:
     - 'vendor/**/*'
     - 'db/schema.rb'
     - 'db/migrate/*'
-    - 'config/routes.rb'
+    - 'config/routes/legacy.rb'
     - 'node_modules/**/*'
     - 'catarse.js/**/*'
     - 'engines/**/*'
@@ -65,6 +65,9 @@ Naming/VariableNumber:
 Rails/Delegate:
   Enabled: false
 
+Rails/RedundantPresenceValidationOnBelongsTo:
+  Enabled: false
+
 Rails/UnknownEnv:
   Environments: ['production', 'test', 'development', 'sandbox', 'cucumber']
 
@@ -76,6 +79,9 @@ RSpec/MessageSpies:
 
 Style/Documentation:
   Enabled: false
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either
 
 Style/FrozenStringLiteralComment:
   Enabled: true

@@ -10,26 +10,26 @@ module SocialHelpersHandler
   end
 
   def render_facebook_sdk
-    render_to_string(partial: 'layouts/facebook_sdk').html_safe
+    render_to_string(partial: 'catarse_bootstrap/layouts/facebook_sdk').html_safe
   end
 
   def render_twitter(options = {})
-    render_to_string(partial: 'layouts/twitter', locals: options).html_safe
+    render_to_string(partial: 'catarse_bootstrap/layouts/twitter', locals: options).html_safe
   end
 
   def render_twitter_mobile(options = {})
-    render_to_string(partial: 'layouts/twitter_mobile', locals: options).html_safe
+    render_to_string(partial: 'catarse_bootstrap/layouts/twitter_mobile', locals: options).html_safe
   end
 
   def render_facebook_like(options = {})
-    render_to_string(partial: 'layouts/facebook_like', locals: options).html_safe
+    render_to_string(partial: 'catarse_bootstrap/layouts/facebook_like', locals: options).html_safe
   end
 
   def render_facebook_share(options = {})
-    render_to_string(partial: 'layouts/facebook_share', locals: options).html_safe
+    render_to_string(partial: 'catarse_bootstrap/layouts/facebook_share', locals: options).html_safe
   end
 
   def render_facebook_share_mobile(options = {})
-    render(partial: 'layouts/facebook_share_mobile', locals: options)[0].html_safe
+    render(partial: 'catarse_bootstrap/layouts/facebook_share_mobile', locals: options)[0].html_safe
   end
 end

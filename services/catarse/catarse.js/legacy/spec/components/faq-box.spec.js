@@ -66,8 +66,8 @@ describe('FaqBox', () => {
             const $contextOutputAon = $output('aon'),
                 $contextOutputFlex = $output('flex');
 
-            expect($contextOutputAon.has('img[src="/assets/aon-badge.png"]')).toBeTrue();
-            expect($contextOutputFlex.has('img[src="/assets/flex-badge.png"]')).toBeTrue();
+            expect($contextOutputAon.has('img[src="/images/legacy/aon-badge.png"]')).toBeTrue();
+            expect($contextOutputFlex.has('img[src="/images/legacy/flex-badge.png"]')).toBeTrue();
         });
     });
 });

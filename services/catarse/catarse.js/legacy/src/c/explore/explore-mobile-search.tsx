@@ -15,7 +15,7 @@ export type ExploreMobileSearchState = {
 }
 
 export default class ExploreMobileSearch implements m.Component {
-    
+
     oninit({ attrs, state } : m.Vnode<ExploreMobileSearchAttrs, ExploreMobileSearchState>) {
         state.searchParam = prop('')
     }
@@ -46,7 +46,7 @@ export default class ExploreMobileSearch implements m.Component {
                             </div>
 
                             <div class='w-col w-col-2 w-col-small-2 w-col-tiny-2'>
-                                <input value='' type='submit' alt='Lupa' form='search-form-id' class='btn btn-attached postfix btn-dark w-inline-block' style='background-repeat: no-repeat; background-position: center; background-image: url(/assets/catarse_bootstrap/lupa.png)'/>
+                                <input value='' type='submit' alt='Lupa' form='search-form-id' class='btn btn-attached postfix btn-dark w-inline-block' style='background-repeat: no-repeat; background-position: center; background-image: url(/images/legacy/catarse_bootstrap/lupa.png)'/>
                             </div>
                         </div>
                     </div>

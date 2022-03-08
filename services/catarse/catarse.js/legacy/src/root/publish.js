@@ -20,9 +20,9 @@ const publish = {
             loader = catarse.loaderWithToken;
 
         const project_id = vnode.attrs.project_id;
-        
+
         filtersVM.project_id(project_id);
-        
+
 
         const l = loader(models.projectDetail.getRowOptions(filtersVM.parameters())),
             accountL = loader(models.projectAccount.getRowOptions(filtersVM.parameters()));
@@ -68,7 +68,7 @@ const publish = {
             const terms = state.getTerms(project);
 
             return [
-                project && account ? 
+                project && account ?
                     [
                         (project.is_owner_or_admin ? m(projectDashboardMenu, {
                             project: prop(project),
@@ -81,7 +81,7 @@ const publish = {
                                     m('.w-col.w-col-3'),
                                     m('.w-col.w-col-6', [
                                         m('.u-text-center', [
-                                            m('img.u-marginbottom-20[src=\'/assets/catarse_bootstrap/launch-icon.png\'][width=\'94\']'),
+                                            m('img.u-marginbottom-20[src=\'/images/legacy/catarse_bootstrap/launch-icon.png\'][width=\'94\']'),
                                             m('.fontsize-large.fontweight-semibold.u-marginbottom-20', 'Pronto para lançar sua campanha?'),
                                             m('.fontsize-base.u-marginbottom-30', 'Preparamos uma lista com informações importantes para você checar antes de colocar seu projeto no ar!')
                                         ])
@@ -134,7 +134,7 @@ const publish = {
                                             m('.w-col.w-col-2')
                                         ])
                                     ]),
-    
+
                                     _.map(terms, (term, index) => m(`.u-marginbottom-30.fontsize-base${(index <= acceptedIndex()) ? '' : '.w-hidden.publish-rules'}`, [
                                         m('.w-row', [
                                             m('.w-col.w-col-1.u-text-center', [
@@ -151,7 +151,7 @@ const publish = {
                                             term
                                         ])
                                     ]))
-    
+
                                 ]),
                                 (acceptedIndex() >= terms.length ?
                                 m('.w-row.publish-btn-section', [
@@ -169,8 +169,8 @@ const publish = {
                                 ]) : '')
                             ])
                         ])
-                    ] 
-                : 
+                    ]
+                :
                     h.loader()
             ];
         } else {
