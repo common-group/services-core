@@ -23,24 +23,24 @@ RSpec.describe CreateProjectFiscalToProjectFlexAndAonAction, type: :action do
         contribution[1].payments.last,
         contribution[2].payments.last,
         create(:payment, state: 'chargeback', contribution: contribution[3], value: value,
-          created_at: Time.zone.now - 1.month
+          created_at: 1.month.ago
         )
       ]
     end
 
     let!(:antifraud) do
       [
-        create(:antifraud_analysis, payment: payment[0], created_at: Time.zone.now - 1.month),
-        create(:antifraud_analysis, payment: payment[1], created_at: Time.zone.now - 1.month),
-        create(:antifraud_analysis, payment: payment[2], created_at: Time.zone.now - 2.months),
-        create(:antifraud_analysis, payment: payment[3], created_at: Time.zone.now - 1.month)
+        create(:antifraud_analysis, payment: payment[0], created_at: 1.month.ago),
+        create(:antifraud_analysis, payment: payment[1], created_at: 1.month.ago),
+        create(:antifraud_analysis, payment: payment[2], created_at: 2.months.ago),
+        create(:antifraud_analysis, payment: payment[3], created_at: 1.month.ago)
       ]
     end
 
     before do
-      payment[0].update(created_at: Time.zone.now - 1.month)
-      payment[1].update(created_at: Time.zone.now - 1.month)
-      payment[2].update(created_at: Time.zone.now - 2.months)
+      payment[0].update(created_at: 1.month.ago)
+      payment[1].update(created_at: 1.month.ago)
+      payment[2].update(created_at: 2.months.ago)
       contribution[0].user.update(account_type: 'pf')
       contribution[1].user.update(account_type: 'pj')
       contribution[2].user.update(account_type: 'pf')
