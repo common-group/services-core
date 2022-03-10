@@ -8,6 +8,8 @@ def all_machine_states
 end
 
 RSpec.describe Project, type: :model do
+  include Chewy::Rspec::Helpers
+
   let(:project) { create(:project, goal: 3000) }
   let(:user) { create(:user) }
 
@@ -745,6 +747,61 @@ RSpec.describe Project, type: :model do
       project.reload
 
       expect(project.full_text_index).not_to eq(nil)
+    end
+  end
+
+  describe 'project_index' do
+    let(:hits) do
+      [
+        {
+          '_index' => 'projects',
+          '_type' => '_doc',
+          '_id' => '1',
+        }
+      ]
+    end
+
+    let(:raw_response) do
+      {
+        'took' => 4,
+        'hits' => {
+          'total' => {
+            'value' => 1,
+            'relation' => 'eq'
+          },
+          'max_score' => 1.0,
+          'hits' => hits
+        }
+      }
+    end
+    context 'when project is created' do
+      let(:project) { build(:project) }
+
+      it 'creates project index' do
+        mock_elasticsearch_response(ProjectsIndex, raw_response) do
+          expect(project.save!).to update_index(ProjectsIndex)
+        end
+      end
+    end
+
+    context 'when project is updated' do
+      let(:project) { create(:project) }
+
+      it 'updates project index' do
+        mock_elasticsearch_response(ProjectsIndex, raw_response) do
+          expect(project.update!(name: "teste")).to update_index(ProjectsIndex)
+        end
+      end
+    end
+
+    context 'when project is destroyed' do
+      let(:project) { create(:project) }
+
+      it 'destroys project index' do
+        mock_elasticsearch_response(ProjectsIndex, raw_response) do
+          expect(project.destroy!).to update_index(ProjectsIndex).and_delete(project)
+        end
+      end
     end
   end
 end

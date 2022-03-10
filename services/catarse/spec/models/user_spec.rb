@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  include Chewy::Rspec::Helpers
+
   let(:blacklist_document) { create(:blacklist_document) }
   let(:blacklisted_user) { create(:blacklisted_user) }
   let(:user) { create(:user) }
@@ -772,6 +774,43 @@ RSpec.describe User, type: :model do
     context 'when the user hasn`t ongoing or successful projects' do
       let(:project) { create(:project, state: 'deleted') }
       it { is_expected.to eq(false) }
+    end
+  end
+
+  describe 'project_index' do
+    let(:hits) do
+      [
+        {
+          '_index' => 'projects',
+          '_type' => '_doc',
+          '_id' => '1',
+        }
+      ]
+    end
+
+    let(:raw_response) do
+      {
+        'took' => 4,
+        'hits' => {
+          'total' => {
+            'value' => 1,
+            'relation' => 'eq'
+          },
+          'max_score' => 1.0,
+          'hits' => hits
+        }
+      }
+    end
+
+    context 'when user is updated' do
+      let(:user) { create(:user) }
+      let!(:project) { create(:project, user: user) }
+
+      it 'updates project index' do
+        mock_elasticsearch_response(ProjectsIndex, raw_response) do
+          expect(user.update!(name: "teste")).to update_index(ProjectsIndex)
+        end
+      end
     end
   end
 end
