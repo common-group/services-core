@@ -15,7 +15,7 @@ class ProjectIndexAction
     project_attributes = project_index.first['attributes']
     return {} if project_attributes.blank?
 
-    project_attributes.merge!(add_key)
+    user.present? ? project_attributes.merge!(add_key) : project_attributes
   rescue StandardError => e
     Sentry.capture_exception(e, level: :fatal)
   end

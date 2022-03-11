@@ -15,7 +15,7 @@ RSpec.describe ProjectIndexAction, type: :action do
     let!(:user) { create(:user) }
     let!(:project) { create(:project, user: user) }
 
-    context 'when project_index attributes is present' do
+    context 'when project_index and user attributes is present' do
       it 'returns add new attributes' do
         expect(result).to eq(
           {
@@ -28,6 +28,15 @@ RSpec.describe ProjectIndexAction, type: :action do
             'can_cancel' => true
           }
         )
+      end
+    end
+
+    context 'when project_index is present and user isn`t present' do
+      let(:user) { nil }
+      let(:project) { create(:project) }
+
+      it 'returns not adding attributes' do
+        expect(result).to eq({ 'id' => '47654' })
       end
     end
 

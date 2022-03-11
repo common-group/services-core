@@ -395,6 +395,22 @@ RSpec.describe ProjectsController, type: :controller do
 
       it { expect(response.body).to eq nil.to_json }
     end
+
+    context 'user not logged in and params are valid' do
+      let(:project) { create(:project) }
+      let(:hits) { [ 'attributes' => { 'id' => '47654' } ] }
+
+      before do
+        allow(controller).to receive(:current_user).and_return(nil)
+        allow(ProjectsIndex).to receive(:query).with(match: { project_id: project.id.to_s }).and_return(hits)
+
+        get :index_document, params: { id: project.id }
+      end
+
+      it 'returns project attributes' do
+        expect(response.body).to eq({ "id"=>"47654" }.to_json)
+      end
+    end
   end
 
   describe 'Solidarity project' do
