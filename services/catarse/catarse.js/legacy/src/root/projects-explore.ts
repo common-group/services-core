@@ -131,6 +131,7 @@ const projectsExplore : m.Component<ProjectExploreAttrs, ProjectExploreState> = 
                 remindProject(projectsDetails)
                 h.redraw()
                 h.storeAction('display_pop', 'success')
+                h.storeAction('set_bookmarked', projectsDetails.id)
             } catch (error) {
                 h.redraw()
                 h.storeAction('display_pop', 'error')

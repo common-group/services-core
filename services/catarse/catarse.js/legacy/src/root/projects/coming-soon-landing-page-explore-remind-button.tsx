@@ -29,7 +29,7 @@ function _ComingSoonLandingPageExploreRemindButton(props: ComingSoonLandingPageE
     const [currentUserBookmarked, setCurrentUserBookmarked] = useState(isFollowing)
 
     // Pop notification properties
-    const timeDisplayingPopup = 5000
+    const timeDisplayingPopup = 6000
     const [displayPopNotification, setDisplayPopNotification] = useState(false)
     const [popNotificationMessage, setPopNotificationMessage] = useState('')
     const [isPopNotificationError, setIsPopNotificationError] = useState(false)
@@ -44,6 +44,7 @@ function _ComingSoonLandingPageExploreRemindButton(props: ComingSoonLandingPageE
 
     function displayPop() {
         const displayPop = localStorage.getItem('display_pop');
+        const setBookmarked = localStorage.getItem('set_bookmarked');
 
         if (displayPop) {
             if (displayPop == 'success') {
@@ -54,6 +55,12 @@ function _ComingSoonLandingPageExploreRemindButton(props: ComingSoonLandingPageE
 
             localStorage.removeItem('display_pop');
         }
+
+        if (setBookmarked && parseInt(setBookmarked) == project.project_id) {
+            setCurrentUserBookmarked(true)
+            localStorage.removeItem('set_bookmarked');
+        }
+
         h.redraw();
     }
 
