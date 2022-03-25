@@ -71,6 +71,7 @@ gem 'typhoeus', '1.4.0'
 gem 'tzinfo-data', '1.2.7', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'user_notifier', '0.4.0', github: 'stephannv/user_notifier', branch: 'master'
 gem 'video_info', '3.0.1'
+gem 'view_component', '2.51.0'
 # REQUIRE DISABLED TO NOT HOOK UP webpacker:compile INTO assets:precompile
 # https://github.com/rails/webpacker/blob/master/docs/deployment.md
 gem 'webpacker', '5.4.3', require: false

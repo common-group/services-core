@@ -630,6 +630,9 @@ GEM
       iso8601 (~> 0.9.1)
       net_http_timeout_errors (~> 0.3.0)
       oga (~> 3.0)
+    view_component (2.51.0)
+      activesupport (>= 5.0.0, < 8.0)
+      method_source (~> 1.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.1.0)
@@ -746,6 +749,7 @@ DEPENDENCIES
   tzinfo-data (= 1.2.7)
   user_notifier (= 0.4.0)!
   video_info (= 3.0.1)
+  view_component (= 2.51.0)
   web-console (= 4.1.0)
   webmock (= 3.14.0)
   webpacker (= 5.4.3)
