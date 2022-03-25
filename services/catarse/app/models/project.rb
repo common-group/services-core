@@ -419,8 +419,6 @@ class Project < ApplicationRecord
         options
       )
     end
-
-    reminders.destroy_all
   end
 
   def delete_from_reminder_queue(user_id)
