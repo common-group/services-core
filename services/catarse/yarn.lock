@@ -1212,6 +1212,7 @@ caniuse-lite@^1.0.30001164:
   dependencies:
     "@sentry/browser" "^5.7.1"
     chart.js "1.0.2"
+    liquidjs "^9.25.1"
     mithril "^1.1.6"
     mithril-hooks "https://github.com/grpse/mithril-hooks.git#v0.6.1-root"
     mithril-postgrest "https://github.com/catarse/mithril-postgrest.git#4.1.0"
@@ -2053,6 +2054,11 @@ leven@^1.0.2:
   resolved "https://registry.yarnpkg.com/leven/-/leven-1.0.2.tgz#9144b6eebca5f1d0680169f1a6770dcea60b75c3"
   integrity sha1-kUS27ryl8dBoAWnxpncNzqYLdcM=
 
+liquidjs@^9.25.1:
+  version "9.36.0"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-9.36.0.tgz#7d469df0461558b09ea279035d1909864893bd41"
+  integrity sha512-HbU4xBsY1r3ZEORTgPsiluXsOtMx8iI0MqTsPejgIk+sIgta5wQUYsoQgUPuGKWVHKKKMO9PidiMEPKlePl8rg==
+
 loader-utils@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.4.0.tgz#c579b5e34cb34b1a74edc6c1fb36bfa371d5a613"
@@ -2139,9 +2145,9 @@ minimatch@^2.0.3:
     brace-expansion "^1.0.0"
 
 minimist@^1.1.0, minimist@^1.2.0, minimist@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
-  integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
+  integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
 "mithril-hooks@https://github.com/grpse/mithril-hooks.git#v0.6.1-root":
   version "0.6.0"
