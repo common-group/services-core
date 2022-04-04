@@ -11,7 +11,7 @@ x-ctrse-service: &ctrse-service
     volumes:
       # mount volumes for development on catarse / catarse.js
       - ./services/catarse/:/usr/app
-      # - ./services/catarse/catarse.js/:/usr/app/node_modules/catarse.js
+      - ./services/catarse/catarse.js/:/usr/app/node_modules/catarse.js
     links:
       - service_core_db
       - "catarse_db:localhostcatarse"
@@ -25,7 +25,19 @@ x-ctrse-service: &ctrse-service
 volumes:
   postgres-data:
     driver: local
+    # IF YOU WANT PG DATA ON LOCAL FOLDER, REMOVE COMMENTS AND SET THE FOLDER PATH
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: /path/to/some/common/data/folder/here eg. /Users/Fulano/docker-volumes/postgres-data
   postgres-catarse-data:
+    driver: local
+    # IF YOU WANT PG DATA ON LOCAL FOLDER, REMOVE COMMENTS AND SET THE FOLDER PATH
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: /path/to/some/catarse/data/folder/here eg. /Users/Fulano/docker-volumes/postgres-catarse-data
+  postgres-catarse-test-data:
     driver: local
   postgres-catarse-moments-data:
     driver: local
@@ -67,6 +79,7 @@ services:
     volumes:
       - ./services/service-core-db/init_catarse.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-catarse-data:/var/lib/postgresql/data
+      # - ./dump:/dump
     ports:
       - "5445:5432"
     links:
@@ -80,6 +93,17 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.42
+
+  catarse_db_test:
+    image: library/postgres:11.5-alpine
+    volumes:
+      - postgres-catarse-test-data:/var/lib/postgresql/data
+    ports:
+      - "5447:5432"
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_USER: postgres
+      POSTGRES_DB: catarse_test
 
   catarse_moments_db:
     image: library/postgres:10.3-alpine
@@ -107,6 +131,7 @@ services:
       - ./services/service-core-db/sample.seed.sql:/sample.seed.sql
       - ./services/service-core-db/setup_fdw_grants.sql.example:/setup_fdw_grants.sql
       - postgres-data:/var/lib/postgresql/data
+      # - ./dump:/dump
     ports:
       - "5444:5432"
     environment:
@@ -320,25 +345,6 @@ services:
       cluster:
         ipv4_address: 10.0.1.55
 
-  recommender_service_api:
-    build:
-      context: ./services/catarse_recommender
-      dockerfile: catarse_recommender/Dockerfile
-    env_file:
-      - ./compose_env/.recommender_service_api.env
-    command: gunicorn -w 4 -b 0.0.0.0:3009 catarse_recommender.application:app
-    volumes:
-      - ./services/catarse_recommender/:/usr/app
-    depends_on:
-      - catarse_db
-    links:
-      - "catarse_db:catarse_db"
-    ports:
-      - "3009:3009"
-    networks:
-      cluster:
-        ipv4_address: 10.0.1.56
-
   catarse_moment_service_api:
     image: postgrest/postgrest:v0.4.4.0
     env_file:
@@ -352,18 +358,6 @@ services:
     networks:
       cluster:
         ipv4_address: 10.0.1.58
-
-  common_docs:
-    image: hrektts/mdbook
-    volumes:
-      - ./services/common/:/data
-    ports:
-      - "3011:3011"
-      - "3012:3012"
-    command: ["mdbook", "serve", "-p", "3011", "-w", "3012", "-n", "0.0.0.0"]
-    networks:
-      cluster:
-        ipv4_address: 10.0.1.60
 
   common_proxy:
     build:
@@ -379,14 +373,13 @@ services:
       - "analytics_service_api:analytics_service_api"
       - "catarse_moment_service_api:catarse_moment_service_api"
       - "notification_service_api:notification_service_api"
-      - "recommender_service_api:recommender_service_api"
       - "common_api:common_api"
       - "service_core_db:service_core_db"
     env_file:
       - ./compose_env/.common_proxy.env
     ports:
       - "3013:80"
-    command: /bin/sh -c "envsubst '$$PORT $$PROTO_SCHEMA $$PAYMENT_SERVICE_API_SERVER $$PROJECT_SERVICE_API_SERVER $$COMMUNITY_SERVICE_API_SERVER $$ANALYTICS_SERVICE_API_SERVER $$NOTIFICATION_SERVICE_API_SERVER $$CATARSE_MOMENT_SERVICE_API_SERVER $$RECOMMENDER_SERVICE_API_SERVER $$COMMON_SERVICE_API_SERVER $$DNS_RESOLVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf && openresty"
+    command: /bin/sh -c "envsubst '$$PORT $$PROTO_SCHEMA $$PAYMENT_SERVICE_API_SERVER $$PROJECT_SERVICE_API_SERVER $$COMMUNITY_SERVICE_API_SERVER $$ANALYTICS_SERVICE_API_SERVER $$NOTIFICATION_SERVICE_API_SERVER $$CATARSE_MOMENT_SERVICE_API_SERVER $$COMMON_SERVICE_API_SERVER $$DNS_RESOLVER' < /etc/nginx/conf.d/proxy.template > /etc/nginx/conf.d/default.conf && openresty"
     networks:
       cluster:
         ipv4_address: 10.0.1.61
@@ -406,7 +399,7 @@ services:
       - ./compose_env/.common_api.env
     ports:
       - "3014:3000"
-    command: 'bundle exec rails s -b 0.0.0.0 -p 3000'
+    command: 'bundle exec rails s -b 0.0.0.0 -p 3000 -P /dev/null'
     networks:
       cluster:
         ipv4_address: 10.0.1.62
