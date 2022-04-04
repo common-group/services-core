@@ -16,9 +16,6 @@ upstream catarse_moment_service_api_server {
 upstream notification_service_api_server {
     server ${NOTIFICATION_SERVICE_API_SERVER};
 }
-upstream recommender_service_api_server {
-    server ${RECOMMENDER_SERVICE_API_SERVER};
-}
 upstream common_api_service_server {
     server ${COMMON_SERVICE_API_SERVER};
 }
@@ -40,10 +37,9 @@ server {
     set $host_analytics_service_api ${ANALYTICS_SERVICE_API_SERVER};
     set $host_catarse_moment_service_api ${CATARSE_MOMENT_SERVICE_API_SERVER};
     set $host_notification_service_api ${NOTIFICATION_SERVICE_API_SERVER};
-    set $host_recommender_service_api ${RECOMMENDER_SERVICE_API_SERVER};
     set $host_common_service_api ${COMMON_SERVICE_API_SERVER};
 	set $require_pagination "off";
-	
+
 	set $proxy_host ${COMMON_SERVICE_API_SERVER};
 
 	set $env_proto_schema ${PROTO_SCHEMA};

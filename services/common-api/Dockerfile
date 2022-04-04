@@ -8,6 +8,7 @@ RUN set -x \
   && apk add --no-cache \
     libxml2-dev \
     libxslt-dev \
+  && gem update --system \
   && gem install nokogiri \
     -- --use-system-libraries \
     --with-xml2-config=/usr/bin/xml2-config \

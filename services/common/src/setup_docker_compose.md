@@ -82,10 +82,8 @@ analytics_service_api - http://localhost:3005
 hook_service_api - http://localhost:3006
 notification_service_api - http://localhost:3007
 catarse_api - http://localhost:3008
-catarse_recommender - http://localhost:3009
 catarse_moments_api - http://localhost:3010
 catarse - http://localhost:3000
-common_docs - http://localhost:3011
 ```
 
 **Note**: if you're using _docker-machine_ with V_irtualBox_, create port-forwards:
