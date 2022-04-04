@@ -24,6 +24,7 @@ FactoryBot.define do
     budget { '1000' }
     uploaded_image { File.open('spec/fixtures/files/testimg.png') }
     content_rating { 1 }
+    service_slip_fee { 0 }
 
     after :create do |project|
       if project.project_transitions.where(to_state: project.state).blank?
@@ -39,9 +40,14 @@ FactoryBot.define do
     end
 
     after :build do |project|
-      project.rewards.build(deliver_at: 1.year.from_now, minimum_value: 10, description: 'test',
-                            shipping_options: 'free'
-                           )
+      project.rewards.build(
+        deliver_at: 1.year.from_now,
+        minimum_value: 10,
+        description: 'test',
+        shipping_options: 'free'
+      )
+
+      project.goals << build(:goal) if project.is_sub?
     end
   end
 end
