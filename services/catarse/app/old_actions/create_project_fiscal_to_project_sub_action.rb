@@ -67,7 +67,7 @@ class CreateProjectFiscalToProjectSubAction
   end
 
   def total_antifraud_fee(state)
-    af_cost = subscription_payments_in_time(state).reduce(0) do |item, amount|
+    af_cost = subscription_payments_in_time(state).reduce(0) do |amount, item|
       item.antifraud_analyses.each do |af|
         amount += af.cost
       end
