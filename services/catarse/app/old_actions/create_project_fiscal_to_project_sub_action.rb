@@ -71,6 +71,8 @@ class CreateProjectFiscalToProjectSubAction
       item.antifraud_analyses.each do |af|
         amount += af.cost
       end
+
+      amount
     end
 
     af_cost * 100
