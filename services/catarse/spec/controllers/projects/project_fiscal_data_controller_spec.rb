@@ -46,7 +46,7 @@ RSpec.describe Projects::ProjectFiscalDataController, type: :controller do
         get :inform, params: { project_id: project.id, fiscal_year: project.created_at.year.to_s }
       end
 
-      it { is_expected.to render_template('user_notifier/mailer/project_inform') }
+      it { is_expected.to render_template('catarse_bootstrap/user_notifier/mailer/project_inform') }
     end
 
     context 'when inform and user is project owner' do
@@ -61,7 +61,7 @@ RSpec.describe Projects::ProjectFiscalDataController, type: :controller do
         get :inform, params: { project_id: project.id, fiscal_year: project.created_at.year.to_s }
       end
 
-      it { is_expected.to render_template('user_notifier/mailer/project_inform') }
+      it { is_expected.to render_template('catarse_bootstrap/user_notifier/mailer/project_inform') }
     end
   end
 end

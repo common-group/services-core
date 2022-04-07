@@ -24,7 +24,7 @@ const press = {
         return m('#press', [
             m('.hero-jobs.hero-medium',
                 m('.w-container.u-text-center', [
-                    m('img.icon-hero[alt=\'Icon assets\'][src=\'/assets/icon-assets-98f4556940e31b239cdd5fbdd993b5d5ed3bf67dcc3164b805e224d22e1340b7.png\']'),
+                    m('img.icon-hero[alt=\'Icon assets\'][src=\'/images/legacy/icon-assets-98f4556940e31b239cdd5fbdd993b5d5ed3bf67dcc3164b805e224d22e1340b7.png\']'),
                     m('.u-text-center.u-marginbottom-20.fontsize-largest',
                         window.I18n.t('page-title', I18nScope())
                     )
@@ -98,7 +98,7 @@ const press = {
                     m('.w-row.u-marginbottom-30.u-text-center',
                         m('.w-col.w-col-8.w-col-push-2', [
                             m('div',
-                                m('img[alt=\'Logo catarse press\'][src=\'/assets/logo-catarse-press-2f2dad49d3e5b256c29e136673b4c4f543c03e0d5548d351ae5a8d1e6e3d2645.png\']')
+                                m('img[alt=\'Logo catarse press\'][src=\'/images/legacy/logo-catarse-press-2f2dad49d3e5b256c29e136673b4c4f543c03e0d5548d351ae5a8d1e6e3d2645.png\']')
                             ),
                             m('.fontsize-base',
                                 window.I18n.t('assets.title', I18nScope())
@@ -160,7 +160,7 @@ const press = {
                                         m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')
                                     ),
                                     m('button.w-inline-block.btn.btn-edit.postfix.btn-attached[type=\'submit\']',
-                                        m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter-9c3ff92b6137fbdb9d928ecdb34c88948277a32cdde3e5b525e97d57735210f5.png\']')
+                                        m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/images/legacy/catarse_bootstrap/icon-newsletter-9c3ff92b6137fbdb9d928ecdb34c88948277a32cdde3e5b525e97d57735210f5.png\']')
                                     )
                                 ])
                             )

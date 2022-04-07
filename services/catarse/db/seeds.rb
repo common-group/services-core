@@ -44,7 +44,7 @@ end
 
 {
   company_name: 'Catarse',
-  company_logo: 'http://catarse.me/assets/catarse_bootstrap/logo_icon_catarse.png',
+  company_logo: 'http://catarse.me/images/legacy/catarse_bootstrap/logo_icon_catarse.png',
   host: 'catarse.me',
   base_url: 'http://catarse.me',
 

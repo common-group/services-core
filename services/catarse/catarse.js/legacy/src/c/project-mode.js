@@ -20,10 +20,10 @@ const projectMode = {
         const project = attrs.project(),
             mode = project.mode,
             modeImgSrc = (mode === 'aon')
-                ? '/assets/aon-badge.png'
+                ? '/images/legacy/aon-badge.png'
                 : (mode === 'sub')
-                    ? '/assets/catarse_bootstrap/badge-sub-h.png'
-                    : '/assets/flex-badge.png',
+                    ? '/images/legacy/catarse_bootstrap/badge-sub-h.png'
+                    : '/images/legacy/flex-badge.png',
             modeTitle = (mode === 'aon') ? 'Campanha Tudo-ou-nada ' : 'Campanha Flexível ',
             goal = _.isNull(project.goal) ? 'não definida' : h.formatNumber(project.goal),
             buildTooltip = el => m(tooltip, {

@@ -173,7 +173,7 @@ const footer = {
                                                     m('input.w-input.text-field.prefix[id=\'EMAIL\'][label=\'email\'][name=\'EMAIL\'][placeholder=\'Digite seu email\'][type=\'email\']')
                                                 ),
                                                 m('button.w-inline-block.btn.btn-edit.postfix.btn-attached[style="padding:0;"]',
-                                                    m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/assets/catarse_bootstrap/icon-newsletter.png\']')
+                                                    m('img.footer-news-icon[alt=\'Icon newsletter\'][src=\'/images/legacy/catarse_bootstrap/icon-newsletter.png\']')
                                                 )
                                             ]
                                         )
@@ -186,7 +186,7 @@ const footer = {
                 m('.w-container',
                     m('.footer-full-copyleft',
                         [
-                            m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'),
+                            m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/images/legacy/logo-footer.png\']'),
                             m('.lineheight-loose',
                                 m('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']',
                                    ` Feito com amor | ${new Date().getFullYear()} | Open source`

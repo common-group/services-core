@@ -39,7 +39,7 @@ export default class BlogBanner implements m.Component {
                 <div class="w-container">
                     <div class="u-text-center">
                         <a href="https://blog.catarse.me" target="blank">
-                            <img src="/assets/icon-blog.png" alt="Icon blog" class="u-marginbottom-10"/>
+                            <img src="/images/legacy/icon-blog.png" alt="Icon blog" class="u-marginbottom-10"/>
                         </a>
                         <div class="fontsize-large u-marginbottom-60 text-success">
                             <a href="https://blog.catarse.me" class="link-hidden-success" target="__blank">

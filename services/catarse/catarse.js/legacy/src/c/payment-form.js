@@ -78,7 +78,7 @@ export default class PaymentForm {
                     m('.fontsize-base.fontweight-semibold.u-marginbottom-20',
                             'Pix'
                         ),
-                    m('img[src="/assets/logo_pix.png"][width=\'48\']')
+                    m('img[src="/images/legacy/logo_pix.png"][width=\'48\']')
                 ]) : ''
             ]),
             state.isCreditCard() ? m('#credit-card-section', [

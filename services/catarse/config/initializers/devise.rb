@@ -219,19 +219,22 @@ Devise.setup do |config|
     config.omniauth 'facebook', 'dummy_key', 'dummy_secret', scope: ''
     config.omniauth 'google_oauth2', 'dummy_key', 'dummy_secret', scope: ''
   else
-    begin
-      if ActiveRecord::Base.connection.table_exists? 'oauth_providers'
-        OauthProvider.all.each do |p|
-          case p.name
-          when 'facebook'
-            config.omniauth p.name, p.key, p.secret, scope: p.scope, info_fields: 'email,name'
-          when 'google_oauth2'
-            config.omniauth p.name, p.key, p.secret, scope: p.scope
+    Rails.application.config.after_initialize do
+      begin
+        if ActiveRecord::Base.connection.table_exists? 'oauth_providers'
+          OauthProvider.all.each do |p|
+            case p.name
+            when 'facebook'
+              config.omniauth p.name, p.key, p.secret, scope: p.scope, info_fields: 'email,name'
+            when 'google_oauth2'
+              config.omniauth p.name, p.key, p.secret, scope: p.scope
+            end
           end
         end
+      rescue StandardError => e
+        puts "ERROR"
+        puts "problem while using OauthProvider model:\n '#{e.message}'"
       end
-    rescue StandardError => e
-      Rails.logger.debug "problem while using OauthProvider model:\n '#{e.message}'"
     end
   end
 

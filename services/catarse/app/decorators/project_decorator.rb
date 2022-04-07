@@ -73,11 +73,11 @@ class ProjectDecorator < Draper::Decorator
   def status_flag
     content_tag(:div, class: [:status_flag]) do
       if object.successful?
-        image_tag "successful.#{I18n.locale}.png"
+        image_tag "/images/legacy/successful.#{I18n.locale}.png"
       elsif object.failed?
-        image_tag "not_successful.#{I18n.locale}.png"
+        image_tag "/images/legacy/not_successful.#{I18n.locale}.png"
       elsif object.waiting_funds?
-        image_tag "waiting_confirmation.#{I18n.locale}.png"
+        image_tag "/images/legacy/waiting_confirmation.#{I18n.locale}.png"
       end
     end
   end

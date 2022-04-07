@@ -86,7 +86,7 @@ RSpec.describe ENotas::ParamsBuilders::Order, type: :params_builder do
 
   describe '#enviar_n_fe_cliente' do
     it 'returns true' do
-      expect(params_builder.enviar_n_fe_cliente).to eq true
+      expect(params_builder.enviar_n_fe_cliente).to be true
     end
   end
 
@@ -120,7 +120,7 @@ RSpec.describe ENotas::ParamsBuilders::Order, type: :params_builder do
 
   describe '#iss_retido_fonte' do
     it 'returns false' do
-      expect(params_builder.iss_retido_fonte).to eq false
+      expect(params_builder.iss_retido_fonte).to be false
     end
   end
 

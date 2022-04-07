@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Notifier < ApplicationMailer
-  default template_path: 'user_notifier/mailer'
+  default template_path: 'catarse_bootstrap/user_notifier/mailer'
   layout UserNotifier.email_layout
 
   def notify(notification)
@@ -16,7 +16,7 @@ class Notifier < ApplicationMailer
   private
 
   def subject
-    render_to_string(template: "user_notifier/mailer/#{@notification.template_name}_subject")
+    render_to_string(template: "catarse_bootstrap/user_notifier/mailer/#{@notification.template_name}_subject")
   end
 
   def mail_attributes

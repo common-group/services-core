@@ -89,13 +89,13 @@ const projectGoalEdit = {
                                             onclick: vm.genClickChangeMode('aon'),
                                             class: vm.fields.mode() == 'aon' ? 'selected' : false
                                         }, [
-                                            m('img[alt="Badge aon"][src="/assets/catarse_bootstrap/badge-aon.png"]')
+                                            m('img[alt="Badge aon"][src="/images/legacy/catarse_bootstrap/badge-aon.png"]')
                                         ]),
                                         m('a.choose-mode.choose-flex.w-inline-block.btn-select.flex-column.u-text-center[data-mode="flex"][href="javascript:void(0);"]', {
                                             onclick: vm.genClickChangeMode('flex'),
                                             class: vm.fields.mode() == 'flex' ? 'selected' : false
                                         }, [
-                                            m('img[alt="Badge flex"][src="/assets/catarse_bootstrap/badge-flex.png"]')
+                                            m('img[alt="Badge flex"][src="/images/legacy/catarse_bootstrap/badge-flex.png"]')
                                         ])
                                     ]),
                                     m('.u-text-center.fontsize-smaller', [

@@ -1,13 +1,12 @@
 - content_for :title, t('.title')
 - content_for :application_js do
-  = javascript_include_tag 'api/application'
-  = javascript_include_tag 'api/catarse' 
+  = render 'layouts/include_catarsejs'
 = render 'shared/header_big'
 .page-header.negative.u-marginbottom-40
   .w-container
     h1.fontsize-largest.u-text-center = t('.title')
 
-.section-one-column  
+.section-one-column
   .w-container
     .headline = t('.content.start')
     p.fontsize-base.u-marginbottom-60 = t('.content.start_text').html_safe
@@ -32,7 +31,7 @@
 
     .headline = t('.content.tax')
     p.fontsize-base.u-marginbottom-60 = t('.content.tax_text').html_safe
-    
+
     .headline = t('.content.chargeback')
     p.fontsize-base.u-marginbottom-60 = t('.content.chargeback_text').html_safe
 

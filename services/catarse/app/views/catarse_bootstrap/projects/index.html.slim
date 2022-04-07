@@ -3,13 +3,12 @@
 
 #application[data-currentuserid=current_user.try(:id) data-hasfb="#{current_user.try(:has_fb_auth?)}"]
   .w-section.hero-full.hero-full-slide
-= javascript_include_tag 'api/application'
-= javascript_include_tag 'api/catarse'
+= render 'layouts/include_catarsejs'
 / section#blog.section-large.bg-gray.before-footer
 /   .w-container
 /     .u-text-center
 /       = link_to CatarseSettings[:blog_url], target: :blank do
-/         = image_tag "icon-blog.png", class: "u-marginbottom-10"
+/         = image_tag "/images/legacy/icon-blog.png", class: "u-marginbottom-10"
 /       .fontsize-large.u-marginbottom-60.text-success
 /         = link_to t('.blog'), CatarseSettings[:blog_url], target: '__blank', class: 'link-hidden-success'
 /     .w-row

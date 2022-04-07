@@ -7,7 +7,7 @@ UserNotifier.configure do |config|
   config.system_email     = CatarseSettings.get_without_cache(:email_system)
 
   # The name of the email template in your views/layouts
-  config.email_layout     = 'email'
+  config.email_layout     = 'catarse_bootstrap/layouts/email'
 
   # The class name of your model representing system users that will receive the notifications
   # The model should have an email attribute containing the email address of the user

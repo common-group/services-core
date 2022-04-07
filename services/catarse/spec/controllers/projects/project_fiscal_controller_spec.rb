@@ -40,7 +40,7 @@ RSpec.describe Projects::ProjectFiscalController, type: :controller do
         get :debit_note, params: { project_id: project.id, id: project_fiscal.id }
       end
 
-      it { is_expected.to render_template('user_notifier/mailer/project_fiscal_debit_note') }
+      it { is_expected.to render_template('catarse_bootstrap/user_notifier/mailer/project_fiscal_debit_note') }
     end
 
     context 'when project fiscal exist and user is project owner' do
@@ -52,7 +52,7 @@ RSpec.describe Projects::ProjectFiscalController, type: :controller do
         get :debit_note, params: { project_id: project.id, id: project_fiscal.id }
       end
 
-      it { is_expected.to render_template('user_notifier/mailer/project_fiscal_debit_note') }
+      it { is_expected.to render_template('catarse_bootstrap/user_notifier/mailer/project_fiscal_debit_note') }
     end
   end
 
@@ -89,7 +89,7 @@ RSpec.describe Projects::ProjectFiscalController, type: :controller do
         get :inform, params: { project_id: project.id, fiscal_year: project_fiscal.end_date.year.to_s }
       end
 
-      it { is_expected.to render_template('user_notifier/mailer/project_fiscal_inform') }
+      it { is_expected.to render_template('catarse_bootstrap/user_notifier/mailer/project_fiscal_inform') }
     end
 
     context 'when project fiscal exist and user is project owner' do
@@ -114,9 +114,9 @@ RSpec.describe Projects::ProjectFiscalController, type: :controller do
 
       it 'returns all project_fiscals' do
         expect(described_class).to render_template(
-          'user_notifier/mailer/project_fiscal_inform',
+          'catarse_bootstrap/user_notifier/mailer/project_fiscal_inform',
           locals: { project_fiscals: ProjectFiscal.all },
-          layout: 'layouts/email'
+          layout: 'catarse_bootstrap/layouts/email'
         )
       end
     end
@@ -145,9 +145,9 @@ RSpec.describe Projects::ProjectFiscalController, type: :controller do
 
       it 'returns all project_fiscals in the year' do
         expect(described_class).to render_template(
-          'user_notifier/mailer/project_fiscal_inform',
+          'catarse_bootstrap/user_notifier/mailer/project_fiscal_inform',
           locals: { project_fiscals: ProjectFiscal.where(id: [project_fiscal.id, project_fiscal_1.id]) },
-          layout: 'layouts/email'
+          layout: 'catarse_bootstrap/layouts/email'
         )
       end
     end

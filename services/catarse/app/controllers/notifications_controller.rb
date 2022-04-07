@@ -6,7 +6,7 @@ class NotificationsController < ApplicationController
     @notification = kclass.find(params[:notification_id])
     raise Pundit::NotAuthorizedError unless current_user.admin || current_user == @notification.user
 
-    render "user_notifier/mailer/#{@notification.template_name}", locals: { notification: @notification }, layout: 'layouts/email'
+    render "catarse_bootstrap/user_notifier/mailer/#{@notification.template_name}", locals: { notification: @notification }, layout: 'catarse_bootstrap/layouts/email'
   end
 
   private

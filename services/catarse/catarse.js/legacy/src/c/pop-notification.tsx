@@ -31,7 +31,7 @@ export default class PopNotification  {
         if (state.displayNotification()) {
             return (
                 <div oncreate={state.setPopTimeout} class={`flash w-clearfix card card-notification u-radius zindex-20 ${attrs.error ? 'card-error' : ''}`}>
-                    <img onclick={() => state.displayNotification(false)} class='icon-close' src='/assets/catarse_bootstrap/x.png' width='12' alt='fechar'/>
+                    <img onclick={() => state.displayNotification(false)} class='icon-close' src='/images/legacy/catarse_bootstrap/x.png' width='12' alt='fechar'/>
                     <div class='fontsize-small'>
                         {m.trust(attrs.message)}
                     </div>

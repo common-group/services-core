@@ -87,6 +87,11 @@ jobs:
           yarn policies set-version
           yarn install --pure-lockfile
 
+      - name: Build assets (CSS & JS)
+        run: |
+          yarn build
+          yarn build:css
+
       - name: Create database
         run: |
           RAILS_ENV=test bundle exec rails db:create

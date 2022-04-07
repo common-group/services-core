@@ -85,7 +85,7 @@ class Projects::ContributionsController < ApplicationController
     authorize resource
     project = resource.project
     template = project.successful? ? 'contribution_project_successful' : 'confirm_contribution'
-    render "user_notifier/mailer/#{template}", locals: { contribution: resource }, layout: 'layouts/email'
+    render "catarse_bootstrap/user_notifier/mailer/#{template}", locals: { contribution: resource }, layout: 'catarse_bootstrap/layouts/email'
   end
 
   def toggle_delivery

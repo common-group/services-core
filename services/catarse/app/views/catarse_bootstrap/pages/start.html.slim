@@ -8,8 +8,7 @@
   meta property="og:url"      content=start_url(locale:'')
   link rel="canonical" href=start_url(locale:'')
 - content_for :application_js do
-  = javascript_include_tag 'api/application'
-  = javascript_include_tag 'api/catarse'
+  = render 'layouts/include_catarsejs'
 / = render 'shared/header_big', overlayer: true
 
 body

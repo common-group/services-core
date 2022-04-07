@@ -84,7 +84,7 @@ const projectContributionReportContentCard = {
         const contribution = attrs.contribution(),
             project = attrs.project(),
             survey = _.first(state.survey()),
-            profileImg = (_.isEmpty(contribution.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
+            profileImg = (_.isEmpty(contribution.profile_img_thumbnail) ? '/images/legacy/catarse_bootstrap/user.jpg' : contribution.profile_img_thumbnail),
             reward = contribution.reward || {
                 minimum_value: 0,
                 description: window.I18n.t('contribution.no_reward', contributionScope())

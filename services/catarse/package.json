@@ -1,12 +1,18 @@
 {
-    "engines": {
-        "node": "14",
-        "yarn": "~1.22"
-    },
-    "dependencies": {
-        "catarse.js": "file:./catarse.js"
-    },
-    "scripts": {
-        "preinstall": "sh yarn_preinstall.sh"
-    }
+  "engines": {
+    "node": "14",
+    "yarn": "~1.22"
+  },
+  "dependencies": {
+    "@rails/ujs": "^6.1.5",
+    "catarse.js": "file:./catarse.js",
+    "esbuild": "^0.14.25",
+    "jquery": "1.12.4",
+    "sass": "^1.49.9"
+  },
+  "scripts": {
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds",
+    "build:css": "sass ./app/assets/stylesheets/entrypoints:./app/assets/builds --no-source-map --load-path=node_modules",
+    "preinstall": "sh yarn_preinstall.sh"
+  }
 }

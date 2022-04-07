@@ -57,10 +57,10 @@ export default class FaqBox {
 
     view({state, attrs}) {
         const image = attrs.mode === 'sub'
-            ? m('div', m('img.u-marginbottom-10[width="130"][src="/assets/catarse_bootstrap/badge-sub-h.png"]'))
+            ? m('div', m('img.u-marginbottom-10[width="130"][src="/images/legacy/catarse_bootstrap/badge-sub-h.png"]'))
             : m('.w-col.w-col-2.w-col-small-2.w-col-tiny-2',
                 m('img[width=\'30\']', {
-                    src: attrs.mode === 'aon' ? '/assets/aon-badge.png' : '/assets/flex-badge.png'
+                    src: attrs.mode === 'aon' ? '/images/legacy/aon-badge.png' : '/images/legacy/flex-badge.png'
                 })
             );
         return m('.faq-box.w-hidden-small.w-hidden-tiny.card.u-radius',

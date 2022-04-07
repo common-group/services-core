@@ -1,6 +1,3 @@
-- content_for :application_js
-  = javascript_include_tag 'app/sign_up_form'
-
 - content_for :title, t('.titles.site')
 
 .w-section
@@ -13,13 +10,13 @@
           .w-col.w-col-6
             .login-oauth
               = button_to user_google_oauth2_omniauth_authorize_path(locale: nil), class: 'btn btn-medium btn-google w-inline-block', :data_onsuccess => 'onSignIn'
-                img.google-icon[src="/assets/catarse_bootstrap/google-icon.png" loading="lazy"]
+                img.google-icon[src="/images/legacy/catarse_bootstrap/google-icon.png" loading="lazy"]
                 div = t('.form.inputs.google')
           .w-col.w-col-6
             .login-oauth
               = button_to user_facebook_omniauth_authorize_path(locale: nil), class: 'btn btn-medium btn-fb btn-fb-flex'
                 span.fa.fa-facebook-f&nbsp;
-                text = t('.form.inputs.facebook')
+                text =< t('.form.inputs.facebook')
         .separator
           .text.or = t('or')
         .w-form

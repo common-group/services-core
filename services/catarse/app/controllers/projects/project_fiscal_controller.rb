@@ -17,9 +17,9 @@ module Projects
       else
         authorize project_fiscal
         render(
-          'user_notifier/mailer/project_fiscal_debit_note',
+          'catarse_bootstrap/user_notifier/mailer/project_fiscal_debit_note',
           locals: { project_fiscal: project_fiscal },
-          layout: 'layouts/email'
+          layout: 'catarse_bootstrap/layouts/email'
         )
       end
     end
@@ -32,9 +32,9 @@ module Projects
       else
         authorize project_fiscals.first
         render(
-          'user_notifier/mailer/project_fiscal_inform',
+          'catarse_bootstrap/user_notifier/mailer/project_fiscal_inform',
           locals: { project_fiscals: project_fiscals },
-          layout: 'layouts/email'
+          layout: 'catarse_bootstrap/layouts/email'
         )
       end
     end

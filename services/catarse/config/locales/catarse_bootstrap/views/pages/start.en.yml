@@ -166,33 +166,33 @@ en:
       panes:
         1:
           label: In the air without bureaucracy
-          src: "/assets/start-publicar.gif"
+          src: "/images/legacy/start-publicar.gif"
         2:
           label: Fast and responsive service
-          src: "/assets/start-attending-ui.gif"
+          src: "/images/legacy/start-attending-ui.gif"
         3:
           label: Complete control panel
-          src: "/assets/start-painel-ui.gif"
+          src: "/images/legacy/start-painel-ui.gif"
         4:
           label: Campaign Blog
-          src: "/assets/start-blog-ui.gif"
+          src: "/images/legacy/start-blog-ui.gif"
         5:
           label: Partial support
-          src: "/assets/start-apoio.gif"
+          src: "/images/legacy/start-apoio.gif"
         6:
           label: Easy transfer
-          src: "/assets/start-repasse.gif"
+          src: "/images/legacy/start-repasse.gif"
       testimonials_title: What are they saying ...
       testimonials:
         1:
-          thumb: "/assets/start/thumb-marcela.jpg"
+          thumb: "/images/legacy/start/thumb-marcela.jpg"
           content: I&#39;m sequencing the genome of the golden mussel. I jointly financed
             my PhD research. This model could change the world.
           name: Marcela Uliano
           totals: It raised R $ 40,736 with the help of 344 people to make feasible
             the Genomic Project of the Golden Mussel.
         2:
-          thumb: "/assets/start/thumb-tiago.jpg"
+          thumb: "/images/legacy/start/thumb-tiago.jpg"
           content: What are you doing? Get in the face. Yes, the incentive law only
             benefits those who have a name. So, are you going to stand still? Stop
             complaining and pick up an alternative.
@@ -201,7 +201,7 @@ en:
             the project &quot;When I stopped worrying about Canalhas&quot;. The movie
             ended up in Cannes. ;)
         3:
-          thumb: "/assets/start/thumb-natalia.png"
+          thumb: "/images/legacy/start/thumb-natalia.png"
           content: A good reporter knows how hard it is to get money to fund the story
             of his dreams and still have editorial independence to actually write
             what he has discovered.
@@ -209,7 +209,7 @@ en:
           totals: It raised R $ 129,159 when receiving 1771 support to carry out 2
             projects of the Public Agency of Investigative Journalism
         4:
-          thumb: "/assets/start/thumb-apanhador.jpg"
+          thumb: "/images/legacy/start/thumb-apanhador.jpg"
           content: We have other possibilities to finance, but you choose crowdfunding
             because you believe in this way. The more the public has the decisions
             at hand, the better.
@@ -217,7 +217,7 @@ en:
           totals: It raised R $ 163,600 when receiving 2181 supports to carry out
             2 projects
         5:
-          thumb: "/assets/start/thumb-larissa.png"
+          thumb: "/images/legacy/start/thumb-larissa.png"
           content: I know that there are 200 more people there with me, sending positive
             energy, cheering, being part of it and walking to the Olympics with me.
           name: Larissa Juk

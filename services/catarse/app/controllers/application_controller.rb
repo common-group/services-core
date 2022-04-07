@@ -13,11 +13,12 @@ class ApplicationController < ActionController::Base
   include PixelHelpersHandler
   include KondutoHandler
   # include OldBrowserChecker
-  include Pundit
+  include Pundit::Authorization
   before_action :redirect_when_zendesk_session, unless: :devise_controller?
 
   acts_as_token_authentication_handler_for User, fallback: :none
   layout 'catarse_bootstrap'
+  prepend_view_path 'app/views/catarse_bootstrap'
   protect_from_forgery
 
   before_action :configure_permitted_parameters, if: :devise_controller?

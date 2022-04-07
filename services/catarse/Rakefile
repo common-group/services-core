@@ -5,8 +5,4 @@
 
 require_relative 'config/application'
 
-require 'rake'
-
-Catarse::Application.load_tasks
-
-Rake::Task['db:structure:dump'].clear if Rails.env.production?
+Rails.application.load_tasks

@@ -29,7 +29,7 @@ p Para ver quais são as questões e responder o questionário, basta clicar no 
 p
   center
     = link_to contribution_survey_url(contribution_id: contribution.id, id: Survey.where(reward_id: contribution.reward_id).first.id), target: '__blank' do
-      = image_tag "#{CatarseSettings[:base_url]}/assets/catarse_bootstrap/btn-answer-survey.png"
+      = image_tag "#{CatarseSettings[:base_url]}/images/legacy/catarse_bootstrap/btn-answer-survey.png"
 
 p Caso você não seja redirecionado ao clicar na imagem acima, acesse o questionário através #{link_to 'deste link', contribution_survey_url(contribution_id: contribution.id, id: Survey.where(reward_id: contribution.reward_id).first.id)}
 
@@ -37,4 +37,4 @@ p Caso você tenha alguma dúvida em relação ao <strong>projeto ou à sua reco
 
 br/
 
-= render partial: 'user_notifier/mailer/contact_info'
+= render partial: 'catarse_bootstrap/user_notifier/mailer/contact_info'

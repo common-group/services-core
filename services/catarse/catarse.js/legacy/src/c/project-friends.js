@@ -35,7 +35,7 @@ const projectFriends = {
         return m(wrapper, [
             m('.friend-facepile', [
                 _.map(state.friendsSample(), (user) => {
-                    const profile_img = _.isEmpty(user.data.profile_img_thumbnail) ? '/assets/catarse_bootstrap/user.jpg' : user.data.profile_img_thumbnail;
+                    const profile_img = _.isEmpty(user.data.profile_img_thumbnail) ? '/images/legacy/catarse_bootstrap/user.jpg' : user.data.profile_img_thumbnail;
                     return m(`img.user-avatar[src='${profile_img}']`);
                 })
             ]),
