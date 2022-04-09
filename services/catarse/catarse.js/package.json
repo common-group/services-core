@@ -92,7 +92,7 @@
         "mithril": "^1.1.6",
         "mithril-hooks": "https://github.com/grpse/mithril-hooks.git#v0.6.1-root",
         "mithril-postgrest": "https://github.com/catarse/mithril-postgrest.git#4.1.0",
-        "moment": "~> 2.19.3",
+        "moment": "~> 2.29.2",
         "moment-timezone": "^0.5.16",
         "rxjs": "^6.5.5",
         "select": "^1.1.2",
