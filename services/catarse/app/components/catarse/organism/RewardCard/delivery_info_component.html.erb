@@ -1,0 +1,23 @@
+<div class="Catarse-RewardCard__DeliveryInfo">
+  <%= render divider_horizontal %>
+    <div class="Catarse-RewardCard__Info">
+      <div class="Catarse-RewardCard__Label">
+        Entrega prevista:
+      </div>
+      <div class="Catarse-RewardCard__Value">
+        <%= estimated_delivery_time %>
+      </div>
+    </div>
+
+  <% if delivery_type %>
+    <%= render divider_horizontal %>
+    <div class="Catarse-RewardCard__Info">
+      <div class="Catarse-RewardCard__Label">
+        Envio:
+      </div>
+      <div class="Catarse-RewardCard__Value">
+      <%= delivery_type %>
+      </div>
+    </div
+  <% end %>
+</div>

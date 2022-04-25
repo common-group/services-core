@@ -1,0 +1,19 @@
+<div class="Catarse-RewardCard__Header">
+  <div class="Catarse-RewardCard__Value">
+    <div class="Catarse-RewardCard__Price">
+      R$<%= price %>
+    </div>
+    <div class="Catarse-RewardCard__Subscription">
+      <% if is_subscription? %>
+        / POR MÊS
+      <% end %>
+    </div>
+  <div class="Catarse-RewardCard__Title">
+    <%= title.try(:upcase) %>
+  </div>
+  <div class="Catarse-RewardCard__Divider">
+    <% if with_divider? %>
+      <%= render divider_horizontal %>
+    <% end %>
+  </div>
+</div>

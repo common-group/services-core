@@ -14,4 +14,5 @@ Rails.application.config.assets.precompile += %w[
   jquery-ui/jquery-ui.js
   api/catarse.js
   app/sign_up_form.js
+  design_system/catarse.css
 ]

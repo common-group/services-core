@@ -1,0 +1,14 @@
+div.Catarse-RewardCard
+  div.Catarse-RewardCard__Value 
+    div.Catarse-RewardCard__Price
+      = "R$#{price}  "
+    div.Catarse-RewardCard__Subscription
+      - if is_subscription?
+        = '/ POR MÊS'
+  h2.Catarse-RewardCard__Title 
+    = title.try(:upcase)
+  div.Catarse-RewardCard__Divider
+    - if with_divider?
+      = render divider_horizontal
+  
+

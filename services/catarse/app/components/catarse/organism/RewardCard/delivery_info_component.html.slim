@@ -1,0 +1,11 @@
+div.Catarse-RewardCard__DeliveryInfo
+  = render divider_horizontal
+  div.Catarse-RewardCard__Info
+    div.Catarse-RewardCard__Label = 'Entrega prevista:'
+    div.Catarse-RewardCard__Value = estimated_delivery_time
+
+- if delivery_type
+  = render divider_horizontal
+  div.Catarse-RewardCard__Info
+    div.Catarse-RewardCard__Label = 'Envio:'
+    div.Catarse-RewardCard__Value = delivery_type

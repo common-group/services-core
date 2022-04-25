@@ -1,0 +1,13 @@
+= render Catarse::Atom::CardComponent.new do
+  div.Catarse-CardReward
+    - if reward[:image]
+      = render Catarse::Organism::RewardCard::ImageComponent.new(image: reward[:image]) 
+    div.Catarse-CardReward__Wrapper
+      = render header
+      p.Catarse-CardReward__Description
+        = reward[:description]
+      = render delivery_status
+    div.Catarse-CardReward__Footer
+      = render Catarse::Atom::ButtonComponent.new(label: label, type: 'primary');
+      p
+

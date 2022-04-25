@@ -1,0 +1,18 @@
+<%= render Catarse::Atom::CardComponent.new do %>
+  <div class="Catarse-CardReward">
+    <% if reward[:image] %>
+      <%= render Catarse::Organism::RewardCard::ImageComponent.new(image: reward[:image]) %>
+    <% end %>
+    <div class="Catarse-CardReward__Wrapper">
+      <%= render header %>
+      <p class="Catarse-CardReward__Description">
+        <%= reward[:description] %>
+      </p>
+      <%= render delivery_info %>
+    </div>
+    <div class="Catarse-CardReward__Footer">
+      <%= render Catarse::Atom::ButtonComponent.new(label: label, type: 'primary'); %>
+      <p></p>
+    </div>
+  </div>
+<% end %>

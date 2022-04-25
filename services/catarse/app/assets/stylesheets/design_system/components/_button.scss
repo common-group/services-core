@@ -1,0 +1,66 @@
+.Catarse-Button {
+  align-items: center;
+  background-color: #3F4752;
+  border: 0px !important;
+  border-color: #3F4752;
+  border-radius: 8px;
+  color: #{$text-primary};
+  cursor: pointer;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 600;
+  overflow: visible;
+  min-width: 100%;
+  padding: 5px 14px;
+  text-align: center;
+  text-transform: none;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  &:focus {
+    box-shadow: 0px 0px 0px 1px rgba(69, 143, 255, 0.5);
+  }
+
+  &:focus-visible {
+    outline: none !important;
+  }
+
+  &--primary {
+    background-color: #{$button-primary};
+
+    &:hover {
+      background-color: #{$button-primary-hover};
+    }
+    &:active {
+      background-color: #{$button-primary-active};
+      box-shadow: 0px;
+      outline: none !important;
+    }
+  }
+
+  &--secondary {
+    background-color: #{$button-secondary-default};
+
+    &:hover {
+      background-color: #{$button-secondary-hover};
+    }
+    &:active {
+      background-color: #{$button-secondary-active};
+      box-shadow: 0px;
+      outline: none !important;
+    }
+  }
+
+  &--danger {
+    background-color: #{$button-danger};
+
+    &:hover {
+      background-color: #{$button-danger-hover};
+    }
+    &:active {
+      background-color: #{$button-danger-active};
+      box-shadow: 0px;
+      outline: none !important;
+    }
+  }
+}

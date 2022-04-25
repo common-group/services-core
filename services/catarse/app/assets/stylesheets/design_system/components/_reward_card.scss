@@ -1,0 +1,97 @@
+.Catarse-RewardCard {
+  background: #{$surface-base-subdued};
+  font-family: #{$main-font};
+  border-radius: 8px;
+  min-height: 400px;
+  max-width: 240px;
+  
+  &:hover {
+    cursor: default;
+  }
+
+  &__Footer {
+    align-items: center;
+    background: #{$surface-base-default};
+    border-radius: 8px;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    padding: 16px 24px;
+    margin-top: auto;
+  }
+
+  &__Description {
+    color: #{$text-default};
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  &__Wrapper {
+    padding: 24px;
+  }
+
+  &__Row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 8px 0px;
+  }
+
+  &__Label {
+    color: #{$text-subdued};
+    font-size: 10px;
+  }
+
+  &__Value {
+    color: #{$text-default};    
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  &__Header {
+    font-family: $main-font;
+    font-style: normal;
+    font-weight: 600; 
+  }
+
+  &__Value {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    color: $text-success; 
+    margin: 12px 0px;
+  }   
+
+  &__Price {
+    font-size: 26px;
+    line-height: 32px;
+    margin: 0px 4px;
+  }
+
+  &__Subscription {
+    font-size: 14px;
+    line-height: 18px;
+    margin: 0px 4px;
+  }
+
+  &__Title {
+    color: $text-default;
+    font-size: 14px;
+    line-height: 18px;
+    margin: 12px 0px;
+  }
+
+  &__Divider {
+    max-width: 16px;
+    margin: 12px 0px;
+  }   
+
+  &__Image {
+    img {
+      width: 100%;
+      background: #C4C4C4;
+      border-radius: 8px 8px 0px 0px;
+    }
+  }
+}
