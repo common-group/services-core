@@ -33,3 +33,4 @@ compose_env/.read_api.env
 .DS_Store
 docker-compose.yml
 .vscode/
+.tool-versions
