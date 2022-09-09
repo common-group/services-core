@@ -1,3 +1,16 @@
-FROM comum/notification-service:latest
+FROM comum/pg-dispatcher:latest AS dispatcher-env
+
+FROM node:9.1-stretch
+
+RUN apt-get update
+RUN apt-get update && apt-get install -y libssl-dev
+
+COPY --from=dispatcher-env /usr/local/bin/pg-dispatcher /usr/local/bin/
+
 WORKDIR /usr/app
+
+COPY . .
+
+RUN npm install
+
 CMD pg-dispatcher --db-uri=$DISPATCHER_DATABASE_URL --tls-mode=$DISPATCHER_TLS_MODE --redis-uri=$DISPATCHER_REDIS_URL --channel=$DISPATCHER_DB_CHANNEL --workers=$DISPATCHER_WORKERS --exec="./scripts/send_mail.js"
