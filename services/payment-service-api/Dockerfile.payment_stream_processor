@@ -1,5 +1,15 @@
-FROM comum/payment-service:latest
+FROM comum/pg-dispatcher:latest AS dispatcher-env
+
+FROM node:9.1-stretch
+
+RUN apt-get update
+RUN apt-get update && apt-get install -y libssl-dev
+
+COPY --from=dispatcher-env /usr/local/bin/pg-dispatcher /usr/local/bin/
+
 WORKDIR /usr/app
+
 COPY . .
+
 RUN npm install
 CMD pg-dispatcher --db-uri=$DATABASE_URL --tls-mode=$TLS_MODE --redis-uri=$REDIS_URL --channel=$DB_CHANNEL --workers=$WORKERS --exec="./main.js"
