@@ -6,7 +6,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "crypto": "^1.0.1",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "pagarme": "4.4.1",
     "pg": "8.5.0",
     "ramda": "^0.25.0",
