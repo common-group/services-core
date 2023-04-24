@@ -4,7 +4,7 @@ PATH
     catarse_scripts (0.1.0)
       pagy
       rails (~> 6.1.0.rc1)
-      ransack
+      ransack (= 2.5.0)
       slim
 
 GEM
@@ -74,7 +74,7 @@ GEM
     chronic_duration (0.10.6)
       numerizer (~> 0.1.1)
     concurrent-ruby (1.1.8)
-    connection_pool (2.2.3)
+    connection_pool (2.4.0)
     crass (1.0.6)
     diff-lcs (1.4.4)
     erubi (1.10.0)
@@ -119,7 +119,7 @@ GEM
     pagy (4.1.0)
     pg (1.2.3)
     racc (1.5.2)
-    rack (2.2.3)
+    rack (2.2.6.4)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (6.1.3.2)
@@ -153,11 +153,12 @@ GEM
       rake (>= 0.8.7)
       thor (~> 1.0)
     rake (13.0.3)
-    ransack (2.4.2)
+    ransack (2.5.0)
       activerecord (>= 5.2.4)
       activesupport (>= 5.2.4)
       i18n
-    redis (4.2.5)
+    redis-client (0.14.1)
+      connection_pool
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
     rspec-expectations (3.10.1)
@@ -185,10 +186,11 @@ GEM
       faraday
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
-    sidekiq (6.2.0)
-      connection_pool (>= 2.2.2)
-      rack (~> 2.0)
-      redis (>= 4.2.0)
+    sidekiq (7.0.9)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.11.0)
     sidekiq-status (1.1.4)
       chronic_duration
       sidekiq (>= 3.0)
