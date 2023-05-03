@@ -413,7 +413,7 @@ class User < ApplicationRecord
 
   def update_tracked_fields(request)
     super
-    login_activities.build(ip_address: current_sign_in_ip)
+    login_activities.build(ip_address: (request.headers['CF-Connecting-IP'].presence || current_sign_in_ip))
   end
 
   def account_active?
@@ -520,5 +520,11 @@ class User < ApplicationRecord
     subscriptions.where(status: %w(inactive active started canceling)).order(id: :desc).find_each do |_sub|
       common_wrapper.cancel_subscription(_sub)
     end
+  end
+
+  protected
+
+  def extract_ip_from(request)
+    request.headers['CF-Connecting-IP'].presence || request.remote_ip
   end
 end
