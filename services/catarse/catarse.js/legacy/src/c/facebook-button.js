@@ -1,23 +1,25 @@
 import m from 'mithril';
 
 const facebookButton = {
-    oninit: function(vnode) {
+    oninit: function (vnode) {
         const share = () => {
-            if (FB) {
-                FB.ui({
-                    method: vnode.attrs.messenger ? 'send' : 'share',
-                    link: vnode.attrs.url,
-                    href: vnode.attrs.url,
-                    display: 'popup',
-                });
-            }
+            window.open(`http://www.facebook.com/share.php?u=${vnode.attrs.url}`, 'popUpWindow', 'height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+            return false;
+            // if (FB) {
+            //     FB.ui({
+            //         method: vnode.attrs.messenger ? 'send' : 'share',
+            //         link: vnode.attrs.url,
+            //         href: vnode.attrs.url,
+            //         display: 'popup',
+            //     });
+            // }
         };
 
         vnode.state = {
             share
         };
     },
-    view: function({state, attrs}) {
+    view: function ({ state, attrs }) {
         const buttonCss = () => {
             if (attrs.mobile) {
                 return `w-hidden-main w-hidden-medium u-marginbottom-20 btn btn-medium btn-fb ${attrs.class}`;

@@ -12,11 +12,11 @@ export type ShareState = {
 }
 
 export class Share implements m.Component {
-    view({ attrs, state } : m.Vnode<ShareAttrs, ShareState>) {
-        
+    view({ attrs, state }: m.Vnode<ShareAttrs, ShareState>) {
+
         const project = attrs.project
         const projectUrl = `${window.location.origin}/${project.permalink}`
-        const copyToClipboard = (copyText : HTMLInputElement) => {
+        const copyToClipboard = (copyText: HTMLInputElement) => {
             copyText.focus()
             copyText.select()
             copyText.setSelectionRange(0, 99999)
@@ -32,15 +32,17 @@ export class Share implements m.Component {
 
         const facebookShare = () => shareSocial(false, facebookShareLink)
         const messengerShare = () => shareSocial(true, messengerShareLink)
-        const shareSocial = (messager : boolean, url : string) => {
-            if (FB) {
-                FB.ui({
-                    method: messager ? 'send' : 'share',
-                    link: url,
-                    href: url,
-                    display: 'popup',
-                });
-            }
+        const shareSocial = (messager: boolean, url: string) => {
+            window.open(`http://www.facebook.com/share.php?u=${url}`, 'popUpWindow', 'height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+            return false;
+            // if (FB) {
+            //     FB.ui({
+            //         method: messager ? 'send' : 'share',
+            //         link: url,
+            //         href: url,
+            //         display: 'popup',
+            //     });
+            // }
         }
 
         const projectCopyUrl = `${projectUrl}?utm_source=project_dashboard&utm_medium=copy_link&utm_campaign=project_share_simplified`
@@ -59,7 +61,7 @@ export class Share implements m.Component {
                             <div class="card medium card-terciary u-marginbottom-20">
                                 <div class="title-dashboard">
                                     Compartilhe sua campanha
-                                    <br/>
+                                    <br />
                                 </div>
                                 <div class="w-row">
                                     <div class="w-col w-col-1"></div>
@@ -114,15 +116,15 @@ export class Share implements m.Component {
                                                 </div>
                                                 <div class="w-row">
                                                     <div class="w-col w-col-8">
-                                                        <input 
+                                                        <input
                                                             oncreate={vnode => state.projectUrlElement = vnode.dom as HTMLInputElement}
                                                             style='cursor: text;'
-                                                            value={projectCopyUrl} 
-                                                            oninput={(event : Event) => {
+                                                            value={projectCopyUrl}
+                                                            oninput={(event: Event) => {
                                                                 event.target.value = projectCopyUrl
                                                             }}
-                                                            type="text" 
-                                                            class="text-field medium positive w-input" 
+                                                            type="text"
+                                                            class="text-field medium positive w-input"
                                                             id="permalink-campain-id" />
                                                     </div>
                                                     <div class="w-col w-col-4">

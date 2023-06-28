@@ -32,7 +32,7 @@ const projectRowWithHeader = {
                                     },
                                     'Ver todos'
                                 ),
-                                showFriendsLinkComponent
+                                // showFriendsLinkComponent
                             ])
                         ])
                     ]) : ''

@@ -8,14 +8,14 @@ import homeVM, { HomeBanner, HomeVM } from '../vms/home-vm';
 import Slider from '../c/slider';
 import ProjectsDisplay from '../c/projects-display';
 import BlogBanner from './blog-banner';
-import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
+//import UnsignedFriendFacebookConnect from '../c/unsigned-friend-facebook-connect';
 import { HomeBannerSlide } from '../c/home-banner-slide';
 import { getCurrentUserCached } from '../shared/services/user/get-current-user-cached';
 import { isLoggedIn } from '../shared/services/user/is-logged-in';
 const I18nScope = _.partial(h.i18nScope, 'projects.home');
 
 const projectsHome = {
-    oninit: function(vnode: m.Vnode) {
+    oninit: function (vnode: m.Vnode) {
         const userFriendVM = catarse.filtersVM({ user_id: 'eq' });
         const friendListVM = catarse.paginationVM(models.userFriend, 'user_id.desc', { Prefer: 'count=exact' });
         const currentUser = getCurrentUserCached();
@@ -35,7 +35,7 @@ const projectsHome = {
             hasFBAuth
         };
     },
-    view: function({state}) {
+    view: function ({ state }) {
         const vm = state.vm as HomeVM;
         const banners = vm.banners;
 
@@ -49,11 +49,11 @@ const projectsHome = {
                     wrapperClass='hero-full hero-full-slide'
                     sliderTime={10000}
                 />
-                <ProjectsDisplay/>
-                {
+                <ProjectsDisplay />
+                {/* {
                     !state.hasFBAuth &&
-                    <UnsignedFriendFacebookConnect largeBg={true}/>
-                }
+                    <UnsignedFriendFacebookConnect largeBg={true} />
+                } */}
                 <BlogBanner />
             </div>
         )
