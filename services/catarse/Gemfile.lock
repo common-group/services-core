@@ -177,6 +177,10 @@ GEM
     chronic_duration (0.10.6)
       numerizer (~> 0.1.1)
     chunky_png (1.4.0)
+    cloudflare-rails (3.0.0)
+      actionpack (>= 6.0, < 7.1.0)
+      activesupport (>= 6.0, < 7.1.0)
+      railties (>= 6.0, < 7.1.0)
     concurrent-ruby (1.1.9)
     connection_pool (2.2.5)
     countries (4.0.1)
@@ -473,6 +477,7 @@ GEM
       ffi (~> 1.0)
     rdstation-ruby-client (0.0.5)
       httparty (~> 0.12)
+    recaptcha (5.14.0)
     redcarpet (3.5.1)
     redis (4.5.1)
     regexp_parser (2.2.0)
@@ -674,6 +679,7 @@ DEPENDENCIES
   catarse_pagarme!
   catarse_scripts!
   catarse_settings_db (= 0.2.0)
+  cloudflare-rails
   concurrent-ruby (= 1.1.9)
   countries (= 4.0.1)
   cpf_cnpj (= 0.5.0)
@@ -718,6 +724,7 @@ DEPENDENCIES
   rails-observers (= 0.1.5)
   ranked-model (= 0.4.7)
   rdstation-ruby-client (= 0.0.5)
+  recaptcha
   redactor-rails (= 0.7.0)!
   redis (= 4.5.1)
   responders (= 3.0.1)

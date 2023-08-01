@@ -23,12 +23,12 @@ Catarse::Application.routes.draw do
       devise_for(:users,
         path: '',
         path_names:   { sign_in: :login, sign_out: :logout, sign_up: :sign_up },
-        controllers:  { passwords: :passwords, sessions: :sessions },
+        controllers:  { passwords: :passwords, sessions: :sessions, registrations: :registrations },
         skip: :omniauth_callbacks
       )
 
       devise_scope :user do
-        post '/sign_up', { to: 'devise/registrations#create', as: :sign_up }
+        post '/sign_up', { to: 'registrations#create', as: :sign_up }
         get '/not-my-account', to: 'sessions#destroy_and_redirect', as: :not_my_account
       end
 
