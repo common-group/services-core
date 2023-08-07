@@ -14,39 +14,24 @@ br/
 p
   | O apoiador #{contributor.display_name} contestou o apoio para o seu projeto junto à operadora de cartão de crédito.
 
-- if project.online? || project.waiting_funds?
-  p
-    | Conforme descrito nos #{link_to 'termos de uso', terms_link}, o #{company_name} deduziu o valor do apoio contestado do total arrecadado no projeto.
-
-  p
-    | Para reaver esse pagamento,
+p
+	| Segundo nossos #{link_to 'termos de uso', terms_link}, como a transferência dos apoios ao projeto já foi efetuada,
 	strong
-      |recomendamos que entre em contato diretamente com o apoiador através do email ou telefone
-      |, pedindo para efetuar um novo pagamento para o seu projeto.
+				| você é o responsável por devolver o valor do apoio, descontadas as taxas de serviço cobradas pelo Catarse.
+p
+	strong
+		| Caso seu saldo no Catarse não seja suficiente para quitar essa contestação,
+	| o valor será lançado e o saldo permanecerá negativo até que esse débito seja quitado por meio de transferência bancária:
+	br/
+	br/
+	| Realizar o depósito de #{fmt_value_without_fee} para a conta do Catarse (Banco Itaú, Ag 4465, CC 11152-6, CNPJ 14.512.425/0001-94) e enviar o comprovante para a nossa equipe, através deste #{link_to 'link', 'https://suporte.catarse.me/hc/pt-br/requests/new'}.
+p
+	| Além disso, recomendamos que você entre em contato com o apoiador por e-mail ou por telefone para reaver este pagamento. Caso isso não aconteça, recomendamos que a recompensa não seja entregue.
 
-- elsif contribution.project_owner_has_balance_to_cover_chargeback?
-	p
-		| Seguindo nossos #{link_to 'termos de uso', terms_link}, o #{company_name} deduziu o valor do apoio do seu #{link_to 'saldo no Catarse', edit_user_url(owner, anchor: 'balance')}.
-	p
-		| Para reaver esse pagamento,
-		strong
-          | recomendamos que entre em contato diretamente com o apoiador através do email ou telefone
-		|, e peça para ele realizar um depósito direto na sua conta bancária.
-- elsif !contribution.project_owner_has_balance_to_cover_chargeback?
-	p
-		| Segundo nossos #{link_to 'termos de uso', terms_link}, como a transferência dos apoios ao projeto já foi efetuada,
-		strong
-          | você é o responsável por devolver o valor do apoio, descontadas as taxas de serviço cobradas pelo Catarse.
-	p
-		| Caso seu saldo no Catarse não seja suficiente para quitar essa contestação, o valor será lançado e o saldo permanecerá negativo até que esse débito seja quitado através das seguintes opções:
-		br/
-		br/
-		| - Opção 1: Realizar o depósito de #{fmt_value_without_fee} para a conta do Catarse (Banco Itau, Ag 4465, CC 11152-6, CNPJ 14.512.425/0001-94) e enviar o comprovante para a nossa equipe, através deste #{link_to 'link', 'https://suporte.catarse.me/hc/pt-br/requests/new'}.
-		br/
-		br/
-		| - Opção 2: Entrar em contato com nosso #{link_to 'atendimento', 'https://suporte.catarse.me/hc/pt-br/requests/new'} e realizar o pagamento via  boleto bancário.
-	p
-		| Além disso, recomendamos que você entre em contato com o apoiador por email ou por telefone para reaver este pagamento. Caso isso não aconteça, recomendamos que a recompensa não seja entregue.
+p
+	strong
+	| Mas caso já tenha realizado a entrega da recompensa,
+	| podemos questionar o pedido de contestação do apoiador junto ao banco emissor, solicitando a devolução do valor.  Para isso precisamos que nos envie através deste #{link_to 'link', 'https://suporte.catarse.me/hc/pt-br/requests/new'}: o comprovante de envio/entrega, descrição dos itens entregues e foto dos itens, caso tenha.
 
 hr/
 
@@ -59,10 +44,7 @@ p
 	br/
 	| Telefone do apoiador: #{contribution.user.phone_number}
 	br/
-	- if detail.payment.gateway_data['paid_amount'].present?
-  		| Valor devolvido: #{number_to_currency detail.payment.gateway_data['paid_amount']/100.0, precision: 2}
-	- else
-  		| Valor devolvido: #{number_to_currency detail.value, precision: 2}
+	| Valor devolvido: #{number_to_currency detail.value, precision: 2}
 	br/
     - if contribution.reward.present?
 	  | Recompensa selecionada:
@@ -74,4 +56,3 @@ p
 
 p
 	= render partial: 'user_notifier/mailer/contact_info'
-
