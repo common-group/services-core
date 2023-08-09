@@ -737,9 +737,10 @@ a:hover {
 }
 
 .project-video {
-  height: 488px;
+  height: auto;
   margin-bottom: 30px;
   background-color: hsla(0, 0%, 87.1%, 0.57);
+  aspect-ratio: 16 / 9;
 }
 
 .fontsize-smaller {
@@ -5106,7 +5107,7 @@ html.w-mod-js *[data-ix="display-0-on-load"] {
     margin-top: 8px;
   }
   .project-video {
-    height: 358px;
+    height: auto;
   }
   .fontsize-smaller {
     font-size: 13px;
