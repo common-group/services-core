@@ -26,6 +26,9 @@ class RefreshPaymentRewardsMetricsTask
             end
           end
         end
+      rescue PG::UnableToSend => e
+        Sentry.capture_exception(e, extra: { task: :refresh_subscription_reward_metrics })
+        raise e
       rescue StandardError => e
         Sentry.capture_exception(e, extra: { task: :refresh_payment_reward_metrics })
       end

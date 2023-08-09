@@ -24,6 +24,9 @@ class RefreshSubscriptionRewardsMetricsTask
             reward.refresh_reward_metric_storage if reward.present?
           end
         end
+      rescue PG::UnableToSend => e
+        Sentry.capture_exception(e, extra: { task: :refresh_subscription_reward_metrics })
+        raise e
       rescue StandardError => e
         Sentry.capture_exception(e, extra: { task: :refresh_subscription_reward_metrics })
       end
