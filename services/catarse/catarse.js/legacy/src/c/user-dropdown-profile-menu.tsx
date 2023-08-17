@@ -5,7 +5,7 @@ import { CurrencyFormat } from '../shared/components/currency-format'
 import { AdminMenuLinks } from './admin-menu-links'
 import ConnectFacebook from './connect-facebook';
 
-declare var window : ThisWindow
+declare var window: ThisWindow
 
 export const UserDropdownProfileMenu = withHooks<UserDropdownProfileMenuProps>(_UserDropdownProfileMenu)
 
@@ -19,7 +19,7 @@ type MenuItem = {
     url: string
 }
 
-function _UserDropdownProfileMenu({ balance, user } : UserDropdownProfileMenuProps) {
+function _UserDropdownProfileMenu({ balance, user }: UserDropdownProfileMenuProps) {
 
     const {
         historyMenuItems,
@@ -81,7 +81,7 @@ function createMenusItems(user: { id: number }, balance: number) {
                             </span>
                             :
                             ''
-                        }
+                    }
                 </span>
             ),
             url: `/users/${user.id}/edit#balance`
@@ -96,9 +96,9 @@ function createMenusItems(user: { id: number }, balance: number) {
         }
     ]
 
-    const settingsMenuItems : MenuItem[] = [
+    const settingsMenuItems: MenuItem[] = [
         {
-            label: 'Encontre amigos',
+            label: 'Encontre criadores para seguir',
             url: '/connect-facebook/'
         },
         {
@@ -121,28 +121,28 @@ function createMenusItems(user: { id: number }, balance: number) {
     }
 }
 
-const UserMenuItemLink = withHooks<{ item : MenuItem }>(_UserMenuItemLink)
+const UserMenuItemLink = withHooks<{ item: MenuItem }>(_UserMenuItemLink)
 
-function _UserMenuItemLink({ item: { label, url }} : { item : MenuItem }) {
+function _UserMenuItemLink({ item: { label, url } }: { item: MenuItem }) {
     return (
         use_connect_facebook(label) ?
-        <ConnectFacebook
-            label={'Encontre amigos'}
-            linkClass={'a.alt-link.fontsize-smaller'}
-            buttonClass={'input.alt-link.fontsize-smaller'}
-            styleInput={'border: unset; background-color: unset; padding-left: 0'}
-        />
-        :
-        <li class="lineheight-looser">
-            <a href={`/${window.I18n.locale}${url}`} class="alt-link fontsize-smaller">
-                {label}
-            </a>
-        </li>
+            <ConnectFacebook
+                label={'Encontre realizadores'}
+                linkClass={'a.alt-link.fontsize-smaller'}
+                buttonClass={'input.alt-link.fontsize-smaller'}
+                styleInput={'border: unset; background-color: unset; padding-left: 0'}
+            />
+            :
+            <li class="lineheight-looser">
+                <a href={`/${window.I18n.locale}${url}`} class="alt-link fontsize-smaller">
+                    {label}
+                </a>
+            </li>
     )
 }
 
 function use_connect_facebook(label) {
-    if (label == 'Encontre amigos') {
+    if (label == 'Encontre criadores para seguir') {
         return true
     }
     false

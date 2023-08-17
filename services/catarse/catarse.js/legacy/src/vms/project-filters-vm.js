@@ -105,7 +105,7 @@ const projectFiltersVM = () => {
             contributed_by_friends: {
                 title: 'Amigos',
                 filter: contributed_by_friends,
-                nicename: 'Apoiados por amigos',
+                nicename: 'Apoiados pela sua rede',
                 isContextual: false,
                 keyName: 'contributed_by_friends'
             },

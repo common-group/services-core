@@ -22,13 +22,15 @@ export function share(shareType: SocialMediaShareType, shareLink: string) {
     }
 
     if (shareType == SocialMediaShareType.Facebook || shareType === SocialMediaShareType.Messenger) {
-        if (window.FB) {
-            window.FB.ui({
-                method,
-                link,
-                href: link,
-                display: 'popup',
-            });
-        }
+        window.open(`http://www.facebook.com/share.php?u=${link}`, 'popUpWindow', 'height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes');
+        return false;
+        // if (window.FB) {
+        //     window.FB.ui({
+        //         method,
+        //         link,
+        //         href: link,
+        //         display: 'popup',
+        //     });
+        // }
     }
 }

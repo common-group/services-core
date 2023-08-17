@@ -2,6 +2,7 @@ import m from 'mithril';
 import h from '../h';
 import projectReport from './project-report';
 
+
 const projectComments = {
     oninit: function (vnode) {
         const loadComments = vnode => {

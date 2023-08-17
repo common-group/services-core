@@ -9,13 +9,13 @@ import userCreators from '../c/user-creators';
 import { getCurrentUserCached } from '../shared/services/user/get-current-user-cached';
 
 const FollowFoundFriends = {
-    oninit: function(vnode) {
+    oninit: function (vnode) {
         const user = getCurrentUserCached(),
             hash = prop(window.location.hash),
             displayTabContent = () => {
                 const c_opts = {
-                        user,
-                    },
+                    user,
+                },
                     tabs = {
                         '#creators': m(userCreators, c_opts),
                         '#friends': m(userFriends, c_opts),
@@ -39,15 +39,15 @@ const FollowFoundFriends = {
             displayTabContent,
         };
     },
-    view: function({ state, attrs }) {
+    view: function ({ state, attrs }) {
         return m('div', [
             m('.w-section.dashboard-header', [
                 m('.w-container', [
                     m('.w-row.u-margintop-20.u-marginbottom-20', [
                         m('.w-col.w-col-1'),
                         m('.w-col.w-col-10.u-text-center', [
-                            m('.fontsize-larger.fontweight-semibold.u-marginbottom-10', 'Descubra projetos com seus amigos'),
-                            m('.fontsize-small', 'Siga os seus amigos e nós iremos te notificar sempre que eles lançarem ou apoiarem algum projeto'),
+                            m('.fontsize-larger.fontweight-semibold.u-marginbottom-10', 'Descubra projetos com sua rede do Catarse'),
+                            m('.fontsize-small', 'Siga seus criadores favoritos e iremos te notificar sempre que eles lançarem ou apoiarem algum projeto'),
                         ]),
                         m('.w-col.w-col-1'),
                     ]),
@@ -58,12 +58,8 @@ const FollowFoundFriends = {
                 '.project-nav',
                 m('.u-text-center.w-container', [
                     m(
-                        `a[id="creators-link"][class="dashboard-nav-link ${h.hashMatch('#creators') ? 'selected' : ''}"] [href="#creators"]`,
+                        `a[id="creators-link"][class="dashboard-nav-link ${h.hashMatch('#creators') || h.hashMatch('') ? 'selected' : ''}"] [href="#creators"]`,
                         'Encontre realizadores'
-                    ),
-                    m(
-                        `a[id="friends-link"][class="dashboard-nav-link ${h.hashMatch('#friends') || h.hashMatch('') ? 'selected' : ''}"] [href="#friends"]`,
-                        'Encontre amigos'
                     ),
                     m(`a[id="follows-link"][class="dashboard-nav-link ${h.hashMatch('#follows') ? 'selected' : ''}"] [href="#follows"]`, [
                         'Seguindo',

@@ -53,7 +53,7 @@ export class ExploreLightBox {
                 }
             } : null,
             userVM.isLoggedIn ? {
-                name: 'Apoiados por amigos',
+                name: 'Apoiados pela sua rede',
                 query: {
                     filter: 'contributed_by_friends',
                 }
