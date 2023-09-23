@@ -59,13 +59,18 @@ const finishProcessOk = (result) => {
 };
 const finishProcessErr = (result) => {
     console.log('finished with error ', result);
+    try {
+        console.log(JSON.stringify(result));
+    } catch (error) {
+        console.log(error);
+    }
     handleError(result);
     process.exitCode = 1;
     process.exit(1);
 };
 
 getStdin().then((notification) => {
-    if(!R.isNil(notification)) {
+    if (!R.isNil(notification)) {
         main(notification)
             .then(finishProcessOk)
             .catch(finishProcessErr);
