@@ -4,7 +4,7 @@ import { getCurrentUserCached } from '../shared/services/user/get-current-user-c
 import { isLoggedIn } from '../shared/services/user/is-logged-in';
 
 const footer = {
-    view: function() {
+    view: function () {
         return m('footer.main-footer.main-footer-neg',
             [
                 m('section.w-container',
@@ -82,34 +82,34 @@ const footer = {
                                                     ' Central de Suporte'
                                                 ),
                                                 isLoggedIn(getCurrentUserCached()) ?
-                                                    m('a.link-footer[href=\'https://suporte.catarse.me/hc/pt-br/signin?return_to=https%3A%2F%2Fsuporte.catarse.me%2Fhc%2Fpt-br%2Frequests%2Fnew&locale=19\'][target="_BLANK"]',
-                                                      ' Contato'
-                                                     )
+                                                    m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer\'][target="_BLANK"]',
+                                                        ' Contato'
+                                                    )
                                                     :
-                                                    m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/requests/new\'][target="_BLANK"]',
-                                                      ' Contato'
-                                                     ),
+                                                    m('a.link-footer[href=\'http://suporte.catarse.me?ref=ctrse_footer\'][target="_BLANK"]',
+                                                        ' Contato'
+                                                    ),
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/changelog\']',
-                                                  ' Atualizações 🌟'
-                                                 ),
+                                                    ' Atualizações 🌟'
+                                                ),
                                                 m('a.link-footer[href=\'https://www.ofinanciamentocoletivo.com.br/?ref=ctrse_footer\']',
-                                                  ' Escola Catarse'
-                                                 ),
+                                                    ' Escola Catarse'
+                                                ),
                                                 m('a.link-footer[href=\'http://crowdfunding.catarse.me/nossa-taxa?ref=ctrse_footer\']',
-                                                  ' Nossa Taxa'
-                                                 ),
+                                                    ' Nossa Taxa'
+                                                ),
                                                 m('a.link-footer[href=\'http://pesquisa.catarse.me/\']',
-                                                  ' Retrato FC Brasil 2013/2014'
-                                                 ),
+                                                    ' Retrato FC Brasil 2013/2014'
+                                                ),
                                                 m('a.link-footer[href=\'http://suporte.catarse.me/hc/pt-br/articles/115002214043-Responsabilidades-e-Seguran%C3%A7a?ref=ctrse_footer\']',
-                                                  ' Responsabilidades e Segurança'
-                                                 ),
+                                                    ' Responsabilidades e Segurança'
+                                                ),
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/legal/termos-de-uso\'][target="_BLANK"]',
-                                                  ' Termos de uso'
-                                                 ),
+                                                    ' Termos de uso'
+                                                ),
                                                 m('a.link-footer[href=\'https://crowdfunding.catarse.me/legal/politica-de-privacidade\'][target="_BLANK"]',
-                                                  ' Política de privacidade'
-                                                 )
+                                                    ' Política de privacidade'
+                                                )
                                             ]
                                         ),
                                         m('.w-col.w-col-4.w-col-small-4.w-col-tiny-4.footer-full-lastcolumn',
@@ -131,7 +131,7 @@ const footer = {
                                                 ),
                                                 m('a.u-marginbottom-30.link-footer[href=\'https://crowdfunding.catarse.me/assinaturas?ref=ctrse_footer\']',
                                                     'Catarse Assinaturas'
-                                                 ),
+                                                ),
                                                 m('.footer-full-signature-text.fontsize-small',
                                                     'Apoie projetos no Catarse'
                                                 ),
@@ -189,7 +189,7 @@ const footer = {
                             m('img.u-marginbottom-20[alt=\'Logo footer\'][src=\'/assets/logo-footer.png\']'),
                             m('.lineheight-loose',
                                 m('a.link-footer-inline[href=\'http://github.com/catarse/catarse\']',
-                                   ` Feito com amor | ${new Date().getFullYear()} | Open source`
+                                    ` Feito com amor | ${new Date().getFullYear()} | Open source`
                                 )
                             )
                         ]
