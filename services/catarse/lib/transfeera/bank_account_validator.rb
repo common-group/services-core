@@ -39,17 +39,21 @@ module Transfeera
       elsif catarse_user_bank_account.account_type.include?("conta_poupanca")
         "CONTA_POUPANCA"
       end
-      {
-        name: catarse_user_bank_account.user.name,
+
+      data = {
+        # name: catarse_user_bank_account.user.name,
         cpf_cnpj: catarse_user_bank_account.user.cpf,
         bank_code: catarse_user_bank_account.bank_code,
         agency: catarse_user_bank_account.agency,
-        agency_digit: catarse_user_bank_account.agency_digit,
         account: catarse_user_bank_account.account,
         account_digit: catarse_user_bank_account.account_digit,
         account_type: account_type,
         integration_id: "",
       }
+
+      data.merge!({agency_digit: catarse_user_bank_account.agency_digit}) if catarse_user_bank_account.agency_digit.present?
+
+      data
     end
 
     def request_validation(account_to_validate)
