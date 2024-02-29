@@ -169,7 +169,7 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const transaction = req.body.transaction;
                 const payment_gateway_id = payment.gateway_general_data.gateway_id
 
-                if(!R.isEmpty(payment_gateway_id) && transaction.id.toString() === payment_gateway_id) {
+                if((!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id)) && transaction.id.toString() === payment_gateway_id.toString()) {
                     if (!['authorized',  'processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
 
                         const payables = await gateway_client.
