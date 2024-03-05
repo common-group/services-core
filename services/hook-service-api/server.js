@@ -144,8 +144,8 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                         order by cp2.created_at desc
                         limit 1
             ) as last_payment on true
-            where cp.id = $1::uuid`
-                    , [req.body.transaction.metadata.payment_id]);
+            where cp.id = $1::uuid and (cp.gateway_general_data->>'gateway_id')::text = $2::text`
+                    , [req.body.transaction.metadata.payment_id, req.body.transaction.id]);
                 if(R.isEmpty(res.rows) || res.rows == null) {
                     exit(1, 'payment not found');
                 }
@@ -167,75 +167,75 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
 
                 const current_status = req.body.current_status;
                 const transaction = req.body.transaction;
-                const payment_gateway_id = payment.gateway_general_data.gateway_id;
+                //const payment_gateway_id = payment.gateway_general_data.gateway_id;
 
-                console.log("payment_gateway_id: ", payment_gateway_id);
-                console.log("(R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)): ", (R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)));
-                console.log("(!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id)): ", (!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id)));
-                console.log("(transaction.id.toString() === payment_gateway_id.toString()): ", (transaction.id.toString() === payment_gateway_id));
+                // console.log("payment_gateway_id: ", payment_gateway_id);
+                // console.log("(R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)): ", (R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)));
+                // console.log("(!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id)): ", (!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id)));
+                // console.log("(transaction.id.toString() === payment_gateway_id.toString()): ", (transaction.id.toString() === payment_gateway_id));
 
-                if(
-                    (R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)) ||
-                    (((!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id))) && transaction.id.toString() === payment_gateway_id.toString())
-                ) {
-                    if (!['authorized',  'processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
+                // if(
+                //     (R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)) ||
+                //     (((!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id))) && transaction.id.toString() === payment_gateway_id.toString())
+                // ) {
+                if (!['authorized',  'processing', 'waiting_payment', 'pending_review','pending_refund'].includes(current_status)) {
 
-                        const payables = await gateway_client.
-                            payables.find({ transactionId: transaction.id});
+                    const payables = await gateway_client.
+                        payables.find({ transactionId: transaction.id});
 
-                        const result_transaction_data = {
-                            transaction: transaction,
-                            payables: payables
-                        };
+                    const result_transaction_data = {
+                        transaction: transaction,
+                        payables: payables
+                    };
 
-                        // update payment with gateway payable and transaction data
-                        await pool.query(
-                            `update payment_service.catalog_payments
-                            set gateway_cached_data = $2::json,
-                                gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::uuid`
-                            , [
-                                payment.id,
-                                JSON.stringify(result_transaction_data)
-                            ]);
-                            // transition payment to current_status
-                        await pool.query(
-                            `select
-                                payment_service.transition_to(p, ($2)::payment_service.payment_status, $3::json)
-                            from payment_service.catalog_payments p
-                            where p.id = ($1)::uuid
-                        `, [
+                    // update payment with gateway payable and transaction data
+                    await pool.query(
+                        `update payment_service.catalog_payments
+                        set gateway_cached_data = $2::json,
+                            gateway_general_data = payment_service.__extractor_for_pagarme($2::json) where id = $1::uuid`
+                        , [
                             payment.id,
-                            current_status,
-                            JSON.stringify(req.body)
+                            JSON.stringify(result_transaction_data)
                         ]);
+                        // transition payment to current_status
+                    await pool.query(
+                        `select
+                            payment_service.transition_to(p, ($2)::payment_service.payment_status, $3::json)
+                        from payment_service.catalog_payments p
+                        where p.id = ($1)::uuid
+                    `, [
+                        payment.id,
+                        current_status,
+                        JSON.stringify(req.body)
+                    ]);
 
-                        // check if has subscription and last_payment is the same of payment to perform subscription transition
-                        if(!R.isEmpty(subscription) && subscription != null && last_payment.id === payment.id && !['canceling', 'canceled'].includes(subscription.status)) {
-                            const subscription_transition_sql = `
-                            select
-                                payment_service.transition_to(s, ($2)::payment_service.subscription_status, $3::json)
-                            from payment_service.subscriptions s
-                            where s.id = ($1)::uuid
-                            `;
+                    // check if has subscription and last_payment is the same of payment to perform subscription transition
+                    if(!R.isEmpty(subscription) && subscription != null && last_payment.id === payment.id && !['canceling', 'canceled'].includes(subscription.status)) {
+                        const subscription_transition_sql = `
+                        select
+                            payment_service.transition_to(s, ($2)::payment_service.subscription_status, $3::json)
+                        from payment_service.subscriptions s
+                        where s.id = ($1)::uuid
+                        `;
 
-                            if(current_status === 'paid' && subscription.status != 'active') {
-                                // active subscription when current_status is paid
-                                await pool.query(subscription_transition_sql
-                                    , [subscription.id, 'active', JSON.stringify(req.body)]);
-                            } else if (current_status === 'refused') {
-                                // NOTE: now we have a retries before inactive on first refused
-                                // inactive subscription when payment is refused
-                                // await pool.query(subscription_transition_sql
-                                //    , [subscription.id, 'inactive', JSON.stringify(req.body)]);
-                            } else if (current_status === 'chargedback') {
-                                // inactive subscription when payment is chargedback
-                                await pool.query(subscription_transition_sql
-                                    , [subscription.id, 'inactive', JSON.stringify(req.body)]);
-                            }
-
+                        if(current_status === 'paid' && subscription.status != 'active') {
+                            // active subscription when current_status is paid
+                            await pool.query(subscription_transition_sql
+                                , [subscription.id, 'active', JSON.stringify(req.body)]);
+                        } else if (current_status === 'refused') {
+                            // NOTE: now we have a retries before inactive on first refused
+                            // inactive subscription when payment is refused
+                            // await pool.query(subscription_transition_sql
+                            //    , [subscription.id, 'inactive', JSON.stringify(req.body)]);
+                        } else if (current_status === 'chargedback') {
+                            // inactive subscription when payment is chargedback
+                            await pool.query(subscription_transition_sql
+                                , [subscription.id, 'inactive', JSON.stringify(req.body)]);
                         }
+
                     }
                 }
+                // }
                 resp.send("ok");
 
                 // transaction payment to status
