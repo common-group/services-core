@@ -146,8 +146,8 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
             ) as last_payment on true
             where cp.id = $1::uuid and (cp.gateway_general_data->>'gateway_id')::text = $2::text`
                     , [req.body.transaction.metadata.payment_id, req.body.transaction.id]);
-                if(R.isEmpty(res.rows) || res.rows == null) {
-                    exit(1, 'payment not found');
+                if(R.isEmpty(res.rows) || R.isNil(res.rows)) {
+                    throw 'payment not found'
                 }
 
                 const payment = res.rows[0].payment_data;
