@@ -144,8 +144,8 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                         order by cp2.created_at desc
                         limit 1
             ) as last_payment on true
-            where cp.id = $1::uuid and (cp.gateway_general_data->>'gateway_id')::text = $2::text`
-                    , [req.body.transaction.metadata.payment_id, req.body.transaction.id]);
+            where cp.id = $1::uuid`
+                    , [req.body.transaction.metadata.payment_id]);
                 if(R.isEmpty(res.rows) || R.isNil(res.rows)) {
                     throw 'payment not found'
                 }
@@ -167,7 +167,15 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
 
                 const current_status = req.body.current_status;
                 const transaction = req.body.transaction;
-                //const payment_gateway_id = payment.gateway_general_data.gateway_id;
+                const payment_gateway_id = payment.gateway_general_data.gateway_id;
+
+                if(
+                    (!R.isEmpty(payment_gateway_id) && !R.isNil(payment_gateway_id))
+                    && req.body.current_status === 'refunded'
+                    && transaction.id.toString() != payment_gateway_id.toString()
+                ) {
+                    throw `can't change payment ${transaction.metadata.payment_id} with gateway id ${transaction.id} because current id in database is ${payment_gateway_id}`
+                }
 
                 // console.log("payment_gateway_id: ", payment_gateway_id);
                 // console.log("(R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)): ", (R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)));
