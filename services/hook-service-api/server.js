@@ -157,15 +157,6 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 const subscription = res.rows[0].subscription_data;
                 const last_payment = res.rows[0].last_payment_data;
 
-                if (req.body.old_status === 'authorized' && req.body.current_status === 'refunded') {
-                    req.body.current_status = 'refused'
-                }
-
-                if (req.body.old_status === 'paid' && req.body.current_status === 'refunded' && wasPaymentCreatedInTheLast30min(payment.created_at)) {
-                    req.body.current_status = 'refused'
-                }
-
-                const current_status = req.body.current_status;
                 const transaction = req.body.transaction;
                 const payment_gateway_id = payment.gateway_general_data.gateway_id;
 
@@ -176,6 +167,16 @@ server.post('/postbacks/:gateway_name', async (req, resp) => {
                 ) {
                     throw `can't change payment ${transaction.metadata.payment_id} with gateway id ${transaction.id} because current id in database is ${payment_gateway_id}`
                 }
+
+                if (req.body.old_status === 'authorized' && req.body.current_status === 'refunded') {
+                    req.body.current_status = 'refused'
+                }
+
+                if (req.body.old_status === 'paid' && req.body.current_status === 'refunded' && wasPaymentCreatedInTheLast30min(payment.created_at)) {
+                    req.body.current_status = 'refused'
+                }
+
+                const current_status = req.body.current_status;
 
                 // console.log("payment_gateway_id: ", payment_gateway_id);
                 // console.log("(R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)): ", (R.isEmpty(payment_gateway_id) || R.isNil(payment_gateway_id)));
