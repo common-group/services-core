@@ -1212,6 +1212,7 @@ caniuse-lite@^1.0.30001164:
   dependencies:
     "@sentry/browser" "^5.7.1"
     chart.js "1.0.2"
+    liquidjs "^9.25.1"
     mithril "^1.1.6"
     mithril-hooks "https://github.com/grpse/mithril-hooks.git#v0.6.1-root"
     mithril-postgrest "https://github.com/catarse/mithril-postgrest.git#4.1.0"
@@ -2053,6 +2054,11 @@ leven@^1.0.2:
   resolved "https://registry.yarnpkg.com/leven/-/leven-1.0.2.tgz#9144b6eebca5f1d0680169f1a6770dcea60b75c3"
   integrity sha1-kUS27ryl8dBoAWnxpncNzqYLdcM=
 
+liquidjs@^9.25.1:
+  version "9.43.0"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-9.43.0.tgz#69924ed3bbe143c17c13ea675cc70390d72eb307"
+  integrity sha512-qZZuL5Emja2UgCqiLewiw9bvwZQwm19TTGFxDkonVzB4YSTOZ8tuTVo/7Uu/AeW1cL2Qb/at3DSoV8wwyFXQCw==
+
 loader-utils@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.4.0.tgz#c579b5e34cb34b1a74edc6c1fb36bfa371d5a613"
@@ -2633,9 +2639,9 @@ semver@7.0.0:
   integrity sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
 
 semver@^5.5.0:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
-  integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.2.tgz#48d55db737c3287cd4835e17fa13feace1c41ef8"
+  integrity sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==
 
 set-blocking@^2.0.0:
   version "2.0.0"
