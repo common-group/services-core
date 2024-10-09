@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "@sendgrid/mail": "^6.3.1",
+    "@sendgrid/mail": "^7.7.0",
     "get-stdin": "^5.0.1",
     "liquidjs": "^2.0.2",
     "pg": "^7.4.0",
