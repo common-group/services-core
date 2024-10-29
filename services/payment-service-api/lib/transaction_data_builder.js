@@ -13,7 +13,8 @@ const buildTransactionData = (context) => {
   const isCreditCard = payment.data.payment_method === 'credit_card'
   const paymentData = isCreditCard ? cardTransactionData(context) : bankSlipTransactionData(context)
   const transactionMetadata = buildTransactionMetadata(context)
-  return {
+  
+  let transactionData = {
     postback_url: process.env.POSTBACK_URL,
     async: false,
     payment_method: payment.data.payment_method,
@@ -21,6 +22,13 @@ const buildTransactionData = (context) => {
     ...paymentData,
     ...transactionMetadata
   }
+
+  // Add recurrence_model only for credit card transactions
+  if (isCreditCard) {
+    transactionData.recurrence_model = 'standing_order'
+  }
+
+  return transactionData
 }
 
 /*

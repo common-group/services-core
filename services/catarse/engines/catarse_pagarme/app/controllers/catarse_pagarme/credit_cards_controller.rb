@@ -35,16 +35,17 @@ module CatarsePagarme
 
     def credit_card_attributes
       contribution.reload
+      installments = get_installment
       hash = {
         payment_method: 'credit_card',
-        amount: delegator.value_with_installment_tax(get_installment),
+        amount: delegator.value_with_installment_tax(installments),
         postback_url: ipn_pagarme_index_url(
           host: CatarsePagarme.configuration.host,
           subdomain: CatarsePagarme.configuration.subdomain,
           protocol: CatarsePagarme.configuration.protocol
         ),
         soft_descriptor: payment.project.permalink.gsub(/[\W\_]/, ' ')[0, MAX_SOFT_DESCRIPTOR_LENGTH],
-        installments: get_installment,
+        installments: installments,
         customer: {
           id: contribution.user.id,
           email: contribution.user.email,
@@ -68,6 +69,9 @@ module CatarsePagarme
         metadata: metadata_attributes,
         antifraud_metadata: af_metadata
       }
+
+      # Adding recurrence_model field only if it's an installment payment
+      hash[:recurrence_model] = 'installment' if installments > 1
 
       if params[:card_hash].present?
         hash[:card_hash] = params[:card_hash]
