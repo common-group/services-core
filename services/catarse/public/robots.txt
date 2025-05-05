@@ -1,15 +1,93 @@
-# See http://www.robotstxt.org/wc/norobots.html for documentation on how to use the robots.txt file
+#   ____    _  _____  _    ____  ____  _____
+#  / ___|  / \|_   _|/ \  |  _ \/ ___|| ____|
+# | |     / _ \ | | / _ \ | |_) \___ \|  _|
+# | |___ / ___ \| |/ ___ \|  _ < ___) | |___
+#  \____/_/   \_\_/_/   \_\_|_\_\____/|_____|
 #
-# To ban all spiders from the entire site uncomment the next two lines:
-# User-Agent: *
-# Disallow: /
+#   ___
+#  / _ \   _ __   ___  _ __ | |_ ___     __| | ___
+# | | | | | '_ \ / _ \| '_ \| __/ _ \   / _` |/ _ \
+# | |_| | | |_) | (_) | | | | || (_) | | (_| |  __/
+#  \___/  | .__/ \___/|_| |_|\__\___/   \__,_|\___|
+#   ___ _ |_|  ___ ___  _ __ | |_ _ __ ___     __| | __ _
+#  / _ \ '_ \ / __/ _ \| '_ \| __| '__/ _ \   / _` |/ _` |
+# |  __/ | | | (_| (_) | | | | |_| | | (_) | | (_| | (_| |
+#  \___|_| |_|\___\___/|_| |_|\__|_|  \___/   \__,_|\__,_|
+#   ___ _ __(_) __ _| |_(_)_   _(_) __| | __ _  __| | ___
+#  / __| '__| |/ _` | __| \ \ / / |/ _` |/ _` |/ _` |/ _ \
+# | (__| |  | | (_| | |_| |\ V /| | (_| | (_| | (_| |  __/
+#  \___|_|  |_|\__,_|\__|_| \_/ |_|\__,_|\__,_|\__,_|\___|
 
+#
+# Bloqueando todos os crawlers ("user-agents") para todo o domínio https://catarse.me! MAs não será aplicado pois impediria o SEO
+#
+#User-agent: *
+#Disallow: /
+
+# Permitir o rastreamento normal do site público - SEO
 User-agent: *
-Disallow: /dbhero/
-Disallow: /api_token
-Disallow: */admin
-Disallow: */new-admin
-Disallow: */projects/
-Disallow: */users/*/edit
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /user-profile/
+Allow: /
 
-Sitemap: https://www.catarse.me/sitemap.xml
+#
+# Agora blqueando crawlers ("user-agents") conhecidos para todo o domínio https://catarse.me
+#
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Twitterbot
+Disallow: /
+
+# não aplicando para não afetar score de landing pages para campanhas de Google Ads
+#User-agent: AdsBot-Google
+#Disallow: /
+
+#User-agent: Googlebot-Video
+#Disallow: /
+
+# não aplicando para imagens do Catarse.me aparecerem no Google Imagens
+#User-agent: Googlebot-Image
+#Disallow: /
+
+User-agent: facebookexternalhit
+Disallow: /
+
+# não aplciando para manter resultados do Bing Search
+#User-agent: Bingbot
+#Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: AnyBot
+Disallow: /
+
+User-agent: ai-crawler
+Disallow: /
+
+#        ;     /        ,--.
+#       ["]   ["]  ,<  |__**|
+#      /[_]\  [~]\/    |//  |     Hey robot! Be nice
+#       ] [   OOO      /o|__|
+#
