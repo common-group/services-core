@@ -64,8 +64,8 @@ Disallow: /
 #User-agent: Googlebot-Image
 #Disallow: /
 
-User-agent: facebookexternalhit
-Disallow: /
+#User-agent: facebookexternalhit
+#Disallow: /
 
 # não aplciando para manter resultados do Bing Search
 #User-agent: Bingbot
